@@ -1,0 +1,266 @@
+openapi: 3.1.0
+info:
+  title: A.R.M.O.R. Server API
+  version: 0.2.0
+  description: >-
+    The HTTP surface of ARMOR-SERVER. Message bodies reference the JSON Schemas
+    published in src/armor_common/schemas, which are the single source of truth.
+    Every route that configures, moves, captures, records, protects or deletes
+    needs an operator (a Studio session cookie, an operator session or the
+    operator bearer token).
+servers:
+  - url: http://127.0.0.1:8080
+paths:
+  /healthz:
+    get:
+      summary: Liveness, no credentials
+      responses:
+        '200': { description: Service ready }
+  /api/v1/status:
+    get:
+      summary: Read-only system projection
+      responses:
+        '200':
+          description: Mode, revision and every node with its stale/offline state
+          content: { application/json: { schema: { $ref: '#/components/schemas/SystemState' } } }
+  /api/v1/info:
+    get:
+      summary: Server version, uptime and enabled capabilities
+      responses:
+        '200': { description: Server information }
+  /api/v1/telemetry:
+    post:
+      summary: Field-node telemetry
+      security: [{ ingestBearer: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '../src/armor_common/schemas/telemetry.schema.json' } } } }
+      responses:
+        '202': { description: Accepted }
+        '400': { description: Invalid payload }
+        '401': { description: Authentication failure }
+  /api/v1/health:
+    post:
+      summary: Field-node health
+      security: [{ ingestBearer: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '../src/armor_common/schemas/health.schema.json' } } } }
+      responses:
+        '202': { description: Accepted }
+        '400': { description: Invalid payload }
+        '401': { description: Authentication failure }
+  /api/v1/control/{mode}:
+    post:
+      summary: Arm or disarm
+      security: [{ controlBearer: [] }]
+      parameters: [{ name: mode, in: path, required: true, schema: { type: string, enum: [arm, disarm] } }]
+      responses:
+        '200': { description: New system state }
+        '401': { description: Authentication failure }
+        '404': { description: Unknown mode }
+  /api/v1/studio/session:
+    get:
+      summary: Is the Studio session cookie valid
+      responses:
+        '200': { description: '{ "authenticated": boolean }' }
+    post:
+      summary: Sign in (rate limited); sets an HttpOnly, SameSite=Strict cookie
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/StudioLogin' } } } }
+      responses:
+        '201': { description: Session opened }
+        '401': { description: Wrong credentials }
+        '429': { description: Too many attempts }
+    delete:
+      summary: Sign out
+      responses:
+        '204': { description: Session closed }
+  /api/v1/operator/session:
+    post:
+      summary: Exchange the operator token for a session cookie
+      security: [{ operatorBearer: [] }]
+      responses:
+        '201': { description: Session opened }
+        '401': { description: Authentication failure }
+    delete:
+      summary: Close the operator session
+      security: [{ operator: [] }]
+      responses:
+        '204': { description: Session closed }
+  /api/v1/camera-views:
+    get:
+      summary: Cameras without username or credentials
+      responses:
+        '200': { description: Camera views }
+  /api/v1/cameras:
+    get:
+      summary: Cameras with username and credential flags (never the password)
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: Cameras }
+        '401': { description: Operator required }
+  /api/v1/cameras/configure:
+    post:
+      summary: Create or update a camera connection
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CameraInput' } } } }
+      responses:
+        '200': { description: Stored camera }
+        '400': { description: Invalid configuration }
+        '401': { description: Operator required }
+  /api/v1/cameras/discover:
+    post:
+      summary: Probe one private /24 for camera services (one scan at a time)
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: Discovered hosts and the networks scanned }
+        '429': { description: A discovery is already running }
+  /api/v1/cameras/{id}:
+    delete:
+      summary: Remove a camera connection (evidence is kept)
+      security: [{ operator: [] }]
+      parameters: [{ $ref: '#/components/parameters/CameraId' }]
+      responses:
+        '204': { description: Removed }
+        '404': { description: Unknown camera }
+        '409': { description: A recording is active }
+  /api/v1/cameras/{id}/ptz:
+    post:
+      summary: Bounded PTZ movement (Hi3510, PSIA, then ONVIF)
+      security: [{ operator: [] }]
+      parameters: [{ $ref: '#/components/parameters/CameraId' }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PtzCommand' } } } }
+      responses:
+        '200': { description: Command sent }
+        '502': { description: Camera refused or is unreachable }
+  /api/v1/cameras/{id}/discover-rtsp:
+    post:
+      summary: Test common RTSP paths with authenticated DESCRIBE
+      security: [{ operator: [] }]
+      parameters: [{ $ref: '#/components/parameters/CameraId' }]
+      responses:
+        '200': { description: Paths that answered 200 }
+        '409': { description: Credentials are incomplete }
+  /api/v1/cameras/{id}/stream-ticket:
+    post:
+      summary: Issue a five-minute stream ticket bound to this camera
+      security: [{ operator: [] }]
+      parameters: [{ $ref: '#/components/parameters/CameraId' }]
+      responses:
+        '201': { description: Stream path with ticket }
+  /api/v1/cameras/{id}/mjpeg:
+    get:
+      summary: Live MJPEG (needs an operator or a ticket for this camera)
+      parameters:
+        - $ref: '#/components/parameters/CameraId'
+        - { name: ticket, in: query, required: false, schema: { type: string } }
+      responses:
+        '200': { description: multipart/x-mixed-replace stream }
+        '401': { description: Neither an operator nor a valid ticket }
+        '503': { description: FFmpeg not configured or relay capacity exhausted }
+  /api/v1/cameras/{id}/snapshot:
+    post:
+      summary: Capture a JPEG
+      security: [{ operator: [] }]
+      parameters: [{ $ref: '#/components/parameters/CameraId' }]
+      responses:
+        '201': { description: Evidence item }
+        '502': { description: Capture failed }
+  /api/v1/cameras/{id}/recordings/start:
+    post:
+      summary: Start an MP4 recording
+      security: [{ operator: [] }]
+      parameters: [{ $ref: '#/components/parameters/CameraId' }]
+      responses:
+        '202': { description: Recording started }
+        '502': { description: Could not start }
+  /api/v1/cameras/{id}/recordings/stop:
+    post:
+      summary: Stop and finalize the recording
+      security: [{ operator: [] }]
+      parameters: [{ $ref: '#/components/parameters/CameraId' }]
+      responses:
+        '200': { description: Finished evidence item }
+        '409': { description: Not recording }
+  /api/v1/media:
+    get:
+      summary: Evidence catalogue, newest first
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: Items and the cameras currently recording }
+    delete:
+      summary: Delete every unprotected item of a kind
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [kind], properties: { kind: { type: string, enum: [snapshot, recording, all] } } } } } }
+      responses:
+        '200': { description: Number deleted }
+        '400': { description: Unknown kind }
+  /api/v1/media/{cameraId}/{kind}/{file}:
+    parameters: [{ $ref: '#/components/parameters/MediaPath' }]
+    get:
+      summary: Download or play one item
+      security: [{ operator: [] }]
+      responses: { '200': { description: image/jpeg or video/mp4 }, '404': { description: Not found } }
+    delete:
+      summary: Delete one item (refused while protected)
+      security: [{ operator: [] }]
+      responses: { '204': { description: Deleted }, '409': { description: Protected }, '404': { description: Not found } }
+  /api/v1/media/{cameraId}/{kind}/{file}/sha256:
+    parameters: [{ $ref: '#/components/parameters/MediaPath' }]
+    get:
+      summary: SHA-256 of the file as stored, for chain of custody
+      security: [{ operator: [] }]
+      responses: { '200': { description: '{ "sha256": hex }' }, '404': { description: Not found } }
+  /api/v1/media/{cameraId}/{kind}/{file}/protected:
+    parameters: [{ $ref: '#/components/parameters/MediaPath' }]
+    put:
+      summary: Protect or unprotect an item from automatic pruning
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [protected], properties: { protected: { type: boolean } } } } } }
+      responses: { '204': { description: Updated }, '400': { description: protected must be a boolean }, '404': { description: Not found } }
+components:
+  securitySchemes:
+    ingestBearer: { type: http, scheme: bearer, description: ARMOR_INGEST_TOKEN }
+    controlBearer: { type: http, scheme: bearer, description: ARMOR_CONTROL_TOKEN }
+    operatorBearer: { type: http, scheme: bearer, description: ARMOR_OPERATOR_TOKEN }
+    operator: { type: apiKey, in: cookie, name: armor_studio_session, description: Studio session, operator session or operator bearer token }
+  parameters:
+    CameraId: { name: id, in: path, required: true, schema: { type: string, pattern: '^[A-Za-z0-9._-]{3,80}$' } }
+    MediaPath:
+      name: cameraId
+      in: path
+      required: true
+      description: Also takes {kind} (snapshots or recordings) and {file}
+      schema: { type: string }
+  schemas:
+    StudioLogin: { type: object, required: [username, password], properties: { username: { type: string }, password: { type: string } } }
+    PtzCommand: { type: object, required: [command], properties: { command: { type: string, enum: [left, right, up, down, zoomIn, zoomOut, stop] } } }
+    CameraInput:
+      type: object
+      required: [id, name, host]
+      properties:
+        id: { type: string, pattern: '^[A-Za-z0-9._-]{3,80}$' }
+        name: { type: string, maxLength: 80 }
+        host: { type: string, maxLength: 253 }
+        username: { type: string }
+        password: { type: string, description: Write-only; an empty value keeps the stored one }
+        rtspPath: { type: string }
+        snapshotUrl: { type: string }
+        onvifPort: { type: integer, minimum: 1, maximum: 65535 }
+        rtspPort: { type: integer, minimum: 1, maximum: 65535 }
+    SystemState:
+      type: object
+      required: [mode, revision, nodes, updated_at]
+      properties:
+        mode: { type: string, enum: [armed, disarmed] }
+        revision: { type: integer }
+        updated_at: { type: string, format: date-time }
+        nodes:
+          type: object
+          additionalProperties:
+            type: object
+            required: [node_id, online, stale, timestamp_ms, lux, target_count, alert_level]
+            properties:
+              node_id: { type: string }
+              online: { type: boolean, description: Reported online and heard from recently }
+              stale: { type: boolean, description: Silent for longer than ARMOR_NODE_STALE_AFTER_S }
+              timestamp_ms: { type: integer }
+              lux: { type: [number, 'null'] }
+              target_count: { type: integer }
+              alert_level: { type: string, enum: [normal, review, high] }

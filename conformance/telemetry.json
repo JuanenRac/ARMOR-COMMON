@@ -1,0 +1,761 @@
+{
+ "kind": "telemetry",
+ "vectors": [
+  {
+   "name": "minimal, no targets",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": []
+   }
+  },
+  {
+   "name": "one target",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "fifteen targets, the limit",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 2,
+      "track_id": 2,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 3,
+      "track_id": 3,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 4,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 2,
+      "track_id": 5,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 3,
+      "track_id": 6,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 7,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 2,
+      "track_id": 8,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 3,
+      "track_id": 9,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 10,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 2,
+      "track_id": 11,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 3,
+      "track_id": 12,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 13,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 2,
+      "track_id": 14,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 3,
+      "track_id": 15,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "zero lux",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 0,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "lux at the sensor limit",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 200000,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "negative coordinates and speed",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": -5000,
+      "y_mm": -1,
+      "speed_mm_s": -785.4
+     }
+    ]
+   }
+  },
+  {
+   "name": "node id with digits, dash and underscore",
+   "valid": true,
+   "payload": {
+    "node_id": "node_2-b",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "sixteen targets",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     },
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "uppercase node id",
+   "valid": false,
+   "payload": {
+    "node_id": "North-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "node id starting with a dash",
+   "valid": false,
+   "payload": {
+    "node_id": "-north",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "node id too long",
+   "valid": false,
+   "payload": {
+    "node_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "empty node id",
+   "valid": false,
+   "payload": {
+    "node_id": "",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "negative timestamp",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": -1,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "fractional timestamp",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1.5,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "string timestamp",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": "1000",
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "boolean timestamp",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": true,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "negative lux",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": -0.1,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "lux above the limit",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 200001,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "boolean lux",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": true,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "string lux",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": "12",
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "missing lux",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "missing targets",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5
+   }
+  },
+  {
+   "name": "targets is not a list",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": {}
+   }
+  },
+  {
+   "name": "unknown top-level field",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ],
+    "extra": 1
+   }
+  },
+  {
+   "name": "target sensor 0",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 0,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "target sensor 4",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 4,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "target track 0",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 0,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "fractional track id",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1.5,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "target with a missing field",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300
+     }
+    ]
+   }
+  },
+  {
+   "name": "target with an unknown field",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0,
+      "z_mm": 1
+     }
+    ]
+   }
+  },
+  {
+   "name": "boolean coordinate",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": true,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "target is not an object",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     7
+    ]
+   }
+  },
+  {
+   "name": "not an object",
+   "valid": false,
+   "payload": [
+    1,
+    2
+   ]
+  }
+ ]
+}

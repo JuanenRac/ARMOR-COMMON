@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/command-0.2.0.json",
+  "title": "A.R.M.O.R. field-node command",
+  "description": "A command to one node. Only these commands exist; anything else is rejected before it reaches hardware control logic.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["node_id", "timestamp_ms", "command"],
+  "properties": {
+    "node_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$" },
+    "timestamp_ms": { "type": "integer", "minimum": 0 },
+    "command": { "type": "string", "enum": ["calibrate", "set_thresholds", "restart"] },
+    "sensitivity": { "type": "integer", "minimum": 1, "maximum": 10, "description": "Only for set_thresholds." }
+  }
+}
