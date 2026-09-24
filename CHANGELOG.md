@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.3.0] - OpenAPI 0.3.0
+
+- `openapi/armor-server-0.3.0.yaml` (replaces 0.2.0) adds `GET /api/v1/history` and `GET`/`PUT /api/v1/rules` with the `Rules` schema.
+
 ## [0.2.0] - Schemas as the single source of truth
 
 - The JSON Schemas are now packaged with the library and interpreted directly by a small validator that refuses any schema keyword it does not implement, so a constraint can never be silently skipped.

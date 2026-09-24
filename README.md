@@ -29,7 +29,7 @@
 * ✅ **A validator that cannot skip a rule:** it interprets the schema directly and refuses a schema that uses a keyword it does not implement.
 * 🤝 **Conformance vectors:** 50 accepted/rejected payloads run by every implementation (Python here, TypeScript in ARMOR-SERVER), so drift fails a build.
 * 🧬 **Generated clients:** TypeScript and Kotlin types come from the schemas (`tools/generate_types.py --check` keeps them current).
-* 🌐 **HTTP contract:** `openapi/armor-server-0.2.0.yaml` describes every server route, its access rule and its schema.
+* 🌐 **HTTP contract:** `openapi/armor-server-0.3.0.yaml` describes every server route, its access rule and its schema.
 * 🚀 **Shared launcher:** `tools/armor_project_tool.py` gives all eleven repositories the same `build`, `build-test` and `run` workflow.
 
 ---
@@ -43,7 +43,7 @@ flowchart LR
     S --> V["conformance vectors"]
     V --> P
     V --> T["ARMOR-SERVER tests"]
-    S --> O["OpenAPI 0.2.0"]
+    S --> O["OpenAPI 0.3.0"]
 ```
 
 Broker topics: `armor/node/{node_id}/telemetry | health | command`. See [contracts](docs/CONTRACTS.md).
@@ -70,7 +70,7 @@ ARMOR-COMMON/
 ├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json
 ├── conformance/        accepted and rejected payloads shared by every implementation
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
-├── openapi/            armor-server-0.2.0.yaml
+├── openapi/            armor-server-0.3.0.yaml
 ├── tools/              armor_project_tool.py, generate_types.py, make_conformance.py
 ├── tests/              unit tests and conformance runner
 └── docs/               contracts guide
