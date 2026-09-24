@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: A.R.M.O.R. Server API
-  version: 0.2.0
+  version: 0.3.0
   description: >-
     The HTTP surface of ARMOR-SERVER. Message bodies reference the JSON Schemas
     published in src/armor_common/schemas, which are the single source of truth.
@@ -214,6 +214,34 @@ paths:
       security: [{ operator: [] }]
       requestBody: { required: true, content: { application/json: { schema: { type: object, required: [protected], properties: { protected: { type: boolean } } } } } }
       responses: { '204': { description: Updated }, '400': { description: protected must be a boolean }, '404': { description: Not found } }
+  /api/v1/history:
+    get:
+      summary: Event history, newest first (operator)
+      description: Alert-level, node-status and security-mode changes. `before` is an event id; use `next_before` to page.
+      parameters:
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 200 } }
+        - { name: before, in: query, schema: { type: integer, minimum: 1 } }
+        - { name: type, in: query, schema: { type: string, enum: [alert, node, mode] } }
+        - { name: node, in: query, schema: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,63}$' } }
+      responses:
+        '200': { description: A page of events }
+        '400': { description: Invalid filter }
+        '401': { description: Operator authorization is required }
+  /api/v1/rules:
+    get:
+      summary: Alert rules (operator)
+      responses:
+        '200':
+          description: Dwell time and ignore zones
+          content: { application/json: { schema: { $ref: '#/components/schemas/Rules' } } }
+        '401': { description: Operator authorization is required }
+    put:
+      summary: Replace the alert rules (operator, audited)
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/Rules' } } } }
+      responses:
+        '200': { description: Rules saved }
+        '400': { description: Invalid rules }
+        '401': { description: Operator authorization is required }
 components:
   securitySchemes:
     ingestBearer: { type: http, scheme: bearer, description: ARMOR_INGEST_TOKEN }
@@ -229,6 +257,30 @@ components:
       description: Also takes {kind} (snapshots or recordings) and {file}
       schema: { type: string }
   schemas:
+    Rules:
+      type: object
+      additionalProperties: false
+      required: [dwell_ms, zones]
+      properties:
+        schema: { type: integer, enum: [1] }
+        dwell_ms: { type: integer, minimum: 0, maximum: 60000, description: Time a two-target condition must persist before it is high }
+        zones:
+          type: array
+          maxItems: 64
+          items:
+            type: object
+            additionalProperties: false
+            required: [id, name, action, x_min_mm, x_max_mm, y_min_mm, y_max_mm]
+            properties:
+              id: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,39}$' }
+              name: { type: string, maxLength: 80 }
+              action: { type: string, enum: [ignore] }
+              node_id: { type: string }
+              sensor_id: { type: integer, minimum: 1, maximum: 3 }
+              x_min_mm: { type: number }
+              x_max_mm: { type: number }
+              y_min_mm: { type: number }
+              y_max_mm: { type: number }
     StudioLogin: { type: object, required: [username, password], properties: { username: { type: string }, password: { type: string } } }
     PtzCommand: { type: object, required: [command], properties: { command: { type: string, enum: [left, right, up, down, zoomIn, zoomOut, stop] } } }
     CameraInput:
