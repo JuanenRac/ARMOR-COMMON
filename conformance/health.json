@@ -1,0 +1,77 @@
+{
+ "kind": "health",
+ "vectors": [
+  {
+   "name": "online node",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 5,
+    "online": true
+   }
+  },
+  {
+   "name": "offline node",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 0,
+    "online": false
+   }
+  },
+  {
+   "name": "string online flag",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 5,
+    "online": "yes"
+   }
+  },
+  {
+   "name": "numeric online flag",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 5,
+    "online": 1
+   }
+  },
+  {
+   "name": "missing online",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 5
+   }
+  },
+  {
+   "name": "negative timestamp",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": -5,
+    "online": true
+   }
+  },
+  {
+   "name": "unknown field",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 5,
+    "online": true,
+    "temp_c": 20
+   }
+  },
+  {
+   "name": "uppercase node id",
+   "valid": false,
+   "payload": {
+    "node_id": "NORTH",
+    "timestamp_ms": 5,
+    "online": true
+   }
+  }
+ ]
+}

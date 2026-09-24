@@ -1,0 +1,89 @@
+{
+ "kind": "command",
+ "vectors": [
+  {
+   "name": "calibrate",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 9,
+    "command": "calibrate"
+   }
+  },
+  {
+   "name": "restart",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 9,
+    "command": "restart"
+   }
+  },
+  {
+   "name": "thresholds with a sensitivity",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 9,
+    "command": "set_thresholds",
+    "sensitivity": 7
+   }
+  },
+  {
+   "name": "command outside the allow-list",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 9,
+    "command": "format_flash"
+   }
+  },
+  {
+   "name": "uppercase command",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 9,
+    "command": "RESTART"
+   }
+  },
+  {
+   "name": "sensitivity above 10",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 9,
+    "command": "set_thresholds",
+    "sensitivity": 11
+   }
+  },
+  {
+   "name": "sensitivity 0",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 9,
+    "command": "set_thresholds",
+    "sensitivity": 0
+   }
+  },
+  {
+   "name": "missing command",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 9
+   }
+  },
+  {
+   "name": "unknown field",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 9,
+    "command": "restart",
+    "shell": "rm -rf /"
+   }
+  }
+ ]
+}

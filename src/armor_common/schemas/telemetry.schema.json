@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/telemetry-0.1.0.json",
+  "title": "A.R.M.O.R. field-node telemetry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["node_id", "timestamp_ms", "lux", "targets"],
+  "properties": {
+    "node_id": {"type":"string","pattern":"^[a-z0-9][a-z0-9_-]{0,63}$"},
+    "timestamp_ms": {"type":"integer","minimum":0},
+    "lux": {"type":"number","minimum":0,"maximum":200000},
+    "targets": {"type":"array","maxItems":15,"items":{"type":"object","additionalProperties":false,"required":["sensor_id","track_id","x_mm","y_mm","speed_mm_s"],"properties":{"sensor_id":{"type":"integer","minimum":1,"maximum":3},"track_id":{"type":"integer","minimum":1},"x_mm":{"type":"number"},"y_mm":{"type":"number"},"speed_mm_s":{"type":"number"}}}}
+  }
+}
