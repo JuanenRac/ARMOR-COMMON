@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: A.R.M.O.R. Server API
-  version: 0.3.0
+  version: 0.4.0
   description: >-
     The HTTP surface of ARMOR-SERVER. Message bodies reference the JSON Schemas
     published in src/armor_common/schemas, which are the single source of truth.
@@ -18,14 +18,15 @@ paths:
         '200': { description: Service ready }
   /api/v1/status:
     get:
-      summary: Read-only system projection
+      summary: Read-only system projection (operator)
       responses:
         '200':
           description: Mode, revision and every node with its stale/offline state
           content: { application/json: { schema: { $ref: '#/components/schemas/SystemState' } } }
+        '401': { description: Operator authorization is required }
   /api/v1/info:
     get:
-      summary: Server version, uptime and enabled capabilities
+      summary: Server version and uptime; the mode and enabled capabilities only for an operator
       responses:
         '200': { description: Server information }
   /api/v1/telemetry:
@@ -221,11 +222,28 @@ paths:
       parameters:
         - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 200 } }
         - { name: before, in: query, schema: { type: integer, minimum: 1 } }
-        - { name: type, in: query, schema: { type: string, enum: [alert, node, mode] } }
+        - { name: type, in: query, schema: { type: string, enum: [alert, node, camera, mode] } }
         - { name: node, in: query, schema: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,63}$' } }
       responses:
         '200': { description: A page of events }
         '400': { description: Invalid filter }
+        '401': { description: Operator authorization is required }
+  /api/v1/nodes/{id}:
+    delete:
+      summary: Forget a decommissioned node (operator, audited)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,63}$' } }
+      responses:
+        '204': { description: Node removed }
+        '400': { description: Invalid node id }
+        '401': { description: Operator authorization is required }
+        '404': { description: Unknown node }
+  /api/v1/camera-status:
+    get:
+      summary: Reachability of every configured camera (operator)
+      description: Seen by the watchdog with a plain TCP probe of the RTSP and ONVIF ports; a camera is offline after consecutive failed checks.
+      responses:
+        '200': { description: Status, time since it changed and consecutive failures per camera }
         '401': { description: Operator authorization is required }
   /api/v1/rules:
     get:
