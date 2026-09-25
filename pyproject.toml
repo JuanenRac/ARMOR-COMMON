@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "armor-common"
-version = "0.1.5"
+version = "0.1.6"
 description = "A.R.M.O.R. shared contracts and validation"
 requires-python = ">=3.11"
 
