@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/info-0.1.0.json",
+  "title": "A.R.M.O.R. field-node information",
+  "description": "What a node says about itself so that a console can offer its web panel: its name, the firmware it runs, and where it can be reached. Sent when the node connects to the broker and now and then afterwards.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["node_id", "timestamp_ms", "name", "firmware", "ip", "port"],
+  "properties": {
+    "node_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$" },
+    "timestamp_ms": { "type": "integer", "minimum": 0 },
+    "name": { "type": "string", "minLength": 1, "maxLength": 48, "description": "The name the operator gave the node." },
+    "firmware": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "ip": { "type": "string", "pattern": "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(\\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}$", "description": "The IPv4 address of the node, four decimal parts without leading zeros." },
+    "port": { "type": "integer", "minimum": 1, "maximum": 65535, "description": "The port of the node's web panel." }
+  }
+}

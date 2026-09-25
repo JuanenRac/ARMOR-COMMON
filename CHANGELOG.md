@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## [0.1.7] - The node information message
+
+- **`info`** (`armor/node/{node_id}/info`, node to server): the node's name, its firmware version, its IPv4 address and the port of its web panel, so a console can offer a link to it. `info.schema.json` follows the same rules as the others (`additionalProperties: false`, the node id equal in topic and body); the address is a dotted quad without leading zeros, the firmware is `x.y.z`, the name 1 to 48 characters.
+- 18 new conformance vectors (68 in all), the generated TypeScript and Kotlin types, and a test of the topic.
+- `armor-server-0.1.7.yaml`: the state of a node carries `panel` (the address the node said, or null).
+
 ## [0.1.6] - OpenAPI 0.1.6
 
 - `armor-server-0.1.6.yaml`: `/api/v1/devices` (and the state, command and test routes), `/api/v1/alarms`, `/api/v1/automations`, `POST /api/v1/mode`, `/api/v1/site`, `/api/v1/system` and `/api/v1/audit`, with their schemas.

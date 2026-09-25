@@ -128,5 +128,14 @@ class EnvelopeTests(unittest.TestCase):
                 decode(bad)
 
 
+class InfoMessageTests(unittest.TestCase):
+    def test_info_is_a_published_kind_with_its_own_topic(self):
+        payload = {"node_id": "north-1", "timestamp_ms": 5, "name": "North gate", "firmware": "0.2.3", "ip": "192.168.0.181", "port": 80}
+        validate_topic_and_payload("armor/node/north-1/info", payload)
+        with self.assertRaises(ContractError):
+            validate_topic_and_payload("armor/node/other/info", payload)  # the node id must match the topic
+        self.assertEqual(parse_topic("armor/node/north-1/info"), ("north-1", "info"))
+
+
 if __name__ == "__main__":
     unittest.main()
