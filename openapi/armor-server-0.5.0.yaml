@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: A.R.M.O.R. Server API
-  version: 0.4.0
+  version: 0.5.0
   description: >-
     The HTTP surface of ARMOR-SERVER. Message bodies reference the JSON Schemas
     published in src/armor_common/schemas, which are the single source of truth.
@@ -123,6 +123,7 @@ paths:
         '409': { description: A recording is active }
   /api/v1/cameras/{id}/ptz:
     post:
+      description: A move is continuous on most cameras, so the server stops it by itself about 2.5 s after the last move; a client holding a button repeats the move every second and sends `stop` on release. The error says why a move failed (login refused, camera silent, no PTZ support).
       summary: Bounded PTZ movement (Hi3510, PSIA, then ONVIF)
       security: [{ operator: [] }]
       parameters: [{ $ref: '#/components/parameters/CameraId' }]
@@ -223,7 +224,12 @@ paths:
         - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 200 } }
         - { name: before, in: query, schema: { type: integer, minimum: 1 } }
         - { name: type, in: query, schema: { type: string, enum: [alert, node, camera, mode] } }
-        - { name: node, in: query, schema: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,63}$' } }
+        - { name: node, in: query, schema: { type: string, pattern: '^[A-Za-z0-9._-]{1,80}$' }, description: Node or camera id }
+        - { name: q, in: query, schema: { type: string, maxLength: 80 }, description: Case-insensitive part of the node or camera id }
+        - { name: level, in: query, schema: { type: string, enum: [normal, review, high] }, description: Alerts that moved to this level }
+        - { name: since, in: query, schema: { type: string, format: date-time } }
+        - { name: until, in: query, schema: { type: string, format: date-time } }
+        - { name: order, in: query, schema: { type: string, enum: [asc, desc] } }
       responses:
         '200': { description: A page of events }
         '400': { description: Invalid filter }
@@ -244,6 +250,24 @@ paths:
       description: Seen by the watchdog with a plain TCP probe of the RTSP and ONVIF ports; a camera is offline after consecutive failed checks.
       responses:
         '200': { description: Status, time since it changed and consecutive failures per camera }
+        '401': { description: Operator authorization is required }
+    delete:
+      summary: Permanently remove history (operator, audited)
+      description: Needs `confirm=delete`. `scope=all` removes every event (optionally only one `type`); `scope=older-than` removes those older than `days`.
+      parameters:
+        - { name: confirm, in: query, required: true, schema: { type: string, enum: [delete] } }
+        - { name: scope, in: query, required: true, schema: { type: string, enum: [all, older-than] } }
+        - { name: days, in: query, schema: { type: integer, minimum: 1, maximum: 3650 } }
+        - { name: type, in: query, schema: { type: string, enum: [alert, node, camera, mode] } }
+      responses:
+        '200': { description: How many events were removed and how many remain }
+        '400': { description: Missing confirmation or invalid scope }
+        '401': { description: Operator authorization is required }
+  /api/v1/history/summary:
+    get:
+      summary: Counts of the events held and of the last 24 hours (operator)
+      responses:
+        '200': { description: Total, by type, oldest and newest time, and last-24-hour counters }
         '401': { description: Operator authorization is required }
   /api/v1/rules:
     get:
