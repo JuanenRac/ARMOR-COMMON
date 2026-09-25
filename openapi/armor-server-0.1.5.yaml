@@ -117,6 +117,152 @@ paths:
         '400': { description: Invalid value, or nothing to change }
         '401': { description: Not signed in }
         '403': { description: The current password is wrong }
+  /api/v1/mode:
+    post:
+      summary: Arm or disarm the system from Studio (an operator); the answer is the new state of the perimeter
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [mode], properties: { mode: { type: string, enum: [armed, disarmed] } } } } } }
+      responses:
+        '200': { description: The new state }
+        '400': { description: Unknown mode }
+  /api/v1/devices:
+    get:
+      summary: The devices (sensors and actuators other than the radars and cameras), with the kinds and protocols A.R.M.O.R. knows; a command URL is never included
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ devices, kinds, protocols }' }
+    post:
+      summary: Register a device
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DeviceInput' } } } }
+      responses:
+        '201': { description: The device }
+        '400': { description: Invalid kind, name, topic or URL }
+        '409': { description: Id already in use, or too many devices }
+  /api/v1/devices/state:
+    post:
+      summary: A device reports its state (an ingest token)
+      security: [{ ingestBearer: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [device_id, state], properties: { device_id: { type: string }, state: { $ref: '#/components/schemas/DeviceState' } } } } } }
+      responses:
+        '202': { description: Accepted }
+        '400': { description: No valid field in the report }
+        '401': { description: Authentication failure }
+        '404': { description: Unknown device }
+  /api/v1/devices/{id}:
+    patch:
+      summary: Change a device
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DeviceInput' } } } }
+      responses:
+        '200': { description: The device }
+        '404': { description: Unknown device }
+    delete:
+      summary: Remove a device
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '204': { description: Removed }
+        '404': { description: Unknown device }
+  /api/v1/devices/{id}/command:
+    post:
+      summary: Switch an actuator on or off, or toggle it (rate limited); over MQTT or over HTTP on the local network
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [command], properties: { command: { type: string, enum: [on, off, toggle] } } } } } }
+      responses:
+        '200': { description: '{ ok, via, command, device }' }
+        '400': { description: The kind does not take that command }
+        '404': { description: Unknown device }
+        '409': { description: No command channel, or the device refused }
+  /api/v1/devices/{id}/state:
+    post:
+      summary: Set a device's state by hand, to try an alarm or an automation; audited
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [state], properties: { state: { $ref: '#/components/schemas/DeviceState' } } } } } }
+      responses:
+        '200': { description: The device }
+        '400': { description: No valid field }
+        '404': { description: Unknown device }
+  /api/v1/alarms:
+    get:
+      summary: Alarms - those that need a person (active) and the closed record (recent)
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ active, recent }' }
+    delete:
+      summary: Delete the closed record (an administrator only)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: '{ deleted }' }
+  /api/v1/alarms/acknowledge:
+    post:
+      summary: Acknowledge every alarm
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ acknowledged }' }
+  /api/v1/alarms/{id}/acknowledge:
+    post:
+      summary: Acknowledge one alarm
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: The alarm }
+        '404': { description: Unknown alarm }
+  /api/v1/automations:
+    get:
+      summary: The automations
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ automations }' }
+    post:
+      summary: Create an automation (a trigger, an optional mode, and up to six actions)
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/AutomationInput' } } } }
+      responses:
+        '201': { description: The automation }
+        '400': { description: Invalid trigger or actions }
+        '409': { description: Too many automations }
+  /api/v1/automations/{id}:
+    patch:
+      summary: Change an automation
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/AutomationInput' } } } }
+      responses:
+        '200': { description: The automation }
+        '404': { description: Unknown automation }
+    delete:
+      summary: Delete an automation
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '204': { description: Deleted }
+        '404': { description: Unknown automation }
+  /api/v1/automations/{id}/run:
+    post:
+      summary: Run an automation now, to try it; audited, and subject to its rate limit
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: Ran }
+        '404': { description: Unknown automation }
+  /api/v1/site:
+    get:
+      summary: The site design kept on the server ({ revision, updated_at, updated_by, site })
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The design, or revision 0 with a null site when none has been saved }
+    put:
+      summary: Save the site design; `revision` must be the one last read, or the save is refused with the current design (up to 768 kB)
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [revision, site], properties: { revision: { type: integer }, site: { type: object } } } } } }
+      responses:
+        '200': { description: '{ revision, updated_at, updated_by }' }
+        '400': { description: The site is not an object, or too large }
+        '409': { description: Someone else saved first; the answer carries `current` }
   /api/v1/operator/session:
     post:
       summary: Exchange the operator token for a session cookie
@@ -346,6 +492,44 @@ components:
       description: Also takes {kind} (snapshots or recordings) and {file}
       schema: { type: string }
   schemas:
+    DeviceState:
+      type: object
+      description: 'Canonical fields only; anything else is dropped. Booleans: triggered, open, on, locked, tamper. Numbers: temperature, humidity, battery, brightness, power_w, energy_kwh, lux, rssi, co_ppm.'
+      additionalProperties: false
+      properties:
+        triggered: { type: boolean }
+        open: { type: boolean }
+        on: { type: boolean }
+        locked: { type: boolean }
+        tamper: { type: boolean }
+        temperature: { type: number }
+        humidity: { type: number }
+        battery: { type: number }
+        brightness: { type: number }
+        power_w: { type: number }
+        energy_kwh: { type: number }
+        lux: { type: number }
+        rssi: { type: number }
+        co_ppm: { type: number }
+    DeviceInput:
+      type: object
+      properties:
+        id: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{1,63}$' }
+        name: { type: string, maxLength: 80 }
+        kind: { type: string, enum: [smoke, co, gas, water_leak, panic_button, door, window, motion, glass_break, vibration, climate, temperature, humidity, light_level, smart_plug, smart_light, smart_switch, siren, lock, valve] }
+        protocol: { type: string, enum: [wifi, bluetooth, zigbee, zwave, thread, lora, rf433, wired, other] }
+        location: { type: string, maxLength: 80 }
+        source: { type: object, description: 'push (reports with the ingest token) or mqtt (a state topic, an optional availability topic and a map from its payload to canonical fields)' }
+        commands: { type: object, description: 'mqtt { topic, on, off, toggle, assume_state } and/or http { on, off, toggle } (URLs on the local network only)' }
+        expected_interval_s: { type: integer, minimum: 0, description: Seconds of silence after which the device is offline; 0 never }
+    AutomationInput:
+      type: object
+      properties:
+        name: { type: string, maxLength: 80 }
+        enabled: { type: boolean }
+        when_mode: { type: string, enum: [any, armed, disarmed] }
+        trigger: { type: object, description: 'device { device_id, field, equals } | alarm { severity?, source_type?, source_id? } | mode { mode }' }
+        actions: { type: array, maxItems: 6, items: { type: object, description: 'device { device_id, command: on|off|toggle, for_s? } | notify' } }
     NewUser:
       type: object
       additionalProperties: false
