@@ -29,6 +29,15 @@ data class Command(
     val sensitivity: Long? = null
 )
 
+data class Info(
+    val nodeId: String,
+    val timestampMs: Long,
+    val name: String,
+    val firmware: String,
+    val ip: String,
+    val port: Long
+)
+
 object ContractLimits {
     const val MAX_TARGETS = 15
     const val MAX_LUX = 200000.0

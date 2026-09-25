@@ -26,6 +26,7 @@ MESSAGES = {
     "telemetry": ("Telemetry", {"targets": "RadarTrack"}),
     "health": ("Health", {}),
     "command": ("Command", {}),
+    "info": ("Info", {}),
 }
 HEADER = "Generated from the A.R.M.O.R. JSON Schemas by tools/generate_types.py. Do not edit."
 

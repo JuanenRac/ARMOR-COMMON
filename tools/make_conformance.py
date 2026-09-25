@@ -18,6 +18,12 @@ def telemetry(**changes):
     return base
 
 
+def info(**changes):
+    base = {"node_id": "north-1", "timestamp_ms": 1000, "name": "North gate", "firmware": "0.2.3", "ip": "192.168.0.181", "port": 80}
+    base.update(changes)
+    return base
+
+
 def without(payload, key):
     return {name: value for name, value in payload.items() if name != key}
 
@@ -67,6 +73,26 @@ cases = {
         ("negative timestamp", False, {"node_id": "north-1", "timestamp_ms": -5, "online": True}),
         ("unknown field", False, {"node_id": "north-1", "timestamp_ms": 5, "online": True, "temp_c": 20}),
         ("uppercase node id", False, {"node_id": "NORTH", "timestamp_ms": 5, "online": True}),
+    ],
+    "info": [
+        ("a node on the LAN", True, info()),
+        ("port at the top of the range", True, info(port=65535)),
+        ("name of 48 characters", True, info(name="n" * 48)),
+        ("name with accents", True, info(name="Perímetro norte")),
+        ("uppercase node id", False, info(node_id="North-1")),
+        ("empty name", False, info(name="")),
+        ("name of 49 characters", False, info(name="n" * 49)),
+        ("firmware with a v", False, info(firmware="v0.2.3")),
+        ("firmware with two parts", False, info(firmware="0.2")),
+        ("address with three parts", False, info(ip="192.168.0")),
+        ("address above 255", False, info(ip="192.168.0.256")),
+        ("address with a leading zero", False, info(ip="192.168.0.01")),
+        ("host name instead of an address", False, info(ip="node.local")),
+        ("port 0", False, info(port=0)),
+        ("port above 65535", False, info(port=65536)),
+        ("string port", False, info(port="80")),
+        ("missing address", False, without(info(), "ip")),
+        ("unknown field", False, info(mac="34:85:18:00:00:01")),
     ],
     "command": [
         ("calibrate", True, {"node_id": "north-1", "timestamp_ms": 9, "command": "calibrate"}),
