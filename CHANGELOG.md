@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.5.0] - OpenAPI 0.5.0
+
+- `armor-server-0.5.0.yaml`: `/api/v1/history/summary`, `DELETE /api/v1/history`, the new history filters, and the PTZ semantics (auto-stop, honest errors).
+
 ## [0.4.0] - OpenAPI 0.4.0
 
 - `armor-server-0.4.0.yaml`: `/api/v1/camera-status`, `DELETE /api/v1/nodes/{id}`, the `camera` event type, and `/api/v1/status` now needing an operator.

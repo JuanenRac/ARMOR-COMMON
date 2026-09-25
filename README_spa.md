@@ -29,7 +29,7 @@
 * ✅ **Un validador que no puede saltarse una regla:** interpreta el esquema directamente y rechaza un esquema que use una palabra clave que no implementa.
 * 🤝 **Vectores de conformidad:** 50 cargas aceptadas o rechazadas que ejecuta cada implementación (Python aquí, TypeScript en ARMOR-SERVER), de modo que una divergencia rompe la compilación.
 * 🧬 **Clientes generados:** los tipos TypeScript y Kotlin salen de los esquemas (`tools/generate_types.py --check` los mantiene al día).
-* 🌐 **Contrato HTTP:** `openapi/armor-server-0.4.0.yaml` describe cada ruta del servidor, su regla de acceso y su esquema.
+* 🌐 **Contrato HTTP:** `openapi/armor-server-0.5.0.yaml` describe cada ruta del servidor, su regla de acceso y su esquema.
 * 🚀 **Lanzador compartido:** `tools/armor_project_tool.py` da a los once repositorios el mismo flujo `build`, `build-test` y `run`.
 
 ---
@@ -43,7 +43,7 @@ flowchart LR
     S --> V["vectores de conformidad"]
     V --> P
     V --> T["tests de ARMOR-SERVER"]
-    S --> O["OpenAPI 0.4.0"]
+    S --> O["OpenAPI 0.5.0"]
 ```
 
 Topics del broker: `armor/node/{node_id}/telemetry | health | command`. Véase [contratos](docs/CONTRACTS.md).
@@ -70,7 +70,7 @@ ARMOR-COMMON/
 ├── src/armor_common/   contracts, schema (validador), envelope, schemas/*.json
 ├── conformance/        cargas aceptadas y rechazadas compartidas por todas las implementaciones
 ├── generated/          tipos TypeScript y Kotlin (generados, no editar)
-├── openapi/            armor-server-0.4.0.yaml
+├── openapi/            armor-server-0.5.0.yaml
 ├── tools/              armor_project_tool.py, generate_types.py, make_conformance.py
 ├── tests/              tests unitarios y ejecutor de conformidad
 └── docs/               guía de contratos
