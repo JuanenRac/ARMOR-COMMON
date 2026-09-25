@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.4.0] - OpenAPI 0.4.0
+
+- `armor-server-0.4.0.yaml`: `/api/v1/camera-status`, `DELETE /api/v1/nodes/{id}`, the `camera` event type, and `/api/v1/status` now needing an operator.
+
 ## [0.3.0] - OpenAPI 0.3.0
 
 - `openapi/armor-server-0.3.0.yaml` (replaces 0.2.0) adds `GET /api/v1/history` and `GET`/`PUT /api/v1/rules` with the `Rules` schema.
