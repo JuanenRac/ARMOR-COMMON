@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: A.R.M.O.R. Server API
-  version: 0.1.5
+  version: 0.1.6
   description: >-
     The HTTP surface of ARMOR-SERVER. Message bodies reference the JSON Schemas
     published in src/armor_common/schemas, which are the single source of truth.
@@ -263,6 +263,20 @@ paths:
         '200': { description: '{ revision, updated_at, updated_by }' }
         '400': { description: The site is not an object, or too large }
         '409': { description: Someone else saved first; the answer carries `current` }
+  /api/v1/system:
+    get:
+      summary: What the server is and how full it is - version, uptime, mode, counts of nodes, cameras, devices, alarms, automations, users and events, and the space media and the disk use
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The system summary }
+  /api/v1/audit:
+    get:
+      summary: The audit trail, newest first (an administrator only); credentials are scrubbed as it is written
+      security: [{ admin: [] }]
+      parameters: [{ name: limit, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 500 } }]
+      responses:
+        '200': { description: '{ entries }' }
+        '403': { description: Not an administrator }
   /api/v1/operator/session:
     post:
       summary: Exchange the operator token for a session cookie
