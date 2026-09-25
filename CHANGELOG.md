@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.1.5] - OpenAPI 0.1.5
+
+- `armor-server-0.1.5.yaml`: `/api/v1/users`, `/api/v1/users/{id}`, `/api/v1/account`, the signed-in user in the Studio session answer, and the targets of a node in the status.
+
 ## [0.1.4] - OpenAPI 0.1.4
 
 - `armor-server-0.1.4.yaml`: `/api/v1/history/summary`, `DELETE /api/v1/history`, the new history filters, and the PTZ semantics (auto-stop, honest errors).

@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: A.R.M.O.R. Server API
-  version: 0.1.4
+  version: 0.1.5
   description: >-
     The HTTP surface of ARMOR-SERVER. Message bodies reference the JSON Schemas
     published in src/armor_common/schemas, which are the single source of truth.
@@ -427,4 +427,18 @@ components:
               timestamp_ms: { type: integer }
               lux: { type: [number, 'null'] }
               target_count: { type: integer }
+              targets:
+                type: array
+                maxItems: 15
+                description: The targets of the node's latest report, in the radar's own frame; empty until it reports and after a restart. `counted` is false inside an ignore zone.
+                items:
+                  type: object
+                  required: [sensor_id, track_id, x_mm, y_mm, speed_mm_s, counted]
+                  properties:
+                    sensor_id: { type: integer }
+                    track_id: { type: integer }
+                    x_mm: { type: number, description: Sideways, millimetres }
+                    y_mm: { type: number, description: Forward, millimetres }
+                    speed_mm_s: { type: number }
+                    counted: { type: boolean }
               alert_level: { type: string, enum: [normal, review, high] }

@@ -35,7 +35,7 @@ silently ignored.
 
 ## HTTP
 
-`openapi/armor-server-0.1.4.yaml` describes every route of ARMOR-SERVER, who may
+`openapi/armor-server-0.1.5.yaml` describes every route of ARMOR-SERVER, who may
 call it and which schema its body follows. ARMOR-SERVER's tests fail when a
 registered route is missing from it.
 
