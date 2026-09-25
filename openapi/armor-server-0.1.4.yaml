@@ -60,7 +60,7 @@ paths:
     get:
       summary: Is the Studio session cookie valid
       responses:
-        '200': { description: '{ "authenticated": boolean }' }
+        '200': { description: '{ "authenticated": boolean, "user": { id, username, role } when signed in }' }
     post:
       summary: Sign in (rate limited); sets an HttpOnly, SameSite=Strict cookie
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/StudioLogin' } } } }
@@ -72,6 +72,51 @@ paths:
       summary: Sign out
       responses:
         '204': { description: Session closed }
+  /api/v1/users:
+    get:
+      summary: Studio users (an administrator only); never a password or a hash
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: '{ users: [{ id, username, role, createdAt, updatedAt, current }], minPasswordLength }' }
+        '401': { description: Not signed in }
+        '403': { description: Not an administrator }
+    post:
+      summary: Create a Studio user (an administrator only)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/NewUser' } } } }
+      responses:
+        '201': { description: The new user }
+        '400': { description: Invalid user name, password or role }
+        '409': { description: User name already in use, or too many users }
+  /api/v1/users/{id}:
+    patch:
+      summary: Rename a user, set a new password or change the role (an administrator only). The user's other sessions end when the password or role changes.
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/UserChange' } } } }
+      responses:
+        '200': { description: The user }
+        '400': { description: Invalid value }
+        '404': { description: Unknown user }
+        '409': { description: Name taken, or it would leave no administrator }
+    delete:
+      summary: Delete a user (an administrator only; never yourself or the last administrator)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '204': { description: Deleted }
+        '404': { description: Unknown user }
+        '409': { description: Yourself, or the last administrator }
+  /api/v1/account:
+    patch:
+      summary: Change your own user name and password; the current password is required (rate limited)
+      security: [{ studio: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/AccountChange' } } } }
+      responses:
+        '200': { description: 'Your user { id, username, role }' }
+        '400': { description: Invalid value, or nothing to change }
+        '401': { description: Not signed in }
+        '403': { description: The current password is wrong }
   /api/v1/operator/session:
     post:
       summary: Exchange the operator token for a session cookie
@@ -290,6 +335,8 @@ components:
     controlBearer: { type: http, scheme: bearer, description: ARMOR_CONTROL_TOKEN }
     operatorBearer: { type: http, scheme: bearer, description: ARMOR_OPERATOR_TOKEN }
     operator: { type: apiKey, in: cookie, name: armor_studio_session, description: Studio session, operator session or operator bearer token }
+    studio: { type: apiKey, in: cookie, name: armor_studio_session, description: A signed-in Studio user }
+    admin: { type: apiKey, in: cookie, name: armor_studio_session, description: A signed-in Studio user with the admin role (bearer tokens do not qualify) }
   parameters:
     CameraId: { name: id, in: path, required: true, schema: { type: string, pattern: '^[A-Za-z0-9._-]{3,80}$' } }
     MediaPath:
@@ -299,6 +346,29 @@ components:
       description: Also takes {kind} (snapshots or recordings) and {file}
       schema: { type: string }
   schemas:
+    NewUser:
+      type: object
+      additionalProperties: false
+      required: [username, password]
+      properties:
+        username: { type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._@-]{2,39}$' }
+        password: { type: string, minLength: 8, maxLength: 200, description: 12 characters or more when the server is reachable from the network }
+        role: { type: string, enum: [admin, operator], default: operator, description: An administrator also manages users }
+    UserChange:
+      type: object
+      additionalProperties: false
+      properties:
+        username: { type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._@-]{2,39}$' }
+        password: { type: string, minLength: 8, maxLength: 200 }
+        role: { type: string, enum: [admin, operator] }
+    AccountChange:
+      type: object
+      additionalProperties: false
+      required: [currentPassword]
+      properties:
+        currentPassword: { type: string }
+        username: { type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._@-]{2,39}$' }
+        newPassword: { type: string, minLength: 8, maxLength: 200 }
     Rules:
       type: object
       additionalProperties: false
