@@ -23,13 +23,13 @@ class ContractError(ValueError):
 
 
 TOPIC_PREFIX = "armor/node/"
-KINDS = ("telemetry", "health", "command")
+KINDS = ("telemetry", "health", "command", "info")
 _NODE_ID_CHARS = set("abcdefghijklmnopqrstuvwxyz0123456789-_")
 
 
 @lru_cache(maxsize=None)
 def load_schema(kind: str) -> dict[str, Any]:
-    """The published schema of a message kind (``telemetry``, ``health`` or ``command``)."""
+    """The published schema of a message kind (``telemetry``, ``health``, ``command`` or ``info``)."""
     if kind not in KINDS:
         raise ContractError(f"unsupported topic kind {kind!r}")
     text = resources.files("armor_common").joinpath("schemas", f"{kind}.schema.json").read_text(encoding="utf-8")

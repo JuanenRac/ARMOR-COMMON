@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: A.R.M.O.R. Server API
-  version: 0.1.6
+  version: 0.1.7
   description: >-
     The HTTP surface of ARMOR-SERVER. Message bodies reference the JSON Schemas
     published in src/armor_common/schemas, which are the single source of truth.
@@ -617,7 +617,7 @@ components:
           type: object
           additionalProperties:
             type: object
-            required: [node_id, online, stale, timestamp_ms, lux, target_count, alert_level]
+            required: [node_id, online, stale, timestamp_ms, lux, target_count, alert_level, panel]
             properties:
               node_id: { type: string }
               online: { type: boolean, description: Reported online and heard from recently }
@@ -625,6 +625,14 @@ components:
               timestamp_ms: { type: integer }
               lux: { type: [number, 'null'] }
               target_count: { type: integer }
+              panel:
+                type: [object, 'null']
+                description: Where the node's own web panel is, as the node said itself in its information message; null until it has. Not stored, the node repeats it.
+                properties:
+                  name: { type: string }
+                  firmware: { type: string }
+                  ip: { type: string }
+                  port: { type: integer }
               targets:
                 type: array
                 maxItems: 15

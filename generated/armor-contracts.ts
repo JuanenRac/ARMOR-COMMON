@@ -28,6 +28,15 @@ export type Command = {
   sensitivity?: number;
 };
 
+export type Info = {
+  node_id: string;
+  timestamp_ms: number;
+  name: string;
+  firmware: string;
+  ip: string;
+  port: number;
+};
+
 export const MAX_TARGETS = 15;
 export const MAX_LUX = 200000;
 export const NODE_ID_PATTERN = /^[a-z0-9][a-z0-9_-]{0,63}$/;

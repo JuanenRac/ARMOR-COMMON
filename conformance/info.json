@@ -1,0 +1,221 @@
+{
+ "kind": "info",
+ "vectors": [
+  {
+   "name": "a node on the LAN",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": 80
+   }
+  },
+  {
+   "name": "port at the top of the range",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": 65535
+   }
+  },
+  {
+   "name": "name of 48 characters",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": 80
+   }
+  },
+  {
+   "name": "name with accents",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "Per\u00edmetro norte",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": 80
+   }
+  },
+  {
+   "name": "uppercase node id",
+   "valid": false,
+   "payload": {
+    "node_id": "North-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": 80
+   }
+  },
+  {
+   "name": "empty name",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": 80
+   }
+  },
+  {
+   "name": "name of 49 characters",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": 80
+   }
+  },
+  {
+   "name": "firmware with a v",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "v0.2.3",
+    "ip": "192.168.0.181",
+    "port": 80
+   }
+  },
+  {
+   "name": "firmware with two parts",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2",
+    "ip": "192.168.0.181",
+    "port": 80
+   }
+  },
+  {
+   "name": "address with three parts",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "192.168.0",
+    "port": 80
+   }
+  },
+  {
+   "name": "address above 255",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.256",
+    "port": 80
+   }
+  },
+  {
+   "name": "address with a leading zero",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.01",
+    "port": 80
+   }
+  },
+  {
+   "name": "host name instead of an address",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "node.local",
+    "port": 80
+   }
+  },
+  {
+   "name": "port 0",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": 0
+   }
+  },
+  {
+   "name": "port above 65535",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": 65536
+   }
+  },
+  {
+   "name": "string port",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": "80"
+   }
+  },
+  {
+   "name": "missing address",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "port": 80
+   }
+  },
+  {
+   "name": "unknown field",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": 80,
+    "mac": "34:85:18:00:00:01"
+   }
+  }
+ ]
+}
