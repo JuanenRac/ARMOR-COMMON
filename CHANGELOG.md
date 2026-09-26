@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.4] - The commands to a switch and the node's answer
+
+- **The contract for switching, not activated.** `electrical.schema.json` gains an **optional** `switches` array (up to four: the auxiliary contacts of each contactor, what is selected and wanted, closing, armed, and a latched fault); two new schemas, `electrical_command.schema.json` (`arm`, then `close_a` or `close_b` with the one-time token the node gave, `open`, `acknowledge`) and `electrical_result.schema.json` (accepted, and the refusal when not), on the new topics `armor/electrical/{node_id}/command` and `.../result`. Every command is an allow-list; nothing that switches has been built.
+- `validate_electrical_command` and `validate_electrical_result` (and, in `validate_electrical_message`, a switch named once) check the rules that join two fields, which a schema cannot state: a token on the closing actions only, a refusal that is `none` exactly when accepted, a token only in an accepted arm. `parse_electrical_topic` takes the leaf (`state`, `command`, `result`).
+- 73 new conformance vectors (266 in all; those only a message-level rule refuses are marked `schema_valid`), 6 new tests (36), the generated types are current, and the OpenAPI file describes `POST /api/v1/electrical/switch` and `GET /api/v1/electrical/switching`.
+
 ## [0.2.3] - A second PV input and parallel units in the inverter message
 
 - `solar_inverter.schema.json` gains **optional** fields: `pv2_v`, `pv2_a`, `pv2_w` (a second PV input; `pv_w` is then the sum of both), `units` (up to ten units of a parallel system, each with its number, mode and, when known, serial, fault code and figures) and the totals `total_out_w`, `total_out_va`, `total_load_percent` and `total_charging_a`. Nothing that was valid stops being valid.

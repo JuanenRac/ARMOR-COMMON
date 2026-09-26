@@ -126,12 +126,50 @@ export type ElectricalChannel = {
   alarm_code?: string;
 };
 
+export type ElectricalSwitch = {
+  id: string;
+  kind: string;
+  label?: string;
+  source_a?: string;
+  source_b?: string;
+  a_closed: boolean;
+  b_closed: boolean;
+  selected: "none" | "a" | "b";
+  wanted: "none" | "a" | "b";
+  closing: boolean;
+  armed: boolean;
+  fault: "none" | "did_not_close" | "did_not_open" | "both_closed" | "disabled";
+};
+
 export type Electrical = {
   kind: string;
   node_id: string;
   timestamp_ms: number;
   switching_enabled?: boolean;
   channels: ElectricalChannel[];
+  switches?: ElectricalSwitch[];
+};
+
+export type ElectricalCommand = {
+  kind: string;
+  node_id: string;
+  timestamp_ms: number;
+  command_id: string;
+  switch: string;
+  action: "arm" | "close_a" | "close_b" | "open" | "acknowledge";
+  token?: string;
+};
+
+export type ElectricalResult = {
+  kind: string;
+  node_id: string;
+  timestamp_ms: number;
+  command_id: string;
+  switch: string;
+  action: "arm" | "close_a" | "close_b" | "open" | "acknowledge";
+  accepted: boolean;
+  refusal: "none" | "disabled" | "fault" | "not_armed" | "not_confirmed_open" | "unknown_switch" | "bad_token" | "not_supported";
+  token?: string;
 };
 
 export const MAX_TARGETS = 15;

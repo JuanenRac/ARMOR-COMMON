@@ -360,6 +360,29 @@ paths:
         '200': { description: '{ node_id, channel, minutes, samples }' }
         '400': { description: node and channel are required }
         '404': { description: Unknown node or channel }
+  /api/v1/electrical/switching:
+    get:
+      summary: Whether the server may send commands to the switches of electrical nodes (off unless ARMOR_ELECTRICAL_SWITCHING=1), the commands still waiting for a node's answer, and what became of the latest ones ({ enabled, pending, recent }); never a token
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The switching status }
+  /api/v1/electrical/switch:
+    post:
+      summary: >-
+        A command to one switch of one electrical node (an administrator only), published to armor/electrical/{node_id}/command (the `electrical_command` message of the shared contract).
+        Closing is two calls: arm, then close_a or close_b once the node accepted the arm (the server keeps the node's one-time token and attaches it). Refused unless the server has switching
+        turned on, the node reports itself as allowed to switch and has that switch, and no fault is latched (except to open or acknowledge). Answered 202: the node's own answer arrives on
+        armor/electrical/{node_id}/result and is shown by GET /api/v1/electrical/switching; an accepted command is not a switch that closed, only the node's state says that.
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [node, switch, action], properties: { node: { type: string }, switch: { type: string }, action: { type: string, enum: [arm, close_a, close_b, open, acknowledge] } } } } } }
+      responses:
+        '202': { description: 'Published; { accepted, command_id }' }
+        '400': { description: node, switch and a valid action are required }
+        '403': { description: 'Not an administrator, or switching is not turned on (code switching_disabled)' }
+        '404': { description: 'unknown_node or unknown_switch' }
+        '409': { description: 'node_unavailable, node_not_switching, switch_fault, busy or not_armed' }
+        '429': { description: Too many switch commands }
+        '503': { description: 'mqtt_unavailable: the broker is not connected' }
   /api/v1/system:
     get:
       summary: What the server is and how full it is - version, uptime, mode, counts of nodes, cameras, devices, alarms, automations, users and events, and the space media and the disk use

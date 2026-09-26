@@ -1,0 +1,327 @@
+{
+ "kind": "electrical_command",
+ "vectors": [
+  {
+   "name": "arm a switch",
+   "valid": true,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "arm"
+   }
+  },
+  {
+   "name": "open a switch",
+   "valid": true,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "open"
+   }
+  },
+  {
+   "name": "acknowledge a fault",
+   "valid": true,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "acknowledge"
+   }
+  },
+  {
+   "name": "close onto source A with its token",
+   "valid": true,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "close_a",
+    "token": "ab12cd34ef56ab12"
+   }
+  },
+  {
+   "name": "close onto source B with its token",
+   "valid": true,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "close_b",
+    "token": "ab12cd34ef56ab12"
+   }
+  },
+  {
+   "name": "a token of eight characters, the shortest",
+   "valid": true,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "close_a",
+    "token": "ab12cd34"
+   }
+  },
+  {
+   "name": "close with no token",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "close_a"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an arm that carries a token",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "arm",
+    "token": "ab12cd34ef56ab12"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an open that carries a token",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "open",
+    "token": "ab12cd34ef56ab12"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an action outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "toggle"
+   }
+  },
+  {
+   "name": "an action that is a source",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "a"
+   }
+  },
+  {
+   "name": "uppercase action",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "ARM"
+   }
+  },
+  {
+   "name": "a token of seven characters",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "close_a",
+    "token": "ab12cd3"
+   }
+  },
+  {
+   "name": "a token of 33 characters",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "close_a",
+    "token": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+   }
+  },
+  {
+   "name": "a token with capitals",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "close_a",
+    "token": "AB12CD34EF56AB12"
+   }
+  },
+  {
+   "name": "a command id of seven characters",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0",
+    "switch": "transfer",
+    "action": "arm"
+   }
+  },
+  {
+   "name": "a command id with a dash",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee01-2345",
+    "switch": "transfer",
+    "action": "arm"
+   }
+  },
+  {
+   "name": "no command id",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "switch": "transfer",
+    "action": "arm"
+   }
+  },
+  {
+   "name": "no switch",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm"
+   }
+  },
+  {
+   "name": "no action",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer"
+   }
+  },
+  {
+   "name": "a switch id with a space",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "my switch",
+    "action": "arm"
+   }
+  },
+  {
+   "name": "a node id with a space",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "my node",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "arm"
+   }
+  },
+  {
+   "name": "negative timestamp",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": -1,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "arm"
+   }
+  },
+  {
+   "name": "the kind of a state message",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "arm"
+   }
+  },
+  {
+   "name": "an unknown field",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "arm",
+    "force": true
+   }
+  },
+  {
+   "name": "a coil to drive directly",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "arm",
+    "coil": "a"
+   }
+  }
+ ]
+}

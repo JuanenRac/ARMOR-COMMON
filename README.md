@@ -20,13 +20,13 @@
   <img src="https://img.shields.io/badge/License-GPL%203.0-blue.svg" alt="GPL 3.0">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-193-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Vectors-266-00E5FF.svg" alt="Vectors">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturity">
 </p>
 
 ---
 
-**Honesty check - what runs today:** The schemas, the Python validator, the 193 shared conformance vectors, the generated TypeScript and Kotlin types and the shared project launcher are real and tested (30 tests). The Kotlin file is generated but **not yet consumed** by ARMOR-ANDROID-CONTROL, and the `set_thresholds` command carries a single `sensitivity` field because the real radar parameters are not defined until firmware exists.
+**Honesty check - what runs today:** The schemas, the Python validator, the 266 shared conformance vectors, the generated TypeScript and Kotlin types and the shared project launcher are real and tested (36 tests). The Kotlin file is generated but **not yet consumed** by ARMOR-ANDROID-CONTROL, and the `set_thresholds` command carries a single `sensitivity` field because the real radar parameters are not defined until firmware exists.
 
 ---
 
@@ -36,7 +36,7 @@
 
 * **One source of truth:** JSON Schemas in `src/armor_common/schemas/` for telemetry, health, command, node information and the two solar messages (inverter, battery with cells and capacities). Unknown fields are rejected everywhere.
 * **A validator that cannot skip a rule:** it interprets the schema directly and refuses a schema that uses a keyword it does not implement.
-* **Conformance vectors:** 193 accepted and rejected payloads run by every implementation (Python here, TypeScript in ARMOR-SERVER, the checks of ARMOR-SOLAR), so drift fails a build.
+* **Conformance vectors:** 266 accepted and rejected payloads run by every implementation (Python here, TypeScript in ARMOR-SERVER, the checks of ARMOR-SOLAR), so drift fails a build.
 * **Generated clients:** TypeScript and Kotlin types come from the schemas (`tools/generate_types.py --check` keeps them current).
 * **HTTP contract:** `openapi/armor-server-0.2.0.yaml` describes every server route, its access rule and its schema.
 * **Shared launcher:** `tools/armor_project_tool.py` gives every repository of the family the same `build`, `build-test` and `run` workflow.
@@ -72,13 +72,13 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 30 tests, 193 conformance vectors
+python -m unittest discover -s tests      # 36 tests, 266 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list
 python tools/sync_firmware_base.py check  # the firmware the node projects share has not drifted (see docs/FIRMWARE_BASE.md)
 ```
 
-Broker topics: `armor/node/{node_id}/telemetry | health | command | info`, `armor/solar/{node_id}/{device}/state` and `armor/electrical/{node_id}/state`. See the [contracts guide](docs/CONTRACTS.md). The shared launcher creates an ignored `.env` on the first ARMOR-SERVER run with random secrets and a random administrator password; nothing is printed or committed.
+Broker topics: `armor/node/{node_id}/telemetry | health | command | info`, `armor/solar/{node_id}/{device}/state` and `armor/electrical/{node_id}/state | command | result`. See the [contracts guide](docs/CONTRACTS.md). The shared launcher creates an ignored `.env` on the first ARMOR-SERVER run with random secrets and a random administrator password; nothing is printed or committed.
 
 ## 🔗 Related Projects
 

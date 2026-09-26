@@ -35,6 +35,30 @@ def channel(**changes):
     return electrical(channels=[dict({"id": "ch1", "domain": "ac"}, **changes)])
 
 
+def switch(**changes):
+    base = {"id": "transfer", "kind": "transfer", "label": "Grid or inverter", "source_a": "grid", "source_b": "inverter", "a_closed": True, "b_closed": False,
+            "selected": "a", "wanted": "a", "closing": False, "armed": False, "fault": "none"}
+    base.update(changes)
+    return base
+
+
+def with_switch(**changes):
+    return electrical(switching_enabled=True, switches=[switch(**changes)])
+
+
+def command(**changes):
+    base = {"kind": "electrical_command", "node_id": "electrical-1", "timestamp_ms": 7000, "command_id": "c0ffee0123456789", "switch": "transfer", "action": "arm"}
+    base.update(changes)
+    return base
+
+
+def result(**changes):
+    base = {"kind": "electrical_result", "node_id": "electrical-1", "timestamp_ms": 7100, "command_id": "c0ffee0123456789", "switch": "transfer", "action": "open",
+            "accepted": True, "refusal": "none"}
+    base.update(changes)
+    return base
+
+
 def inverter(**changes):
     base = {"kind": "inverter", "node_id": "solar-1", "device": "axpert-1", "timestamp_ms": 1000, "mode": "line", "grid_v": 232.0, "grid_hz": 50.0, "out_v": 230.0,
             "out_hz": 50.0, "out_va": 161, "out_w": 119, "load_percent": 3, "battery_v": 57.5, "battery_a": 12.0, "battery_percent": 100, "pv_v": 103.8, "pv_a": 14.0,
@@ -252,6 +276,83 @@ cases = {
         ("a node id with a space", False, electrical(node_id="my node")),
         ("negative timestamp", False, electrical(timestamp_ms=-1)),
         ("channels that are not a list", False, electrical(channels={"id": "grid"})),
+        ("a transfer switch in a state message", True, with_switch()),
+        ("a switch that is closing", True, with_switch(a_closed=False, selected="none", wanted="b", closing=True, armed=False)),
+        ("an armed switch with nothing closed", True, with_switch(a_closed=False, selected="none", wanted="none", armed=True)),
+        ("a latched fault, everything open", True, with_switch(a_closed=False, selected="none", wanted="none", fault="did_not_close")),
+        ("both contacts closed, a fault", True, with_switch(b_closed=True, selected="none", wanted="none", fault="both_closed")),
+        ("a switch with no label or sources", True, electrical(switches=[{k: v for k, v in switch().items() if k not in ("label", "source_a", "source_b")}])),
+        ("no switches at all", True, electrical(switches=[])),
+        ("four switches, the limit", True, electrical(switches=[switch(id=f"t{i}") for i in range(4)])),
+        ("five switches", False, electrical(switches=[switch(id=f"t{i}") for i in range(5)])),
+        ("a switch id twice", False, electrical(switches=[switch(), switch()]), True),
+        ("a switch without its contacts", False, electrical(switches=[{k: v for k, v in switch().items() if k != "a_closed"}])),
+        ("a switch without its fault", False, electrical(switches=[{k: v for k, v in switch().items() if k != "fault"}])),
+        ("a switch of a kind that does not exist", False, with_switch(kind="breaker")),
+        ("a source that is not a source", False, with_switch(selected="c")),
+        ("a wanted state that is a command", False, with_switch(wanted="close_a")),
+        ("a fault outside the list", False, with_switch(fault="welded")),
+        ("a contact that is a string", False, with_switch(a_closed="true")),
+        ("a switch with an unknown field", False, with_switch(coil_pin=4)),
+        ("a switch id with capitals", False, with_switch(id="Transfer")),
+        ("an empty switch label", False, with_switch(label="")),
+        ("switches that are not a list", False, electrical(switches={"id": "transfer"})),
+    ],
+    "electrical_command": [
+        ("arm a switch", True, command()),
+        ("open a switch", True, command(action="open")),
+        ("acknowledge a fault", True, command(action="acknowledge")),
+        ("close onto source A with its token", True, command(action="close_a", token="ab12cd34ef56ab12")),
+        ("close onto source B with its token", True, command(action="close_b", token="ab12cd34ef56ab12")),
+        ("a token of eight characters, the shortest", True, command(action="close_a", token="ab12cd34")),
+        ("close with no token", False, command(action="close_a"), True),
+        ("an arm that carries a token", False, command(token="ab12cd34ef56ab12"), True),
+        ("an open that carries a token", False, command(action="open", token="ab12cd34ef56ab12"), True),
+        ("an action outside the list", False, command(action="toggle")),
+        ("an action that is a source", False, command(action="a")),
+        ("uppercase action", False, command(action="ARM")),
+        ("a token of seven characters", False, command(action="close_a", token="ab12cd3")),
+        ("a token of 33 characters", False, command(action="close_a", token="a" * 33)),
+        ("a token with capitals", False, command(action="close_a", token="AB12CD34EF56AB12")),
+        ("a command id of seven characters", False, command(command_id="c0ffee0")),
+        ("a command id with a dash", False, command(command_id="c0ffee01-2345")),
+        ("no command id", False, {k: v for k, v in command().items() if k != "command_id"}),
+        ("no switch", False, {k: v for k, v in command().items() if k != "switch"}),
+        ("no action", False, {k: v for k, v in command().items() if k != "action"}),
+        ("a switch id with a space", False, command(switch="my switch")),
+        ("a node id with a space", False, command(node_id="my node")),
+        ("negative timestamp", False, command(timestamp_ms=-1)),
+        ("the kind of a state message", False, command(kind="electrical")),
+        ("an unknown field", False, command(force=True)),
+        ("a coil to drive directly", False, command(coil="a")),
+    ],
+    "electrical_result": [
+        ("an open, accepted", True, result()),
+        ("an arm, accepted, with its token", True, result(action="arm", token="ab12cd34ef56ab12")),
+        ("a close, accepted", True, result(action="close_a")),
+        ("a close refused: not armed", True, result(action="close_a", accepted=False, refusal="not_armed")),
+        ("a close refused: switching is off", True, result(action="close_b", accepted=False, refusal="disabled")),
+        ("an arm refused: a fault is latched", True, result(action="arm", accepted=False, refusal="fault")),
+        ("an acknowledge refused: contacts not open", True, result(action="acknowledge", accepted=False, refusal="not_confirmed_open")),
+        ("a command to a switch it does not have", True, result(switch="nothing", accepted=False, refusal="unknown_switch")),
+        ("a wrong token", True, result(action="close_a", accepted=False, refusal="bad_token")),
+        ("a node that cannot do it", True, result(action="close_a", accepted=False, refusal="not_supported")),
+        ("accepted with a refusal", False, result(refusal="disabled"), True),
+        ("refused with refusal none", False, result(accepted=False), True),
+        ("a token in the result of an open", False, result(token="ab12cd34ef56ab12"), True),
+        ("a token in the result of a refused arm", False, result(action="arm", accepted=False, refusal="disabled", token="ab12cd34ef56ab12"), True),
+        ("an accepted arm without a token", False, result(action="arm"), True),
+        ("a refusal outside the list", False, result(accepted=False, refusal="welded")),
+        ("an action outside the list", False, result(action="toggle")),
+        ("accepted as a string", False, result(accepted="true")),
+        ("no command id", False, {k: v for k, v in result().items() if k != "command_id"}),
+        ("no refusal", False, {k: v for k, v in result().items() if k != "refusal"}),
+        ("no accepted", False, {k: v for k, v in result().items() if k != "accepted"}),
+        ("a command id of seven characters", False, result(command_id="c0ffee0")),
+        ("a token with capitals", False, result(action="arm", token="AB12CD34EF56AB12")),
+        ("the kind of a command", False, result(kind="electrical_command")),
+        ("a node id with a space", False, result(node_id="my node")),
+        ("an unknown field", False, result(detail="welded")),
     ],
     "command": [
         ("calibrate", True, {"node_id": "north-1", "timestamp_ms": 9, "command": "calibrate"}),
@@ -268,7 +369,8 @@ cases = {
 
 ROOT.mkdir(exist_ok=True)
 for kind, entries in cases.items():
-    vectors = [{"name": name, "valid": valid, "payload": payload} for name, valid, payload in entries]
+    # A fourth item, True, marks a payload the schema accepts and the message-level rule refuses (a token where none belongs, a switch named twice).
+    vectors = [{"name": name, "valid": valid, "payload": payload, **({"schema_valid": True} if extra else {})} for name, valid, payload, *extra in entries]
     schema_kind = {"solar_inverter": "inverter", "solar_battery": "battery"}.get(kind, kind)   # the solar files are named after their schema, and carry the payload's kind
     (ROOT / f"{kind}.json").write_text(json.dumps({"kind": schema_kind, "vectors": vectors}, indent=1) + "\n", encoding="utf-8", newline="\n")
     print(kind, len(vectors), "vectors")
