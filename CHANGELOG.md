@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.1] - The project tool runs the tests of both boards
+
+- `armor_project_tool.py` also builds and runs the board-profile tests of ARMOR-RADAR (`test_board_wifi`) and ARMOR-SOLAR (`test_board_eth`). No change to the messages, the schemas or the vectors.
+
 ## [0.2.0] - Declaring solar equipment
 
 - **OpenAPI 0.2.0:** `POST /api/v1/solar/devices` (declare an inverter or a battery stack: name, model, connection, gateway node), `DELETE /api/v1/solar/devices/{node}/{device}` and `POST /api/v1/solar/devices/{node}/{device}/example` (one made-up reading, marked as an example); `GET /api/v1/solar` also lists the declared devices that have not reported yet and the catalogue of models and connections. The file is renamed `armor-server-0.2.0.yaml`. No schema changed.

@@ -129,7 +129,7 @@ def test_radar(project: Path) -> None:
     command(project, [cmake, "-S", "tests", "-B", str(build), "-DCMAKE_BUILD_TYPE=Debug"])
     command(project, [cmake, "--build", str(build)])
     suffix = ".exe" if os.name == "nt" else ""
-    for test in ("test_core", "test_node", "test_sensors"):
+    for test in ("test_core", "test_node", "test_sensors", "test_board_wifi"):
         command(project, [str(build / f"{test}{suffix}")])
     emitter = subprocess.run([str(build / f"emit_samples{suffix}")], cwd=project, capture_output=True, text=True, check=True)
     checker = subprocess.run([sys.executable, "tests/check_contract.py"], cwd=project, input=emitter.stdout, text=True, check=False)
@@ -148,7 +148,7 @@ def test_solar(project: Path) -> None:
     command(project, [cmake, "-S", "tests", "-B", str(build), "-DCMAKE_BUILD_TYPE=Debug"])
     command(project, [cmake, "--build", str(build)])
     suffix = ".exe" if os.name == "nt" else ""
-    for test in ("test_solar", "test_node"):
+    for test in ("test_solar", "test_node", "test_board_eth"):
         command(project, [str(build / f"{test}{suffix}")])
     for emit in ("emit_samples", "emit_poller_samples"):
         emitter = subprocess.run([str(build / f"{emit}{suffix}")], cwd=project, capture_output=True, text=True, check=True)
