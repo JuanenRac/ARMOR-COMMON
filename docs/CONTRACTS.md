@@ -6,6 +6,8 @@ nothing may ignore one.
 
 ## Broker namespace
 
+The nodes that read solar inverters and batteries publish on their own topic family, `armor/solar/{node_id}/{device}/state`, with the message's own
+`kind` (`inverter` or `battery`) inside the payload (see *Solar messages* below). The radar family is
 `armor/node/{node_id}/{kind}` where `kind` is `telemetry`, `health`, `info` or `command`.
 Topic names are lower-case and part of the compatibility contract. A producer
 keeps its `node_id` identical in the topic and in the JSON body; consumers reject
@@ -21,12 +23,24 @@ a mismatch.
 All four use `additionalProperties: false`: an unknown field is an error, never
 silently ignored.
 
+## Solar messages
+
+`armor/solar/{node_id}/{device}/state` (node → server), `device` being lowercase letters, digits, `-` and `_` (at most 32 characters, not starting with `-` or `_`). The
+payload repeats `node_id` and `device`; a mismatch is refused. The payload's `kind` picks the schema:
+
+| Kind | Schema |
+|---|---|
+| `inverter` | `solar_inverter.schema.json`: the mode, the grid and output figures, the battery side (voltage, signed current, percentage), the panels' voltage, current and power, the temperature, three flags and the names of the active warnings |
+| `battery` | `solar_battery.schema.json`: how many modules are present (0 to 16) and, when there are, the state, voltage, current, temperature range, cell range, mean state of charge and alarm, and one entry per module (with, when the node reads them, the voltage of each cell and the module's temperature sensors). With no module present the message carries no other reading |
+
+Both use `additionalProperties: false` and have no nulls: a reading a node does not know is left out.
+
 ## Keeping every implementation in step
 
 1. **Python** (`armor_common`) interprets the schema files directly with a small
    validator that *refuses* a schema using a keyword it does not implement, so a
    constraint can never be quietly skipped.
-2. **Conformance vectors** (`conformance/*.json`, 68 cases) list payloads that must
+2. **Conformance vectors** (`conformance/*.json`, 142 cases) list payloads that must
    be accepted and payloads that must be rejected. Every implementation runs them:
    `armor_common` in its own tests, ARMOR-SERVER in `tests/conformance.test.ts`. A
    disagreement fails a build; tightening a contract means adding a vector here.
@@ -36,7 +50,7 @@ silently ignored.
 
 ## HTTP
 
-`openapi/armor-server-0.1.7.yaml` describes every route of ARMOR-SERVER, who may
+`openapi/armor-server-0.1.9.yaml` describes every route of ARMOR-SERVER, who may
 call it and which schema its body follows. ARMOR-SERVER's tests fail when a
 registered route is missing from it.
 

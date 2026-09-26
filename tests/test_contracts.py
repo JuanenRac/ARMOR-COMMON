@@ -2,8 +2,8 @@ import json
 import unittest
 from pathlib import Path
 
-from armor_common import ContractError, decode, encode, validate_topic_and_payload
-from armor_common.contracts import load_schema, parse_topic, validate_payload
+from armor_common import ContractError, decode, encode, validate_solar_message, validate_topic_and_payload
+from armor_common.contracts import load_schema, parse_solar_topic, parse_topic, validate_payload
 from armor_common.schema import SchemaError, UnsupportedSchema, check_schema, validate
 
 CONFORMANCE = Path(__file__).resolve().parent.parent / "conformance"
@@ -139,3 +139,32 @@ class InfoMessageTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SolarMessageTests(unittest.TestCase):
+    """The messages of the gateway nodes that read inverters and batteries."""
+
+    inverter = json.loads((CONFORMANCE / "solar_inverter.json").read_text(encoding="utf-8"))["vectors"][0]["payload"]
+    battery = json.loads((CONFORMANCE / "solar_battery.json").read_text(encoding="utf-8"))["vectors"][0]["payload"]
+
+    def test_the_topic_carries_the_node_and_the_device(self):
+        self.assertEqual(parse_solar_topic("armor/solar/solar-1/axpert-1/state"), ("solar-1", "axpert-1"))
+        for topic in ["armor/solar/solar-1/state", "armor/solar/solar-1/axpert-1/set", "armor/node/solar-1/axpert-1/state", "armor/solar/Solar/axpert-1/state",
+                      "armor/solar/solar-1/AXPERT/state", "armor/solar/-solar/axpert-1/state", "armor/solar/solar-1/-axpert/state", "armor/solar/solar-1/" + "d" * 33 + "/state",
+                      "armor/solar/solar-1/axpert-1/state/extra", "armor/solar//axpert-1/state"]:
+            with self.subTest(topic=topic), self.assertRaises(ContractError):
+                parse_solar_topic(topic)
+
+    def test_a_message_must_agree_with_its_topic(self):
+        validate_solar_message("armor/solar/solar-1/axpert-1/state", self.inverter)
+        validate_solar_message("armor/solar/solar-1/us3000-1/state", self.battery)
+        with self.assertRaises(ContractError):
+            validate_solar_message("armor/solar/solar-2/axpert-1/state", self.inverter)     # another node
+        with self.assertRaises(ContractError):
+            validate_solar_message("armor/solar/solar-1/axpert-2/state", self.inverter)     # another device
+        with self.assertRaises(ContractError):
+            validate_solar_message("armor/solar/solar-1/axpert-1/state", {**self.inverter, "kind": "toaster"})
+        with self.assertRaises(ContractError):
+            validate_solar_message("armor/solar/solar-1/axpert-1/state", [self.inverter])
+        with self.assertRaises(ContractError):
+            validate_solar_message("armor/solar/solar-1/axpert-1/state", {**self.inverter, "kind": "battery"})   # the schema of a battery refuses an inverter's fields
