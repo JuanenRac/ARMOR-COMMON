@@ -1,0 +1,376 @@
+{
+ "kind": "electrical_result",
+ "vectors": [
+  {
+   "name": "an open, accepted",
+   "valid": true,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "open",
+    "accepted": true,
+    "refusal": "none"
+   }
+  },
+  {
+   "name": "an arm, accepted, with its token",
+   "valid": true,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "arm",
+    "accepted": true,
+    "refusal": "none",
+    "token": "ab12cd34ef56ab12"
+   }
+  },
+  {
+   "name": "a close, accepted",
+   "valid": true,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "close_a",
+    "accepted": true,
+    "refusal": "none"
+   }
+  },
+  {
+   "name": "a close refused: not armed",
+   "valid": true,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "close_a",
+    "accepted": false,
+    "refusal": "not_armed"
+   }
+  },
+  {
+   "name": "a close refused: switching is off",
+   "valid": true,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "close_b",
+    "accepted": false,
+    "refusal": "disabled"
+   }
+  },
+  {
+   "name": "an arm refused: a fault is latched",
+   "valid": true,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "arm",
+    "accepted": false,
+    "refusal": "fault"
+   }
+  },
+  {
+   "name": "an acknowledge refused: contacts not open",
+   "valid": true,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "acknowledge",
+    "accepted": false,
+    "refusal": "not_confirmed_open"
+   }
+  },
+  {
+   "name": "a command to a switch it does not have",
+   "valid": true,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "nothing",
+    "action": "open",
+    "accepted": false,
+    "refusal": "unknown_switch"
+   }
+  },
+  {
+   "name": "a wrong token",
+   "valid": true,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "close_a",
+    "accepted": false,
+    "refusal": "bad_token"
+   }
+  },
+  {
+   "name": "a node that cannot do it",
+   "valid": true,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "close_a",
+    "accepted": false,
+    "refusal": "not_supported"
+   }
+  },
+  {
+   "name": "accepted with a refusal",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "open",
+    "accepted": true,
+    "refusal": "disabled"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "refused with refusal none",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "open",
+    "accepted": false,
+    "refusal": "none"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a token in the result of an open",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "open",
+    "accepted": true,
+    "refusal": "none",
+    "token": "ab12cd34ef56ab12"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a token in the result of a refused arm",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "arm",
+    "accepted": false,
+    "refusal": "disabled",
+    "token": "ab12cd34ef56ab12"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an accepted arm without a token",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "arm",
+    "accepted": true,
+    "refusal": "none"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a refusal outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "open",
+    "accepted": false,
+    "refusal": "welded"
+   }
+  },
+  {
+   "name": "an action outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "toggle",
+    "accepted": true,
+    "refusal": "none"
+   }
+  },
+  {
+   "name": "accepted as a string",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "open",
+    "accepted": "true",
+    "refusal": "none"
+   }
+  },
+  {
+   "name": "no command id",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "switch": "transfer",
+    "action": "open",
+    "accepted": true,
+    "refusal": "none"
+   }
+  },
+  {
+   "name": "no refusal",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "open",
+    "accepted": true
+   }
+  },
+  {
+   "name": "no accepted",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "open",
+    "refusal": "none"
+   }
+  },
+  {
+   "name": "a command id of seven characters",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0",
+    "switch": "transfer",
+    "action": "open",
+    "accepted": true,
+    "refusal": "none"
+   }
+  },
+  {
+   "name": "a token with capitals",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "arm",
+    "accepted": true,
+    "refusal": "none",
+    "token": "AB12CD34EF56AB12"
+   }
+  },
+  {
+   "name": "the kind of a command",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "open",
+    "accepted": true,
+    "refusal": "none"
+   }
+  },
+  {
+   "name": "a node id with a space",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "my node",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "open",
+    "accepted": true,
+    "refusal": "none"
+   }
+  },
+  {
+   "name": "an unknown field",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "switch": "transfer",
+    "action": "open",
+    "accepted": true,
+    "refusal": "none",
+    "detail": "welded"
+   }
+  }
+ ]
+}

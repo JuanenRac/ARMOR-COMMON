@@ -2,11 +2,17 @@ import json
 import unittest
 from pathlib import Path
 
-from armor_common import ContractError, decode, encode, validate_electrical_message, validate_solar_message, validate_topic_and_payload
+from armor_common import ContractError, decode, encode, validate_electrical_command, validate_electrical_message, validate_electrical_result, validate_solar_message, validate_topic_and_payload
 from armor_common.contracts import load_schema, parse_electrical_topic, parse_solar_topic, parse_topic, validate_payload
 from armor_common.schema import SchemaError, UnsupportedSchema, check_schema, validate
 
 CONFORMANCE = Path(__file__).resolve().parent.parent / "conformance"
+# The kinds whose messages also have a rule a schema cannot state (a token where none belongs, a switch named twice): the check of the whole message.
+MESSAGE_RULES = {
+    "electrical": lambda payload: validate_electrical_message(f"armor/electrical/{payload['node_id']}/state", payload),
+    "electrical_command": lambda payload: validate_electrical_command(f"armor/electrical/{payload['node_id']}/command", payload),
+    "electrical_result": lambda payload: validate_electrical_result(f"armor/electrical/{payload['node_id']}/result", payload),
+}
 
 
 class ConformanceTests(unittest.TestCase):
@@ -19,8 +25,15 @@ class ConformanceTests(unittest.TestCase):
             kind = document["kind"]
             for vector in document["vectors"]:
                 with self.subTest(kind=kind, case=vector["name"]):
+                    rule = MESSAGE_RULES.get(kind)
                     if vector["valid"]:
                         validate_payload(kind, vector["payload"])
+                        if rule:
+                            rule(vector["payload"])
+                    elif vector.get("schema_valid"):
+                        validate_payload(kind, vector["payload"])   # the schema alone accepts it...
+                        with self.assertRaises(ContractError):
+                            rule(vector["payload"])                 # ...and the rule of the whole message refuses it
                     else:
                         with self.assertRaises(ContractError):
                             validate_payload(kind, vector["payload"])
@@ -191,3 +204,67 @@ class ElectricalMessageTests(unittest.TestCase):
         twice = {**self.electrical, "channels": [{"id": "grid", "domain": "ac"}, {"id": "grid", "domain": "dc"}]}
         with self.assertRaises(ContractError):
             validate_electrical_message("armor/electrical/electrical-1/state", twice)
+
+
+class ElectricalSwitchMessageTests(unittest.TestCase):
+    """The command to a switch and the node's answer: their topics, and the rules of the whole message."""
+
+    command = json.loads((CONFORMANCE / "electrical_command.json").read_text(encoding="utf-8"))["vectors"][0]["payload"]
+    result = json.loads((CONFORMANCE / "electrical_result.json").read_text(encoding="utf-8"))["vectors"][0]["payload"]
+
+    def test_the_topic_of_each_leaf_carries_the_node(self):
+        for leaf in ("state", "command", "result"):
+            self.assertEqual(parse_electrical_topic(f"armor/electrical/electrical-1/{leaf}", leaf), "electrical-1")
+        for topic, leaf in [("armor/electrical/electrical-1/command", "state"), ("armor/electrical/electrical-1/state", "command"), ("armor/electrical/electrical-1/result", "command"),
+                            ("armor/electrical/electrical-1/set", "command"), ("armor/electrical/Node/command", "command"), ("armor/electrical/-x/result", "result"),
+                            ("armor/electrical/a/b/command", "command"), ("armor/electrical/electrical-1/command/extra", "command")]:
+            with self.subTest(topic=topic, leaf=leaf), self.assertRaises(ContractError):
+                parse_electrical_topic(topic, leaf)
+        with self.assertRaises(ContractError):
+            parse_electrical_topic("armor/electrical/electrical-1/set", "set")
+
+    def test_a_command_must_agree_with_its_topic(self):
+        validate_electrical_command("armor/electrical/electrical-1/command", self.command)
+        for topic in ("armor/electrical/other/command", "armor/electrical/electrical-1/state", "armor/electrical/electrical-1/result"):
+            with self.subTest(topic=topic), self.assertRaises(ContractError):
+                validate_electrical_command(topic, self.command)
+        with self.assertRaises(ContractError):
+            validate_electrical_command("armor/electrical/electrical-1/command", [self.command])
+
+    def test_only_a_close_carries_a_token(self):
+        token = "ab12cd34ef56ab12"
+        for action in ("close_a", "close_b"):
+            validate_electrical_command("armor/electrical/electrical-1/command", {**self.command, "action": action, "token": token})
+            with self.assertRaises(ContractError):
+                validate_electrical_command("armor/electrical/electrical-1/command", {**self.command, "action": action})
+        for action in ("arm", "open", "acknowledge"):
+            validate_electrical_command("armor/electrical/electrical-1/command", {**self.command, "action": action})
+            with self.assertRaises(ContractError):
+                validate_electrical_command("armor/electrical/electrical-1/command", {**self.command, "action": action, "token": token})
+
+    def test_a_result_must_agree_with_its_topic_and_say_why_it_refused(self):
+        validate_electrical_result("armor/electrical/electrical-1/result", self.result)
+        with self.assertRaises(ContractError):
+            validate_electrical_result("armor/electrical/other/result", self.result)
+        with self.assertRaises(ContractError):
+            validate_electrical_result("armor/electrical/electrical-1/command", self.result)
+        refused = {**self.result, "action": "close_a", "accepted": False, "refusal": "not_armed"}
+        validate_electrical_result("armor/electrical/electrical-1/result", refused)
+        for bad in ({**refused, "refusal": "none"}, {**self.result, "refusal": "fault"}):
+            with self.assertRaises(ContractError):
+                validate_electrical_result("armor/electrical/electrical-1/result", bad)
+
+    def test_only_an_accepted_arm_gives_a_token(self):
+        token = "ab12cd34ef56ab12"
+        arm = {**self.result, "action": "arm"}
+        validate_electrical_result("armor/electrical/electrical-1/result", {**arm, "token": token})
+        for bad in (arm, {**self.result, "token": token}, {**arm, "accepted": False, "refusal": "fault", "token": token}):
+            with self.assertRaises(ContractError):
+                validate_electrical_result("armor/electrical/electrical-1/result", bad)
+
+    def test_a_switch_is_named_once_in_a_state_message(self):
+        switch = {"id": "transfer", "kind": "transfer", "a_closed": True, "b_closed": False, "selected": "a", "wanted": "a", "closing": False, "armed": False, "fault": "none"}
+        state = {"kind": "electrical", "node_id": "electrical-1", "timestamp_ms": 1, "channels": [], "switches": [switch]}
+        validate_electrical_message("armor/electrical/electrical-1/state", state)
+        with self.assertRaises(ContractError):
+            validate_electrical_message("armor/electrical/electrical-1/state", {**state, "switches": [switch, dict(switch)]})

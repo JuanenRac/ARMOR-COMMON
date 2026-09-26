@@ -632,6 +632,940 @@
      "id": "grid"
     }
    }
+  },
+  {
+   "name": "a transfer switch in a state message",
+   "valid": true,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switching_enabled": true,
+    "switches": [
+     {
+      "id": "transfer",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a switch that is closing",
+   "valid": true,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switching_enabled": true,
+    "switches": [
+     {
+      "id": "transfer",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": false,
+      "b_closed": false,
+      "selected": "none",
+      "wanted": "b",
+      "closing": true,
+      "armed": false,
+      "fault": "none"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an armed switch with nothing closed",
+   "valid": true,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switching_enabled": true,
+    "switches": [
+     {
+      "id": "transfer",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": false,
+      "b_closed": false,
+      "selected": "none",
+      "wanted": "none",
+      "closing": false,
+      "armed": true,
+      "fault": "none"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a latched fault, everything open",
+   "valid": true,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switching_enabled": true,
+    "switches": [
+     {
+      "id": "transfer",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": false,
+      "b_closed": false,
+      "selected": "none",
+      "wanted": "none",
+      "closing": false,
+      "armed": false,
+      "fault": "did_not_close"
+     }
+    ]
+   }
+  },
+  {
+   "name": "both contacts closed, a fault",
+   "valid": true,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switching_enabled": true,
+    "switches": [
+     {
+      "id": "transfer",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": true,
+      "selected": "none",
+      "wanted": "none",
+      "closing": false,
+      "armed": false,
+      "fault": "both_closed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a switch with no label or sources",
+   "valid": true,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switches": [
+     {
+      "id": "transfer",
+      "kind": "transfer",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     }
+    ]
+   }
+  },
+  {
+   "name": "no switches at all",
+   "valid": true,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switches": []
+   }
+  },
+  {
+   "name": "four switches, the limit",
+   "valid": true,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switches": [
+     {
+      "id": "t0",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     },
+     {
+      "id": "t1",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     },
+     {
+      "id": "t2",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     },
+     {
+      "id": "t3",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     }
+    ]
+   }
+  },
+  {
+   "name": "five switches",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switches": [
+     {
+      "id": "t0",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     },
+     {
+      "id": "t1",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     },
+     {
+      "id": "t2",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     },
+     {
+      "id": "t3",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     },
+     {
+      "id": "t4",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a switch id twice",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switches": [
+     {
+      "id": "transfer",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     },
+     {
+      "id": "transfer",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     }
+    ]
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a switch without its contacts",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switches": [
+     {
+      "id": "transfer",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a switch without its fault",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switches": [
+     {
+      "id": "transfer",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "a switch of a kind that does not exist",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switching_enabled": true,
+    "switches": [
+     {
+      "id": "transfer",
+      "kind": "breaker",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a source that is not a source",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switching_enabled": true,
+    "switches": [
+     {
+      "id": "transfer",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "c",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a wanted state that is a command",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switching_enabled": true,
+    "switches": [
+     {
+      "id": "transfer",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "close_a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a fault outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switching_enabled": true,
+    "switches": [
+     {
+      "id": "transfer",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "welded"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a contact that is a string",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switching_enabled": true,
+    "switches": [
+     {
+      "id": "transfer",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": "true",
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a switch with an unknown field",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switching_enabled": true,
+    "switches": [
+     {
+      "id": "transfer",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none",
+      "coil_pin": 4
+     }
+    ]
+   }
+  },
+  {
+   "name": "a switch id with capitals",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switching_enabled": true,
+    "switches": [
+     {
+      "id": "Transfer",
+      "kind": "transfer",
+      "label": "Grid or inverter",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an empty switch label",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switching_enabled": true,
+    "switches": [
+     {
+      "id": "transfer",
+      "kind": "transfer",
+      "label": "",
+      "source_a": "grid",
+      "source_b": "inverter",
+      "a_closed": true,
+      "b_closed": false,
+      "selected": "a",
+      "wanted": "a",
+      "closing": false,
+      "armed": false,
+      "fault": "none"
+     }
+    ]
+   }
+  },
+  {
+   "name": "switches that are not a list",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switches": {
+     "id": "transfer"
+    }
+   }
   }
  ]
 }

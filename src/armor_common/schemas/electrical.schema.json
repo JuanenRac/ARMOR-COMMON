@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://armor.local/schemas/electrical-0.1.0.json",
   "title": "A.R.M.O.R. electrical readings of one node",
-  "description": "What an ARMOR-ELECTRICAL node measures on the house's electrical network: one entry per measured channel (a circuit, a line, the grid input, a DC bus). Published to armor/electrical/{node_id}/state. Reading only: the message carries the state of a switchable channel, never a command.",
+  "description": "What an ARMOR-ELECTRICAL node measures on the house's electrical network: one entry per measured channel (a circuit, a line, the grid input, a DC bus) and, when the node has them, the state of its switches. Published to armor/electrical/{node_id}/state. It carries states, never a command: what a switch was asked to do travels in electrical_command.schema.json and what the node answered in electrical_result.schema.json.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -102,6 +102,97 @@
           "alarm_code": {
             "type": "string",
             "pattern": "^[a-z][a-z0-9_]{0,39}$"
+          }
+        }
+      }
+    },
+    "switches": {
+      "type": "array",
+      "maxItems": 4,
+      "description": "The switches the node controls (a source transfer: two contactors onto one line). Absent on a node that only measures. What each says is what the auxiliary contacts show, never what was asked.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "kind",
+          "a_closed",
+          "b_closed",
+          "selected",
+          "wanted",
+          "closing",
+          "armed",
+          "fault"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$"
+          },
+          "kind": {
+            "type": "string",
+            "const": "transfer",
+            "description": "Two sources, A and B, each behind a contactor, onto one line; never both."
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "source_a": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$",
+            "description": "The id of the channel that measures source A."
+          },
+          "source_b": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$",
+            "description": "The id of the channel that measures source B."
+          },
+          "a_closed": {
+            "type": "boolean",
+            "description": "The auxiliary contact of A's contactor: true = confirmed closed."
+          },
+          "b_closed": {
+            "type": "boolean",
+            "description": "The auxiliary contact of B's contactor: true = confirmed closed."
+          },
+          "selected": {
+            "type": "string",
+            "enum": [
+              "none",
+              "a",
+              "b"
+            ],
+            "description": "The source that is confirmed closed onto the line (none while opening, closing or open)."
+          },
+          "wanted": {
+            "type": "string",
+            "enum": [
+              "none",
+              "a",
+              "b"
+            ],
+            "description": "The source the controller is trying to reach (none = open)."
+          },
+          "closing": {
+            "type": "boolean",
+            "description": "A coil is energised and the contact has not yet confirmed."
+          },
+          "armed": {
+            "type": "boolean",
+            "description": "The next request to close is accepted (a short window that one request consumes)."
+          },
+          "fault": {
+            "type": "string",
+            "enum": [
+              "none",
+              "did_not_close",
+              "did_not_open",
+              "both_closed",
+              "disabled"
+            ],
+            "description": "A latched fault opens everything until it is acknowledged with both contactors confirmed open."
           }
         }
       }

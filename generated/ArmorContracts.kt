@@ -127,12 +127,50 @@ data class ElectricalChannel(
     val alarmCode: String? = null
 )
 
+data class ElectricalSwitch(
+    val id: String,
+    val kind: String,
+    val label: String? = null,
+    val sourceA: String? = null,
+    val sourceB: String? = null,
+    val aClosed: Boolean,
+    val bClosed: Boolean,
+    val selected: String,
+    val wanted: String,
+    val closing: Boolean,
+    val armed: Boolean,
+    val fault: String
+)
+
 data class Electrical(
     val kind: String,
     val nodeId: String,
     val timestampMs: Long,
     val switchingEnabled: Boolean? = null,
-    val channels: List<ElectricalChannel>
+    val channels: List<ElectricalChannel>,
+    val switches: List<ElectricalSwitch>? = null
+)
+
+data class ElectricalCommand(
+    val kind: String,
+    val nodeId: String,
+    val timestampMs: Long,
+    val commandId: String,
+    val switch: String,
+    val action: String,
+    val token: String? = null
+)
+
+data class ElectricalResult(
+    val kind: String,
+    val nodeId: String,
+    val timestampMs: Long,
+    val commandId: String,
+    val switch: String,
+    val action: String,
+    val accepted: Boolean,
+    val refusal: String,
+    val token: String? = null
 )
 
 object ContractLimits {
