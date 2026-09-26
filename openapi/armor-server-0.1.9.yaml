@@ -38,6 +38,33 @@ paths:
         '202': { description: Accepted }
         '400': { description: Invalid payload }
         '401': { description: Authentication failure }
+  /api/v1/solar:
+    get:
+      summary: The latest reading of every solar inverter and battery stack that a gateway node reports, with whether each is stale, and the sums Studio shows
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ devices: [{ node_id, device, kind, reading, received_at, stale }], totals }' }
+        '401': { description: Operator authorization is required }
+    post:
+      summary: A solar message over HTTP (an ingest token); the same payloads as armor/solar/{node_id}/{device}/state
+      security: [{ ingestBearer: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { oneOf: [ { $ref: '../src/armor_common/schemas/solar_inverter.schema.json' }, { $ref: '../src/armor_common/schemas/solar_battery.schema.json' } ] } } } }
+      responses:
+        '202': { description: Accepted }
+        '400': { description: Invalid payload }
+        '401': { description: Authentication failure }
+  /api/v1/solar/history:
+    get:
+      summary: The recent history of one solar device, a few numbers per sample, oldest first
+      security: [{ operator: [] }]
+      parameters:
+        - { name: node, in: query, required: true, schema: { type: string } }
+        - { name: device, in: query, required: true, schema: { type: string } }
+        - { name: minutes, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 1440 } }
+      responses:
+        '200': { description: '{ node_id, device, kind, samples: [{ t, ... }] }' }
+        '400': { description: Missing or invalid node or device }
+        '401': { description: Operator authorization is required }
   /api/v1/health:
     post:
       summary: Field-node health

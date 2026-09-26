@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## [0.1.9] - The solar messages
+
+- **Two new messages**, on their own topics `armor/solar/{node_id}/{device}/state`: `inverter` (a solar inverter of the Voltronic / MPP Solar family) and `battery` (a battery stack as Pylontech's console reports it, with each module's cell voltages and temperature sensors when the node reads them). Schemas, `validate_solar_message` and `parse_solar_topic` in Python, **74 new conformance vectors** (142 in all), TypeScript and Kotlin types, and the description in `docs/CONTRACTS.md`. No change to the radar messages.
+- **OpenAPI 0.1.9**: `POST /api/v1/solar` (an ingest token), `GET /api/v1/solar` and `GET /api/v1/solar/history` (an operator); the file is renamed `armor-server-0.1.9.yaml`.
+- The generator writes the types of an array of plain values (the list of warning names). Tests: 19.
+
 ## [0.1.8] - The shared project tool knows ARMOR-SOLAR
 
 - `armor_project_tool.py` tests ARMOR-SOLAR (its protocol library and the messages its serialiser prints) and runs all three host tests of ARMOR-RADAR (it ran only one). No change to the messages, the schemas or the vectors.

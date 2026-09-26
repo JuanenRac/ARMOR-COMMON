@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/solar-battery-0.1.0.json",
+  "title": "A.R.M.O.R. solar battery stack reading",
+  "description": "The readings of one battery stack (Pylontech console table, summarised as a stack). With no module present the message has modules 0 and no other reading. Published to armor/solar/{node_id}/{device}/state.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "node_id",
+    "device",
+    "timestamp_ms",
+    "modules",
+    "stack"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "battery"
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "device": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$"
+    },
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "modules": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 16,
+      "description": "How many modules are present."
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "charging",
+        "discharging",
+        "idle"
+      ]
+    },
+    "voltage_v": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1000
+    },
+    "current_a": {
+      "type": "number",
+      "minimum": -1000,
+      "maximum": 1000,
+      "description": "Sum of the modules: positive while charging."
+    },
+    "temperature_min_c": {
+      "type": "number",
+      "minimum": -50,
+      "maximum": 200
+    },
+    "temperature_max_c": {
+      "type": "number",
+      "minimum": -50,
+      "maximum": 200
+    },
+    "cell_min_v": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "cell_max_v": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "soc_percent": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Mean state of charge; left out when unknown."
+    },
+    "alarm": {
+      "type": "boolean",
+      "description": "True when any module reports a state that is not normal."
+    },
+    "stack": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "n",
+          "present"
+        ],
+        "properties": {
+          "n": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 16
+          },
+          "present": {
+            "type": "boolean"
+          },
+          "voltage_v": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "current_a": {
+            "type": "number",
+            "minimum": -1000,
+            "maximum": 1000
+          },
+          "temperature_c": {
+            "type": "number",
+            "minimum": -50,
+            "maximum": 200
+          },
+          "soc_percent": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "state": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16
+          },
+          "cells_v": {
+            "type": "array",
+            "maxItems": 32,
+            "items": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "description": "The voltage of every cell of the module, in volts, in cell order; left out when the node does not read them."
+          },
+          "temperatures_c": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "type": "number",
+              "minimum": -50,
+              "maximum": 200
+            },
+            "description": "The temperature sensors of the module; left out when the node does not read them."
+          },
+          "capacity_ah": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100000
+          },
+          "full_capacity_ah": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100000
+          },
+          "cycles": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          }
+        }
+      }
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 24,
+      "description": "The battery's model as it reports it (US3000C...)."
+    },
+    "capacity_ah": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100000,
+      "description": "Remaining capacity of the stack in ampere-hours (the modules' add up)."
+    },
+    "full_capacity_ah": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100000,
+      "description": "Full (total) capacity of the stack in ampere-hours."
+    },
+    "energy_kwh": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10000,
+      "description": "Energy left in the stack in kilowatt-hours: the remaining capacity times the voltage."
+    },
+    "cycles": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000000,
+      "description": "Charge cycles of the most used module."
+    }
+  }
+}

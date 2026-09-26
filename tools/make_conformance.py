@@ -24,6 +24,22 @@ def info(**changes):
     return base
 
 
+def inverter(**changes):
+    base = {"kind": "inverter", "node_id": "solar-1", "device": "axpert-1", "timestamp_ms": 1000, "mode": "line", "grid_v": 232.0, "grid_hz": 50.0, "out_v": 230.0,
+            "out_hz": 50.0, "out_va": 161, "out_w": 119, "load_percent": 3, "battery_v": 57.5, "battery_a": 12.0, "battery_percent": 100, "pv_v": 103.8, "pv_a": 14.0,
+            "pv_w": 856, "heatsink_c": 69, "ac_charging": False, "pv_charging": True, "load_on": True, "warnings": []}
+    base.update(changes)
+    return base
+
+
+def battery(**changes):
+    base = {"kind": "battery", "node_id": "solar-1", "device": "us3000-1", "timestamp_ms": 3000, "modules": 2, "state": "discharging", "voltage_v": 49.87, "current_a": -2.59,
+            "temperature_min_c": 19.5, "temperature_max_c": 25.0, "cell_min_v": 3.328, "cell_max_v": 3.349, "soc_percent": 88, "alarm": False,
+            "stack": [{"n": 1, "present": True, "voltage_v": 49.872, "current_a": -1.28, "temperature_c": 22.0, "soc_percent": 88, "state": "Dischg"}, {"n": 2, "present": False}]}
+    base.update(changes)
+    return base
+
+
 def without(payload, key):
     return {name: value for name, value in payload.items() if name != key}
 
@@ -94,6 +110,85 @@ cases = {
         ("missing address", False, without(info(), "ip")),
         ("unknown field", False, info(mac="34:85:18:00:00:01")),
     ],
+    "solar_inverter": [
+        ("a typical reading", True, inverter()),
+        ("running on the battery with two warnings", True, inverter(mode="battery", warnings=["line_fail", "battery_low"], battery_a=-8.5)),
+        ("unknown mode", True, inverter(mode="unknown")),
+        ("everything at zero", True, inverter(grid_v=0, grid_hz=0, out_v=0, out_hz=0, out_va=0, out_w=0, load_percent=0, battery_v=0, battery_a=0, battery_percent=0, pv_v=0, pv_a=0, pv_w=0, heatsink_c=0)),
+        ("a device name of 32 characters", True, inverter(device="d" * 32)),
+        ("thirty-two warnings, the limit", True, inverter(warnings=["w%d" % i for i in range(32)])),
+        ("a mode the contract does not know", False, inverter(mode="sleeping")),
+        ("uppercase device", False, inverter(device="Axpert-1")),
+        ("device of 33 characters", False, inverter(device="d" * 33)),
+        ("empty device", False, inverter(device="")),
+        ("device starting with a dash", False, inverter(device="-axpert")),
+        ("uppercase node id", False, inverter(node_id="Solar-1")),
+        ("negative timestamp", False, inverter(timestamp_ms=-1)),
+        ("the kind of a battery", False, inverter(kind="battery")),
+        ("missing kind", False, without(inverter(), "kind")),
+        ("missing mode", False, without(inverter(), "mode")),
+        ("missing battery current", False, without(inverter(), "battery_a")),
+        ("grid voltage above the limit", False, inverter(grid_v=601)),
+        ("negative output power", False, inverter(out_w=-1)),
+        ("battery percentage above 100", False, inverter(battery_percent=101)),
+        ("battery current beyond the limit", False, inverter(battery_a=-1001)),
+        ("heat-sink temperature below the limit", False, inverter(heatsink_c=-51)),
+        ("string voltage", False, inverter(grid_v="230")),
+        ("boolean voltage", False, inverter(grid_v=True)),
+        ("numeric charging flag", False, inverter(ac_charging=1)),
+        ("warnings is not a list", False, inverter(warnings="line_fail")),
+        ("warning that is not a name", False, inverter(warnings=["Line fail"])),
+        ("thirty-three warnings", False, inverter(warnings=["w%d" % i for i in range(33)])),
+        ("unknown field", False, inverter(serial="92931903102538")),
+        ("not an object", False, [1, 2]),
+    ],
+    "solar_battery": [
+        ("a stack of two modules, one not there", True, battery()),
+        ("charging", True, battery(state="charging", current_a=12.4)),
+        ("idle", True, battery(state="idle", current_a=0.1)),
+        ("state of charge left out", True, without(battery(), "soc_percent")),
+        ("no module present", True, {"kind": "battery", "node_id": "solar-1", "device": "us3000-2", "timestamp_ms": 4000, "modules": 0, "stack": []}),
+        ("sixteen modules, the limit", True, battery(modules=16, stack=[{"n": i + 1, "present": True} for i in range(16)])),
+        ("an alarm", True, battery(alarm=True)),
+        ("a module with its fifteen cells and temperatures", True, battery(stack=[{"n": 1, "present": True, "voltage_v": 49.872, "soc_percent": 88, "cells_v": [3.324 + 0.001 * i for i in range(15)], "temperatures_c": [22.0, 21.5, 22.5, 23.0, 21.0]}])),
+        ("a module with thirty-two cells, the limit", True, battery(stack=[{"n": 1, "present": True, "cells_v": [3.3] * 32}])),
+        ("a module with no cells listed", True, battery(stack=[{"n": 1, "present": True, "cells_v": []}])),
+        ("thirty-three cells", False, battery(stack=[{"n": 1, "present": True, "cells_v": [3.3] * 33}])),
+        ("a cell above ten volts", False, battery(stack=[{"n": 1, "present": True, "cells_v": [10.5]}])),
+        ("a negative cell voltage", False, battery(stack=[{"n": 1, "present": True, "cells_v": [-0.1]}])),
+        ("a cell voltage as a string", False, battery(stack=[{"n": 1, "present": True, "cells_v": ["3.3"]}])),
+        ("cells that are not a list", False, battery(stack=[{"n": 1, "present": True, "cells_v": 3.3}])),
+        ("nine temperature sensors", False, battery(stack=[{"n": 1, "present": True, "temperatures_c": [20.0] * 9}])),
+        ("a temperature beyond the limit", False, battery(stack=[{"n": 1, "present": True, "temperatures_c": [201.0]}])),
+        ("capacities, model and cycles", True, battery(model="US3000C", capacity_ah=140.5, full_capacity_ah=148.0, energy_kwh=7.0, cycles=312,
+                                                       stack=[{"n": 1, "present": True, "capacity_ah": 70.2, "full_capacity_ah": 74.0, "cycles": 312}])),
+        ("a model of 24 characters", True, battery(model="m" * 24)),
+        ("an empty model", False, battery(model="")),
+        ("a model of 25 characters", False, battery(model="m" * 25)),
+        ("a negative capacity", False, battery(capacity_ah=-1)),
+        ("a capacity above the limit", False, battery(full_capacity_ah=100001)),
+        ("negative energy", False, battery(energy_kwh=-0.1)),
+        ("fractional cycles", False, battery(cycles=1.5)),
+        ("a module with a negative capacity", False, battery(stack=[{"n": 1, "present": True, "capacity_ah": -5}])),
+        ("a module with fractional cycles", False, battery(stack=[{"n": 1, "present": True, "cycles": 2.5}])),
+        ("seventeen modules", False, battery(modules=17)),
+        ("seventeen entries in the stack", False, battery(stack=[{"n": (i % 16) + 1, "present": True} for i in range(17)])),
+        ("a state that is not one of the three", False, battery(state="full")),
+        ("state of charge above 100", False, battery(soc_percent=101)),
+        ("state of charge as a null", False, battery(soc_percent=None)),
+        ("fractional state of charge", False, battery(soc_percent=88.5)),
+        ("cell voltage above the limit", False, battery(cell_max_v=10.1)),
+        ("missing stack", False, without(battery(), "stack")),
+        ("missing modules", False, without(battery(), "modules")),
+        ("modules as a string", False, battery(modules="2")),
+        ("module number 0", False, battery(stack=[{"n": 0, "present": True}])),
+        ("module without its presence", False, battery(stack=[{"n": 1}])),
+        ("module with an unknown field", False, battery(stack=[{"n": 1, "present": True, "cells": 15}])),
+        ("module state of 17 characters", False, battery(stack=[{"n": 1, "present": True, "state": "s" * 17}])),
+        ("the kind of an inverter", False, battery(kind="inverter")),
+        ("uppercase device", False, battery(device="US3000")),
+        ("unknown field", False, battery(serial="PPTBH01")),
+    ],
     "command": [
         ("calibrate", True, {"node_id": "north-1", "timestamp_ms": 9, "command": "calibrate"}),
         ("restart", True, {"node_id": "north-1", "timestamp_ms": 9, "command": "restart"}),
@@ -110,5 +205,6 @@ cases = {
 ROOT.mkdir(exist_ok=True)
 for kind, entries in cases.items():
     vectors = [{"name": name, "valid": valid, "payload": payload} for name, valid, payload in entries]
-    (ROOT / f"{kind}.json").write_text(json.dumps({"kind": kind, "vectors": vectors}, indent=1) + "\n", encoding="utf-8", newline="\n")
+    schema_kind = {"solar_inverter": "inverter", "solar_battery": "battery"}.get(kind, kind)   # the solar files are named after their schema, and carry the payload's kind
+    (ROOT / f"{kind}.json").write_text(json.dumps({"kind": schema_kind, "vectors": vectors}, indent=1) + "\n", encoding="utf-8", newline="\n")
     print(kind, len(vectors), "vectors")

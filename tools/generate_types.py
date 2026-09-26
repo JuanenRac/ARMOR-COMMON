@@ -27,6 +27,8 @@ MESSAGES = {
     "health": ("Health", {}),
     "command": ("Command", {}),
     "info": ("Info", {}),
+    "solar_inverter": ("SolarInverter", {}),
+    "solar_battery": ("SolarBattery", {"stack": "SolarModule"}),
 }
 HEADER = "Generated from the A.R.M.O.R. JSON Schemas by tools/generate_types.py. Do not edit."
 
@@ -47,7 +49,8 @@ def ts_type(field: Field) -> str:
         return " | ".join(json.dumps(value) for value in schema["enum"])
     kind = schema["type"]
     if kind == "array":
-        return f"{field.nested or 'unknown'}[]"
+        items = schema.get("items", {}).get("type")
+        return f"{field.nested or {'string': 'string', 'integer': 'number', 'number': 'number', 'boolean': 'boolean'}.get(items, 'unknown')}[]"
     return {"string": "string", "integer": "number", "number": "number", "boolean": "boolean"}[kind]
 
 
@@ -55,7 +58,8 @@ def kt_type(field: Field) -> str:
     schema = field.schema
     kind = schema["type"]
     if kind == "array":
-        return f"List<{field.nested or 'Any'}>"
+        items = schema.get("items", {}).get("type")
+        return f"List<{field.nested or {'string': 'String', 'integer': 'Long', 'number': 'Double', 'boolean': 'Boolean'}.get(items, 'Any')}>"
     return {"string": "String", "integer": "Long", "number": "Double", "boolean": "Boolean"}[kind]
 
 

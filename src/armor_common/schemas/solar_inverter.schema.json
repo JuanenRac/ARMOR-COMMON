@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/solar-inverter-0.1.0.json",
+  "title": "A.R.M.O.R. solar inverter reading",
+  "description": "The readings of one solar inverter as a gateway node read them from its serial port (Voltronic / MPP Solar family). Published to armor/solar/{node_id}/{device}/state every few seconds and on a change.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "node_id",
+    "device",
+    "timestamp_ms",
+    "mode",
+    "grid_v",
+    "grid_hz",
+    "out_v",
+    "out_hz",
+    "out_va",
+    "out_w",
+    "load_percent",
+    "battery_v",
+    "battery_a",
+    "battery_percent",
+    "pv_v",
+    "pv_a",
+    "pv_w",
+    "heatsink_c",
+    "ac_charging",
+    "pv_charging",
+    "load_on",
+    "warnings"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "inverter"
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "device": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$"
+    },
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "power_on",
+        "standby",
+        "line",
+        "battery",
+        "fault",
+        "power_saving",
+        "shutdown",
+        "unknown"
+      ]
+    },
+    "grid_v": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 600,
+      "description": "Grid (utility) voltage."
+    },
+    "grid_hz": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "out_v": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 600,
+      "description": "AC output voltage."
+    },
+    "out_hz": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "out_va": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100000,
+      "description": "Apparent output power."
+    },
+    "out_w": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100000,
+      "description": "Active output power."
+    },
+    "load_percent": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 200
+    },
+    "battery_v": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1000
+    },
+    "battery_a": {
+      "type": "number",
+      "minimum": -1000,
+      "maximum": 1000,
+      "description": "Battery current: positive while charging, negative while discharging."
+    },
+    "battery_percent": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "pv_v": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1500
+    },
+    "pv_a": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 500
+    },
+    "pv_w": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100000,
+      "description": "Power from the panels."
+    },
+    "heatsink_c": {
+      "type": "number",
+      "minimum": -50,
+      "maximum": 200
+    },
+    "ac_charging": {
+      "type": "boolean"
+    },
+    "pv_charging": {
+      "type": "boolean"
+    },
+    "load_on": {
+      "type": "boolean"
+    },
+    "warnings": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]{0,39}$"
+      },
+      "description": "Names of the active warnings and faults."
+    }
+  }
+}

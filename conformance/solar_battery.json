@@ -1,0 +1,1597 @@
+{
+ "kind": "battery",
+ "vectors": [
+  {
+   "name": "a stack of two modules, one not there",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "charging",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "charging",
+    "voltage_v": 49.87,
+    "current_a": 12.4,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "idle",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "idle",
+    "voltage_v": 49.87,
+    "current_a": 0.1,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "state of charge left out",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "no module present",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-2",
+    "timestamp_ms": 4000,
+    "modules": 0,
+    "stack": []
+   }
+  },
+  {
+   "name": "sixteen modules, the limit",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 16,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true
+     },
+     {
+      "n": 2,
+      "present": true
+     },
+     {
+      "n": 3,
+      "present": true
+     },
+     {
+      "n": 4,
+      "present": true
+     },
+     {
+      "n": 5,
+      "present": true
+     },
+     {
+      "n": 6,
+      "present": true
+     },
+     {
+      "n": 7,
+      "present": true
+     },
+     {
+      "n": 8,
+      "present": true
+     },
+     {
+      "n": 9,
+      "present": true
+     },
+     {
+      "n": 10,
+      "present": true
+     },
+     {
+      "n": 11,
+      "present": true
+     },
+     {
+      "n": 12,
+      "present": true
+     },
+     {
+      "n": 13,
+      "present": true
+     },
+     {
+      "n": 14,
+      "present": true
+     },
+     {
+      "n": 15,
+      "present": true
+     },
+     {
+      "n": 16,
+      "present": true
+     }
+    ]
+   }
+  },
+  {
+   "name": "an alarm",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": true,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "a module with its fifteen cells and temperatures",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "soc_percent": 88,
+      "cells_v": [
+       3.324,
+       3.3249999999999997,
+       3.3259999999999996,
+       3.327,
+       3.328,
+       3.3289999999999997,
+       3.3299999999999996,
+       3.331,
+       3.332,
+       3.3329999999999997,
+       3.3339999999999996,
+       3.335,
+       3.336,
+       3.3369999999999997,
+       3.3379999999999996
+      ],
+      "temperatures_c": [
+       22.0,
+       21.5,
+       22.5,
+       23.0,
+       21.0
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "a module with thirty-two cells, the limit",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "cells_v": [
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "a module with no cells listed",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "cells_v": []
+     }
+    ]
+   }
+  },
+  {
+   "name": "thirty-three cells",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "cells_v": [
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3,
+       3.3
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "a cell above ten volts",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "cells_v": [
+       10.5
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "a negative cell voltage",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "cells_v": [
+       -0.1
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "a cell voltage as a string",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "cells_v": [
+       "3.3"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "cells that are not a list",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "cells_v": 3.3
+     }
+    ]
+   }
+  },
+  {
+   "name": "nine temperature sensors",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "temperatures_c": [
+       20.0,
+       20.0,
+       20.0,
+       20.0,
+       20.0,
+       20.0,
+       20.0,
+       20.0,
+       20.0
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "a temperature beyond the limit",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "temperatures_c": [
+       201.0
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "capacities, model and cycles",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "capacity_ah": 70.2,
+      "full_capacity_ah": 74.0,
+      "cycles": 312
+     }
+    ],
+    "model": "US3000C",
+    "capacity_ah": 140.5,
+    "full_capacity_ah": 148.0,
+    "energy_kwh": 7.0,
+    "cycles": 312
+   }
+  },
+  {
+   "name": "a model of 24 characters",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "model": "mmmmmmmmmmmmmmmmmmmmmmmm"
+   }
+  },
+  {
+   "name": "an empty model",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "model": ""
+   }
+  },
+  {
+   "name": "a model of 25 characters",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "model": "mmmmmmmmmmmmmmmmmmmmmmmmm"
+   }
+  },
+  {
+   "name": "a negative capacity",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "capacity_ah": -1
+   }
+  },
+  {
+   "name": "a capacity above the limit",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "full_capacity_ah": 100001
+   }
+  },
+  {
+   "name": "negative energy",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "energy_kwh": -0.1
+   }
+  },
+  {
+   "name": "fractional cycles",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "cycles": 1.5
+   }
+  },
+  {
+   "name": "a module with a negative capacity",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "capacity_ah": -5
+     }
+    ]
+   }
+  },
+  {
+   "name": "a module with fractional cycles",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "cycles": 2.5
+     }
+    ]
+   }
+  },
+  {
+   "name": "seventeen modules",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 17,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "seventeen entries in the stack",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true
+     },
+     {
+      "n": 2,
+      "present": true
+     },
+     {
+      "n": 3,
+      "present": true
+     },
+     {
+      "n": 4,
+      "present": true
+     },
+     {
+      "n": 5,
+      "present": true
+     },
+     {
+      "n": 6,
+      "present": true
+     },
+     {
+      "n": 7,
+      "present": true
+     },
+     {
+      "n": 8,
+      "present": true
+     },
+     {
+      "n": 9,
+      "present": true
+     },
+     {
+      "n": 10,
+      "present": true
+     },
+     {
+      "n": 11,
+      "present": true
+     },
+     {
+      "n": 12,
+      "present": true
+     },
+     {
+      "n": 13,
+      "present": true
+     },
+     {
+      "n": 14,
+      "present": true
+     },
+     {
+      "n": 15,
+      "present": true
+     },
+     {
+      "n": 16,
+      "present": true
+     },
+     {
+      "n": 1,
+      "present": true
+     }
+    ]
+   }
+  },
+  {
+   "name": "a state that is not one of the three",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "full",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "state of charge above 100",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 101,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "state of charge as a null",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": null,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "fractional state of charge",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88.5,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "cell voltage above the limit",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 10.1,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "missing stack",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false
+   }
+  },
+  {
+   "name": "missing modules",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "modules as a string",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": "2",
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "module number 0",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 0,
+      "present": true
+     }
+    ]
+   }
+  },
+  {
+   "name": "module without its presence",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1
+     }
+    ]
+   }
+  },
+  {
+   "name": "module with an unknown field",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "cells": 15
+     }
+    ]
+   }
+  },
+  {
+   "name": "module state of 17 characters",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "state": "sssssssssssssssss"
+     }
+    ]
+   }
+  },
+  {
+   "name": "the kind of an inverter",
+   "valid": false,
+   "payload": {
+    "kind": "inverter",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "uppercase device",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "US3000",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "unknown field",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "serial": "PPTBH01"
+   }
+  }
+ ]
+}
