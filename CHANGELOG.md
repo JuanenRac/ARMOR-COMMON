@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.1.8] - The shared project tool knows ARMOR-SOLAR
+
+- `armor_project_tool.py` tests ARMOR-SOLAR (its protocol library and the messages its serialiser prints) and runs all three host tests of ARMOR-RADAR (it ran only one). No change to the messages, the schemas or the vectors.
+
 ## [0.1.7] - The node information message
 
 - **`info`** (`armor/node/{node_id}/info`, node to server): the node's name, its firmware version, its IPv4 address and the port of its web panel, so a console can offer a link to it. `info.schema.json` follows the same rules as the others (`additionalProperties: false`, the node id equal in topic and body); the address is a dotted quad without leading zeros, the firmware is `x.y.z`, the name 1 to 48 characters.

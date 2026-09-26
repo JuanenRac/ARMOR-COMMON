@@ -99,6 +99,8 @@ def test_project(project: Path, manifest: dict[str, object]) -> None:
         command(project, [NPM, "run", "build"])
     elif name == "ARMOR-RADAR":
         test_radar(project)
+    elif name == "ARMOR-SOLAR":
+        test_solar(project)
     elif name == "ARMOR-ANDROID-CONTROL":
         gradle = "gradlew.bat" if os.name == "nt" and (project / "gradlew.bat").is_file() else ("./gradlew" if (project / "gradlew").is_file() else check_tool("gradle", "Gradle or the project wrapper is required; open the project in Android Studio once to generate/restore it"))
         command(project, [gradle, "test", "assembleDebug"])
@@ -127,7 +129,8 @@ def test_radar(project: Path) -> None:
     command(project, [cmake, "-S", "tests", "-B", str(build), "-DCMAKE_BUILD_TYPE=Debug"])
     command(project, [cmake, "--build", str(build)])
     suffix = ".exe" if os.name == "nt" else ""
-    command(project, [str(build / f"test_core{suffix}")])
+    for test in ("test_core", "test_node", "test_sensors"):
+        command(project, [str(build / f"{test}{suffix}")])
     emitter = subprocess.run([str(build / f"emit_samples{suffix}")], cwd=project, capture_output=True, text=True, check=True)
     checker = subprocess.run([sys.executable, "tests/check_contract.py"], cwd=project, input=emitter.stdout, text=True, check=False)
     if checker.returncode:
@@ -136,6 +139,20 @@ def test_radar(project: Path) -> None:
         command(project, ["idf.py", "build"])
     else:
         print("ARMOR_RADAR_FIRMWARE=NOT_BUILT ESP-IDF (idf.py) was not found; only the host-tested core was verified")
+
+
+def test_solar(project: Path) -> None:
+    """Build and run ARMOR-SOLAR's protocol library tests, then check the messages its serialiser prints. Needs CMake and a C++17 compiler."""
+    cmake = check_tool("cmake", "CMake and a C++17 compiler are required to test ARMOR-SOLAR (use Linux, WSL or MSYS2)")
+    build = project / "build" / "host"
+    command(project, [cmake, "-S", "tests", "-B", str(build), "-DCMAKE_BUILD_TYPE=Debug"])
+    command(project, [cmake, "--build", str(build)])
+    suffix = ".exe" if os.name == "nt" else ""
+    command(project, [str(build / f"test_solar{suffix}")])
+    emitter = subprocess.run([str(build / f"emit_samples{suffix}")], cwd=project, capture_output=True, text=True, check=True)
+    checker = subprocess.run([sys.executable, "tests/check_samples.py"], cwd=project, input=emitter.stdout, text=True, check=False)
+    if checker.returncode:
+        raise RuntimeError("the solar messages do not have the fields of contract version 0")
 
 
 def validate_markdown_links(project: Path) -> None:
