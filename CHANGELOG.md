@@ -5,7 +5,7 @@ All notable changes to this project are documented here.
 ## [0.2.2] - The health of a battery
 
 - **`health_percent`** (an integer from 0 to 100, optional) on the battery message and on each module of its stack: the capacity the battery has learned against its rated one. A node that cannot tell leaves it out. Five new conformance vectors (147 in all); the generated TypeScript and Kotlin types carry it.
-- OpenAPI: `GET` and `PUT /api/v1/electrical` (the electrical design of the house, kept apart from the site design).
+- OpenAPI: `GET` and `PUT /api/v1/electrical/design` (the electrical design of the house, kept apart from the site design).
 
 ## [0.2.1] - The project tool runs the tests of both boards
 
