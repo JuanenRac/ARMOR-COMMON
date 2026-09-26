@@ -1,0 +1,637 @@
+{
+ "kind": "electrical",
+ "vectors": [
+  {
+   "name": "a whole channel",
+   "valid": true,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "no channels yet",
+   "valid": true,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": []
+   }
+  },
+  {
+   "name": "sixteen channels, the limit",
+   "valid": true,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "c0",
+      "domain": "ac"
+     },
+     {
+      "id": "c1",
+      "domain": "ac"
+     },
+     {
+      "id": "c2",
+      "domain": "ac"
+     },
+     {
+      "id": "c3",
+      "domain": "ac"
+     },
+     {
+      "id": "c4",
+      "domain": "ac"
+     },
+     {
+      "id": "c5",
+      "domain": "ac"
+     },
+     {
+      "id": "c6",
+      "domain": "ac"
+     },
+     {
+      "id": "c7",
+      "domain": "ac"
+     },
+     {
+      "id": "c8",
+      "domain": "ac"
+     },
+     {
+      "id": "c9",
+      "domain": "ac"
+     },
+     {
+      "id": "c10",
+      "domain": "ac"
+     },
+     {
+      "id": "c11",
+      "domain": "ac"
+     },
+     {
+      "id": "c12",
+      "domain": "ac"
+     },
+     {
+      "id": "c13",
+      "domain": "ac"
+     },
+     {
+      "id": "c14",
+      "domain": "ac"
+     },
+     {
+      "id": "c15",
+      "domain": "ac"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a DC channel",
+   "valid": true,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "dc",
+      "voltage_v": 52.1,
+      "current_a": -14.2,
+      "power_w": -740.0
+     }
+    ]
+   }
+  },
+  {
+   "name": "a node that says it may switch",
+   "valid": true,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "switching_enabled": true
+   }
+  },
+  {
+   "name": "an open switch and an alarm",
+   "valid": true,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "state": "open",
+      "alarm": true,
+      "alarm_code": "over_current"
+     }
+    ]
+   }
+  },
+  {
+   "name": "power fed to the network",
+   "valid": true,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "power_w": -1500.0
+     }
+    ]
+   }
+  },
+  {
+   "name": "seventeen channels",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "c0",
+      "domain": "ac"
+     },
+     {
+      "id": "c1",
+      "domain": "ac"
+     },
+     {
+      "id": "c2",
+      "domain": "ac"
+     },
+     {
+      "id": "c3",
+      "domain": "ac"
+     },
+     {
+      "id": "c4",
+      "domain": "ac"
+     },
+     {
+      "id": "c5",
+      "domain": "ac"
+     },
+     {
+      "id": "c6",
+      "domain": "ac"
+     },
+     {
+      "id": "c7",
+      "domain": "ac"
+     },
+     {
+      "id": "c8",
+      "domain": "ac"
+     },
+     {
+      "id": "c9",
+      "domain": "ac"
+     },
+     {
+      "id": "c10",
+      "domain": "ac"
+     },
+     {
+      "id": "c11",
+      "domain": "ac"
+     },
+     {
+      "id": "c12",
+      "domain": "ac"
+     },
+     {
+      "id": "c13",
+      "domain": "ac"
+     },
+     {
+      "id": "c14",
+      "domain": "ac"
+     },
+     {
+      "id": "c15",
+      "domain": "ac"
+     },
+     {
+      "id": "c16",
+      "domain": "ac"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a channel with no domain",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a channel with no id",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "domain": "ac"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a domain that is neither AC nor DC",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "hv"
+     }
+    ]
+   }
+  },
+  {
+   "name": "uppercase channel id",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "Grid",
+      "domain": "ac"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a channel id of 33 characters",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ccccccccccccccccccccccccccccccccc",
+      "domain": "ac"
+     }
+    ]
+   }
+  },
+  {
+   "name": "voltage above the limit",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "voltage_v": 1000.5
+     }
+    ]
+   }
+  },
+  {
+   "name": "negative voltage",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "voltage_v": -1
+     }
+    ]
+   }
+  },
+  {
+   "name": "current beyond the limit",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "current_a": 1000.5
+     }
+    ]
+   }
+  },
+  {
+   "name": "negative energy",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "energy_kwh": -0.1
+     }
+    ]
+   }
+  },
+  {
+   "name": "power factor above 1",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "power_factor": 1.01
+     }
+    ]
+   }
+  },
+  {
+   "name": "frequency above 100",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "frequency_hz": 100.1
+     }
+    ]
+   }
+  },
+  {
+   "name": "a state that is a command",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "state": "close"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an alarm code with capitals",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "alarm_code": "OverCurrent"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an empty label",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "label": ""
+     }
+    ]
+   }
+  },
+  {
+   "name": "a string where a number should be",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "voltage_v": "231"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an unknown field in a channel",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "relay_pin": 4
+     }
+    ]
+   }
+  },
+  {
+   "name": "an unknown field in the message",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ],
+    "command": "close"
+   }
+  },
+  {
+   "name": "a message of another kind",
+   "valid": false,
+   "payload": {
+    "kind": "inverter",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "missing channels",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000
+   }
+  },
+  {
+   "name": "a node id with a space",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "my node",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "negative timestamp",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": -1,
+    "channels": [
+     {
+      "id": "grid",
+      "domain": "ac",
+      "label": "Grid input",
+      "voltage_v": 231.4,
+      "current_a": 12.6,
+      "power_w": 2810.5,
+      "energy_kwh": 5230.4,
+      "frequency_hz": 49.98,
+      "power_factor": 0.97,
+      "state": "closed",
+      "alarm": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "channels that are not a list",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": {
+     "id": "grid"
+    }
+   }
+  }
+ ]
+}

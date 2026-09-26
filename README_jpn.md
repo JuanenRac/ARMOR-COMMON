@@ -20,13 +20,13 @@
   <img src="https://img.shields.io/badge/License-GPL%203.0-blue.svg" alt="GPL 3.0">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-147-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Vectors-177-00E5FF.svg" alt="Vectors">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturity">
 </p>
 
 ---
 
-**正直さのチェック - 今日動いているもの:** スキーマ、Python の検証器、共有の 147 件の適合性ベクトル、生成された TypeScript と Kotlin の型、共有のプロジェクトランチャーは実在し、テストされています（19 件）。Kotlin のファイルは生成されていますが ARMOR-ANDROID-CONTROL では**まだ使われておらず**、`set_thresholds` コマンドは `sensitivity` という 1 つのフィールドしか持ちません。実際のレーダーのパラメーターはファームウェアができるまで定義されないからです。
+**正直さのチェック - 今日動いているもの:** スキーマ、Python の検証器、共有の 177 件の適合性ベクトル、生成された TypeScript と Kotlin の型、共有のプロジェクトランチャーは実在し、テストされています（19 件）。Kotlin のファイルは生成されていますが ARMOR-ANDROID-CONTROL では**まだ使われておらず**、`set_thresholds` コマンドは `sensitivity` という 1 つのフィールドしか持ちません。実際のレーダーのパラメーターはファームウェアができるまで定義されないからです。
 
 ---
 
@@ -36,7 +36,7 @@
 
 * **唯一の真実の源：** `src/armor_common/schemas/` の JSON スキーマ。テレメトリ、ヘルス、コマンド、ノード情報、そして 2 つの太陽光メッセージ（インバーター、セルと容量を持つバッテリー）。未知のフィールドはどこでも拒否されます。
 * **規則を飛ばせない検証器：** スキーマを直接解釈し、実装していないキーワードを使うスキーマは拒否します。
-* **適合性ベクトル：** 受理と拒否の 147 件のペイロードを、各実装（ここでは Python、ARMOR-SERVER では TypeScript、ARMOR-SOLAR のチェック）が実行するので、ずれるとビルドが失敗します。
+* **適合性ベクトル：** 受理と拒否の 177 件のペイロードを、各実装（ここでは Python、ARMOR-SERVER では TypeScript、ARMOR-SOLAR のチェック）が実行するので、ずれるとビルドが失敗します。
 * **生成されたクライアント：** TypeScript と Kotlin の型はスキーマから作られます（`tools/generate_types.py --check` が最新に保ちます）。
 * **HTTP 契約：** `openapi/armor-server-0.2.0.yaml` は、サーバーのすべてのルート、そのアクセス規則、スキーマを記述します。
 * **共有ランチャー：** `tools/armor_project_tool.py` は、ファミリーのすべてのリポジトリに同じ `build`、`build-test`、`run` の流れを与えます。
@@ -71,7 +71,7 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 19 tests, 147 conformance vectors
+python -m unittest discover -s tests      # 19 tests, 177 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list
 ```

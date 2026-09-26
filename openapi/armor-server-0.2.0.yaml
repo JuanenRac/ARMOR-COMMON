@@ -334,6 +334,32 @@ paths:
         '200': { description: '{ revision, updated_at, updated_by }' }
         '400': { description: The design is not an object, or too large }
         '409': { description: Someone else saved first; the answer carries `current` }
+  /api/v1/electrical/readings:
+    post:
+      summary: A reading from an ARMOR-ELECTRICAL node (the `electrical` message of the shared contract, one entry per measured channel); the same message arrives over MQTT on armor/electrical/{node_id}/state
+      security: [{ ingestBearer: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object } } } }
+      responses:
+        '202': { description: Accepted }
+        '400': { description: The message breaks the contract }
+        '401': { description: Authentication failure }
+    get:
+      summary: The latest reading of every electrical node ({ nodes, totals }); a node that has been silent for a minute is stale
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The readings and the sums (grid power and energy, alarms) }
+  /api/v1/electrical/history:
+    get:
+      summary: The recent samples (voltage, current, power, energy) of one channel of one node, oldest first
+      security: [{ operator: [] }]
+      parameters:
+        - { name: node, in: query, required: true, schema: { type: string } }
+        - { name: channel, in: query, required: true, schema: { type: string } }
+        - { name: minutes, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 1440 } }
+      responses:
+        '200': { description: '{ node_id, channel, minutes, samples }' }
+        '400': { description: node and channel are required }
+        '404': { description: Unknown node or channel }
   /api/v1/system:
     get:
       summary: What the server is and how full it is - version, uptime, mode, counts of nodes, cameras, devices, alarms, automations, users and events, and the space media and the disk use

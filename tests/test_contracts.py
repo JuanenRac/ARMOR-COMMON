@@ -2,8 +2,8 @@ import json
 import unittest
 from pathlib import Path
 
-from armor_common import ContractError, decode, encode, validate_solar_message, validate_topic_and_payload
-from armor_common.contracts import load_schema, parse_solar_topic, parse_topic, validate_payload
+from armor_common import ContractError, decode, encode, validate_electrical_message, validate_solar_message, validate_topic_and_payload
+from armor_common.contracts import load_schema, parse_electrical_topic, parse_solar_topic, parse_topic, validate_payload
 from armor_common.schema import SchemaError, UnsupportedSchema, check_schema, validate
 
 CONFORMANCE = Path(__file__).resolve().parent.parent / "conformance"
@@ -168,3 +168,26 @@ class SolarMessageTests(unittest.TestCase):
             validate_solar_message("armor/solar/solar-1/axpert-1/state", [self.inverter])
         with self.assertRaises(ContractError):
             validate_solar_message("armor/solar/solar-1/axpert-1/state", {**self.inverter, "kind": "battery"})   # the schema of a battery refuses an inverter's fields
+
+
+class ElectricalMessageTests(unittest.TestCase):
+    """The messages of the nodes that measure the house's electrical network."""
+
+    electrical = json.loads((CONFORMANCE / "electrical.json").read_text(encoding="utf-8"))["vectors"][0]["payload"]
+
+    def test_the_topic_carries_the_node(self):
+        self.assertEqual(parse_electrical_topic("armor/electrical/electrical-1/state"), "electrical-1")
+        for topic in ["armor/electrical/state", "armor/electrical/electrical-1/set", "armor/solar/electrical-1/state", "armor/electrical/Node/state",
+                      "armor/electrical/-node/state", "armor/electrical/" + "n" * 65 + "/state", "armor/electrical/electrical-1/state/extra", "armor/electrical//state"]:
+            with self.subTest(topic=topic), self.assertRaises(ContractError):
+                parse_electrical_topic(topic)
+
+    def test_a_message_must_agree_with_its_topic_and_name_each_channel_once(self):
+        validate_electrical_message("armor/electrical/electrical-1/state", self.electrical)
+        with self.assertRaises(ContractError):
+            validate_electrical_message("armor/electrical/other/state", self.electrical)
+        with self.assertRaises(ContractError):
+            validate_electrical_message("armor/electrical/electrical-1/state", [self.electrical])
+        twice = {**self.electrical, "channels": [{"id": "grid", "domain": "ac"}, {"id": "grid", "domain": "dc"}]}
+        with self.assertRaises(ContractError):
+            validate_electrical_message("armor/electrical/electrical-1/state", twice)
