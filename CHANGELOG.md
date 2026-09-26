@@ -5,6 +5,7 @@ All notable changes to this project are documented here.
 ## [0.2.0] - Declaring solar equipment
 
 - **OpenAPI 0.2.0:** `POST /api/v1/solar/devices` (declare an inverter or a battery stack: name, model, connection, gateway node), `DELETE /api/v1/solar/devices/{node}/{device}` and `POST /api/v1/solar/devices/{node}/{device}/example` (one made-up reading, marked as an example); `GET /api/v1/solar` also lists the declared devices that have not reported yet and the catalogue of models and connections. The file is renamed `armor-server-0.2.0.yaml`. No schema changed.
+- `armor_project_tool.py` also tests ARMOR-SOLAR's node (settings, network plan, emulated UART, the exchange with stand-in equipment) and checks the messages its ports make against the contract. No change to the messages, the schemas or the vectors.
 
 ## [0.1.9] - The solar messages
 

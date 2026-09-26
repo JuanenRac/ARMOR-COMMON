@@ -142,17 +142,19 @@ def test_radar(project: Path) -> None:
 
 
 def test_solar(project: Path) -> None:
-    """Build and run ARMOR-SOLAR's protocol library tests, then check the messages its serialiser prints. Needs CMake and a C++17 compiler."""
+    """Build and run ARMOR-SOLAR's protocol library and node tests, then check the messages its serialiser and its ports print. Needs CMake and a C++17 compiler."""
     cmake = check_tool("cmake", "CMake and a C++17 compiler are required to test ARMOR-SOLAR (use Linux, WSL or MSYS2)")
     build = project / "build" / "host"
     command(project, [cmake, "-S", "tests", "-B", str(build), "-DCMAKE_BUILD_TYPE=Debug"])
     command(project, [cmake, "--build", str(build)])
     suffix = ".exe" if os.name == "nt" else ""
-    command(project, [str(build / f"test_solar{suffix}")])
-    emitter = subprocess.run([str(build / f"emit_samples{suffix}")], cwd=project, capture_output=True, text=True, check=True)
-    checker = subprocess.run([sys.executable, "tests/check_samples.py"], cwd=project, input=emitter.stdout, text=True, check=False)
-    if checker.returncode:
-        raise RuntimeError("the solar messages do not have the fields of contract version 0")
+    for test in ("test_solar", "test_node"):
+        command(project, [str(build / f"{test}{suffix}")])
+    for emit in ("emit_samples", "emit_poller_samples"):
+        emitter = subprocess.run([str(build / f"{emit}{suffix}")], cwd=project, capture_output=True, text=True, check=True)
+        checker = subprocess.run([sys.executable, "tests/check_samples.py"], cwd=project, input=emitter.stdout, text=True, check=False)
+        if checker.returncode:
+            raise RuntimeError("the solar messages do not have the fields of contract version 0")
 
 
 def validate_markdown_links(project: Path) -> None:
