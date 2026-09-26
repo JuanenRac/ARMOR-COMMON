@@ -101,6 +101,8 @@ def test_project(project: Path, manifest: dict[str, object]) -> None:
         test_radar(project)
     elif name == "ARMOR-SOLAR":
         test_solar(project)
+    elif name == "ARMOR-ELECTRICAL":
+        test_electrical(project)
     elif name == "ARMOR-ANDROID-CONTROL":
         gradle = "gradlew.bat" if os.name == "nt" and (project / "gradlew.bat").is_file() else ("./gradlew" if (project / "gradlew").is_file() else check_tool("gradle", "Gradle or the project wrapper is required; open the project in Android Studio once to generate/restore it"))
         command(project, [gradle, "test", "assembleDebug"])
@@ -155,6 +157,21 @@ def test_solar(project: Path) -> None:
         checker = subprocess.run([sys.executable, "tests/check_samples.py"], cwd=project, input=emitter.stdout, text=True, check=False)
         if checker.returncode:
             raise RuntimeError("the solar messages do not have the fields of contract version 0")
+
+
+def test_electrical(project: Path) -> None:
+    """Build and run ARMOR-ELECTRICAL's meter and switching tests, then check the messages its serialiser prints. Needs CMake and a C++17 compiler."""
+    cmake = check_tool("cmake", "CMake and a C++17 compiler are required to test ARMOR-ELECTRICAL (use Linux, WSL or MSYS2)")
+    build = project / "build" / "host"
+    command(project, [cmake, "-S", "tests", "-B", str(build), "-DCMAKE_BUILD_TYPE=Debug"])
+    command(project, [cmake, "--build", str(build)])
+    suffix = ".exe" if os.name == "nt" else ""
+    for test in ("test_meters", "test_interlock"):
+        command(project, [str(build / f"{test}{suffix}")])
+    emitter = subprocess.run([str(build / f"emit_samples{suffix}")], cwd=project, capture_output=True, text=True, check=True)
+    checker = subprocess.run([sys.executable, "tests/check_samples.py"], cwd=project, input=emitter.stdout, text=True, check=False)
+    if checker.returncode:
+        raise RuntimeError("the electrical messages do not have the fields of contract version 0")
 
 
 def validate_markdown_links(project: Path) -> None:
