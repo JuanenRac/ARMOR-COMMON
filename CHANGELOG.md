@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.3] - A second PV input and parallel units in the inverter message
+
+- `solar_inverter.schema.json` gains **optional** fields: `pv2_v`, `pv2_a`, `pv2_w` (a second PV input; `pv_w` is then the sum of both), `units` (up to ten units of a parallel system, each with its number, mode and, when known, serial, fault code and figures) and the totals `total_out_w`, `total_out_va`, `total_load_percent` and `total_charging_a`. Nothing that was valid stops being valid.
+- 16 new conformance vectors (193 in all); the generated types are current.
+- **The firmware the node projects share, once** (`firmware_base/`, `tools/sync_firmware_base.py`, `docs/FIRMWARE_BASE.md`): 35 files (the network, the settings store, the certificate, the log, the Bluetooth channel and its framing, the login and the address rules, the panel's page and its build...) that ARMOR-RADAR, ARMOR-SOLAR and ARMOR-ELECTRICAL used to keep as three copies now have one master with the project's name as placeholders; `sync` writes it into each project (keeping its line endings), `check` fails when a copy has drifted (it is part of `check_all.sh`) and `import` takes the projects' files as they are. Nothing is shared at build time: each project builds from its own tree as before. 9 tests (30 in all).
+
+
 ## [0.2.2] - The health of a battery
 
 - **`health_percent`** (an integer from 0 to 100, optional) on the battery message and on each module of its stack: the capacity the battery has learned against its rated one. A node that cannot tell leaves it out. Five new conformance vectors (147 in all); the generated TypeScript and Kotlin types carry it.

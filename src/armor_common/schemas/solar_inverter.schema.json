@@ -129,7 +129,7 @@
       "type": "number",
       "minimum": 0,
       "maximum": 100000,
-      "description": "Power from the panels."
+      "description": "Power from the panels: the sum of every PV input when the inverter has more than one (then pv2_* say the second)."
     },
     "heatsink_c": {
       "type": "number",
@@ -153,6 +153,137 @@
         "pattern": "^[a-z][a-z0-9_]{0,39}$"
       },
       "description": "Names of the active warnings and faults."
+    },
+    "pv2_v": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1500,
+      "description": "Voltage of the second PV input, for an inverter that has one (the answer to QPIGS2)."
+    },
+    "pv2_a": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 500,
+      "description": "Current of the second PV input."
+    },
+    "pv2_w": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100000,
+      "description": "Power of the second PV input (already counted in pv_w)."
+    },
+    "total_out_w": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1000000,
+      "description": "Active output power of the whole parallel system, when the node reads the units (QPGS)."
+    },
+    "total_out_va": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1000000,
+      "description": "Apparent output power of the whole parallel system."
+    },
+    "total_load_percent": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 200,
+      "description": "Load of the whole parallel system."
+    },
+    "total_charging_a": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10000,
+      "description": "Battery charging current of the whole parallel system."
+    },
+    "units": {
+      "type": "array",
+      "maxItems": 10,
+      "description": "The inverters of a parallel system as the one on this port reports them (QPGS0 to QPGS9), one entry per unit. Only what a unit tells is listed.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "unit",
+          "mode"
+        ],
+        "properties": {
+          "unit": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9,
+            "description": "The unit's number in the parallel system, from 0."
+          },
+          "serial": {
+            "type": "string",
+            "maxLength": 24
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "power_on",
+              "standby",
+              "line",
+              "battery",
+              "fault",
+              "power_saving",
+              "shutdown",
+              "unknown"
+            ]
+          },
+          "fault_code": {
+            "type": "string",
+            "pattern": "^[0-9]{2}$",
+            "description": "The two-digit fault code of the unit; 00 is no fault."
+          },
+          "grid_v": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 600
+          },
+          "out_v": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 600
+          },
+          "out_va": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100000
+          },
+          "out_w": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100000
+          },
+          "load_percent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 200
+          },
+          "battery_v": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "battery_percent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "pv_v": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1500
+          },
+          "charging_a": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000,
+            "description": "This unit's battery charging current."
+          }
+        }
+      }
     }
   }
 }
