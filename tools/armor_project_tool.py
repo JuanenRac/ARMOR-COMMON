@@ -166,7 +166,7 @@ def test_electrical(project: Path) -> None:
     command(project, [cmake, "-S", "tests", "-B", str(build), "-DCMAKE_BUILD_TYPE=Debug"])
     command(project, [cmake, "--build", str(build)])
     suffix = ".exe" if os.name == "nt" else ""
-    for test in ("test_meters", "test_interlock"):
+    for test in ("test_meters", "test_interlock", "test_switch_set"):
         command(project, [str(build / f"{test}{suffix}")])
     emitter = subprocess.run([str(build / f"emit_samples{suffix}")], cwd=project, capture_output=True, text=True, check=True)
     checker = subprocess.run([sys.executable, "tests/check_samples.py"], cwd=project, input=emitter.stdout, text=True, check=False)

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/electrical-command-0.1.0.json",
+  "title": "A.R.M.O.R. command to the switch of an electrical node",
+  "description": "A command to one switch of one ARMOR-ELECTRICAL node, published by the server to armor/electrical/{node_id}/command (never retained). Only these actions exist. Closing is two steps: `arm` (the node answers with a one-time `token`), then `close_a` or `close_b` carrying that token within ten seconds; the token is what stops an old message from closing anything. `open` and `acknowledge` carry no token. `open` is always accepted; a node without switching enabled refuses the rest.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "node_id",
+    "timestamp_ms",
+    "command_id",
+    "switch",
+    "action"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "electrical_command"
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "command_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]{8,32}$",
+      "description": "Chosen by the server; the node repeats it in its result."
+    },
+    "switch": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$",
+      "description": "The id of one of the node's switches (the `id` in its state message)."
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "arm",
+        "close_a",
+        "close_b",
+        "open",
+        "acknowledge"
+      ]
+    },
+    "token": {
+      "type": "string",
+      "pattern": "^[a-z0-9]{8,32}$",
+      "description": "Only on close_a and close_b: the token the node gave in the result of the arm."
+    }
+  }
+}

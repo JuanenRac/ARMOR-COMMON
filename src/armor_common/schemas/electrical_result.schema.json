@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/electrical-result-0.1.0.json",
+  "title": "A.R.M.O.R. answer of an electrical node to a switch command",
+  "description": "What a node answers to a command, published to armor/electrical/{node_id}/result (never retained): whether it accepted the request and, when it did not, why. Accepting a request to close is not the switch being closed: only the `state` message says that. The result of an accepted `arm` carries the one-time `token`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "node_id",
+    "timestamp_ms",
+    "command_id",
+    "switch",
+    "action",
+    "accepted",
+    "refusal"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "electrical_result"
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "command_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]{8,32}$",
+      "description": "The command_id of the command answered."
+    },
+    "switch": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "arm",
+        "close_a",
+        "close_b",
+        "open",
+        "acknowledge"
+      ]
+    },
+    "accepted": {
+      "type": "boolean"
+    },
+    "refusal": {
+      "type": "string",
+      "enum": [
+        "none",
+        "disabled",
+        "fault",
+        "not_armed",
+        "not_confirmed_open",
+        "unknown_switch",
+        "bad_token",
+        "not_supported"
+      ],
+      "description": "none exactly when the request was accepted."
+    },
+    "token": {
+      "type": "string",
+      "pattern": "^[a-z0-9]{8,32}$",
+      "description": "Only in the result of an accepted arm."
+    }
+  }
+}

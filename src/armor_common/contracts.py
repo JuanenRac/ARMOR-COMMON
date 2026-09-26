@@ -29,8 +29,12 @@ KINDS = ("telemetry", "health", "command", "info")
 SOLAR_TOPIC_PREFIX = "armor/solar/"
 SOLAR_KINDS = ("inverter", "battery")
 _SOLAR_SCHEMAS = {"inverter": "solar_inverter", "battery": "solar_battery"}
-# The electrical message (ARMOR-ELECTRICAL nodes measuring the house's network) has one topic per node: armor/electrical/{node_id}/state.
+# The electrical message (ARMOR-ELECTRICAL nodes measuring the house's network) has one topic per node: armor/electrical/{node_id}/state. The switches of a node are
+# commanded on armor/electrical/{node_id}/command (server -> node) and answered on armor/electrical/{node_id}/result (node -> server).
 ELECTRICAL_TOPIC_PREFIX = "armor/electrical/"
+ELECTRICAL_LEAVES = ("state", "command", "result")
+ELECTRICAL_KINDS = ("electrical", "electrical_command", "electrical_result")
+_TOKEN_ACTIONS = ("close_a", "close_b")
 _DEVICE_CHARS = set("abcdefghijklmnopqrstuvwxyz0123456789-_")
 _NODE_ID_CHARS = set("abcdefghijklmnopqrstuvwxyz0123456789-_")
 
@@ -38,7 +42,7 @@ _NODE_ID_CHARS = set("abcdefghijklmnopqrstuvwxyz0123456789-_")
 @lru_cache(maxsize=None)
 def load_schema(kind: str) -> dict[str, Any]:
     """The published schema of a message kind (``telemetry``, ``health``, ``command`` or ``info``)."""
-    if kind not in KINDS and kind not in _SOLAR_SCHEMAS and kind != "electrical":
+    if kind not in KINDS and kind not in _SOLAR_SCHEMAS and kind not in ELECTRICAL_KINDS:
         raise ContractError(f"unsupported topic kind {kind!r}")
     text = resources.files("armor_common").joinpath("schemas", f"{_SOLAR_SCHEMAS.get(kind, kind)}.schema.json").read_text(encoding="utf-8")
     schema = json.loads(text)
@@ -107,13 +111,15 @@ def validate_solar_message(topic: str, payload: Mapping[str, object]) -> None:
     validate_payload(str(kind), payload)
 
 
-def parse_electrical_topic(topic: str) -> str:
-    """Split ``armor/electrical/{node_id}/state`` into ``node_id``."""
+def parse_electrical_topic(topic: str, leaf: str = "state") -> str:
+    """Split ``armor/electrical/{node_id}/{leaf}`` into ``node_id``; the leaf is ``state``, ``command`` or ``result``."""
     if not isinstance(topic, str):
         raise ContractError("topic must be a string")
+    if leaf not in ELECTRICAL_LEAVES:
+        raise ContractError("unsupported topic leaf")
     parts = topic.split("/")
-    if len(parts) != 4 or parts[:2] != ["armor", "electrical"] or parts[3] != "state":
-        raise ContractError("topic must be armor/electrical/{node_id}/state")
+    if len(parts) != 4 or parts[:2] != ["armor", "electrical"] or parts[3] != leaf:
+        raise ContractError(f"topic must be armor/electrical/{{node_id}}/{leaf}")
     node_id = parts[2]
     if not node_id or not set(node_id) <= _NODE_ID_CHARS or node_id[0] in "-_" or len(node_id) > 64:
         raise ContractError("node_id must use lowercase letters, digits, '-' or '_'")
@@ -133,3 +139,35 @@ def validate_electrical_message(topic: str, payload: Mapping[str, object]) -> No
         ids = [channel.get("id") for channel in channels if isinstance(channel, Mapping)]
         if len(ids) != len(set(ids)):
             raise ContractError("a channel id must appear once")
+    switches = payload.get("switches")
+    if isinstance(switches, list):
+        ids = [item.get("id") for item in switches if isinstance(item, Mapping)]
+        if len(ids) != len(set(ids)):
+            raise ContractError("a switch id must appear once")
+
+
+def validate_electrical_command(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate a command to a switch: the topic, the schema, that the node matches, and that a token is present exactly on the two actions that close."""
+    node_id = parse_electrical_topic(topic, "command")
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    if payload.get("node_id") != node_id:
+        raise ContractError("payload node_id must match the topic")
+    validate_payload("electrical_command", payload)
+    if (payload.get("action") in _TOKEN_ACTIONS) != ("token" in payload):
+        raise ContractError("a token goes on close_a and close_b and on nothing else")
+
+
+def validate_electrical_result(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate a node's answer: the topic, the schema, that the node matches, refusal none exactly when accepted, and a token only in an accepted arm."""
+    node_id = parse_electrical_topic(topic, "result")
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    if payload.get("node_id") != node_id:
+        raise ContractError("payload node_id must match the topic")
+    validate_payload("electrical_result", payload)
+    accepted = payload.get("accepted")
+    if accepted != (payload.get("refusal") == "none"):
+        raise ContractError("the refusal is none exactly when the request was accepted")
+    if ("token" in payload) != (accepted is True and payload.get("action") == "arm"):
+        raise ContractError("a token is given only in the result of an accepted arm")
