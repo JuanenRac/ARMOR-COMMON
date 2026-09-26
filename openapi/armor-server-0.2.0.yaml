@@ -320,7 +320,7 @@ paths:
         '200': { description: '{ revision, updated_at, updated_by }' }
         '400': { description: The site is not an object, or too large }
         '409': { description: Someone else saved first; the answer carries `current` }
-  /api/v1/electrical:
+  /api/v1/electrical/design:
     get:
       summary: The electrical design (the house's electrical diagram) kept on the server ({ revision, updated_at, updated_by, electrical })
       security: [{ operator: [] }]
