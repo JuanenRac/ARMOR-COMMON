@@ -38,7 +38,7 @@
 * **Un validador que no puede saltarse una regla:** interpreta el esquema directamente y rechaza un esquema que use una palabra clave que no implementa.
 * **Vectores de conformidad:** 142 cargas aceptadas y rechazadas que ejecuta cada implementación (Python aquí, TypeScript en ARMOR-SERVER, las comprobaciones de ARMOR-SOLAR), de modo que una deriva rompe la compilación.
 * **Clientes generados:** los tipos de TypeScript y Kotlin salen de los esquemas (`tools/generate_types.py --check` los mantiene al día).
-* **Contrato HTTP:** `openapi/armor-server-0.1.9.yaml` describe cada ruta del servidor, su regla de acceso y su esquema.
+* **Contrato HTTP:** `openapi/armor-server-0.2.0.yaml` describe cada ruta del servidor, su regla de acceso y su esquema.
 * **Lanzador compartido:** `tools/armor_project_tool.py` da a todos los repositorios de la familia el mismo flujo `build`, `build-test` y `run`.
 
 ## 🔄 Arquitectura
@@ -51,7 +51,7 @@ flowchart LR
     V --> P
     V --> T["ARMOR-SERVER tests"]
     V --> X["ARMOR-SOLAR checks"]
-    S --> O["OpenAPI 0.1.9"]
+    S --> O["OpenAPI 0.2.0"]
 ```
 
 ## 📂 Estructura del repositorio
@@ -61,7 +61,7 @@ ARMOR-COMMON/
 ├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery)
 ├── conformance/        accepted and rejected payloads shared by every implementation
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
-├── openapi/            armor-server-0.1.9.yaml
+├── openapi/            armor-server-0.2.0.yaml
 ├── tools/              armor_project_tool.py, generate_types.py, make_conformance.py
 ├── tests/              unit tests and conformance runner
 └── docs/               contracts guide

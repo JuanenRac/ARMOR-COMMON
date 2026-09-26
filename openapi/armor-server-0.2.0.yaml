@@ -43,7 +43,7 @@ paths:
       summary: The latest reading of every solar inverter and battery stack that a gateway node reports, with whether each is stale, and the sums Studio shows
       security: [{ operator: [] }]
       responses:
-        '200': { description: '{ devices: [{ node_id, device, kind, reading, received_at, stale }], totals }' }
+        '200': { description: '{ devices: [{ node_id, device, kind, reading, received_at, stale, example, registered? }], waiting: [declared devices with no reading yet], totals, catalog: { inverter_models, battery_models, connections } }' }
         '401': { description: Operator authorization is required }
     post:
       summary: A solar message over HTTP (an ingest token); the same payloads as armor/solar/{node_id}/{device}/state
@@ -53,6 +53,36 @@ paths:
         '202': { description: Accepted }
         '400': { description: Invalid payload }
         '401': { description: Authentication failure }
+  /api/v1/solar/devices:
+    post:
+      summary: Declare a solar inverter or battery stack (name, model, connection, gateway node), or change the one with the same node and device; it shows as waiting until its gateway node reports
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [kind, name, node_id], properties: { kind: { type: string, enum: [inverter, battery] }, name: { type: string, maxLength: 60 }, node_id: { type: string }, device: { type: string, description: Taken from the name when omitted }, model: { type: string }, connection: { type: string, enum: [rs232, rs485, usb, can, wifi, other] }, notes: { type: string, maxLength: 200 } } } } } }
+      responses:
+        '200': { description: Changed }
+        '201': { description: Declared }
+        '400': { description: Invalid input }
+        '401': { description: Operator authorization is required }
+        '409': { description: The node and device exist with another kind, or there are too many devices }
+  /api/v1/solar/devices/{node}/{device}:
+    delete:
+      summary: Forget a declared solar device and its readings
+      security: [{ operator: [] }]
+      parameters: [{ name: node, in: path, required: true, schema: { type: string } }, { name: device, in: path, required: true, schema: { type: string } }]
+      responses:
+        '204': { description: Removed }
+        '400': { description: Invalid node or device }
+        '401': { description: Operator authorization is required }
+        '404': { description: Unknown solar device }
+  /api/v1/solar/devices/{node}/{device}/example:
+    post:
+      summary: One made-up reading of a declared device, marked as an example, to try the menus before a gateway node reports
+      security: [{ operator: [] }]
+      parameters: [{ name: node, in: path, required: true, schema: { type: string } }, { name: device, in: path, required: true, schema: { type: string } }]
+      responses:
+        '202': { description: Accepted }
+        '401': { description: Operator authorization is required }
+        '404': { description: The device was not declared }
   /api/v1/solar/history:
     get:
       summary: The recent history of one solar device, a few numbers per sample, oldest first
