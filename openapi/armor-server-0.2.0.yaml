@@ -320,6 +320,20 @@ paths:
         '200': { description: '{ revision, updated_at, updated_by }' }
         '400': { description: The site is not an object, or too large }
         '409': { description: Someone else saved first; the answer carries `current` }
+  /api/v1/electrical:
+    get:
+      summary: The electrical design (the house's electrical diagram) kept on the server ({ revision, updated_at, updated_by, electrical })
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The design, or revision 0 with a null electrical when none has been saved }
+    put:
+      summary: Save the electrical design; `revision` must be the one last read, or the save is refused with the current design (up to 768 kB). Kept apart from the site design.
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [revision, electrical], properties: { revision: { type: integer }, electrical: { type: object } } } } } }
+      responses:
+        '200': { description: '{ revision, updated_at, updated_by }' }
+        '400': { description: The design is not an object, or too large }
+        '409': { description: Someone else saved first; the answer carries `current` }
   /api/v1/system:
     get:
       summary: What the server is and how full it is - version, uptime, mode, counts of nodes, cameras, devices, alarms, automations, users and events, and the space media and the disk use
