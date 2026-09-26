@@ -24,6 +24,17 @@ def info(**changes):
     return base
 
 
+def electrical(**changes):
+    base = {"kind": "electrical", "node_id": "electrical-1", "timestamp_ms": 5000, "channels": [
+        {"id": "grid", "domain": "ac", "label": "Grid input", "voltage_v": 231.4, "current_a": 12.6, "power_w": 2810.5, "energy_kwh": 5230.4, "frequency_hz": 49.98, "power_factor": 0.97, "state": "closed", "alarm": False}]}
+    base.update(changes)
+    return base
+
+
+def channel(**changes):
+    return electrical(channels=[dict({"id": "ch1", "domain": "ac"}, **changes)])
+
+
 def inverter(**changes):
     base = {"kind": "inverter", "node_id": "solar-1", "device": "axpert-1", "timestamp_ms": 1000, "mode": "line", "grid_v": 232.0, "grid_hz": 50.0, "out_v": 230.0,
             "out_hz": 50.0, "out_va": 161, "out_w": 119, "load_percent": 3, "battery_v": 57.5, "battery_a": 12.0, "battery_percent": 100, "pv_v": 103.8, "pv_a": 14.0,
@@ -193,6 +204,38 @@ cases = {
         ("the kind of an inverter", False, battery(kind="inverter")),
         ("uppercase device", False, battery(device="US3000")),
         ("unknown field", False, battery(serial="PPTBH01")),
+    ],
+    "electrical": [
+        ("a whole channel", True, electrical()),
+        ("no channels yet", True, electrical(channels=[])),
+        ("sixteen channels, the limit", True, electrical(channels=[{"id": f"c{i}", "domain": "ac"} for i in range(16)])),
+        ("a DC channel", True, channel(domain="dc", voltage_v=52.1, current_a=-14.2, power_w=-740.0)),
+        ("a node that says it may switch", True, electrical(switching_enabled=True)),
+        ("an open switch and an alarm", True, channel(state="open", alarm=True, alarm_code="over_current")),
+        ("power fed to the network", True, channel(power_w=-1500.0)),
+        ("seventeen channels", False, electrical(channels=[{"id": f"c{i}", "domain": "ac"} for i in range(17)])),
+        ("a channel with no domain", False, electrical(channels=[{"id": "ch1"}])),
+        ("a channel with no id", False, electrical(channels=[{"domain": "ac"}])),
+        ("a domain that is neither AC nor DC", False, channel(domain="hv")),
+        ("uppercase channel id", False, channel(id="Grid")),
+        ("a channel id of 33 characters", False, electrical(channels=[{"id": "c" * 33, "domain": "ac"}])),
+        ("voltage above the limit", False, channel(voltage_v=1000.5)),
+        ("negative voltage", False, channel(voltage_v=-1)),
+        ("current beyond the limit", False, channel(current_a=1000.5)),
+        ("negative energy", False, channel(energy_kwh=-0.1)),
+        ("power factor above 1", False, channel(power_factor=1.01)),
+        ("frequency above 100", False, channel(frequency_hz=100.1)),
+        ("a state that is a command", False, channel(state="close")),
+        ("an alarm code with capitals", False, channel(alarm_code="OverCurrent")),
+        ("an empty label", False, channel(label="")),
+        ("a string where a number should be", False, channel(voltage_v="231")),
+        ("an unknown field in a channel", False, channel(relay_pin=4)),
+        ("an unknown field in the message", False, electrical(command="close")),
+        ("a message of another kind", False, electrical(kind="inverter")),
+        ("missing channels", False, {"kind": "electrical", "node_id": "electrical-1", "timestamp_ms": 5000}),
+        ("a node id with a space", False, electrical(node_id="my node")),
+        ("negative timestamp", False, electrical(timestamp_ms=-1)),
+        ("channels that are not a list", False, electrical(channels={"id": "grid"})),
     ],
     "command": [
         ("calibrate", True, {"node_id": "north-1", "timestamp_ms": 9, "command": "calibrate"}),
