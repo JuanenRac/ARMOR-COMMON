@@ -26,7 +26,7 @@
 
 ---
 
-**Ehrlichkeitsprüfung - was heute läuft:** Die Schemas, der Python-Validierer, die 177 gemeinsamen Konformitätsvektoren, die generierten TypeScript- und Kotlin-Typen und der gemeinsame Projektstarter sind real und getestet (19 Tests). Die Kotlin-Datei ist generiert, wird aber von ARMOR-ANDROID-CONTROL **noch nicht verwendet**, und der Befehl `set_thresholds` trägt nur ein Feld `sensitivity`, weil die echten Radarparameter erst definiert werden, wenn es Firmware gibt.
+**Ehrlichkeitsprüfung - was heute läuft:** Die Schemas, der Python-Validierer, die 177 gemeinsamen Konformitätsvektoren, die generierten TypeScript- und Kotlin-Typen und der gemeinsame Projektstarter sind real und getestet (21 Tests). Die Kotlin-Datei ist generiert, wird aber von ARMOR-ANDROID-CONTROL **noch nicht verwendet**, und der Befehl `set_thresholds` trägt nur ein Feld `sensitivity`, weil die echten Radarparameter erst definiert werden, wenn es Firmware gibt.
 
 ---
 
@@ -50,7 +50,7 @@ flowchart LR
     S --> V["conformance vectors"]
     V --> P
     V --> T["ARMOR-SERVER tests"]
-    V --> X["ARMOR-SOLAR checks"]
+    V --> X["ARMOR-SOLAR and ARMOR-ELECTRICAL checks"]
     S --> O["OpenAPI 0.2.0"]
 ```
 
@@ -58,7 +58,7 @@ flowchart LR
 
 ```text
 ARMOR-COMMON/
-├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery)
+├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery, electrical)
 ├── conformance/        accepted and rejected payloads shared by every implementation
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
 ├── openapi/            armor-server-0.2.0.yaml
@@ -71,12 +71,12 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 19 tests, 177 conformance vectors
+python -m unittest discover -s tests      # 21 tests, 177 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list
 ```
 
-Broker-Topics: `armor/node/{node_id}/telemetry | health | command | info` und `armor/solar/{node_id}/{device}/state`. Siehe den [Vertragsleitfaden](docs/CONTRACTS.md). Der gemeinsame Starter erzeugt beim ersten ARMOR-SERVER-Lauf eine ignorierte `.env` mit zufälligen Geheimnissen und einem zufälligen Administratorpasswort; nichts wird gedruckt oder eingecheckt.
+Broker-Topics: `armor/node/{node_id}/telemetry | health | command | info`, `armor/solar/{node_id}/{device}/state` und `armor/electrical/{node_id}/state`. Siehe den [Vertragsleitfaden](docs/CONTRACTS.md). Der gemeinsame Starter erzeugt beim ersten ARMOR-SERVER-Lauf eine ignorierte `.env` mit zufälligen Geheimnissen und einem zufälligen Administratorpasswort; nichts wird gedruckt oder eingecheckt.
 
 ## 🔗 Verwandte Projekte
 

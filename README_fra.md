@@ -26,7 +26,7 @@
 
 ---
 
-**Vérification d'honnêteté - ce qui fonctionne aujourd'hui:** Les schémas, le validateur Python, les 177 vecteurs de conformité partagés, les types TypeScript et Kotlin générés et le lanceur de projets partagé sont réels et testés (19 tests). Le fichier Kotlin est généré mais **pas encore utilisé** par ARMOR-ANDROID-CONTROL, et la commande `set_thresholds` ne porte qu'un champ `sensitivity` car les vrais paramètres du radar ne sont pas définis tant que le firmware n'existe pas.
+**Vérification d'honnêteté - ce qui fonctionne aujourd'hui:** Les schémas, le validateur Python, les 177 vecteurs de conformité partagés, les types TypeScript et Kotlin générés et le lanceur de projets partagé sont réels et testés (21 tests). Le fichier Kotlin est généré mais **pas encore utilisé** par ARMOR-ANDROID-CONTROL, et la commande `set_thresholds` ne porte qu'un champ `sensitivity` car les vrais paramètres du radar ne sont pas définis tant que le firmware n'existe pas.
 
 ---
 
@@ -50,7 +50,7 @@ flowchart LR
     S --> V["conformance vectors"]
     V --> P
     V --> T["ARMOR-SERVER tests"]
-    V --> X["ARMOR-SOLAR checks"]
+    V --> X["ARMOR-SOLAR and ARMOR-ELECTRICAL checks"]
     S --> O["OpenAPI 0.2.0"]
 ```
 
@@ -58,7 +58,7 @@ flowchart LR
 
 ```text
 ARMOR-COMMON/
-├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery)
+├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery, electrical)
 ├── conformance/        accepted and rejected payloads shared by every implementation
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
 ├── openapi/            armor-server-0.2.0.yaml
@@ -71,12 +71,12 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 19 tests, 177 conformance vectors
+python -m unittest discover -s tests      # 21 tests, 177 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list
 ```
 
-Sujets du broker : `armor/node/{node_id}/telemetry | health | command | info` et `armor/solar/{node_id}/{device}/state`. Voir le [guide des contrats](docs/CONTRACTS.md). Le lanceur partagé crée un `.env` ignoré au premier lancement d'ARMOR-SERVER avec des secrets aléatoires et un mot de passe d'administrateur aléatoire ; rien n'est imprimé ni versionné.
+Sujets du broker : `armor/node/{node_id}/telemetry | health | command | info`, `armor/solar/{node_id}/{device}/state` et `armor/electrical/{node_id}/state`. Voir le [guide des contrats](docs/CONTRACTS.md). Le lanceur partagé crée un `.env` ignoré au premier lancement d'ARMOR-SERVER avec des secrets aléatoires et un mot de passe d'administrateur aléatoire ; rien n'est imprimé ni versionné.
 
 ## 🔗 Projets liés
 
