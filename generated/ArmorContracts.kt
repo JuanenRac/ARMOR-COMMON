@@ -104,6 +104,29 @@ data class SolarBattery(
     val healthPercent: Long? = null
 )
 
+data class ElectricalChannel(
+    val id: String,
+    val domain: String,
+    val label: String? = null,
+    val voltageV: Double? = null,
+    val currentA: Double? = null,
+    val powerW: Double? = null,
+    val energyKwh: Double? = null,
+    val frequencyHz: Double? = null,
+    val powerFactor: Double? = null,
+    val state: String? = null,
+    val alarm: Boolean? = null,
+    val alarmCode: String? = null
+)
+
+data class Electrical(
+    val kind: String,
+    val nodeId: String,
+    val timestampMs: Long,
+    val switchingEnabled: Boolean? = null,
+    val channels: List<ElectricalChannel>
+)
+
 object ContractLimits {
     const val MAX_TARGETS = 15
     const val MAX_LUX = 200000.0

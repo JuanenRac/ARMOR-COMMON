@@ -40,7 +40,7 @@ Both use `additionalProperties: false` and have no nulls: a reading a node does 
 1. **Python** (`armor_common`) interprets the schema files directly with a small
    validator that *refuses* a schema using a keyword it does not implement, so a
    constraint can never be quietly skipped.
-2. **Conformance vectors** (`conformance/*.json`, 147 cases) list payloads that must
+2. **Conformance vectors** (`conformance/*.json`, 177 cases) list payloads that must
    be accepted and payloads that must be rejected. Every implementation runs them:
    `armor_common` in its own tests, ARMOR-SERVER in `tests/conformance.test.ts`. A
    disagreement fails a build; tightening a contract means adding a vector here.

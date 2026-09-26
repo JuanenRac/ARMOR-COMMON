@@ -29,6 +29,7 @@ MESSAGES = {
     "info": ("Info", {}),
     "solar_inverter": ("SolarInverter", {}),
     "solar_battery": ("SolarBattery", {"stack": "SolarModule"}),
+    "electrical": ("Electrical", {"channels": "ElectricalChannel"}),
 }
 HEADER = "Generated from the A.R.M.O.R. JSON Schemas by tools/generate_types.py. Do not edit."
 

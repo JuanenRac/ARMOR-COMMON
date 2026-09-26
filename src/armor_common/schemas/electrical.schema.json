@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/electrical-0.1.0.json",
+  "title": "A.R.M.O.R. electrical readings of one node",
+  "description": "What an ARMOR-ELECTRICAL node measures on the house's electrical network: one entry per measured channel (a circuit, a line, the grid input, a DC bus). Published to armor/electrical/{node_id}/state. Reading only: the message carries the state of a switchable channel, never a command.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "node_id",
+    "timestamp_ms",
+    "channels"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "electrical"
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "switching_enabled": {
+      "type": "boolean",
+      "description": "Whether the node's firmware is allowed to switch anything at all (it is off unless it was built and set up to allow it)."
+    },
+    "channels": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "domain"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$"
+          },
+          "domain": {
+            "type": "string",
+            "enum": [
+              "ac",
+              "dc"
+            ]
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "voltage_v": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "current_a": {
+            "type": "number",
+            "minimum": -1000,
+            "maximum": 1000
+          },
+          "power_w": {
+            "type": "number",
+            "minimum": -1000000,
+            "maximum": 1000000,
+            "description": "Positive when the channel draws power from the network, negative when it feeds it."
+          },
+          "energy_kwh": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10000000,
+            "description": "The energy that has flowed through the channel since the meter was last reset."
+          },
+          "frequency_hz": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "power_factor": {
+            "type": "number",
+            "minimum": -1,
+            "maximum": 1
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "closed",
+              "open",
+              "unknown"
+            ],
+            "description": "For a channel that has a switch: what the node sees, not what it was asked."
+          },
+          "alarm": {
+            "type": "boolean"
+          },
+          "alarm_code": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,39}$"
+          }
+        }
+      }
+    }
+  }
+}

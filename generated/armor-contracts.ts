@@ -103,6 +103,29 @@ export type SolarBattery = {
   health_percent?: number;
 };
 
+export type ElectricalChannel = {
+  id: string;
+  domain: "ac" | "dc";
+  label?: string;
+  voltage_v?: number;
+  current_a?: number;
+  power_w?: number;
+  energy_kwh?: number;
+  frequency_hz?: number;
+  power_factor?: number;
+  state?: "closed" | "open" | "unknown";
+  alarm?: boolean;
+  alarm_code?: string;
+};
+
+export type Electrical = {
+  kind: string;
+  node_id: string;
+  timestamp_ms: number;
+  switching_enabled?: boolean;
+  channels: ElectricalChannel[];
+};
+
 export const MAX_TARGETS = 15;
 export const MAX_LUX = 200000;
 export const NODE_ID_PATTERN = /^[a-z0-9][a-z0-9_-]{0,63}$/;

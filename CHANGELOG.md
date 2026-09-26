@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 - **`health_percent`** (an integer from 0 to 100, optional) on the battery message and on each module of its stack: the capacity the battery has learned against its rated one. A node that cannot tell leaves it out. Five new conformance vectors (147 in all); the generated TypeScript and Kotlin types carry it.
 - OpenAPI: `GET` and `PUT /api/v1/electrical/design` (the electrical design of the house, kept apart from the site design).
+- **The `electrical` message** (kind `electrical`, topic `armor/electrical/{node_id}/state`): what an ARMOR-ELECTRICAL node measures on the house's network, one entry per channel (up to 16: a circuit, a line, the grid input, a DC bus) with AC or DC, voltage, current, power (positive when it draws from the network), energy, frequency, power factor, the state of a switch it sees (`closed`, `open`, `unknown`), an alarm and its code, and whether the node is allowed to switch at all. It carries a state, never a command. Schema, 30 conformance vectors (177 in all), the generated TypeScript and Kotlin types, the Python validator (`validate_electrical_message`: the topic, the schema and a channel id once) and OpenAPI for `POST` and `GET /api/v1/electrical/readings` and `GET /api/v1/electrical/history`.
 
 ## [0.2.1] - The project tool runs the tests of both boards
 

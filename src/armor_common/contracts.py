@@ -29,6 +29,8 @@ KINDS = ("telemetry", "health", "command", "info")
 SOLAR_TOPIC_PREFIX = "armor/solar/"
 SOLAR_KINDS = ("inverter", "battery")
 _SOLAR_SCHEMAS = {"inverter": "solar_inverter", "battery": "solar_battery"}
+# The electrical message (ARMOR-ELECTRICAL nodes measuring the house's network) has one topic per node: armor/electrical/{node_id}/state.
+ELECTRICAL_TOPIC_PREFIX = "armor/electrical/"
 _DEVICE_CHARS = set("abcdefghijklmnopqrstuvwxyz0123456789-_")
 _NODE_ID_CHARS = set("abcdefghijklmnopqrstuvwxyz0123456789-_")
 
@@ -36,7 +38,7 @@ _NODE_ID_CHARS = set("abcdefghijklmnopqrstuvwxyz0123456789-_")
 @lru_cache(maxsize=None)
 def load_schema(kind: str) -> dict[str, Any]:
     """The published schema of a message kind (``telemetry``, ``health``, ``command`` or ``info``)."""
-    if kind not in KINDS and kind not in _SOLAR_SCHEMAS:
+    if kind not in KINDS and kind not in _SOLAR_SCHEMAS and kind != "electrical":
         raise ContractError(f"unsupported topic kind {kind!r}")
     text = resources.files("armor_common").joinpath("schemas", f"{_SOLAR_SCHEMAS.get(kind, kind)}.schema.json").read_text(encoding="utf-8")
     schema = json.loads(text)
@@ -103,3 +105,31 @@ def validate_solar_message(topic: str, payload: Mapping[str, object]) -> None:
     if payload.get("node_id") != node_id or payload.get("device") != device:
         raise ContractError("payload node_id and device must match the topic")
     validate_payload(str(kind), payload)
+
+
+def parse_electrical_topic(topic: str) -> str:
+    """Split ``armor/electrical/{node_id}/state`` into ``node_id``."""
+    if not isinstance(topic, str):
+        raise ContractError("topic must be a string")
+    parts = topic.split("/")
+    if len(parts) != 4 or parts[:2] != ["armor", "electrical"] or parts[3] != "state":
+        raise ContractError("topic must be armor/electrical/{node_id}/state")
+    node_id = parts[2]
+    if not node_id or not set(node_id) <= _NODE_ID_CHARS or node_id[0] in "-_" or len(node_id) > 64:
+        raise ContractError("node_id must use lowercase letters, digits, '-' or '_'")
+    return node_id
+
+
+def validate_electrical_message(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate an electrical message: the topic, the payload's schema, and that the topic's node matches the payload; a channel id appears once."""
+    node_id = parse_electrical_topic(topic)
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    if payload.get("node_id") != node_id:
+        raise ContractError("payload node_id must match the topic")
+    validate_payload("electrical", payload)
+    channels = payload.get("channels")
+    if isinstance(channels, list):
+        ids = [channel.get("id") for channel in channels if isinstance(channel, Mapping)]
+        if len(ids) != len(set(ids)):
+            raise ContractError("a channel id must appear once")
