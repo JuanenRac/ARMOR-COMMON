@@ -20,13 +20,13 @@
   <img src="https://img.shields.io/badge/License-GPL%203.0-blue.svg" alt="GPL 3.0">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-142-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Vectors-147-00E5FF.svg" alt="Vectors">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturity">
 </p>
 
 ---
 
-**诚实性检查 - 今天真正能运行的部分:** 模式、Python 验证器、142 个共享的一致性向量、生成的 TypeScript 和 Kotlin 类型以及共享的项目启动器都是真实的并经过测试（19 个测试）。Kotlin 文件已生成，但 ARMOR-ANDROID-CONTROL **尚未使用**；`set_thresholds` 命令只带一个 `sensitivity` 字段，因为在固件存在之前，真实的雷达参数尚未定义。
+**诚实性检查 - 今天真正能运行的部分:** 模式、Python 验证器、147 个共享的一致性向量、生成的 TypeScript 和 Kotlin 类型以及共享的项目启动器都是真实的并经过测试（19 个测试）。Kotlin 文件已生成，但 ARMOR-ANDROID-CONTROL **尚未使用**；`set_thresholds` 命令只带一个 `sensitivity` 字段，因为在固件存在之前，真实的雷达参数尚未定义。
 
 ---
 
@@ -36,7 +36,7 @@
 
 * **唯一的事实来源：** `src/armor_common/schemas/` 中的 JSON 模式，涵盖遥测、健康、命令、节点信息和两条太阳能消息（逆变器、带电芯和容量的电池）。未知字段在所有地方都会被拒绝。
 * **不会跳过任何规则的验证器：** 它直接解释模式，并拒绝使用其未实现关键字的模式。
-* **一致性向量：** 142 个被接受和被拒绝的负载，由每个实现运行（此处的 Python、ARMOR-SERVER 中的 TypeScript、ARMOR-SOLAR 的检查），因此偏差会让构建失败。
+* **一致性向量：** 147 个被接受和被拒绝的负载，由每个实现运行（此处的 Python、ARMOR-SERVER 中的 TypeScript、ARMOR-SOLAR 的检查），因此偏差会让构建失败。
 * **生成的客户端：** TypeScript 和 Kotlin 类型来自模式（`tools/generate_types.py --check` 使其保持最新）。
 * **HTTP 契约：** `openapi/armor-server-0.2.0.yaml` 描述服务器的每条路由、其访问规则和模式。
 * **共享启动器：** `tools/armor_project_tool.py` 让家族中的每个仓库都有相同的 `build`、`build-test` 和 `run` 流程。
@@ -71,7 +71,7 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 19 tests, 142 conformance vectors
+python -m unittest discover -s tests      # 19 tests, 147 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list
 ```

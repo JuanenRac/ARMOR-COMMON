@@ -76,7 +76,8 @@ data class SolarModule(
     val temperaturesC: List<Double>? = null,
     val capacityAh: Double? = null,
     val fullCapacityAh: Double? = null,
-    val cycles: Long? = null
+    val cycles: Long? = null,
+    val healthPercent: Long? = null
 )
 
 data class SolarBattery(
@@ -99,7 +100,8 @@ data class SolarBattery(
     val capacityAh: Double? = null,
     val fullCapacityAh: Double? = null,
     val energyKwh: Double? = null,
-    val cycles: Long? = null
+    val cycles: Long? = null,
+    val healthPercent: Long? = null
 )
 
 object ContractLimits {
