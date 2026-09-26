@@ -61,7 +61,15 @@ data class SolarInverter(
     val acCharging: Boolean,
     val pvCharging: Boolean,
     val loadOn: Boolean,
-    val warnings: List<String>
+    val warnings: List<String>,
+    val pv2V: Double? = null,
+    val pv2A: Double? = null,
+    val pv2W: Double? = null,
+    val totalOutW: Double? = null,
+    val totalOutVa: Double? = null,
+    val totalLoadPercent: Double? = null,
+    val totalChargingA: Double? = null,
+    val units: List<Any>? = null
 )
 
 data class SolarModule(

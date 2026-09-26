@@ -33,6 +33,8 @@ payload repeats `node_id` and `device`; a mismatch is refused. The payload's `ki
 | `inverter` | `solar_inverter.schema.json`: the mode, the grid and output figures, the battery side (voltage, signed current, percentage), the panels' voltage, current and power, the temperature, three flags and the names of the active warnings |
 | `battery` | `solar_battery.schema.json`: how many modules are present (0 to 16) and, when there are, the state, voltage, current, temperature range, cell range, mean state of charge and alarm, and one entry per module (with, when the node reads them, the voltage of each cell and the module's temperature sensors). With no module present the message carries no other reading |
 
+An inverter message may also carry a second PV input (`pv2_v`, `pv2_a`, `pv2_w`; `pv_w` is then the sum of both) and, for a parallel system, `units` (up to ten entries) with the totals `total_out_w`, `total_out_va`, `total_load_percent` and `total_charging_a`; all of these are optional.
+
 Both use `additionalProperties: false` and have no nulls: a reading a node does not know is left out.
 
 ## Electrical messages
@@ -44,7 +46,7 @@ Both use `additionalProperties: false` and have no nulls: a reading a node does 
 1. **Python** (`armor_common`) interprets the schema files directly with a small
    validator that *refuses* a schema using a keyword it does not implement, so a
    constraint can never be quietly skipped.
-2. **Conformance vectors** (`conformance/*.json`, 177 cases) list payloads that must
+2. **Conformance vectors** (`conformance/*.json`, 193 cases) list payloads that must
    be accepted and payloads that must be rejected. Every implementation runs them:
    `armor_common` in its own tests, ARMOR-SERVER in `tests/conformance.test.ts`. A
    disagreement fails a build; tightening a contract means adding a vector here.

@@ -61,6 +61,14 @@ export type SolarInverter = {
   pv_charging: boolean;
   load_on: boolean;
   warnings: string[];
+  pv2_v?: number;
+  pv2_a?: number;
+  pv2_w?: number;
+  total_out_w?: number;
+  total_out_va?: number;
+  total_load_percent?: number;
+  total_charging_a?: number;
+  units?: unknown[];
 };
 
 export type SolarModule = {
