@@ -26,7 +26,7 @@
 
 ---
 
-**诚实性检查 - 今天真正能运行的部分:** 模式、Python 验证器、177 个共享的一致性向量、生成的 TypeScript 和 Kotlin 类型以及共享的项目启动器都是真实的并经过测试（19 个测试）。Kotlin 文件已生成，但 ARMOR-ANDROID-CONTROL **尚未使用**；`set_thresholds` 命令只带一个 `sensitivity` 字段，因为在固件存在之前，真实的雷达参数尚未定义。
+**诚实性检查 - 今天真正能运行的部分:** 模式、Python 验证器、177 个共享的一致性向量、生成的 TypeScript 和 Kotlin 类型以及共享的项目启动器都是真实的并经过测试（21 个测试）。Kotlin 文件已生成，但 ARMOR-ANDROID-CONTROL **尚未使用**；`set_thresholds` 命令只带一个 `sensitivity` 字段，因为在固件存在之前，真实的雷达参数尚未定义。
 
 ---
 
@@ -50,7 +50,7 @@ flowchart LR
     S --> V["conformance vectors"]
     V --> P
     V --> T["ARMOR-SERVER tests"]
-    V --> X["ARMOR-SOLAR checks"]
+    V --> X["ARMOR-SOLAR and ARMOR-ELECTRICAL checks"]
     S --> O["OpenAPI 0.2.0"]
 ```
 
@@ -58,7 +58,7 @@ flowchart LR
 
 ```text
 ARMOR-COMMON/
-├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery)
+├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery, electrical)
 ├── conformance/        accepted and rejected payloads shared by every implementation
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
 ├── openapi/            armor-server-0.2.0.yaml
@@ -71,12 +71,12 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 19 tests, 177 conformance vectors
+python -m unittest discover -s tests      # 21 tests, 177 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list
 ```
 
-代理主题：`armor/node/{node_id}/telemetry | health | command | info` 和 `armor/solar/{node_id}/{device}/state`。参见[契约指南](docs/CONTRACTS.md)。共享启动器在 ARMOR-SERVER 首次运行时创建被忽略的 `.env`，含随机机密和随机的管理员密码；不会打印或提交任何内容。
+代理主题：`armor/node/{node_id}/telemetry | health | command | info`、`armor/solar/{node_id}/{device}/state` 和 `armor/electrical/{node_id}/state`。参见[契约指南](docs/CONTRACTS.md)。共享启动器在 ARMOR-SERVER 首次运行时创建被忽略的 `.env`，含随机机密和随机的管理员密码；不会打印或提交任何内容。
 
 ## 🔗 相关项目
 
