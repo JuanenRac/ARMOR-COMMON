@@ -38,6 +38,70 @@ data class Info(
     val port: Long
 )
 
+data class SolarInverter(
+    val kind: String,
+    val nodeId: String,
+    val device: String,
+    val timestampMs: Long,
+    val mode: String,
+    val gridV: Double,
+    val gridHz: Double,
+    val outV: Double,
+    val outHz: Double,
+    val outVa: Double,
+    val outW: Double,
+    val loadPercent: Double,
+    val batteryV: Double,
+    val batteryA: Double,
+    val batteryPercent: Double,
+    val pvV: Double,
+    val pvA: Double,
+    val pvW: Double,
+    val heatsinkC: Double,
+    val acCharging: Boolean,
+    val pvCharging: Boolean,
+    val loadOn: Boolean,
+    val warnings: List<String>
+)
+
+data class SolarModule(
+    val n: Long,
+    val present: Boolean,
+    val voltageV: Double? = null,
+    val currentA: Double? = null,
+    val temperatureC: Double? = null,
+    val socPercent: Long? = null,
+    val state: String? = null,
+    val cellsV: List<Double>? = null,
+    val temperaturesC: List<Double>? = null,
+    val capacityAh: Double? = null,
+    val fullCapacityAh: Double? = null,
+    val cycles: Long? = null
+)
+
+data class SolarBattery(
+    val kind: String,
+    val nodeId: String,
+    val device: String,
+    val timestampMs: Long,
+    val modules: Long,
+    val state: String? = null,
+    val voltageV: Double? = null,
+    val currentA: Double? = null,
+    val temperatureMinC: Double? = null,
+    val temperatureMaxC: Double? = null,
+    val cellMinV: Double? = null,
+    val cellMaxV: Double? = null,
+    val socPercent: Long? = null,
+    val alarm: Boolean? = null,
+    val stack: List<SolarModule>,
+    val model: String? = null,
+    val capacityAh: Double? = null,
+    val fullCapacityAh: Double? = null,
+    val energyKwh: Double? = null,
+    val cycles: Long? = null
+)
+
 object ContractLimits {
     const val MAX_TARGETS = 15
     const val MAX_LUX = 200000.0
