@@ -20,13 +20,13 @@
   <img src="https://img.shields.io/badge/License-GPL%203.0-blue.svg" alt="GPL 3.0">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-142-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Vectors-147-00E5FF.svg" alt="Vectors">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturity">
 </p>
 
 ---
 
-**Vérification d'honnêteté - ce qui fonctionne aujourd'hui:** Les schémas, le validateur Python, les 142 vecteurs de conformité partagés, les types TypeScript et Kotlin générés et le lanceur de projets partagé sont réels et testés (19 tests). Le fichier Kotlin est généré mais **pas encore utilisé** par ARMOR-ANDROID-CONTROL, et la commande `set_thresholds` ne porte qu'un champ `sensitivity` car les vrais paramètres du radar ne sont pas définis tant que le firmware n'existe pas.
+**Vérification d'honnêteté - ce qui fonctionne aujourd'hui:** Les schémas, le validateur Python, les 147 vecteurs de conformité partagés, les types TypeScript et Kotlin générés et le lanceur de projets partagé sont réels et testés (19 tests). Le fichier Kotlin est généré mais **pas encore utilisé** par ARMOR-ANDROID-CONTROL, et la commande `set_thresholds` ne porte qu'un champ `sensitivity` car les vrais paramètres du radar ne sont pas définis tant que le firmware n'existe pas.
 
 ---
 
@@ -36,7 +36,7 @@
 
 * **Une seule source de vérité :** des schémas JSON dans `src/armor_common/schemas/` pour la télémétrie, la santé, la commande, l'information du nœud et les deux messages solaires (onduleur, batterie avec cellules et capacités). Les champs inconnus sont rejetés partout.
 * **Un validateur qui ne peut sauter aucune règle :** il interprète directement le schéma et refuse un schéma qui utilise un mot-clé qu'il n'implémente pas.
-* **Vecteurs de conformité :** 142 charges acceptées et rejetées exécutées par chaque implémentation (Python ici, TypeScript dans ARMOR-SERVER, les contrôles d'ARMOR-SOLAR), si bien qu'une dérive fait échouer la compilation.
+* **Vecteurs de conformité :** 147 charges acceptées et rejetées exécutées par chaque implémentation (Python ici, TypeScript dans ARMOR-SERVER, les contrôles d'ARMOR-SOLAR), si bien qu'une dérive fait échouer la compilation.
 * **Clients générés :** les types TypeScript et Kotlin sortent des schémas (`tools/generate_types.py --check` les tient à jour).
 * **Contrat HTTP :** `openapi/armor-server-0.2.0.yaml` décrit chaque route du serveur, sa règle d'accès et son schéma.
 * **Lanceur partagé :** `tools/armor_project_tool.py` donne à tous les dépôts de la famille le même flux `build`, `build-test` et `run`.
@@ -71,7 +71,7 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 19 tests, 142 conformance vectors
+python -m unittest discover -s tests      # 19 tests, 147 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list
 ```

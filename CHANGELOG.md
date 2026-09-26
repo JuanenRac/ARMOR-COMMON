@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.2] - The health of a battery
+
+- **`health_percent`** (an integer from 0 to 100, optional) on the battery message and on each module of its stack: the capacity the battery has learned against its rated one. A node that cannot tell leaves it out. Five new conformance vectors (147 in all); the generated TypeScript and Kotlin types carry it.
+
 ## [0.2.1] - The project tool runs the tests of both boards
 
 - `armor_project_tool.py` also builds and runs the board-profile tests of ARMOR-RADAR (`test_board_wifi`) and ARMOR-SOLAR (`test_board_eth`). No change to the messages, the schemas or the vectors.

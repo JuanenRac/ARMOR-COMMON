@@ -76,6 +76,7 @@ export type SolarModule = {
   capacity_ah?: number;
   full_capacity_ah?: number;
   cycles?: number;
+  health_percent?: number;
 };
 
 export type SolarBattery = {
@@ -99,6 +100,7 @@ export type SolarBattery = {
   full_capacity_ah?: number;
   energy_kwh?: number;
   cycles?: number;
+  health_percent?: number;
 };
 
 export const MAX_TARGETS = 15;
