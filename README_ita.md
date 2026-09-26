@@ -26,7 +26,7 @@
 
 ---
 
-**Controllo di onestà - cosa funziona oggi:** Gli schemi, il validatore Python, i 177 vettori di conformità condivisi, i tipi TypeScript e Kotlin generati e il lanciatore di progetti condiviso sono reali e testati (19 test). Il file Kotlin è generato ma **non ancora usato** da ARMOR-ANDROID-CONTROL, e il comando `set_thresholds` porta un solo campo `sensitivity` perché i veri parametri del radar non sono definiti finché non esiste il firmware.
+**Controllo di onestà - cosa funziona oggi:** Gli schemi, il validatore Python, i 177 vettori di conformità condivisi, i tipi TypeScript e Kotlin generati e il lanciatore di progetti condiviso sono reali e testati (21 test). Il file Kotlin è generato ma **non ancora usato** da ARMOR-ANDROID-CONTROL, e il comando `set_thresholds` porta un solo campo `sensitivity` perché i veri parametri del radar non sono definiti finché non esiste il firmware.
 
 ---
 
@@ -50,7 +50,7 @@ flowchart LR
     S --> V["conformance vectors"]
     V --> P
     V --> T["ARMOR-SERVER tests"]
-    V --> X["ARMOR-SOLAR checks"]
+    V --> X["ARMOR-SOLAR and ARMOR-ELECTRICAL checks"]
     S --> O["OpenAPI 0.2.0"]
 ```
 
@@ -58,7 +58,7 @@ flowchart LR
 
 ```text
 ARMOR-COMMON/
-├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery)
+├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery, electrical)
 ├── conformance/        accepted and rejected payloads shared by every implementation
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
 ├── openapi/            armor-server-0.2.0.yaml
@@ -71,12 +71,12 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 19 tests, 177 conformance vectors
+python -m unittest discover -s tests      # 21 tests, 177 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list
 ```
 
-Topic del broker: `armor/node/{node_id}/telemetry | health | command | info` e `armor/solar/{node_id}/{device}/state`. Vedi la [guida ai contratti](docs/CONTRACTS.md). Il lanciatore condiviso crea un `.env` ignorato alla prima esecuzione di ARMOR-SERVER con segreti casuali e una password di amministratore casuale; nulla viene stampato né versionato.
+Topic del broker: `armor/node/{node_id}/telemetry | health | command | info`, `armor/solar/{node_id}/{device}/state` e `armor/electrical/{node_id}/state`. Vedi la [guida ai contratti](docs/CONTRACTS.md). Il lanciatore condiviso crea un `.env` ignorato alla prima esecuzione di ARMOR-SERVER con segreti casuali e una password di amministratore casuale; nulla viene stampato né versionato.
 
 ## 🔗 Progetti correlati
 

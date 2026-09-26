@@ -26,7 +26,7 @@
 
 ---
 
-**正直さのチェック - 今日動いているもの:** スキーマ、Python の検証器、共有の 177 件の適合性ベクトル、生成された TypeScript と Kotlin の型、共有のプロジェクトランチャーは実在し、テストされています（19 件）。Kotlin のファイルは生成されていますが ARMOR-ANDROID-CONTROL では**まだ使われておらず**、`set_thresholds` コマンドは `sensitivity` という 1 つのフィールドしか持ちません。実際のレーダーのパラメーターはファームウェアができるまで定義されないからです。
+**正直さのチェック - 今日動いているもの:** スキーマ、Python の検証器、共有の 177 件の適合性ベクトル、生成された TypeScript と Kotlin の型、共有のプロジェクトランチャーは実在し、テストされています（21 件）。Kotlin のファイルは生成されていますが ARMOR-ANDROID-CONTROL では**まだ使われておらず**、`set_thresholds` コマンドは `sensitivity` という 1 つのフィールドしか持ちません。実際のレーダーのパラメーターはファームウェアができるまで定義されないからです。
 
 ---
 
@@ -50,7 +50,7 @@ flowchart LR
     S --> V["conformance vectors"]
     V --> P
     V --> T["ARMOR-SERVER tests"]
-    V --> X["ARMOR-SOLAR checks"]
+    V --> X["ARMOR-SOLAR and ARMOR-ELECTRICAL checks"]
     S --> O["OpenAPI 0.2.0"]
 ```
 
@@ -58,7 +58,7 @@ flowchart LR
 
 ```text
 ARMOR-COMMON/
-├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery)
+├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery, electrical)
 ├── conformance/        accepted and rejected payloads shared by every implementation
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
 ├── openapi/            armor-server-0.2.0.yaml
@@ -71,12 +71,12 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 19 tests, 177 conformance vectors
+python -m unittest discover -s tests      # 21 tests, 177 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list
 ```
 
-ブローカーのトピック：`armor/node/{node_id}/telemetry | health | command | info` と `armor/solar/{node_id}/{device}/state`。[契約ガイド](docs/CONTRACTS.md)を参照。共有ランチャーは ARMOR-SERVER の初回実行時に、ランダムなシークレットとランダムな管理者パスワードを持つ無視される `.env` を作ります。何も表示もコミットもされません。
+ブローカーのトピック：`armor/node/{node_id}/telemetry | health | command | info`、`armor/solar/{node_id}/{device}/state`、`armor/electrical/{node_id}/state`。[契約ガイド](docs/CONTRACTS.md)を参照。共有ランチャーは ARMOR-SERVER の初回実行時に、ランダムなシークレットとランダムな管理者パスワードを持つ無視される `.env` を作ります。何も表示もコミットもされません。
 
 ## 🔗 関連プロジェクト
 

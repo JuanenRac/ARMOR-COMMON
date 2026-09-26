@@ -7,7 +7,7 @@ nothing may ignore one.
 ## Broker namespace
 
 The nodes that read solar inverters and batteries publish on their own topic family, `armor/solar/{node_id}/{device}/state`, with the message's own
-`kind` (`inverter` or `battery`) inside the payload (see *Solar messages* below). The radar family is
+`kind` (`inverter` or `battery`) inside the payload (see *Solar messages* below). The nodes that measure the house's electrical network publish `armor/electrical/{node_id}/state` (see *Electrical messages*). The radar family is
 `armor/node/{node_id}/{kind}` where `kind` is `telemetry`, `health`, `info` or `command`.
 Topic names are lower-case and part of the compatibility contract. A producer
 keeps its `node_id` identical in the topic and in the JSON body; consumers reject
@@ -34,6 +34,10 @@ payload repeats `node_id` and `device`; a mismatch is refused. The payload's `ki
 | `battery` | `solar_battery.schema.json`: how many modules are present (0 to 16) and, when there are, the state, voltage, current, temperature range, cell range, mean state of charge and alarm, and one entry per module (with, when the node reads them, the voltage of each cell and the module's temperature sensors). With no module present the message carries no other reading |
 
 Both use `additionalProperties: false` and have no nulls: a reading a node does not know is left out.
+
+## Electrical messages
+
+`armor/electrical/{node_id}/state` (node → server), one message per node every few seconds, `kind` `electrical` (`electrical.schema.json`). It carries `node_id`, `timestamp_ms`, `switching_enabled` (whether the node's firmware may switch anything at all; false unless it was built and set up for it) and up to sixteen `channels`. A channel has an `id` (lowercase letters, digits, `-` and `_`, unique in the message), `domain` (`ac` or `dc`), optionally a `label`, and `voltage_v`, `current_a`, `power_w` (positive when it draws from the network, negative when it feeds it), `energy_kwh`, and for AC `frequency_hz` and `power_factor`; `state` (`closed`, `open`, `unknown`) is what a switch's auxiliary contact shows, never what was asked; `alarm` is the meter's own flag. The message carries states and never a command. `additionalProperties: false` and no nulls, as for the others. See ARMOR-ELECTRICAL's `docs/ELECTRICAL_MESSAGES.md`.
 
 ## Keeping every implementation in step
 
