@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "ecosystem": "A.R.M.O.R.",
   "name": "ARMOR-COMMON",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "role": "Shared contracts and validation library",
   "stack": "Python 3.11+ / JSON Schema / OpenAPI",
   "technologies": [
