@@ -163,6 +163,12 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 1000000
+          },
+          "health_percent": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "The capacity the module has learned against its rated one, in percent; left out when unknown."
           }
         }
       }
@@ -196,6 +202,12 @@
       "minimum": 0,
       "maximum": 1000000,
       "description": "Charge cycles of the most used module."
+    },
+    "health_percent": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Mean of the modules' health (the capacity learned against the rated one); left out when no module knows it."
     }
   }
 }
