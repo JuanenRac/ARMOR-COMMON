@@ -32,6 +32,8 @@ MESSAGES = {
     "electrical": ("Electrical", {"channels": "ElectricalChannel", "switches": "ElectricalSwitch"}),
     "electrical_command": ("ElectricalCommand", {}),
     "electrical_result": ("ElectricalResult", {}),
+    "network": ("Network", {"interface": "NetworkInterface", "internet": "NetworkInternet", "probes": "NetworkProbe", "last_outage": "NetworkOutage", "devices": "NetworkDevice",
+                            "ports": "NetworkPort", "events": "NetworkEvent", "scan": "NetworkScan"}),
 }
 HEADER = "Generated from the A.R.M.O.R. JSON Schemas by tools/generate_types.py. Do not edit."
 
@@ -54,6 +56,8 @@ def ts_type(field: Field) -> str:
     if kind == "array":
         items = schema.get("items", {}).get("type")
         return f"{field.nested or {'string': 'string', 'integer': 'number', 'number': 'number', 'boolean': 'boolean'}.get(items, 'unknown')}[]"
+    if kind == "object":
+        return field.nested or "Record<string, unknown>"
     return {"string": "string", "integer": "number", "number": "number", "boolean": "boolean"}[kind]
 
 
@@ -63,7 +67,21 @@ def kt_type(field: Field) -> str:
     if kind == "array":
         items = schema.get("items", {}).get("type")
         return f"List<{field.nested or {'string': 'String', 'integer': 'Long', 'number': 'Double', 'boolean': 'Boolean'}.get(items, 'Any')}>"
+    if kind == "object":
+        return field.nested or "Map<String, Any>"
     return {"string": "String", "integer": "Long", "number": "Double", "boolean": "Boolean"}[kind]
+
+
+def nested_types(schema: dict, nested: dict[str, str], emitted: set[str]):
+    """The named types inside a schema, the deepest first: (type name, its schema). A property named in `nested` is an object or an array of objects."""
+    for prop, type_name in nested.items():
+        child = schema.get("properties", {}).get(prop)
+        if child is None or type_name in emitted:
+            continue
+        emitted.add(type_name)
+        item = child.get("items", child)
+        yield from nested_types(item, nested, emitted)
+        yield type_name, item
 
 
 def camel(name: str) -> str:
@@ -76,13 +94,9 @@ def render_typescript(docs: dict[str, dict]) -> str:
     emitted: set[str] = set()
     for key, (name, nested) in MESSAGES.items():
         schema = docs[key]
-        for prop, type_name in nested.items():
-            if type_name in emitted:
-                continue
-            emitted.add(type_name)
-            item = schema["properties"][prop]["items"]
+        for type_name, item in nested_types(schema, nested, emitted):
             out.append(f"export type {type_name} = {{")
-            out += [f"  {f.name}{'' if f.required else '?'}: {ts_type(f)};" for f in fields_of(item, {})]
+            out += [f"  {f.name}{'' if f.required else '?'}: {ts_type(f)};" for f in fields_of(item, nested)]
             out += ["};", ""]
         out.append(f"export type {name} = {{")
         out += [f"  {f.name}{'' if f.required else '?'}: {ts_type(f)};" for f in fields_of(schema, nested)]
@@ -103,12 +117,8 @@ def render_kotlin(docs: dict[str, dict]) -> str:
     emitted: set[str] = set()
     for key, (name, nested) in MESSAGES.items():
         schema = docs[key]
-        for prop, type_name in nested.items():
-            if type_name in emitted:
-                continue
-            emitted.add(type_name)
-            item = schema["properties"][prop]["items"]
-            body = ",\n".join(f"    val {camel(f.name)}: {kt_type(f)}{'' if f.required else '? = null'}" for f in fields_of(item, {}))
+        for type_name, item in nested_types(schema, nested, emitted):
+            body = ",\n".join(f"    val {camel(f.name)}: {kt_type(f)}{'' if f.required else '? = null'}" for f in fields_of(item, nested))
             out += [f"data class {type_name}(", body, ")", ""]
         body = ",\n".join(f"    val {camel(f.name)}: {kt_type(f)}{'' if f.required else '? = null'}" for f in fields_of(schema, nested))
         out += [f"data class {name}(", body, ")", ""]

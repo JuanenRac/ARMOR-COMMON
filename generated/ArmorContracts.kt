@@ -173,6 +173,91 @@ data class ElectricalResult(
     val token: String? = null
 )
 
+data class NetworkInterface(
+    val name: String,
+    val ip: String,
+    val cidr: String,
+    val gateway: String? = null,
+    val rxBps: Long? = null,
+    val txBps: Long? = null
+)
+
+data class NetworkProbe(
+    val target: String,
+    val kind: String,
+    val ok: Boolean,
+    val latencyMs: Double? = null
+)
+
+data class NetworkOutage(
+    val startedMs: Long,
+    val endedMs: Long,
+    val durationS: Long
+)
+
+data class NetworkInternet(
+    val state: String,
+    val sinceMs: Long? = null,
+    val gatewayOk: Boolean? = null,
+    val latencyMs: Double? = null,
+    val lossPercent: Double? = null,
+    val probes: List<NetworkProbe>? = null,
+    val lastOutage: NetworkOutage? = null,
+    val outages24h: Long? = null,
+    val downtime24hS: Long? = null
+)
+
+data class NetworkPort(
+    val port: Long,
+    val proto: String,
+    val service: String? = null,
+    val banner: String? = null
+)
+
+data class NetworkDevice(
+    val id: String,
+    val ip: String,
+    val mac: String? = null,
+    val randomizedMac: Boolean? = null,
+    val vendor: String? = null,
+    val hostname: String? = null,
+    val kind: String? = null,
+    val os: String? = null,
+    val online: Boolean,
+    val firstSeenMs: Long,
+    val lastSeenMs: Long,
+    val latencyMs: Double? = null,
+    val ports: List<NetworkPort>? = null,
+    val services: List<String>? = null
+)
+
+data class NetworkEvent(
+    val id: String,
+    val kind: String,
+    val atMs: Long,
+    val deviceId: String? = null,
+    val port: Long? = null,
+    val outageS: Long? = null,
+    val detail: String? = null
+)
+
+data class NetworkScan(
+    val lastMs: Long,
+    val hosts: Long,
+    val durationMs: Long? = null
+)
+
+data class Network(
+    val kind: String,
+    val nodeId: String,
+    val timestampMs: Long,
+    val interface: NetworkInterface,
+    val internet: NetworkInternet,
+    val devices: List<NetworkDevice>,
+    val events: List<NetworkEvent>? = null,
+    val scan: NetworkScan? = null
+)
+
 object ContractLimits {
     const val MAX_TARGETS = 15
     const val MAX_LUX = 200000.0

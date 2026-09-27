@@ -1,0 +1,397 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/network-0.1.0.json",
+  "title": "A.R.M.O.R. state of the local network, as seen by one ARMOR-NETWORK node",
+  "description": "What an ARMOR-NETWORK node sees on the local network it is connected to: the interface it watches, whether the internet is reachable (and, when it is not, whether the router still answers, which tells the provider's side from the local one), every device it has found with what it could learn about it, and the latest events (a device that appeared, an address that changed hands, a port that opened, the internet lost and back). Published to armor/network/{node_id}/state or POSTed to the server. It only observes: what a node was asked to do would travel in a separate command message. `timestamp_ms` and every `*_ms` are milliseconds since 1970 (the node is a program with a real clock, not a microcontroller counting from boot). Everything a node reports is a finding about the network, not a fact: a device 'kind', 'os' and 'vendor' are guesses from its address, its answers and the manufacturer's block of its MAC.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "node_id",
+    "timestamp_ms",
+    "interface",
+    "internet",
+    "devices"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "network"
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "interface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "ip",
+        "cidr"
+      ],
+      "description": "The network interface the node watches.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "ip": {
+          "type": "string",
+          "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
+        },
+        "cidr": {
+          "type": "string",
+          "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])/(?:3[0-2]|[12]?[0-9])$",
+          "description": "The network the node scans, for example 192.168.0.0/24; always a private range."
+        },
+        "gateway": {
+          "type": "string",
+          "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
+        },
+        "rx_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Bits per second received by the interface over the last sample."
+        },
+        "tx_bps": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Bits per second sent by the interface over the last sample."
+        }
+      }
+    },
+    "internet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state"
+      ],
+      "description": "Whether the internet is reachable from the node.",
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": [
+            "up",
+            "degraded",
+            "down",
+            "lan_down",
+            "unknown"
+          ],
+          "description": "up; degraded (loss or high latency); down (the router answers and nothing beyond it does: the provider's side); lan_down (the router does not answer either: the local side); unknown (just started)."
+        },
+        "since_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "When the node came to this state."
+        },
+        "gateway_ok": {
+          "type": "boolean"
+        },
+        "latency_ms": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 60000,
+          "description": "Median of the internet probes that answered, over the last round."
+        },
+        "loss_percent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Share of the probes of the last minute that did not answer."
+        },
+        "probes": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "target",
+              "kind",
+              "ok"
+            ],
+            "properties": {
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "icmp",
+                  "tcp",
+                  "dns",
+                  "http"
+                ]
+              },
+              "ok": {
+                "type": "boolean"
+              },
+              "latency_ms": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 60000
+              }
+            }
+          }
+        },
+        "last_outage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "started_ms",
+            "ended_ms",
+            "duration_s"
+          ],
+          "description": "The latest outage of the internet that is over.",
+          "properties": {
+            "started_ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ended_ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "duration_s": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "outages_24h": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Outages that began in the last 24 hours."
+        },
+        "downtime_24h_s": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 86400,
+          "description": "Seconds without internet in the last 24 hours."
+        }
+      }
+    },
+    "devices": {
+      "type": "array",
+      "maxItems": 512,
+      "description": "Every device found on the network, online or not.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "ip",
+          "online",
+          "first_seen_ms",
+          "last_seen_ms"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9:._-]{0,63}$",
+            "description": "The MAC address in lowercase with colons or, when it is not known, ip-<address with dashes>. Stable while the device is the same."
+          },
+          "ip": {
+            "type": "string",
+            "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
+          },
+          "mac": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{2}(:[0-9a-f]{2}){5}$"
+          },
+          "randomized_mac": {
+            "type": "boolean",
+            "description": "The MAC is locally administered: a phone or laptop that changes it on purpose, so it is not an identity."
+          },
+          "vendor": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": "The maker of the network card, from the block of its MAC (a guess about the device)."
+          },
+          "hostname": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "router",
+              "computer",
+              "phone",
+              "tv",
+              "printer",
+              "camera",
+              "iot",
+              "server",
+              "nas",
+              "network",
+              "unknown"
+            ],
+            "description": "A guess from the open ports, the services announced and the vendor."
+          },
+          "os": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32,
+            "description": "A guess from the TTL of its replies."
+          },
+          "online": {
+            "type": "boolean"
+          },
+          "first_seen_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "last_seen_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "latency_ms": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 60000
+          },
+          "ports": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "port",
+                "proto"
+              ],
+              "properties": {
+                "port": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 65535
+                },
+                "proto": {
+                  "type": "string",
+                  "enum": [
+                    "tcp",
+                    "udp"
+                  ]
+                },
+                "service": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 32
+                },
+                "banner": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80,
+                  "description": "The first line a service says or its web page title, cut and cleaned."
+                }
+              }
+            }
+          },
+          "services": {
+            "type": "array",
+            "maxItems": 16,
+            "description": "What the device announces about itself (mDNS types, UPnP device kinds).",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 48
+            }
+          }
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "maxItems": 64,
+      "description": "The latest events, oldest first. An event keeps its id, so a consumer that reads the same event twice counts it once.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "kind",
+          "at_ms"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "new_device",
+              "device_online",
+              "device_offline",
+              "ip_changed",
+              "arp_conflict",
+              "port_opened",
+              "port_closed",
+              "internet_down",
+              "internet_up",
+              "gateway_down",
+              "gateway_up"
+            ]
+          },
+          "at_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "device_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9:._-]{0,63}$"
+          },
+          "port": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "outage_s": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Only on internet_up and gateway_up: how long it was down."
+          },
+          "detail": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        }
+      }
+    },
+    "scan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "last_ms",
+        "hosts"
+      ],
+      "properties": {
+        "last_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "hosts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1024
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

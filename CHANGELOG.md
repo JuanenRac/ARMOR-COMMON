@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.5] - The state of the local network
+
+- **`network.schema.json`**, the message of the new ARMOR-NETWORK nodes on `armor/network/{node_id}/state`: the interface a node watches, the state of the internet (and whose side an outage is on: `down` is the provider's, `lan_down` this side's), every device found with what is known about it (MAC, maker, name, kind, system, open ports with what each says, announced services, first and last seen) and the latest events (a device that appeared, went or returned, changed its address, two machines for one address, a port that opened or closed, the internet lost and back with how long). Up to 512 devices and 64 events; nothing is a command.
+- `validate_network_message` and `parse_network_topic` (the rules that join two fields), 64 new conformance vectors (330 in all; those only a message-level rule refuses are marked `schema_valid`), 3 new tests (39), the generated types are current (the generator now follows objects and arrays of objects inside objects, and the types it made before are byte for byte the same), and the OpenAPI file describes the routes of the network: `POST /api/v1/network/state`, `GET /api/v1/network`, `GET /api/v1/network/history`, `PUT` and `DELETE /api/v1/network/devices/{id}`, `GET` and `PUT /api/v1/network/design`.
+
 ## [0.2.4] - The commands to a switch and the node's answer
 
 - **The contract for switching, not activated.** `electrical.schema.json` gains an **optional** `switches` array (up to four: the auxiliary contacts of each contactor, what is selected and wanted, closing, armed, and a latched fault); two new schemas, `electrical_command.schema.json` (`arm`, then `close_a` or `close_b` with the one-time token the node gave, `open`, `acknowledge`) and `electrical_result.schema.json` (accepted, and the refusal when not), on the new topics `armor/electrical/{node_id}/command` and `.../result`. Every command is an allow-list; nothing that switches has been built.
