@@ -2,8 +2,8 @@ import json
 import unittest
 from pathlib import Path
 
-from armor_common import ContractError, decode, encode, validate_electrical_command, validate_electrical_message, validate_electrical_result, validate_solar_message, validate_topic_and_payload
-from armor_common.contracts import load_schema, parse_electrical_topic, parse_solar_topic, parse_topic, validate_payload
+from armor_common import ContractError, decode, encode, validate_electrical_command, validate_electrical_message, validate_electrical_result, validate_network_message, validate_solar_message, validate_topic_and_payload
+from armor_common.contracts import load_schema, parse_electrical_topic, parse_network_topic, parse_solar_topic, parse_topic, validate_payload
 from armor_common.schema import SchemaError, UnsupportedSchema, check_schema, validate
 
 CONFORMANCE = Path(__file__).resolve().parent.parent / "conformance"
@@ -12,6 +12,7 @@ MESSAGE_RULES = {
     "electrical": lambda payload: validate_electrical_message(f"armor/electrical/{payload['node_id']}/state", payload),
     "electrical_command": lambda payload: validate_electrical_command(f"armor/electrical/{payload['node_id']}/command", payload),
     "electrical_result": lambda payload: validate_electrical_result(f"armor/electrical/{payload['node_id']}/result", payload),
+    "network": lambda payload: validate_network_message(f"armor/network/{payload['node_id']}/state", payload),
 }
 
 
@@ -268,3 +269,44 @@ class ElectricalSwitchMessageTests(unittest.TestCase):
         validate_electrical_message("armor/electrical/electrical-1/state", state)
         with self.assertRaises(ContractError):
             validate_electrical_message("armor/electrical/electrical-1/state", {**state, "switches": [switch, dict(switch)]})
+
+
+class NetworkMessageTests(unittest.TestCase):
+    """The state of the local network as one ARMOR-NETWORK node sees it."""
+
+    network = json.loads((CONFORMANCE / "network.json").read_text(encoding="utf-8"))["vectors"][0]["payload"]
+    topic = "armor/network/network-1/state"
+
+    def test_the_topic_carries_the_node(self):
+        self.assertEqual(parse_network_topic(self.topic), "network-1")
+        for topic in ["armor/network/state", "armor/network/network-1/set", "armor/electrical/network-1/state", "armor/network/Node/state", "armor/network/-x/state",
+                      "armor/network/" + "n" * 65 + "/state", "armor/network/network-1/state/extra", "armor/network//state"]:
+            with self.subTest(topic=topic), self.assertRaises(ContractError):
+                parse_network_topic(topic)
+
+    def test_a_message_must_agree_with_its_topic(self):
+        validate_network_message(self.topic, self.network)
+        with self.assertRaises(ContractError):
+            validate_network_message("armor/network/other/state", self.network)
+        with self.assertRaises(ContractError):
+            validate_network_message(self.topic, [self.network])
+
+    def test_the_rules_that_join_two_fields(self):
+        device = self.network["devices"][0]
+        event = self.network["events"][0]
+        cases = {
+            "a device named twice": {**self.network, "devices": [device, dict(device)]},
+            "a MAC that is not the id": {**self.network, "devices": [{**device, "id": "aa:bb:cc:dd:ee:ff"}]},
+            "first seen after last seen": {**self.network, "devices": [{**device, "first_seen_ms": 9, "last_seen_ms": 1}]},
+            "an event named twice": {**self.network, "events": [event, dict(event)]},
+            "an internet event about a device": {**self.network, "events": [{"id": "x1", "kind": "internet_down", "at_ms": 1, "device_id": device["id"]}]},
+            "a device event with no device": {**self.network, "events": [{"id": "x2", "kind": "device_offline", "at_ms": 1}]},
+            "a duration where there is no end": {**self.network, "events": [{**event, "id": "x3", "outage_s": 3}]},
+            "a port event with no port": {**self.network, "events": [{**event, "id": "x4", "kind": "port_closed"}]},
+        }
+        for name, payload in cases.items():
+            with self.subTest(name), self.assertRaises(ContractError):
+                validate_network_message(self.topic, payload)
+        # and the ones that look alike and are fine
+        validate_network_message(self.topic, {**self.network, "events": [{"id": "x5", "kind": "internet_up", "at_ms": 1, "outage_s": 3}]})
+        validate_network_message(self.topic, {**self.network, "devices": [{"id": "ip-192-168-0-9", "ip": "192.168.0.9", "online": True, "first_seen_ms": 1, "last_seen_ms": 1}]})

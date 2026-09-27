@@ -23,7 +23,7 @@ from datetime import date
 from pathlib import Path
 
 
-PYTHON_PROJECTS = {"ARMOR-COMMON", "ARMOR-SIMULATOR", "ARMOR-SERVER-AI", "ARMOR-VOICE-AI"}
+PYTHON_PROJECTS = {"ARMOR-COMMON", "ARMOR-SIMULATOR", "ARMOR-SERVER-AI", "ARMOR-VOICE-AI", "ARMOR-NETWORK"}
 NODE_PROJECTS = {"ARMOR-SERVER", "ARMOR-STUDIO"}
 NPM = "npm.cmd" if os.name == "nt" else "npm"
 
@@ -231,7 +231,7 @@ def run_project(project: Path, manifest: dict[str, object]) -> None:
     environment = os.environ.copy()
     if name in PYTHON_PROJECTS:
         environment["PYTHONPATH"] = str(project / "src") + os.pathsep + environment.get("PYTHONPATH", "")
-        module = {"ARMOR-SIMULATOR": "armor_simulator", "ARMOR-SERVER-AI": "armor_server_ai.cli", "ARMOR-VOICE-AI": "armor_voice_ai.gateway"}.get(name)
+        module = {"ARMOR-SIMULATOR": "armor_simulator", "ARMOR-NETWORK": "armor_network", "ARMOR-SERVER-AI": "armor_server_ai.cli", "ARMOR-VOICE-AI": "armor_voice_ai.gateway"}.get(name)
         if not module:
             print("ARMOR-COMMON is a library; run its tests or consume it from another project.")
             return

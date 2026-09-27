@@ -59,6 +59,43 @@ def result(**changes):
     return base
 
 
+def net_device(**changes):
+    base = {"id": "14:2e:5e:86:d9:62", "ip": "192.168.0.1", "mac": "14:2e:5e:86:d9:62", "vendor": "Sagemcom Broadband SAS", "hostname": "router", "kind": "router", "os": "network gear",
+            "online": True, "first_seen_ms": 1790000000000, "last_seen_ms": 1790000060000, "latency_ms": 1.4,
+            "ports": [{"port": 80, "proto": "tcp", "service": "http", "banner": "Router login"}, {"port": 443, "proto": "tcp", "service": "https"}], "services": ["_http._tcp"]}
+    base.update(changes)
+    return base
+
+
+def net_event(**changes):
+    base = {"id": "e1", "kind": "new_device", "at_ms": 1790000030000, "device_id": "96:b3:ed:0b:1c:18", "detail": "A device that was never seen has joined the network"}
+    base.update(changes)
+    return base
+
+
+def network(**changes):
+    base = {"kind": "network", "node_id": "network-1", "timestamp_ms": 1790000060000,
+            "interface": {"name": "Ethernet", "ip": "192.168.0.10", "cidr": "192.168.0.0/24", "gateway": "192.168.0.1", "rx_bps": 1200000, "tx_bps": 340000},
+            "internet": {"state": "up", "since_ms": 1789990000000, "gateway_ok": True, "latency_ms": 12.5, "loss_percent": 0.0,
+                         "probes": [{"target": "1.1.1.1", "kind": "tcp", "ok": True, "latency_ms": 11.2}, {"target": "8.8.8.8", "kind": "dns", "ok": True, "latency_ms": 13.8}],
+                         "last_outage": {"started_ms": 1789900000000, "ended_ms": 1789900300000, "duration_s": 300}, "outages_24h": 1, "downtime_24h_s": 300},
+            "devices": [net_device()], "events": [net_event()], "scan": {"last_ms": 1790000050000, "hosts": 254, "duration_ms": 9000}}
+    base.update(changes)
+    return base
+
+
+def internet(**changes):
+    return network(internet=dict(network()["internet"], **changes))
+
+
+def dev(**changes):
+    return network(devices=[net_device(**changes)])
+
+
+def without(payload, key):
+    return {name: value for name, value in payload.items() if name != key}
+
+
 def inverter(**changes):
     base = {"kind": "inverter", "node_id": "solar-1", "device": "axpert-1", "timestamp_ms": 1000, "mode": "line", "grid_v": 232.0, "grid_hz": 50.0, "out_v": 230.0,
             "out_hz": 50.0, "out_va": 161, "out_w": 119, "load_percent": 3, "battery_v": 57.5, "battery_a": 12.0, "battery_percent": 100, "pv_v": 103.8, "pv_a": 14.0,
@@ -353,6 +390,73 @@ cases = {
         ("the kind of a command", False, result(kind="electrical_command")),
         ("a node id with a space", False, result(node_id="my node")),
         ("an unknown field", False, result(detail="welded")),
+    ],
+    "network": [
+        ("a whole network state", True, network()),
+        ("nothing found yet", True, network(devices=[], events=[])),
+        ("the smallest state", True, {"kind": "network", "node_id": "network-1", "timestamp_ms": 1, "interface": {"name": "eth0", "ip": "10.0.0.2", "cidr": "10.0.0.0/24"},
+                                      "internet": {"state": "unknown"}, "devices": []}),
+        ("the internet is down and the router answers", True, internet(state="down", gateway_ok=True, loss_percent=100.0)),
+        ("the local network is down", True, internet(state="lan_down", gateway_ok=False)),
+        ("degraded internet", True, internet(state="degraded", latency_ms=480.0, loss_percent=35.5)),
+        ("a device known only by its address", True, network(devices=[{"id": "ip-192-168-0-77", "ip": "192.168.0.77", "online": True, "first_seen_ms": 5, "last_seen_ms": 5}])),
+        ("a phone with a randomised MAC", True, dev(id="96:b3:ed:0b:1c:18", mac="96:b3:ed:0b:1c:18", ip="192.168.0.12", randomized_mac=True, kind="phone")),
+        ("a device that went offline", True, dev(online=False)),
+        ("an internet outage that ended", True, network(events=[{"id": "e2", "kind": "internet_up", "at_ms": 5, "outage_s": 420}])),
+        ("an internet outage that began", True, network(events=[{"id": "e3", "kind": "internet_down", "at_ms": 5}])),
+        ("a port that opened", True, network(events=[net_event(id="e4", kind="port_opened", port=23)])),
+        ("an ARP conflict", True, network(events=[net_event(id="e5", kind="arp_conflict", detail="192.168.0.1 answers from two addresses")])),
+        ("512 devices, the limit", True, network(devices=[{"id": f"ip-10-0-{i // 250}-{i % 250 + 1}", "ip": f"10.0.{i // 250}.{i % 250 + 1}", "online": True, "first_seen_ms": 1, "last_seen_ms": 2} for i in range(512)])),
+        ("513 devices", False, network(devices=[{"id": f"ip-10-0-{i // 250}-{i % 250 + 1}", "ip": f"10.0.{i // 250}.{i % 250 + 1}", "online": True, "first_seen_ms": 1, "last_seen_ms": 2} for i in range(513)])),
+        ("65 ports on a device", False, dev(ports=[{"port": i + 1, "proto": "tcp"} for i in range(65)])),
+        ("17 services on a device", False, dev(services=[f"_s{i}._tcp" for i in range(17)])),
+        ("65 events", False, network(events=[{"id": f"e{i}", "kind": "internet_down", "at_ms": 1} for i in range(65)])),
+        ("nine probes", False, internet(probes=[{"target": f"h{i}", "kind": "tcp", "ok": True} for i in range(9)])),
+        ("no interface", False, without(network(), "interface")),
+        ("no internet", False, without(network(), "internet")),
+        ("no devices", False, without(network(), "devices")),
+        ("an internet state that is not one", False, internet(state="offline")),
+        ("an address with an octet of 256", False, network(interface={"name": "eth0", "ip": "192.168.0.256", "cidr": "192.168.0.0/24"})),
+        ("a prefix of 33", False, network(interface={"name": "eth0", "ip": "192.168.0.10", "cidr": "192.168.0.0/33"})),
+        ("an address with a leading zero", False, dev(ip="192.168.000.1")),
+        ("a MAC in capitals", False, dev(mac="14:2E:5E:86:D9:62")),
+        ("a MAC with dashes", False, dev(mac="14-2e-5e-86-d9-62")),
+        ("a device id with a space", False, dev(id="my device")),
+        ("a device with no address", False, network(devices=[{k: v for k, v in net_device().items() if k != "ip"}])),
+        ("a device with no online flag", False, network(devices=[{k: v for k, v in net_device().items() if k != "online"}])),
+        ("a device kind that is not one", False, dev(kind="toaster")),
+        ("a port of 0", False, dev(ports=[{"port": 0, "proto": "tcp"}])),
+        ("a port of 65536", False, dev(ports=[{"port": 65536, "proto": "tcp"}])),
+        ("a protocol that is not one", False, dev(ports=[{"port": 80, "proto": "icmp"}])),
+        ("a banner of 81 characters", False, dev(ports=[{"port": 80, "proto": "tcp", "banner": "b" * 81}])),
+        ("an empty hostname", False, dev(hostname="")),
+        ("a negative latency", False, dev(latency_ms=-1)),
+        ("loss above 100", False, internet(loss_percent=100.5)),
+        ("a probe of a kind that is not one", False, internet(probes=[{"target": "1.1.1.1", "kind": "ping", "ok": True}])),
+        ("a probe with no result", False, internet(probes=[{"target": "1.1.1.1", "kind": "tcp"}])),
+        ("an outage without its duration", False, internet(last_outage={"started_ms": 1, "ended_ms": 2})),
+        ("more than a day of downtime in a day", False, internet(downtime_24h_s=86401)),
+        ("an event of a kind that is not one", False, network(events=[net_event(kind="attack")])),
+        ("an event with no time", False, network(events=[{k: v for k, v in net_event().items() if k != "at_ms"}])),
+        ("an event id with capitals", False, network(events=[net_event(id="E1")])),
+        ("a string where a number should be", False, network(timestamp_ms="1790000060000")),
+        ("a negative timestamp", False, network(timestamp_ms=-1)),
+        ("a node id with a space", False, network(node_id="my node")),
+        ("the kind of another message", False, network(kind="electrical")),
+        ("an unknown field in the message", False, network(command="scan")),
+        ("an unknown field in a device", False, dev(password="admin")),
+        ("an unknown field in a port", False, dev(ports=[{"port": 80, "proto": "tcp", "exploit": "x"}])),
+        ("an unknown field in the internet block", False, internet(dns_server="1.1.1.1")),
+        ("an unknown field in the interface", False, network(interface={"name": "eth0", "ip": "10.0.0.2", "cidr": "10.0.0.0/24", "password": "x"})),
+        ("a device named twice", False, network(devices=[net_device(), net_device()]), True),
+        ("a MAC that is not the id", False, dev(id="aa:bb:cc:dd:ee:ff"), True),
+        ("first seen after last seen", False, dev(first_seen_ms=10, last_seen_ms=5), True),
+        ("an event named twice", False, network(events=[net_event(), net_event()]), True),
+        ("an internet event about a device", False, network(events=[{"id": "e6", "kind": "internet_down", "at_ms": 1, "device_id": "14:2e:5e:86:d9:62"}]), True),
+        ("an internet event about a port", False, network(events=[{"id": "e7", "kind": "gateway_down", "at_ms": 1, "port": 80}]), True),
+        ("a device event that names no device", False, network(events=[{"id": "e8", "kind": "new_device", "at_ms": 1}]), True),
+        ("a duration on an event that is not an end", False, network(events=[net_event(id="e9", outage_s=5)]), True),
+        ("a port event that names no port", False, network(events=[net_event(id="e10", kind="port_opened")]), True),
     ],
     "command": [
         ("calibrate", True, {"node_id": "north-1", "timestamp_ms": 9, "command": "calibrate"}),
