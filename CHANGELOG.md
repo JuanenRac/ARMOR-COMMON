@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.6] - Canonical CI tooling for the whole ecosystem
+
+- `tools/armor_ci_validate.py`, `tools/_armor_readme_parity.py` and `tools/ci.yml.template`, the canonical CI baseline every other A.R.M.O.R. repository vendors (via ARMOR-DOCS' new `tools/sync_ci_tools.py`): the manifest, its version, CHANGELOG.md's heading, the seven README translations' structure and its local Markdown links are checked before the project's own real build/test runs.
+- `armor_project_tool.py`: `bump()`'s version odometer now rolls PATCH past 9 into MINOR (`0.2.9` -> `0.3.0`) instead of continuing to `0.2.10` - the same real mistake found and corrected on ARMOR-SERVER's own version once already, now fixed at the source; ARMOR-DEVOPS's own build-test step now runs `scripts/generate_secrets.sh` first when no local `.env` exists, so `docker compose config` has real (disposable) values to interpolate; ARMOR-UPDATER's pytest-based suite is now a recognized project.
+- Found while writing the validator and running it once against every repository: four real manifest/build drifts (ARMOR-RADAR, ARMOR-SOLAR, ARMOR-ELECTRICAL, ARMOR-SIMULATOR each had `native_version` behind `version`, and ARMOR-ELECTRICAL's manifest was missing the field outright) - all four fixed.
+
 ## [0.2.5] - The state of the local network
 
 - **`network.schema.json`**, the message of the new ARMOR-NETWORK nodes on `armor/network/{node_id}/state`: the interface a node watches, the state of the internet (and whose side an outage is on: `down` is the provider's, `lan_down` this side's), every device found with what is known about it (MAC, maker, name, kind, system, open ports with what each says, announced services, first and last seen) and the latest events (a device that appeared, went or returned, changed its address, two machines for one address, a port that opened or closed, the internet lost and back with how long). Up to 512 devices and 64 events; nothing is a command.

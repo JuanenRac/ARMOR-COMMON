@@ -97,6 +97,7 @@ python tools/sync_firmware_base.py check  # the firmware the node projects share
 * **[ARMOR-HARDWARE](../ARMOR-HARDWARE)** - 外壳、电子器件和台架验收矩阵
 * **[ARMOR-DEVOPS](../ARMOR-DEVOPS)** - 部署、CM5 测试台、备份与 TLS
 * **[ARMOR-SIMULATOR](../ARMOR-SIMULATOR)** - 带可重复故障的离线遥测模拟器
+* **[ARMOR-UPDATER](../ARMOR-UPDATER)** - 发现、安装并更新生态系统自身的仓库
 * **[ARMOR-DOCS](../ARMOR-DOCS)** - 架构、安全基线和能力矩阵
 
 ## 📚 文档与社区
