@@ -24,6 +24,7 @@ from pathlib import Path
 
 
 PYTHON_PROJECTS = {"ARMOR-COMMON", "ARMOR-SIMULATOR", "ARMOR-SERVER-AI", "ARMOR-VOICE-AI", "ARMOR-NETWORK"}
+PYTEST_PROJECTS = {"ARMOR-UPDATER"}
 NODE_PROJECTS = {"ARMOR-SERVER", "ARMOR-STUDIO"}
 NPM = "npm.cmd" if os.name == "nt" else "npm"
 
@@ -92,6 +93,15 @@ def test_project(project: Path, manifest: dict[str, object]) -> None:
         environment = os.environ.copy()
         environment["PYTHONPATH"] = str(project / "src") + os.pathsep + environment.get("PYTHONPATH", "")
         command(project, [sys.executable, "-m", "unittest", "discover", "-s", "tests"], environment)
+    elif name in PYTEST_PROJECTS:
+        # A stdlib-only CLI/install core with an optional pytest-based test
+        # suite and an optional PySide6 desktop shell - `pip install -e
+        # ".[dev]"` first so `pytest` and the package's own console entry
+        # point are both on PATH for this checkout.
+        command(project, [sys.executable, "-m", "pip", "install", "-q", "-e", ".[dev]"])
+        environment = os.environ.copy()
+        environment["PYTHONPATH"] = str(project / "src") + os.pathsep + environment.get("PYTHONPATH", "")
+        command(project, [sys.executable, "-m", "pytest", "tests", "-q"], environment)
     elif name in NODE_PROJECTS:
         check_tool("npm", "npm is required; install Node.js 22 or newer")
         command(project, [NPM, "run", "typecheck"])
@@ -113,6 +123,12 @@ def test_project(project: Path, manifest: dict[str, object]) -> None:
         command(project, [openscad, "-o", str(output), "scad/node_enclosure.scad"])
     elif name == "ARMOR-DEVOPS":
         check_tool("docker", "Docker Compose is required to validate ARMOR-DEVOPS")
+        # `docker compose config` only checks the topology is well formed; it
+        # still needs every variable the compose file interpolates to have
+        # SOME value. generate_secrets.sh's own real, disposable secrets are
+        # exactly that - CI never reuses them past this one validation run.
+        if not (project / ".env").is_file():
+            command(project, ["bash", "scripts/generate_secrets.sh"])
         command(project, ["docker", "compose", "config", "--quiet"])
     elif name == "ARMOR-DOCS":
         validate_markdown_links(project)
@@ -194,7 +210,15 @@ def bump(project: Path, manifest: dict[str, object]) -> tuple[str, str]:
     parts = before.split(".")
     if len(parts) != 3 or any(not part.isdigit() for part in parts):
         raise RuntimeError("manifest version must use major.minor.patch numeric format")
-    after = f"{parts[0]}.{parts[1]}.{int(parts[2]) + 1}"
+    # Odometer scheme: PATCH +1, rolling into MINOR past 9 (0.2.9 -> 0.3.0),
+    # A previous version of this function stopped at 0.2.10 - a real
+    # mistake found and corrected on ARMOR-SERVER's own 0.2.9 -> 0.2.10 bump.
+    major, minor, patch = (int(part) for part in parts)
+    patch += 1
+    if patch > 9:
+        patch = 0
+        minor += 1
+    after = f"{major}.{minor}.{patch}"
     manifest["version"] = after
     manifest["native_version"] = after
     manifest_path = project / "armor.project.json"
@@ -216,6 +240,26 @@ def bump(project: Path, manifest: dict[str, object]) -> tuple[str, str]:
         gradle = gradle[:code_match.start(1)] + str(int(code_match.group(1)) + 1) + gradle[code_match.end(1):]
         gradle = re.sub(r'versionName\s*=\s*"[^"]+"', f'versionName = "{after}"', gradle, count=1)
         gradle_file.write_text(gradle, encoding="utf-8")
+    # A Python project's own pyproject.toml `version` (PyPI-style packaging
+    # identity) and its package `__init__.py`'s `__version__` mirror are a
+    # separate copy of the number from armor.project.json's - found while
+    # auditing the ecosystem: ARMOR-NETWORK's pyproject.toml stayed at 0.0.1
+    # while its manifest reached 0.0.2, and ARMOR-COMMON's stayed at 0.2.3
+    # against a manifest already at 0.2.6, unnoticed because nothing kept
+    # them in sync. Kept narrow to the projects that actually have a
+    # pyproject.toml (every PYTHON_PROJECTS/PYTEST_PROJECTS member).
+    if manifest.get("name") in PYTHON_PROJECTS | PYTEST_PROJECTS:
+        pyproject_file = project / "pyproject.toml"
+        if pyproject_file.is_file():
+            pyproject = pyproject_file.read_text(encoding="utf-8")
+            pyproject, count = re.subn(r'(?m)^version\s*=\s*"[^"]+"', f'version = "{after}"', pyproject, count=1)
+            if count:
+                pyproject_file.write_text(pyproject, encoding="utf-8")
+        for init_file in (project / "src").glob("*/__init__.py"):
+            init_text = init_file.read_text(encoding="utf-8")
+            init_text, count = re.subn(r'(?m)^__version__\s*=\s*"[^"]+"', f'__version__ = "{after}"', init_text, count=1)
+            if count:
+                init_file.write_text(init_text, encoding="utf-8")
     changelog = project / "CHANGELOG.md"
     previous = changelog.read_text(encoding="utf-8") if changelog.is_file() else "# Changelog\n\nAll notable changes to this project are documented here.\n"
     entry = f"\n## [{after}] - {date.today().isoformat()}\n\n- Verified build completed; release version advanced from `{before}` to `{after}`.\n"
@@ -263,7 +307,7 @@ def run_project(project: Path, manifest: dict[str, object]) -> None:
         command(project, [NPM, "run", "dev"], environment)
     elif name == "ARMOR-DEVOPS":
         command(project, ["docker", "compose", "up", "--build"])
-    elif name in {"ARMOR-RADAR", "ARMOR-ANDROID-CONTROL", "ARMOR-HARDWARE", "ARMOR-DOCS"}:
+    elif name in {"ARMOR-RADAR", "ARMOR-ANDROID-CONTROL", "ARMOR-HARDWARE", "ARMOR-DOCS", "ARMOR-UPDATER"}:
         print(f"{name} has no safe generic runtime command. Use build-test to validate it, then follow its project documentation for hardware or IDE deployment.")
     else:
         raise RuntimeError(f"no run rule registered for {name}")
