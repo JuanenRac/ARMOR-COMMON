@@ -383,6 +383,63 @@ paths:
         '409': { description: 'node_unavailable, node_not_switching, switch_fault, busy or not_armed' }
         '429': { description: Too many switch commands }
         '503': { description: 'mqtt_unavailable: the broker is not connected' }
+  /api/v1/network/state:
+    post:
+      summary: The state of the local network from an ARMOR-NETWORK node (the `network` message of the shared contract, ingest token); the same message arrives over MQTT on armor/network/{node_id}/state
+      security: [{ ingestBearer: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object } } } }
+      responses:
+        '202': { description: Accepted }
+        '400': { description: The message does not follow the contract }
+        '401': { description: Missing or wrong ingest token }
+  /api/v1/network:
+    get:
+      summary: The local network as the nodes see it ({ nodes, totals, events, outages }): every node with its interface, the state of the internet and its devices (each with the name and notes an administrator gave it), the sums, the latest events and the outages
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The network }
+  /api/v1/network/history:
+    get:
+      summary: The recent samples of one node (the internet's state, latency and loss, and the interface's traffic), oldest first
+      security: [{ operator: [] }]
+      parameters:
+        - { name: node, in: query, required: true, schema: { type: string } }
+        - { name: minutes, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 1440 } }
+      responses:
+        '200': { description: '{ node_id, minutes, samples }' }
+        '400': { description: node is required }
+        '404': { description: Unknown node }
+  /api/v1/network/devices/{id}:
+    put:
+      summary: Name a device, note something about it, mark it as known (which ends the alarm of a new device) or give it a kind of your own (an administrator only; only the fields given change)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { name: { type: string, maxLength: 48 }, notes: { type: string, maxLength: 300 }, trusted: { type: boolean }, kind: { type: string } } } } } }
+      responses:
+        '200': { description: '{ id, note }' }
+        '400': { description: Not a valid note or device id }
+        '403': { description: Not an administrator }
+    delete:
+      summary: Forget what was kept about a device (an administrator only)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '204': { description: Forgotten }
+        '404': { description: Nothing was kept about it }
+  /api/v1/network/design:
+    get:
+      summary: The network design (the house's network drawn in Studio's Network Designer) kept on the server ({ revision, updated_at, updated_by, network })
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The design, or revision 0 with a null network when none has been saved }
+    put:
+      summary: Save the network design; `revision` must be the one last read, or the save is refused with the current design (up to 768 kB)
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [revision, network], properties: { revision: { type: integer }, network: { type: object } } } } } }
+      responses:
+        '200': { description: Saved }
+        '400': { description: Not an object, or too large }
+        '409': { description: Someone else saved a newer revision; the body has the current design }
   /api/v1/system:
     get:
       summary: What the server is and how full it is - version, uptime, mode, counts of nodes, cameras, devices, alarms, automations, users and events, and the space media and the disk use

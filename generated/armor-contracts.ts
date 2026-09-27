@@ -172,6 +172,91 @@ export type ElectricalResult = {
   token?: string;
 };
 
+export type NetworkInterface = {
+  name: string;
+  ip: string;
+  cidr: string;
+  gateway?: string;
+  rx_bps?: number;
+  tx_bps?: number;
+};
+
+export type NetworkProbe = {
+  target: string;
+  kind: "icmp" | "tcp" | "dns" | "http";
+  ok: boolean;
+  latency_ms?: number;
+};
+
+export type NetworkOutage = {
+  started_ms: number;
+  ended_ms: number;
+  duration_s: number;
+};
+
+export type NetworkInternet = {
+  state: "up" | "degraded" | "down" | "lan_down" | "unknown";
+  since_ms?: number;
+  gateway_ok?: boolean;
+  latency_ms?: number;
+  loss_percent?: number;
+  probes?: NetworkProbe[];
+  last_outage?: NetworkOutage;
+  outages_24h?: number;
+  downtime_24h_s?: number;
+};
+
+export type NetworkPort = {
+  port: number;
+  proto: "tcp" | "udp";
+  service?: string;
+  banner?: string;
+};
+
+export type NetworkDevice = {
+  id: string;
+  ip: string;
+  mac?: string;
+  randomized_mac?: boolean;
+  vendor?: string;
+  hostname?: string;
+  kind?: "router" | "computer" | "phone" | "tv" | "printer" | "camera" | "iot" | "server" | "nas" | "network" | "unknown";
+  os?: string;
+  online: boolean;
+  first_seen_ms: number;
+  last_seen_ms: number;
+  latency_ms?: number;
+  ports?: NetworkPort[];
+  services?: string[];
+};
+
+export type NetworkEvent = {
+  id: string;
+  kind: "new_device" | "device_online" | "device_offline" | "ip_changed" | "arp_conflict" | "port_opened" | "port_closed" | "internet_down" | "internet_up" | "gateway_down" | "gateway_up";
+  at_ms: number;
+  device_id?: string;
+  port?: number;
+  outage_s?: number;
+  detail?: string;
+};
+
+export type NetworkScan = {
+  last_ms: number;
+  hosts: number;
+  duration_ms?: number;
+};
+
+export type Network = {
+  kind: string;
+  node_id: string;
+  timestamp_ms: number;
+  interface: NetworkInterface;
+  internet: NetworkInternet;
+  devices: NetworkDevice[];
+  events?: NetworkEvent[];
+  scan?: NetworkScan;
+};
+
 export const MAX_TARGETS = 15;
 export const MAX_LUX = 200000;
 export const NODE_ID_PATTERN = /^[a-z0-9][a-z0-9_-]{0,63}$/;
