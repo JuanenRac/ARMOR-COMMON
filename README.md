@@ -97,6 +97,7 @@ Broker topics: `armor/node/{node_id}/telemetry | health | command | info`, `armo
 * **[ARMOR-HARDWARE](../ARMOR-HARDWARE)** - Enclosures, electronics and the bench acceptance matrix
 * **[ARMOR-DEVOPS](../ARMOR-DEVOPS)** - Deployment, the CM5 test bench, backup and TLS
 * **[ARMOR-SIMULATOR](../ARMOR-SIMULATOR)** - Offline telemetry simulator with repeatable faults
+* **[ARMOR-UPDATER](../ARMOR-UPDATER)** - Detects, installs and updates the ecosystem's own repositories
 * **[ARMOR-DOCS](../ARMOR-DOCS)** - Architecture, security baseline and the capability matrix
 
 ## 📚 Documentation & Community
