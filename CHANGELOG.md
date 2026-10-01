@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.3.2] - The services route
+
+- OpenAPI: `GET /api/v1/system/services` (every service of the system, running or not).
+
 ## [0.3.1] - The network node can look at a device's web login
 
 - The network message's order types gain `inspect` (look at a device's web administration with a login given for that one order); a conformance vector covers it.

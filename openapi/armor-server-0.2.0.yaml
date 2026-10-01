@@ -541,6 +541,12 @@ paths:
       security: [{ operator: [] }]
       responses:
         '200': { description: The latest sample and its history }
+  /api/v1/system/services:
+    get:
+      summary: Every service of the system, running or not - the programs of the machine (read from systemd: state, process, memory, restarts, when it started) and the field nodes (online or not) - read only
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ time_ms, systemd, services: [{ id, name, family, description, kind, state, sub_state?, unit?, enabled?, pid?, since_ms?, memory_bytes?, restarts?, port? }] }; systemd is false where the machine has none' }
   /api/v1/panel/summary:
     get:
       summary: A few hundred bytes for the screens that cannot take the whole state (the touch panel, a watch) - the mode, the nodes online and the alarms that need a person, the ones nobody has acknowledged first
