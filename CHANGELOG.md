@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [0.3.1] - The network node can look at a device's web login
+
+- The network message's order types gain `inspect` (look at a device's web administration with a login given for that one order); a conformance vector covers it.
+- OpenAPI: `PUT/DELETE /api/v1/network/devices/{id}/login`.
+
 ## [0.3.0] - The touch panel joins the shared firmware
 
 - **`firmware_base` serves ARMOR-HMI too:** the sync tool and the manifest list the new project (27 shared files), whose settings are its own.
