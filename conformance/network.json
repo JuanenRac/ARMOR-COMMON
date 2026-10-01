@@ -769,6 +769,106 @@
    }
   },
   {
+   "name": "the result of a look at a web administration",
+   "valid": true,
+   "payload": {
+    "kind": "network",
+    "node_id": "network-1",
+    "timestamp_ms": 1790000060000,
+    "interface": {
+     "name": "Ethernet",
+     "ip": "192.168.0.10",
+     "cidr": "192.168.0.0/24",
+     "gateway": "192.168.0.1",
+     "rx_bps": 1200000,
+     "tx_bps": 340000
+    },
+    "internet": {
+     "state": "up",
+     "since_ms": 1789990000000,
+     "gateway_ok": true,
+     "latency_ms": 12.5,
+     "loss_percent": 0.0,
+     "probes": [
+      {
+       "target": "1.1.1.1",
+       "kind": "tcp",
+       "ok": true,
+       "latency_ms": 11.2
+      },
+      {
+       "target": "8.8.8.8",
+       "kind": "dns",
+       "ok": true,
+       "latency_ms": 13.8
+      }
+     ],
+     "last_outage": {
+      "started_ms": 1789900000000,
+      "ended_ms": 1789900300000,
+      "duration_s": 300
+     },
+     "outages_24h": 1,
+     "downtime_24h_s": 300
+    },
+    "devices": [
+     {
+      "id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1",
+      "mac": "14:2e:5e:86:d9:62",
+      "vendor": "Sagemcom Broadband SAS",
+      "hostname": "router",
+      "kind": "router",
+      "os": "network gear",
+      "online": true,
+      "first_seen_ms": 1790000000000,
+      "last_seen_ms": 1790000060000,
+      "latency_ms": 1.4,
+      "ports": [
+       {
+        "port": 80,
+        "proto": "tcp",
+        "service": "http",
+        "banner": "Router login"
+       },
+       {
+        "port": 443,
+        "proto": "tcp",
+        "service": "https"
+       }
+      ],
+      "services": [
+       "_http._tcp"
+      ]
+     }
+    ],
+    "events": [
+     {
+      "id": "e1",
+      "kind": "new_device",
+      "at_ms": 1790000030000,
+      "device_id": "96:b3:ed:0b:1c:18",
+      "detail": "A device that was never seen has joined the network"
+     }
+    ],
+    "scan": {
+     "last_ms": 1790000050000,
+     "hosts": 254,
+     "duration_ms": 9000
+    },
+    "results": [
+     {
+      "id": "c1a2b5",
+      "type": "inspect",
+      "ok": true,
+      "finished_ms": 5,
+      "device_id": "14:2e:5e:86:d9:62",
+      "output": "http://192.168.0.1:80/ -> HTTP 200\nlogin: accepted (Digest)\ntitle: Home Router\nmodel: HR-5000"
+     }
+    ]
+   }
+  },
+  {
    "name": "the result of a look at the ports",
    "valid": true,
    "payload": {

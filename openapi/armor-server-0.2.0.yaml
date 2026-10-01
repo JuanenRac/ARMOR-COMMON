@@ -498,6 +498,23 @@ paths:
       responses:
         '204': { description: Forgotten }
         '404': { description: Nothing was kept about it }
+  /api/v1/network/devices/{id}/login:
+    put:
+      summary: Keep the login of the web administration of a device, encrypted; the password goes in and never comes out (an administrator only)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [user, password], properties: { user: { type: string, maxLength: 64 }, password: { type: string, maxLength: 128 } } } } } }
+      responses:
+        '200': { description: '{ id, login: { user } }' }
+        '400': { description: Not a valid login or device id }
+        '403': { description: Not an administrator }
+    delete:
+      summary: Forget the login kept for a device (an administrator only)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '204': { description: Forgotten }
+        '404': { description: No login was kept for it }
   /api/v1/network/design:
     get:
       summary: The network design (the house's network drawn in Studio's Network Designer) kept on the server ({ revision, updated_at, updated_by, network })
