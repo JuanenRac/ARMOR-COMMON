@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.8] - The contract of the design versions and of deleting alarms
+
+- OpenAPI: `GET /api/v1/{site,electrical/design,network/design}/versions` and `.../versions/{id}` (the versions the server keeps of each design, newest first, to take one back by saving it as the current one) and `DELETE /api/v1/alarms/{id}` (take one alarm off the list); `DELETE /api/v1/alarms` now clears every alarm somebody has acknowledged, ended or not, and is the operator's to use (it was an administrator's, and did nothing at all when the role was missing).
+
 ## [0.2.7] - ARMOR-HARDWARE's enclosure was renamed
 
 - `armor_project_tool.py` and the CI template (`tools/ci.yml.template`, `.github/workflows/ci.yml`) now look for ARMOR-HARDWARE's enclosure at `scad/node_enclosure_radar.scad` (rendered to `build/node_enclosure_radar.stl`) instead of the old placeholder `scad/node_enclosure.scad`, which no longer exists: its real design moved there from `CAD/`. The other repositories' vendored copies carry the same line, which only matters to ARMOR-HARDWARE, and pick it up the next time they are synced.
