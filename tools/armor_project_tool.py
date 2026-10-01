@@ -128,9 +128,9 @@ def test_project(project: Path, manifest: dict[str, object]) -> None:
         command(project, [gradle, "test", "assembleDebug"])
     elif name == "ARMOR-HARDWARE":
         openscad = check_tool("openscad", "OpenSCAD is required to validate the parametric enclosure")
-        output = project / "build" / "node_enclosure.stl"
+        output = project / "build" / "node_enclosure_radar.stl"
         output.parent.mkdir(exist_ok=True)
-        command(project, [openscad, "-o", str(output), "scad/node_enclosure.scad"])
+        command(project, [openscad, "-o", str(output), "scad/node_enclosure_radar.scad"])
     elif name == "ARMOR-DEVOPS":
         check_tool("docker", "Docker Compose is required to validate ARMOR-DEVOPS")
         # `docker compose config` only checks the topology is well formed; it
