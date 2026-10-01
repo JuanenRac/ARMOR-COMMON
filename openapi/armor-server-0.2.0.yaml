@@ -518,6 +518,25 @@ paths:
       security: [{ operator: [] }]
       responses:
         '200': { description: The system summary }
+  /api/v1/system/metrics:
+    get:
+      summary: How the machine the server runs on is doing - processor, memory, temperatures, disks, network cards and the last minutes of them, as a task manager shows it
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The latest sample and its history }
+  /api/v1/system/connection:
+    get:
+      summary: Where the server listens and where Studio is served - the active address and ports, the saved ones and whether a restart is needed (an administrator)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: The active and the saved connection settings }
+    put:
+      summary: Save the address and ports (host, port, studio_port; an empty one leaves the deployment's value); they take effect when the server is started again
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { host: { type: string }, port: { type: integer, minimum: 1, maximum: 65535 }, studio_port: { type: integer, minimum: 1, maximum: 65535 } } } } } }
+      responses:
+        '200': { description: The new state }
+        '400': { description: Not an acceptable address or port }
   /api/v1/audit:
     get:
       summary: The audit trail, newest first (an administrator only); credentials are scrubbed as it is written
