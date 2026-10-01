@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here.
 
+## [0.3.0] - The touch panel joins the shared firmware
+
+- **`firmware_base` serves ARMOR-HMI too:** the sync tool and the manifest list the new project (27 shared files), whose settings are its own.
+- **The certificate no longer overflows the stack:** the 4 KB buffer that mbedTLS writes the certificate into lives on the heap, and the main task has 16 KB of stack (`CONFIG_ESP_MAIN_TASK_STACK_SIZE=16384`), after the first board reset in a loop right there ("A stack overflow in task main").
+- OpenAPI: `GET /api/v1/panel/summary`, `GET /api/v1/system/metrics` and `GET/PUT /api/v1/system/connection`.
+- The shared project tool builds and tests ARMOR-HMI (`test_hmi`).
+- The conformance vectors of the network message use documentation addresses instead of a real one.
+
 ## [0.2.9] - The network message carries the public address and the results of manual orders
 
 - `network.schema.json`: an optional `public` block (the public address of the connection and what a public service says of it) and an optional `results` array (what the node did with the manual orders the server handed it: `scan_now`, `ping`, `traceroute`, `wake`, `ports`, `http`). 13 new conformance vectors (the network message has 77); the TypeScript and Kotlin types are regenerated. `docs/CONTRACTS.md` tells that the orders travel in the answer to `POST /api/v1/network/state`, never over MQTT.

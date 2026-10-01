@@ -108,7 +108,7 @@ class CheckAndSyncTests(unittest.TestCase):
         fx = self.shared()
         base = tool.BASE_DIR / "main" / "entropy.cpp"
         base.write_text(base.read_text(encoding="utf-8") + "// @PROJECT@ says hello from the @kind@ node\n", encoding="utf-8")
-        self.assertEqual(len(tool.drift(fx.root)), 3)
+        self.assertEqual(len(tool.drift(fx.root)), len(tool.PROJECTS))
         tool.do_sync(fx.root)
         self.assertEqual(tool.drift(fx.root), [])
         for project, names in tool.PROJECTS.items():
