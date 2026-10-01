@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.7] - ARMOR-HARDWARE's enclosure was renamed
+
+- `armor_project_tool.py` and the CI template (`tools/ci.yml.template`, `.github/workflows/ci.yml`) now look for ARMOR-HARDWARE's enclosure at `scad/node_enclosure_radar.scad` (rendered to `build/node_enclosure_radar.stl`) instead of the old placeholder `scad/node_enclosure.scad`, which no longer exists: its real design moved there from `CAD/`. The other repositories' vendored copies carry the same line, which only matters to ARMOR-HARDWARE, and pick it up the next time they are synced.
+
 ## [0.2.6] - Canonical CI tooling for the whole ecosystem
 
 - `tools/armor_ci_validate.py`, `tools/_armor_readme_parity.py` and `tools/ci.yml.template`, the canonical CI baseline every other A.R.M.O.R. repository vendors (via ARMOR-DOCS' new `tools/sync_ci_tools.py`): the manifest, its version, CHANGELOG.md's heading, the seven README translations' structure and its local Markdown links are checked before the project's own real build/test runs.
