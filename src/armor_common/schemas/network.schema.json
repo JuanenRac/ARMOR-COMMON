@@ -445,7 +445,7 @@
     "results": {
       "type": "array",
       "maxItems": 16,
-      "description": "What the node did with the manual orders the server handed it (a sweep now, a ping, a traceroute, a wake-up, a look at the ports of one device, a look at its web page), oldest first. A result keeps the id of its order, so one read twice counts once.",
+      "description": "What the node did with the manual orders the server handed it (a sweep now, a ping, a traceroute, a wake-up, a look at the ports of one device, a look at its web page, a look at its web administration with a login the person gave), oldest first. A result keeps the id of its order, so one read twice counts once.",
       "items": {
         "type": "object",
         "additionalProperties": false,
@@ -468,7 +468,8 @@
               "traceroute",
               "wake",
               "ports",
-              "http"
+              "http",
+              "inspect"
             ]
           },
           "ok": {
