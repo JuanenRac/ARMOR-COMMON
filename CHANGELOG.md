@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 - The network message's order types gain `inspect` (look at a device's web administration with a login given for that one order); a conformance vector covers it.
 - OpenAPI: `PUT/DELETE /api/v1/network/devices/{id}/login`.
+- `docs/CONTRACTS.md` describes the `inspect` order and its `auth`.
 
 ## [0.3.0] - The touch panel joins the shared firmware
 
