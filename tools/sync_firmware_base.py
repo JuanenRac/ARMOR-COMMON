@@ -39,6 +39,7 @@ PROJECTS = {
     "ARMOR-SOLAR": ("ARMOR-SOLAR", "armor-solar", "armor_solar", "solar"),
     "ARMOR-ELECTRICAL": ("ARMOR-ELECTRICAL", "armor-electrical", "armor_electrical", "electrical"),
     "ARMOR-RADAR": ("ARMOR-RADAR", "armor-radar", "armor_radar", "radar"),
+    "ARMOR-HMI": ("ARMOR-HMI", "armor-hmi", "armor_hmi", "hmi"),
 }
 PLACEHOLDERS = ("@PROJECT@", "@project-@", "@project_@", "@kind@")
 

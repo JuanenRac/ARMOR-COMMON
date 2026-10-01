@@ -18,157 +18,181 @@
       "targets": {
         "ARMOR-SOLAR": "main/entropy.cpp",
         "ARMOR-ELECTRICAL": "main/entropy.cpp",
-        "ARMOR-RADAR": "main/entropy.cpp"
+        "ARMOR-RADAR": "main/entropy.cpp",
+        "ARMOR-HMI": "main/entropy.cpp"
       }
     },
     "main/entropy.hpp": {
       "targets": {
         "ARMOR-SOLAR": "main/entropy.hpp",
         "ARMOR-ELECTRICAL": "main/entropy.hpp",
-        "ARMOR-RADAR": "main/entropy.hpp"
+        "ARMOR-RADAR": "main/entropy.hpp",
+        "ARMOR-HMI": "main/entropy.hpp"
       }
     },
     "main/log_buffer.cpp": {
       "targets": {
         "ARMOR-SOLAR": "main/log_buffer.cpp",
         "ARMOR-ELECTRICAL": "main/log_buffer.cpp",
-        "ARMOR-RADAR": "main/log_buffer.cpp"
+        "ARMOR-RADAR": "main/log_buffer.cpp",
+        "ARMOR-HMI": "main/log_buffer.cpp"
       }
     },
     "main/log_buffer.hpp": {
       "targets": {
         "ARMOR-SOLAR": "main/log_buffer.hpp",
         "ARMOR-ELECTRICAL": "main/log_buffer.hpp",
-        "ARMOR-RADAR": "main/log_buffer.hpp"
+        "ARMOR-RADAR": "main/log_buffer.hpp",
+        "ARMOR-HMI": "main/log_buffer.hpp"
       }
     },
     "main/mqtt_link.cpp": {
       "targets": {
         "ARMOR-SOLAR": "main/mqtt_link.cpp",
-        "ARMOR-ELECTRICAL": "main/mqtt_link.cpp"
+        "ARMOR-ELECTRICAL": "main/mqtt_link.cpp",
+        "ARMOR-HMI": "main/mqtt_link.cpp"
       }
     },
     "main/mqtt_link.hpp": {
       "targets": {
         "ARMOR-SOLAR": "main/mqtt_link.hpp",
-        "ARMOR-ELECTRICAL": "main/mqtt_link.hpp"
+        "ARMOR-ELECTRICAL": "main/mqtt_link.hpp",
+        "ARMOR-HMI": "main/mqtt_link.hpp"
       }
     },
     "main/network.cpp": {
       "targets": {
         "ARMOR-SOLAR": "main/network.cpp",
-        "ARMOR-ELECTRICAL": "main/network.cpp"
+        "ARMOR-ELECTRICAL": "main/network.cpp",
+        "ARMOR-HMI": "main/network.cpp"
       }
     },
     "main/network.hpp": {
       "targets": {
         "ARMOR-SOLAR": "main/network.hpp",
-        "ARMOR-ELECTRICAL": "main/network.hpp"
+        "ARMOR-ELECTRICAL": "main/network.hpp",
+        "ARMOR-HMI": "main/network.hpp"
       }
     },
     "main/node_store.cpp": {
       "targets": {
         "ARMOR-SOLAR": "main/node_store.cpp",
-        "ARMOR-ELECTRICAL": "main/node_store.cpp"
+        "ARMOR-ELECTRICAL": "main/node_store.cpp",
+        "ARMOR-HMI": "main/node_store.cpp"
       }
     },
     "main/node_store.hpp": {
       "targets": {
         "ARMOR-SOLAR": "main/node_store.hpp",
-        "ARMOR-ELECTRICAL": "main/node_store.hpp"
+        "ARMOR-ELECTRICAL": "main/node_store.hpp",
+        "ARMOR-HMI": "main/node_store.hpp"
       }
     },
     "main/tls_cert.cpp": {
       "targets": {
         "ARMOR-SOLAR": "main/tls_cert.cpp",
         "ARMOR-ELECTRICAL": "main/tls_cert.cpp",
-        "ARMOR-RADAR": "main/tls_cert.cpp"
+        "ARMOR-RADAR": "main/tls_cert.cpp",
+        "ARMOR-HMI": "main/tls_cert.cpp"
       }
     },
     "main/tls_cert.hpp": {
       "targets": {
         "ARMOR-SOLAR": "main/tls_cert.hpp",
         "ARMOR-ELECTRICAL": "main/tls_cert.hpp",
-        "ARMOR-RADAR": "main/tls_cert.hpp"
+        "ARMOR-RADAR": "main/tls_cert.hpp",
+        "ARMOR-HMI": "main/tls_cert.hpp"
       }
     },
     "main/web_server.hpp": {
       "targets": {
         "ARMOR-SOLAR": "main/web_server.hpp",
-        "ARMOR-ELECTRICAL": "main/web_server.hpp"
+        "ARMOR-ELECTRICAL": "main/web_server.hpp",
+        "ARMOR-HMI": "main/web_server.hpp"
       }
     },
     "main/ble_provision.cpp": {
       "targets": {
         "ARMOR-SOLAR": "main/ble_provision.cpp",
         "ARMOR-ELECTRICAL": "main/ble_provision.cpp",
-        "ARMOR-RADAR": "main/ble_provision.cpp"
+        "ARMOR-RADAR": "main/ble_provision.cpp",
+        "ARMOR-HMI": "main/ble_provision.cpp"
       }
     },
     "main/ble_provision.hpp": {
       "targets": {
         "ARMOR-SOLAR": "main/ble_provision.hpp",
-        "ARMOR-ELECTRICAL": "main/ble_provision.hpp"
+        "ARMOR-ELECTRICAL": "main/ble_provision.hpp",
+        "ARMOR-HMI": "main/ble_provision.hpp"
       }
     },
     "main/Kconfig.projbuild": {
       "targets": {
         "ARMOR-SOLAR": "main/Kconfig.projbuild",
-        "ARMOR-ELECTRICAL": "main/Kconfig.projbuild"
+        "ARMOR-ELECTRICAL": "main/Kconfig.projbuild",
+        "ARMOR-HMI": "main/Kconfig.projbuild"
       }
     },
     "core/auth.hpp": {
       "targets": {
         "ARMOR-SOLAR": "core/auth.hpp",
         "ARMOR-ELECTRICAL": "core/auth.hpp",
-        "ARMOR-RADAR": "main/core/auth.hpp"
+        "ARMOR-RADAR": "main/core/auth.hpp",
+        "ARMOR-HMI": "core/auth.hpp"
       }
     },
     "core/net_text.hpp": {
       "targets": {
         "ARMOR-SOLAR": "core/net_text.hpp",
         "ARMOR-ELECTRICAL": "core/net_text.hpp",
-        "ARMOR-RADAR": "main/core/net_text.hpp"
+        "ARMOR-RADAR": "main/core/net_text.hpp",
+        "ARMOR-HMI": "core/net_text.hpp"
       }
     },
     "core/netplan.hpp": {
       "targets": {
         "ARMOR-SOLAR": "core/netplan.hpp",
-        "ARMOR-ELECTRICAL": "core/netplan.hpp"
+        "ARMOR-ELECTRICAL": "core/netplan.hpp",
+        "ARMOR-HMI": "core/netplan.hpp"
       }
     },
     "core/node_id.hpp": {
       "targets": {
         "ARMOR-SOLAR": "core/node_id.hpp",
         "ARMOR-ELECTRICAL": "core/node_id.hpp",
-        "ARMOR-RADAR": "main/core/node_id.hpp"
+        "ARMOR-RADAR": "main/core/node_id.hpp",
+        "ARMOR-HMI": "core/node_id.hpp"
       }
     },
     "core/web_policy.hpp": {
       "targets": {
         "ARMOR-SOLAR": "core/web_policy.hpp",
-        "ARMOR-ELECTRICAL": "core/web_policy.hpp"
+        "ARMOR-ELECTRICAL": "core/web_policy.hpp",
+        "ARMOR-HMI": "core/web_policy.hpp"
       }
     },
     "core/json.hpp": {
       "targets": {
         "ARMOR-SOLAR": "core/json.hpp",
         "ARMOR-ELECTRICAL": "core/json.hpp",
-        "ARMOR-RADAR": "main/core/json.hpp"
+        "ARMOR-RADAR": "main/core/json.hpp",
+        "ARMOR-HMI": "core/json.hpp"
       }
     },
     "core/ble_frame.hpp": {
       "targets": {
         "ARMOR-SOLAR": "core/ble_frame.hpp",
         "ARMOR-ELECTRICAL": "core/ble_frame.hpp",
-        "ARMOR-RADAR": "main/core/ble_frame.hpp"
+        "ARMOR-RADAR": "main/core/ble_frame.hpp",
+        "ARMOR-HMI": "core/ble_frame.hpp"
       }
     },
     "core/ble_dispatch.hpp": {
       "targets": {
         "ARMOR-SOLAR": "core/ble_dispatch.hpp",
         "ARMOR-ELECTRICAL": "core/ble_dispatch.hpp",
-        "ARMOR-RADAR": "main/core/ble_dispatch.hpp"
+        "ARMOR-RADAR": "main/core/ble_dispatch.hpp",
+        "ARMOR-HMI": "core/ble_dispatch.hpp"
       }
     },
     "core/board_s3.hpp": {
@@ -181,21 +205,24 @@
       "targets": {
         "ARMOR-SOLAR": "panel/index.html",
         "ARMOR-ELECTRICAL": "panel/index.html",
-        "ARMOR-RADAR": "panel/index.html"
+        "ARMOR-RADAR": "panel/index.html",
+        "ARMOR-HMI": "panel/index.html"
       }
     },
     "panel/style.css": {
       "targets": {
         "ARMOR-SOLAR": "panel/style.css",
         "ARMOR-ELECTRICAL": "panel/style.css",
-        "ARMOR-RADAR": "panel/style.css"
+        "ARMOR-RADAR": "panel/style.css",
+        "ARMOR-HMI": "panel/style.css"
       }
     },
     "tools/pack_panel.py": {
       "targets": {
         "ARMOR-SOLAR": "tools/pack_panel.py",
         "ARMOR-ELECTRICAL": "tools/pack_panel.py",
-        "ARMOR-RADAR": "tools/pack_panel.py"
+        "ARMOR-RADAR": "tools/pack_panel.py",
+        "ARMOR-HMI": "tools/pack_panel.py"
       }
     },
     "tools/build_node.sh": {

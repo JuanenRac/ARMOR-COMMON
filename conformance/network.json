@@ -180,12 +180,12 @@
      "duration_ms": 9000
     },
     "public": {
-     "ip": "95.60.192.108",
-     "hostname": "108.red-95-60-192.dynamicip.rima-tde.net",
+     "ip": "203.0.113.9",
+     "hostname": "host-203-0-113-9.example.net",
      "city": "Madrid",
      "region": "Madrid",
      "country": "ES",
-     "org": "AS3352 TELEFONICA DE ESPANA S.A.U.",
+     "org": "AS64496 EXAMPLE TELECOM",
      "timezone": "Europe/Madrid",
      "checked_ms": 1790000050000,
      "changed_ms": 1789990000000
@@ -281,7 +281,7 @@
      "duration_ms": 9000
     },
     "public": {
-     "ip": "95.60.192.108",
+     "ip": "203.0.113.9",
      "checked_ms": 5
     }
    }
@@ -469,7 +469,7 @@
      "duration_ms": 9000
     },
     "public": {
-     "ip": "95.60.192.108"
+     "ip": "203.0.113.9"
     }
    }
   },
@@ -562,7 +562,7 @@
      "duration_ms": 9000
     },
     "public": {
-     "ip": "95.60.192.108",
+     "ip": "203.0.113.9",
      "checked_ms": 5,
      "isp_login": "x"
     }

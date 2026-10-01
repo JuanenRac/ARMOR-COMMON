@@ -524,6 +524,12 @@ paths:
       security: [{ operator: [] }]
       responses:
         '200': { description: The latest sample and its history }
+  /api/v1/panel/summary:
+    get:
+      summary: A few hundred bytes for the screens that cannot take the whole state (the touch panel, a watch) - the mode, the nodes online and the alarms that need a person, the ones nobody has acknowledged first
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The summary }
   /api/v1/system/connection:
     get:
       summary: Where the server listens and where Studio is served - the active address and ports, the saved ones and whether a restart is needed (an administrator)
