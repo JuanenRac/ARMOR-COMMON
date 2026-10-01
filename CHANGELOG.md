@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [0.2.9] - The network message carries the public address and the results of manual orders
+
+- `network.schema.json`: an optional `public` block (the public address of the connection and what a public service says of it) and an optional `results` array (what the node did with the manual orders the server handed it: `scan_now`, `ping`, `traceroute`, `wake`, `ports`, `http`). 13 new conformance vectors (the network message has 77); the TypeScript and Kotlin types are regenerated. `docs/CONTRACTS.md` tells that the orders travel in the answer to `POST /api/v1/network/state`, never over MQTT.
+- OpenAPI: `POST/GET /api/v1/network/commands` and `GET /api/v1/network/commands/{id}`.
+
 ## [0.2.8] - The contract of the design versions and of deleting alarms
 
 - OpenAPI: `GET /api/v1/{site,electrical/design,network/design}/versions` and `.../versions/{id}` (the versions the server keeps of each design, newest first, to take one back by saving it as the current one) and `DELETE /api/v1/alarms/{id}` (take one alarm off the list); `DELETE /api/v1/alarms` now clears every alarm somebody has acknowledged, ended or not, and is the operator's to use (it was an administrator's, and did nothing at all when the role was missing).

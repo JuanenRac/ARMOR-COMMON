@@ -255,6 +255,8 @@ export type Network = {
   devices: NetworkDevice[];
   events?: NetworkEvent[];
   scan?: NetworkScan;
+  public?: Record<string, unknown>;
+  results?: unknown[];
 };
 
 export const MAX_TARGETS = 15;

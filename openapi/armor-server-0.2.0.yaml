@@ -318,6 +318,28 @@ paths:
       responses:
         '200': { description: The document of that version }
         '404': { description: Unknown version }
+  /api/v1/network/commands:
+    post:
+      summary: Hand an ARMOR-NETWORK node a manual order (a sweep now, a ping, a traceroute, a wake-up, the ports or the web page of one device); the node gets it in the answer to its next message
+      security: [{ operator: [] }]
+      responses:
+        '202': { description: The order, queued }
+        '400': { description: An order that does not exist, a device the node does not know, a device with no MAC to wake, a port that is not one }
+        '404': { description: No such network node }
+        '409': { description: The node is not reporting }
+    get:
+      summary: The latest orders and what became of them (newest first)
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ commands }' }
+  /api/v1/network/commands/{id}:
+    get:
+      summary: One order with its status (queued, sent, done, expired) and, when the node has reported, its result
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: The order }
+        '404': { description: Unknown order }
   /api/v1/automations:
     get:
       summary: The automations

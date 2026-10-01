@@ -392,6 +392,141 @@
           "minimum": 0
         }
       }
+    },
+    "public": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ip",
+        "checked_ms"
+      ],
+      "description": "What the internet sees of this connection, asked of a public service now and then (the node opts out with --no-public-info): the public address and what is known of who gives it.",
+      "properties": {
+        "ip": {
+          "type": "string",
+          "maxLength": 45
+        },
+        "hostname": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "city": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "region": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "country": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "org": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "The provider and its autonomous system, as the service words it."
+        },
+        "timezone": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "checked_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "changed_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "When the address was seen to change last (absent when it never has)."
+        }
+      }
+    },
+    "results": {
+      "type": "array",
+      "maxItems": 16,
+      "description": "What the node did with the manual orders the server handed it (a sweep now, a ping, a traceroute, a wake-up, a look at the ports of one device, a look at its web page), oldest first. A result keeps the id of its order, so one read twice counts once.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "ok",
+          "finished_ms"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "scan_now",
+              "ping",
+              "traceroute",
+              "wake",
+              "ports",
+              "http"
+            ]
+          },
+          "ok": {
+            "type": "boolean"
+          },
+          "finished_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "device_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9:._-]{0,63}$"
+          },
+          "output": {
+            "type": "string",
+            "maxLength": 2000,
+            "description": "What it printed, trimmed: the lines of a traceroute, the title of a page, the reason it failed."
+          },
+          "ports": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "port",
+                "proto"
+              ],
+              "properties": {
+                "port": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 65535
+                },
+                "proto": {
+                  "type": "string",
+                  "enum": [
+                    "tcp",
+                    "udp"
+                  ]
+                },
+                "service": {
+                  "type": "string",
+                  "maxLength": 32
+                },
+                "banner": {
+                  "type": "string",
+                  "maxLength": 80
+                }
+              }
+            }
+          },
+          "latency_ms": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      }
     }
   }
 }
