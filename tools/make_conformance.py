@@ -400,6 +400,7 @@ cases = {
         ("an unknown field in the public block", False, network(public={"ip": "203.0.113.9", "checked_ms": 5, "isp_login": "x"})),
         ("the result of a ping", True, network(results=[{"id": "c1a2b3", "type": "ping", "ok": True, "finished_ms": 5, "device_id": "14:2e:5e:86:d9:62", "latency_ms": 1.3, "output": "1 packet, 1 received"}])),
         ("the result of a traceroute", True, network(results=[{"id": "c1a2b4", "type": "traceroute", "ok": True, "finished_ms": 5, "output": " 1  192.168.0.1  1.2 ms\n 2  10.10.0.1  5.1 ms"}])),
+        ("the result of a look at a web administration", True, network(results=[{"id": "c1a2b5", "type": "inspect", "ok": True, "finished_ms": 5, "device_id": "14:2e:5e:86:d9:62", "output": "http://192.168.0.1:80/ -> HTTP 200\nlogin: accepted (Digest)\ntitle: Home Router\nmodel: HR-5000"}])),
         ("the result of a look at the ports", True, network(results=[{"id": "c1a2b5", "type": "ports", "ok": True, "finished_ms": 5, "device_id": "14:2e:5e:86:d9:62", "ports": [{"port": 80, "proto": "tcp", "service": "http", "banner": "Router login"}]}])),
         ("a result that failed", True, network(results=[{"id": "c1a2b6", "type": "wake", "ok": False, "finished_ms": 5, "output": "the device has no MAC address"}])),
         ("a result of a kind that is not one", False, network(results=[{"id": "c1a2b7", "type": "reboot", "ok": True, "finished_ms": 5}])),
