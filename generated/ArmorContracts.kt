@@ -255,7 +255,9 @@ data class Network(
     val internet: NetworkInternet,
     val devices: List<NetworkDevice>,
     val events: List<NetworkEvent>? = null,
-    val scan: NetworkScan? = null
+    val scan: NetworkScan? = null,
+    val public: Map<String, Any>? = null,
+    val results: List<Any>? = null
 )
 
 object ContractLimits {
