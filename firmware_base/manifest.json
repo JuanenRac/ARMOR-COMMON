@@ -92,8 +92,7 @@
       "targets": {
         "ARMOR-SOLAR": "main/tls_cert.cpp",
         "ARMOR-ELECTRICAL": "main/tls_cert.cpp",
-        "ARMOR-RADAR": "main/tls_cert.cpp",
-        "ARMOR-HMI": "main/tls_cert.cpp"
+        "ARMOR-RADAR": "main/tls_cert.cpp"
       }
     },
     "main/tls_cert.hpp": {
