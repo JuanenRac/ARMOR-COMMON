@@ -38,7 +38,7 @@
 * **Un validateur qui ne peut sauter aucune règle :** il interprète directement le schéma et refuse un schéma qui utilise un mot-clé qu'il n'implémente pas.
 * **Vecteurs de conformité :** 330 charges acceptées et rejetées exécutées par chaque implémentation (Python ici, TypeScript dans ARMOR-SERVER, les contrôles d'ARMOR-SOLAR), si bien qu'une dérive fait échouer la compilation.
 * **Clients générés :** les types TypeScript et Kotlin sortent des schémas (`tools/generate_types.py --check` les tient à jour).
-* **Contrat HTTP :** `openapi/armor-server-0.2.0.yaml` décrit chaque route du serveur, sa règle d'accès et son schéma.
+* **Contrat HTTP :** `openapi/armor-server-0.4.0.yaml` décrit chaque route du serveur, sa règle d'accès et son schéma.
 * **Lanceur partagé :** `tools/armor_project_tool.py` donne à tous les dépôts de la famille le même flux `build`, `build-test` et `run`.
 
 ## 🔄 Architecture
@@ -62,7 +62,7 @@ ARMOR-COMMON/
 ├── conformance/        accepted and rejected payloads shared by every implementation
 ├── firmware_base/      the firmware that ARMOR-RADAR, ARMOR-SOLAR and ARMOR-ELECTRICAL share, once (synced into each by tools/sync_firmware_base.py)
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
-├── openapi/            armor-server-0.2.0.yaml
+├── openapi/            armor-server-0.4.0.yaml
 ├── tools/              armor_project_tool.py, generate_types.py, make_conformance.py, sync_firmware_base.py
 ├── tests/              unit tests and conformance runner
 └── docs/               contracts guide, the shared firmware base

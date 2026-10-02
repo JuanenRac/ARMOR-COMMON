@@ -74,7 +74,7 @@ The schema cannot say the rules that join two fields (a token on the closing act
 
 ## HTTP
 
-`openapi/armor-server-0.2.0.yaml` describes every route of ARMOR-SERVER, who may
+`openapi/armor-server-0.4.0.yaml` describes every route of ARMOR-SERVER, who may
 call it and which schema its body follows. ARMOR-SERVER's tests fail when a
 registered route is missing from it.
 

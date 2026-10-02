@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: A.R.M.O.R. Server API
-  version: 0.1.7
+  version: 0.4.0
   description: >-
     The HTTP surface of ARMOR-SERVER. Message bodies reference the JSON Schemas
     published in src/armor_common/schemas, which are the single source of truth.
