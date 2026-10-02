@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [0.3.4] - The OpenAPI file was not actually valid YAML
+
+- **`openapi/armor-server-0.4.0.yaml`: two summaries had an unquoted "word: word" inside parentheses** (the network and services routes), which a real YAML parser reads as a second mapping key, not plain text - this repo's own conformance test only ever did a substring check, so it never caught it. Both quoted now; the file parses cleanly.
+- Added `GET`/`PUT /api/v1/preferences` to the same file, for ARMOR-SERVER 0.4.1's new per-account language/theme/weather-place storage.
+
 ## [0.3.3] - ARMOR-HMI was missing from the shared firmware's checks
 
 - **`firmware_base/manifest.json` reconciled with what the four node projects actually run:** the fixes made to `ble_provision.cpp` (the Bluetooth stack size and the advertise-while-in-setup condition) and to the panel's titled `<title>`, among others, had been written straight into ARMOR-RADAR/-SOLAR/-ELECTRICAL's own copies without ever updating this project's shared base - `sync_firmware_base.py check` had nothing current to compare ARMOR-HMI against, so its own copies (never fixed) went unnoticed. The base now reflects the fixed content, and ARMOR-HMI has been synced to it (see its own 0.0.4).
