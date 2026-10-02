@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [0.3.3] - ARMOR-HMI was missing from the shared firmware's checks
+
+- **`firmware_base/manifest.json` reconciled with what the four node projects actually run:** the fixes made to `ble_provision.cpp` (the Bluetooth stack size and the advertise-while-in-setup condition) and to the panel's titled `<title>`, among others, had been written straight into ARMOR-RADAR/-SOLAR/-ELECTRICAL's own copies without ever updating this project's shared base - `sync_firmware_base.py check` had nothing current to compare ARMOR-HMI against, so its own copies (never fixed) went unnoticed. The base now reflects the fixed content, and ARMOR-HMI has been synced to it (see its own 0.0.4).
+- **`openapi/armor-server-0.2.0.yaml` renamed to `armor-server-0.4.0.yaml`, its own `info.version` bumped from 0.1.7 to match**, catching the file's name and its own declared version up to ARMOR-SERVER's real current one; its content (76 routes) was already reasonably current, only the name and the version field had stopped following it.
+
 ## [0.3.2] - The services route
 
 - OpenAPI: `GET /api/v1/system/services` (every service of the system, running or not).
