@@ -589,6 +589,79 @@ paths:
       responses:
         '200': { description: '{ entries }' }
         '403': { description: Not an administrator }
+  /api/v1/admin/status:
+    get:
+      summary: Whether the admin agent (the privileged helper of ARMOR-DEVOPS) is installed and answering (an administrator)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: '{ available, reason }' }
+  /api/v1/admin/services:
+    get:
+      summary: The A.R.M.O.R. services the admin agent may control, with their state (an administrator)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: '{ services }' }
+        '503': { description: The admin agent is not installed or not answering }
+  /api/v1/admin/services/{id}/{action}:
+    post:
+      summary: Start, stop, restart or reload one of those services (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }, { name: action, in: path, required: true, schema: { type: string, enum: [start, stop, restart, reload] } }]
+      responses:
+        '200': { description: Done }
+        '404': { description: Not one of the services }
+        '503': { description: The admin agent is not installed or not answering }
+  /api/v1/admin/files:
+    get:
+      summary: The settings files the admin agent may read and write (an administrator)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: '{ files }' }
+  /api/v1/admin/files/{id}:
+    get:
+      summary: One settings file; in an environment file the value of every secret is replaced by a mask (an administrator)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: '{ id, path, format, content, mtime, masked }' }
+        '404': { description: Not one of the files }
+    put:
+      summary: Save one settings file (a masked line keeps its real value), optionally restarting the services that read it; the old file is kept as a copy (an administrator)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [content], properties: { content: { type: string }, restart: { type: boolean }, expect_mtime: { type: number } } } } } }
+      responses:
+        '200': { description: '{ ok, restarted }' }
+        '409': { description: The file changed since it was read }
+        '422': { description: The content is not valid for this kind of file }
+  /api/v1/admin/mqtt/accounts:
+    get:
+      summary: The accounts of the A.R.M.O.R. MQTT broker, with their role and what each may read and write (an administrator)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: '{ accounts }' }
+    post:
+      summary: Make the account of a node, a device or a consumer; the password is returned once and kept only hashed (an administrator)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [role, name], properties: { role: { type: string, enum: [node, solar-node, electrical-node, network-node, consumer, device, bridge] }, name: { type: string } } } } } }
+      responses:
+        '200': { description: '{ ok, user, password }' }
+        '409': { description: The account exists }
+  /api/v1/admin/mqtt/accounts/{user}:
+    delete:
+      summary: Remove an account (never the server's own) (an administrator)
+      security: [{ admin: [] }]
+      parameters: [{ name: user, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: Removed }
+  /api/v1/admin/nodes/provision:
+    post:
+      summary: Adopt a field node in one step - make (or renew) its broker account and write the broker and that account into the node's own panel with the login given, which is used once and never kept (an administrator)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [node_id, address, broker_host], properties: { node_id: { type: string }, address: { type: string }, panel_user: { type: string }, panel_password: { type: string }, broker_host: { type: string }, broker_port: { type: integer } } } } } }
+      responses:
+        '200': { description: '{ ok, written, why, broker } - written is false when the panel could not be written to; broker then holds what to type by hand' }
+        '422': { description: Not a node id or a local address }
   /api/v1/operator/session:
     post:
       summary: Exchange the operator token for a session cookie
