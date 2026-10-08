@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [0.3.5] - The shared firmware catches up, and the administration routes in the OpenAPI file
+
+- **`firmware_base` re-made from the four node projects:** it now carries the clock (time zone and time server), the flash overview, the persistent set-up code, the Wi-Fi reason shown for a secured network joined with an empty password, the pause of the station's attempts while someone is using the rescue network, and the style rules for the buttons that are file pickers. `sync_firmware_base.py check` passes again for the 35 shared files.
+- **`openapi/armor-server-0.4.0.yaml`:** the `/api/v1/admin/...` routes of ARMOR-SERVER 0.4.2 (services, settings files, broker accounts, adopting a node).
+
 ## [0.3.4] - The OpenAPI file was not actually valid YAML
 
 - **`openapi/armor-server-0.4.0.yaml`: two summaries had an unquoted "word: word" inside parentheses** (the network and services routes), which a real YAML parser reads as a second mapping key, not plain text - this repo's own conformance test only ever did a substring check, so it never caught it. Both quoted now; the file parses cleanly.
