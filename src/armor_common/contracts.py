@@ -60,6 +60,12 @@ def validate_payload(kind: str, payload: Mapping[str, object]) -> None:
         raise ContractError(str(error)) from error
 
 
+def _check_node_id(node_id: str) -> None:
+    """The node id of a topic: lowercase letters, digits, '-' or '_', not starting with '-' or '_', at most 64 characters."""
+    if not node_id or not set(node_id) <= _NODE_ID_CHARS or node_id[0] in "-_" or len(node_id) > 64:
+        raise ContractError("node_id must use lowercase letters, digits, '-' or '_'")
+
+
 def parse_topic(topic: str) -> tuple[str, str]:
     """Split ``armor/node/{node_id}/{kind}`` into ``(node_id, kind)``."""
     if not isinstance(topic, str):
@@ -68,8 +74,7 @@ def parse_topic(topic: str) -> tuple[str, str]:
     if len(parts) != 4 or parts[:2] != ["armor", "node"]:
         raise ContractError("topic must be armor/node/{node_id}/{kind}")
     node_id, kind = parts[2], parts[3]
-    if not node_id or not set(node_id) <= _NODE_ID_CHARS:
-        raise ContractError("node_id must use lowercase letters, digits, '-' or '_'")
+    _check_node_id(node_id)
     if kind not in KINDS:
         raise ContractError("unsupported topic kind")
     return node_id, kind
@@ -93,8 +98,7 @@ def parse_solar_topic(topic: str) -> tuple[str, str]:
     if len(parts) != 5 or parts[:2] != ["armor", "solar"] or parts[4] != "state":
         raise ContractError("topic must be armor/solar/{node_id}/{device}/state")
     node_id, device = parts[2], parts[3]
-    if not node_id or not set(node_id) <= _NODE_ID_CHARS or node_id[0] in "-_" or len(node_id) > 64:
-        raise ContractError("node_id must use lowercase letters, digits, '-' or '_'")
+    _check_node_id(node_id)
     if not device or not set(device) <= _DEVICE_CHARS or device[0] in "-_" or len(device) > 32:
         raise ContractError("device must use lowercase letters, digits, '-' or '_' (at most 32)")
     return node_id, device
@@ -123,8 +127,7 @@ def parse_electrical_topic(topic: str, leaf: str = "state") -> str:
     if len(parts) != 4 or parts[:2] != ["armor", "electrical"] or parts[3] != leaf:
         raise ContractError(f"topic must be armor/electrical/{{node_id}}/{leaf}")
     node_id = parts[2]
-    if not node_id or not set(node_id) <= _NODE_ID_CHARS or node_id[0] in "-_" or len(node_id) > 64:
-        raise ContractError("node_id must use lowercase letters, digits, '-' or '_'")
+    _check_node_id(node_id)
     return node_id
 
 
@@ -183,8 +186,7 @@ def parse_network_topic(topic: str) -> str:
     if len(parts) != 4 or parts[:2] != ["armor", "network"] or parts[3] != "state":
         raise ContractError("topic must be armor/network/{node_id}/state")
     node_id = parts[2]
-    if not node_id or not set(node_id) <= _NODE_ID_CHARS or node_id[0] in "-_" or len(node_id) > 64:
-        raise ContractError("node_id must use lowercase letters, digits, '-' or '_'")
+    _check_node_id(node_id)
     return node_id
 
 
