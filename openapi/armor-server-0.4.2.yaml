@@ -662,6 +662,49 @@ paths:
       responses:
         '200': { description: '{ ok, written, why, broker } - written is false when the panel could not be written to; broker then holds what to type by hand' }
         '422': { description: Not a node id or a local address }
+  /api/v1/admin/firmware/uploads:
+    post:
+      summary: Keep a firmware image (the .bin of a node project, as application/octet-stream, at most 4 MB) for a firmware job; kept for an hour (an administrator)
+      security: [{ admin: [] }]
+      responses:
+        '201': { description: '{ id, name, bytes, sha256 }' }
+        '415': { description: Not sent as application/octet-stream }
+        '422': { description: Not an image of an ESP32 application, or of a size that makes sense }
+  /api/v1/admin/firmware/releases/{kind}:
+    get:
+      summary: The newest release of the repository of a kind of node (radar, solar, electrical, hmi), downloaded and checked against the SHA-256 the release publishes (an administrator)
+      security: [{ admin: [] }]
+      parameters: [{ name: kind, in: path, required: true, schema: { type: string, enum: [radar, solar, electrical, hmi] } }]
+      responses:
+        '200': { description: '{ kind, repo, version, bytes, checksum }' }
+        '404': { description: Unknown kind, or the repository has no release }
+        '422': { description: The release has no image or no hash file, or the image does not match its hash }
+        '502': { description: GitHub could not be reached }
+  /api/v1/admin/firmware/probe:
+    post:
+      summary: Ask nodes (by local address) what they say about themselves without a login - id, version and board (an administrator)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [addresses], properties: { addresses: { type: array, items: { type: string } } } } } } }
+      responses:
+        '200': { description: '{ nodes: [{ address, reachable, node_id?, version?, board? }] }' }
+        '422': { description: Not a local address }
+  /api/v1/admin/firmware/jobs:
+    post:
+      summary: Update the firmware of one or more nodes of one kind, one at a time, from an uploaded image or the newest GitHub release, with the login of the nodes' own panel (used for the job, never kept) (an administrator)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [kind, source, targets, panel_user, panel_password], properties: { kind: { type: string, enum: [radar, solar, electrical, hmi] }, source: { type: string, enum: [github, upload] }, upload_id: { type: string }, targets: { type: array, items: { type: object, required: [address], properties: { address: { type: string }, node_id: { type: string } } } }, panel_user: { type: string }, panel_password: { type: string } } } } } }
+      responses:
+        '202': { description: '{ id } - the job runs in the background' }
+        '409': { description: Another job is running }
+        '422': { description: Unknown kind or source, not a local address, no login, or an unknown upload }
+  /api/v1/admin/firmware/jobs/{id}:
+    get:
+      summary: How a firmware job stands - its state and, for every node, where it is and the version before and after (an administrator)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: The job }
+        '404': { description: Unknown job }
   /api/v1/operator/session:
     post:
       summary: Exchange the operator token for a session cookie
