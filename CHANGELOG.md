@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.3.7] - The firmware routes in the OpenAPI file
+
+- `openapi/armor-server-0.4.2.yaml` describes `/api/v1/admin/firmware/uploads`, `releases/{kind}`, `probe`, `jobs` and `jobs/{id}` of ARMOR-SERVER 0.4.4.
+
 ## [0.3.6] - One rule for the node id of every topic, and the OpenAPI file with the version of the server
 
 - **Node id:** `parse_topic` (the node topics) now applies the same rule as the solar, electrical and network topics - at most 64 characters, not starting with `-` or `_` - through one shared check, so a long or odd id is refused the same way everywhere.
