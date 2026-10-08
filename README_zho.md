@@ -38,7 +38,7 @@
 * **不会跳过任何规则的验证器：** 它直接解释模式，并拒绝使用其未实现关键字的模式。
 * **一致性向量：** 330 个被接受和被拒绝的负载，由每个实现运行（此处的 Python、ARMOR-SERVER 中的 TypeScript、ARMOR-SOLAR 的检查），因此偏差会让构建失败。
 * **生成的客户端：** TypeScript 和 Kotlin 类型来自模式（`tools/generate_types.py --check` 使其保持最新）。
-* **HTTP 契约：** `openapi/armor-server-0.4.0.yaml` 描述服务器的每条路由、其访问规则和模式。
+* **HTTP 契约：** `openapi/armor-server-0.4.2.yaml` 描述服务器的每条路由、其访问规则和模式。
 * **共享启动器：** `tools/armor_project_tool.py` 让家族中的每个仓库都有相同的 `build`、`build-test` 和 `run` 流程。
 
 ## 🔄 架构
@@ -62,7 +62,7 @@ ARMOR-COMMON/
 ├── conformance/        accepted and rejected payloads shared by every implementation
 ├── firmware_base/      the firmware that ARMOR-RADAR, ARMOR-SOLAR and ARMOR-ELECTRICAL share, once (synced into each by tools/sync_firmware_base.py)
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
-├── openapi/            armor-server-0.4.0.yaml
+├── openapi/            armor-server-0.4.2.yaml
 ├── tools/              armor_project_tool.py, generate_types.py, make_conformance.py, sync_firmware_base.py
 ├── tests/              unit tests and conformance runner
 └── docs/               contracts guide, the shared firmware base

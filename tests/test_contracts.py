@@ -310,3 +310,15 @@ class NetworkMessageTests(unittest.TestCase):
         # and the ones that look alike and are fine
         validate_network_message(self.topic, {**self.network, "events": [{"id": "x5", "kind": "internet_up", "at_ms": 1, "outage_s": 3}]})
         validate_network_message(self.topic, {**self.network, "devices": [{"id": "ip-192-168-0-9", "ip": "192.168.0.9", "online": True, "first_seen_ms": 1, "last_seen_ms": 1}]})
+
+
+def test_a_node_id_is_limited_the_same_way_in_every_topic():
+    from armor_common.contracts import ContractError, parse_topic
+
+    assert parse_topic("armor/node/" + "a" * 64 + "/telemetry")[0] == "a" * 64
+    for bad in ("a" * 65, "-lead", "_lead", "Upper"):
+        try:
+            parse_topic(f"armor/node/{bad}/telemetry")
+        except ContractError:
+            continue
+        raise AssertionError(f"{bad!r} was accepted")

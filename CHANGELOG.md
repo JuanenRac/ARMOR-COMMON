@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## [0.3.6] - One rule for the node id of every topic, and the OpenAPI file with the version of the server
+
+- **Node id:** `parse_topic` (the node topics) now applies the same rule as the solar, electrical and network topics - at most 64 characters, not starting with `-` or `_` - through one shared check, so a long or odd id is refused the same way everywhere.
+- **`openapi/armor-server-0.4.2.yaml`** (it was `armor-server-0.4.0.yaml`, with version 0.4.0 inside) carries the version of the server it describes; the documents that name it say so.
+
+
 ## [0.3.5] - The shared firmware catches up, and the administration routes in the OpenAPI file
 
 - **`firmware_base` re-made from the four node projects:** it now carries the clock (time zone and time server), the flash overview, the persistent set-up code, the Wi-Fi reason shown for a secured network joined with an empty password, the pause of the station's attempts while someone is using the rescue network, and the style rules for the buttons that are file pickers. `sync_firmware_base.py check` passes again for the 35 shared files.

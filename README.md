@@ -38,7 +38,7 @@
 * **A validator that cannot skip a rule:** it interprets the schema directly and refuses a schema that uses a keyword it does not implement.
 * **Conformance vectors:** 330 accepted and rejected payloads run by every implementation (Python here, TypeScript in ARMOR-SERVER, the checks of ARMOR-SOLAR), so drift fails a build.
 * **Generated clients:** TypeScript and Kotlin types come from the schemas (`tools/generate_types.py --check` keeps them current).
-* **HTTP contract:** `openapi/armor-server-0.4.0.yaml` describes every server route, its access rule and its schema.
+* **HTTP contract:** `openapi/armor-server-0.4.2.yaml` describes every server route, its access rule and its schema.
 * **Shared launcher:** `tools/armor_project_tool.py` gives every repository of the family the same `build`, `build-test` and `run` workflow.
 
 ## 🔄 Architecture
@@ -62,7 +62,7 @@ ARMOR-COMMON/
 ├── conformance/        accepted and rejected payloads shared by every implementation
 ├── firmware_base/      the firmware that ARMOR-RADAR, ARMOR-SOLAR and ARMOR-ELECTRICAL share, once (synced into each by tools/sync_firmware_base.py)
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
-├── openapi/            armor-server-0.4.0.yaml
+├── openapi/            armor-server-0.4.2.yaml
 ├── tools/              armor_project_tool.py, generate_types.py, make_conformance.py, sync_firmware_base.py
 ├── tests/              unit tests and conformance runner
 └── docs/               contracts guide, the shared firmware base

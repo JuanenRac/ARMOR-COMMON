@@ -38,7 +38,7 @@
 * **規則を飛ばせない検証器：** スキーマを直接解釈し、実装していないキーワードを使うスキーマは拒否します。
 * **適合性ベクトル：** 受理と拒否の 330 件のペイロードを、各実装（ここでは Python、ARMOR-SERVER では TypeScript、ARMOR-SOLAR のチェック）が実行するので、ずれるとビルドが失敗します。
 * **生成されたクライアント：** TypeScript と Kotlin の型はスキーマから作られます（`tools/generate_types.py --check` が最新に保ちます）。
-* **HTTP 契約：** `openapi/armor-server-0.4.0.yaml` は、サーバーのすべてのルート、そのアクセス規則、スキーマを記述します。
+* **HTTP 契約：** `openapi/armor-server-0.4.2.yaml` は、サーバーのすべてのルート、そのアクセス規則、スキーマを記述します。
 * **共有ランチャー：** `tools/armor_project_tool.py` は、ファミリーのすべてのリポジトリに同じ `build`、`build-test`、`run` の流れを与えます。
 
 ## 🔄 アーキテクチャ
@@ -62,7 +62,7 @@ ARMOR-COMMON/
 ├── conformance/        accepted and rejected payloads shared by every implementation
 ├── firmware_base/      the firmware that ARMOR-RADAR, ARMOR-SOLAR and ARMOR-ELECTRICAL share, once (synced into each by tools/sync_firmware_base.py)
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
-├── openapi/            armor-server-0.4.0.yaml
+├── openapi/            armor-server-0.4.2.yaml
 ├── tools/              armor_project_tool.py, generate_types.py, make_conformance.py, sync_firmware_base.py
 ├── tests/              unit tests and conformance runner
 └── docs/               contracts guide, the shared firmware base
