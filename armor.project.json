@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "ecosystem": "A.R.M.O.R.",
   "name": "ARMOR-COMMON",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "role": "Shared contracts and validation library",
   "stack": "Python 3.11+ / JSON Schema / OpenAPI",
   "technologies": [
@@ -15,7 +15,7 @@
   "maturity": "established",
   "family": "Platform Contracts",
   "parent": null,
-  "native_version": "0.3.4",
+  "native_version": "0.3.5",
   "build": "python -m unittest discover -s tests && python tools/generate_types.py --check",
   "notes": "A real, substantial version history under this ecosystem's own odometer scheme (0.2.6, 26+ real builds), and genuinely depended on by every other real A.R.M.O.R. project, not just its own test suite: its 330 conformance vectors are run by ARMOR-SERVER and by ARMOR-SOLAR's own checks (per ARMOR-DOCS' own capability matrix), and ARMOR-RADAR/-ELECTRICAL/-NETWORK's own emitted payloads and device states are all independently accepted by this project's own shared contract checker. JSON Schemas are the single source of truth for every message. The Python validators interpret them directly, and TypeScript and Kotlin types are generated from them."
 }
