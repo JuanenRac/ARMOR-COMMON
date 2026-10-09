@@ -297,6 +297,11 @@ paths:
       security: [{ operator: [] }]
       responses:
         '200': { description: '{ versions: [{ id, revision, saved_at, updated_by, counts }] }' }
+    delete:
+      summary: Forget every kept version of the site design (the current design is not touched)
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ removed } how many versions were forgotten' }
   /api/v1/site/versions/{id}:
     get:
       summary: One version of the site design, whole; to take it back, save it as the current one
@@ -305,12 +310,24 @@ paths:
       responses:
         '200': { description: The document of that version }
         '404': { description: Unknown version }
+    delete:
+      summary: Forget one kept version of the site design
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '204': { description: Forgotten }
+        '404': { description: Unknown version }
   /api/v1/electrical/design/versions:
     get:
       summary: The versions the server keeps of the electrical design (what it was before changes; newest first)
       security: [{ operator: [] }]
       responses:
         '200': { description: '{ versions: [{ id, revision, saved_at, updated_by, counts }] }' }
+    delete:
+      summary: Forget every kept version of the electrical design (the current design is not touched)
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ removed } how many versions were forgotten' }
   /api/v1/electrical/design/versions/{id}:
     get:
       summary: One version of the electrical design, whole; to take it back, save it as the current one
@@ -319,12 +336,24 @@ paths:
       responses:
         '200': { description: The document of that version }
         '404': { description: Unknown version }
+    delete:
+      summary: Forget one kept version of the electrical design
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '204': { description: Forgotten }
+        '404': { description: Unknown version }
   /api/v1/network/design/versions:
     get:
       summary: The versions the server keeps of the network design (what it was before changes; newest first)
       security: [{ operator: [] }]
       responses:
         '200': { description: '{ versions: [{ id, revision, saved_at, updated_by, counts }] }' }
+    delete:
+      summary: Forget every kept version of the network design (the current design is not touched)
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ removed } how many versions were forgotten' }
   /api/v1/network/design/versions/{id}:
     get:
       summary: One version of the network design, whole; to take it back, save it as the current one
@@ -332,6 +361,13 @@ paths:
       parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
       responses:
         '200': { description: The document of that version }
+        '404': { description: Unknown version }
+    delete:
+      summary: Forget one kept version of the network design
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '204': { description: Forgotten }
         '404': { description: Unknown version }
   /api/v1/network/commands:
     post:
