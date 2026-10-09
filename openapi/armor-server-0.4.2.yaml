@@ -705,6 +705,21 @@ paths:
       responses:
         '200': { description: The job }
         '404': { description: Unknown job }
+  /api/v1/admin/notifications:
+    get:
+      summary: Which places the alarms are sent to - webhook, MQTT, Telegram, Home Assistant - and the language of their sentences (never their secrets) (an administrator)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: '{ webhook, mqtt, telegram, homeassistant, language }' }
+  /api/v1/admin/notifications/test:
+    post:
+      summary: Send one test message to every place the alarms go (or to the one in `channel`), once, and say what each answered (an administrator)
+      security: [{ admin: [] }]
+      requestBody: { required: false, content: { application/json: { schema: { type: object, properties: { channel: { type: string, enum: [webhook, mqtt, telegram, homeassistant] } } } } } }
+      responses:
+        '200': { description: '{ results: [{ channel, ok, detail }] }' }
+        '409': { description: Nothing is configured }
+        '422': { description: Unknown channel }
   /api/v1/voice/status:
     get:
       summary: Whether written and spoken commands are available on this install (a voice gateway is set up)
