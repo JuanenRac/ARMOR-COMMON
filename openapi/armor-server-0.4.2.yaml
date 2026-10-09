@@ -83,6 +83,13 @@ paths:
         '202': { description: Accepted }
         '401': { description: Operator authorization is required }
         '404': { description: The device was not declared }
+  /api/v1/solar/energy:
+    get:
+      summary: What the panels made, the load used and the battery took and gave, day by day (the last `days`, default 30, at most 400), in kilowatt-hours
+      security: [{ operator: [] }]
+      parameters: [{ name: days, in: query, required: false, schema: { type: integer } }]
+      responses:
+        '200': { description: '{ days: [{ date, pv_kwh, load_kwh, battery_in_kwh, battery_out_kwh }] }' }
   /api/v1/solar/history:
     get:
       summary: The recent history of one solar device, a few numbers per sample, oldest first
@@ -592,6 +599,12 @@ paths:
       security: [{ operator: [] }]
       responses:
         '200': { description: The latest sample and its history }
+  /api/v1/system/ingest:
+    get:
+      summary: What the nodes sent that the server took, refused or partly ignored (fields of a newer firmware), per topic, with the start of the last refused message
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ topics: [{ topic, accepted, rejected, ignored_fields, last_ok_at, last_error, last_error_at, last_payload }] }' }
   /api/v1/system/services:
     get:
       summary: 'Every service of the system, running or not - the programs of the machine (read from systemd: state, process, memory, restarts, when it started) and the field nodes (online or not) - read only'
