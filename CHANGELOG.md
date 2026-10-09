@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [0.3.8] - The voice routes in the OpenAPI file
+
+- `openapi/armor-server-0.4.2.yaml` describes `/api/v1/voice/status` and `/api/v1/voice/command` of ARMOR-SERVER 0.4.6.
+
+
 ## [0.3.7] - The firmware routes in the OpenAPI file
 
 - `openapi/armor-server-0.4.2.yaml` describes `/api/v1/admin/firmware/uploads`, `releases/{kind}`, `probe`, `jobs` and `jobs/{id}` of ARMOR-SERVER 0.4.4.
