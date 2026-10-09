@@ -37,6 +37,265 @@
    }
   },
   {
+   "name": "what a battery management system adds",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "power_w": -129.2,
+    "balancing": 3,
+    "protecting": false,
+    "charge_mos": 1,
+    "discharge_mos": 1
+   }
+  },
+  {
+   "name": "a protection active",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "protecting": true,
+    "charge_mos": 5,
+    "discharge_mos": 1,
+    "balancing": 0
+   }
+  },
+  {
+   "name": "power as a string",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "power_w": "12"
+   }
+  },
+  {
+   "name": "balancing a fractional number of cells",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "balancing": 2.5
+   }
+  },
+  {
+   "name": "balancing a negative number of cells",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "balancing": -1
+   }
+  },
+  {
+   "name": "a mosfet code above 255",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "charge_mos": 256
+   }
+  },
+  {
+   "name": "protecting as a number",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "protecting": 1
+   }
+  },
+  {
    "name": "charging",
    "valid": true,
    "payload": {
