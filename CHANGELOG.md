@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.3.9] - The notification routes in the OpenAPI file
+
+- `openapi/armor-server-0.4.2.yaml` describes `/api/v1/admin/notifications` and `/api/v1/admin/notifications/test` of ARMOR-SERVER 0.4.8.
+
 ## [0.3.8] - The voice routes in the OpenAPI file
 
 - `openapi/armor-server-0.4.2.yaml` describes `/api/v1/voice/status` and `/api/v1/voice/command` of ARMOR-SERVER 0.4.6.
