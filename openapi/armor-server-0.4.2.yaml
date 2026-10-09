@@ -720,6 +720,31 @@ paths:
         '200': { description: '{ results: [{ channel, ok, detail }] }' }
         '409': { description: Nothing is configured }
         '422': { description: Unknown channel }
+  /api/v1/ai/context:
+    get:
+      summary: For the observation service (ARMOR-SERVER-AI, with its own token): the mode, the radar nodes with their tracks and light, and the cameras it can look at
+      security: [{ aiBearer: [] }]
+      responses:
+        '200': { description: '{ mode, nodes: [{ id, online, targets, lux }], cameras: [{ id, name }] }' }
+        '401': { description: Not the observation service token }
+  /api/v1/ai/cameras/{id}/frame:
+    get:
+      summary: For the observation service - one grey frame of a camera, 64 x 36 bytes taken from its stream and never stored; what goes wrong is told without the camera's address or password
+      security: [{ aiBearer: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: 'application/octet-stream, 2304 bytes, headers X-Frame-Width and X-Frame-Height' }
+        '404': { description: Unknown camera }
+        '502': { description: The camera did not answer }
+  /api/v1/ai/observations:
+    post:
+      summary: For the observation service - what it saw (movement on a camera, with the radar tracks and the light profile); it raises an alarm only while the system is armed, once until it is closed
+      security: [{ aiBearer: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [camera_id, severity, reasons, profile, motion, radar_tracks], properties: { camera_id: { type: string }, severity: { type: string, enum: [review, high] }, reasons: { type: array, items: { type: string } }, profile: { type: string, enum: [daylight, low-light] }, motion: { type: number }, radar_tracks: { type: integer } } } } } }
+      responses:
+        '200': { description: '{ raised, alarm_id?, reason? }' }
+        '404': { description: Unknown camera }
+        '422': { description: Not a valid observation }
   /api/v1/voice/status:
     get:
       summary: Whether written and spoken commands are available on this install (a voice gateway is set up)
@@ -952,6 +977,7 @@ components:
     ingestBearer: { type: http, scheme: bearer, description: ARMOR_INGEST_TOKEN }
     controlBearer: { type: http, scheme: bearer, description: ARMOR_CONTROL_TOKEN }
     operatorBearer: { type: http, scheme: bearer, description: ARMOR_OPERATOR_TOKEN }
+    aiBearer: { type: http, scheme: bearer, description: ARMOR_AI_TOKEN - the observation service, which opens only the /api/v1/ai routes }
     operator: { type: apiKey, in: cookie, name: armor_studio_session, description: Studio session, operator session or operator bearer token }
     studio: { type: apiKey, in: cookie, name: armor_studio_session, description: A signed-in Studio user }
     admin: { type: apiKey, in: cookie, name: armor_studio_session, description: A signed-in Studio user with the admin role (bearer tokens do not qualify) }
