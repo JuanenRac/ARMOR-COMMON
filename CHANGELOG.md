@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.4.2] - The service actions of the OpenAPI file
+
+- `openapi/armor-server-0.4.2.yaml`: the service administration route accepts `pause` and `resume` besides start, stop, restart and reload.
+
 ## [0.4.1] - The voice command in the OpenAPI file lists its commands
 
 - `openapi/armor-server-0.4.2.yaml` says which commands `/api/v1/voice/command` understands: arm, disarm, status, silence, alarms, nodes, cameras, radar, solar, electrical, network, time, help, lights on and lights off.
