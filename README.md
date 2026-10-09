@@ -26,7 +26,7 @@
 
 ---
 
-**Honesty check - what runs today:** The schemas, the Python validator, the 330 shared conformance vectors, the generated TypeScript and Kotlin types and the shared project launcher are real and tested (36 tests). The Kotlin file is generated but **not yet consumed** by ARMOR-ANDROID-CONTROL, and the `set_thresholds` command carries a single `sensitivity` field because the real radar parameters are not defined until firmware exists.
+**Honesty check - what runs today:** The schemas, the Python validator, the 330 shared conformance vectors, the generated TypeScript and Kotlin types and the shared project launcher are real and tested (39 tests). The Kotlin file is generated but **not yet consumed** by ARMOR-ANDROID-CONTROL, and the `set_thresholds` command carries a single `sensitivity` field because the real radar parameters are not defined until firmware exists.
 
 ---
 
