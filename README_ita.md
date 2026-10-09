@@ -26,7 +26,7 @@
 
 ---
 
-**Controllo di onestà - cosa funziona oggi:** Gli schemi, il validatore Python, i 330 vettori di conformità condivisi, i tipi TypeScript e Kotlin generati e il lanciatore di progetti condiviso sono reali e testati (36 test). Il file Kotlin è generato ma **non ancora usato** da ARMOR-ANDROID-CONTROL, e il comando `set_thresholds` porta un solo campo `sensitivity` perché i veri parametri del radar non sono definiti finché non esiste il firmware.
+**Controllo di onestà - cosa funziona oggi:** Gli schemi, il validatore Python, i 330 vettori di conformità condivisi, i tipi TypeScript e Kotlin generati e il lanciatore di progetti condiviso sono reali e testati (39 test). Il file Kotlin è generato ma **non ancora usato** da ARMOR-ANDROID-CONTROL, e il comando `set_thresholds` porta un solo campo `sensitivity` perché i veri parametri del radar non sono definiti finché non esiste il firmware.
 
 ---
 
