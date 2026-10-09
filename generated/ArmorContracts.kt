@@ -69,7 +69,8 @@ data class SolarInverter(
     val totalOutVa: Double? = null,
     val totalLoadPercent: Double? = null,
     val totalChargingA: Double? = null,
-    val units: List<Any>? = null
+    val units: List<Any>? = null,
+    val busV: Double? = null
 )
 
 data class SolarModule(
@@ -109,7 +110,12 @@ data class SolarBattery(
     val fullCapacityAh: Double? = null,
     val energyKwh: Double? = null,
     val cycles: Long? = null,
-    val healthPercent: Long? = null
+    val healthPercent: Long? = null,
+    val powerW: Double? = null,
+    val balancing: Long? = null,
+    val protecting: Boolean? = null,
+    val chargeMos: Long? = null,
+    val dischargeMos: Long? = null
 )
 
 data class ElectricalChannel(

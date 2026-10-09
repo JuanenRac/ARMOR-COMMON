@@ -208,6 +208,34 @@
       "minimum": 0,
       "maximum": 100,
       "description": "Mean of the modules' health (the capacity learned against the rated one); left out when no module knows it."
+    },
+    "power_w": {
+      "type": "number",
+      "minimum": -1000000,
+      "maximum": 1000000,
+      "description": "What a battery management system measures for the stack, in watts: negative while discharging. Left out when the equipment does not say."
+    },
+    "balancing": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 64,
+      "description": "How many cells are being balanced at this moment; left out when unknown."
+    },
+    "protecting": {
+      "type": "boolean",
+      "description": "True when a protection of the battery management system has switched a MOSFET off (not merely off, full or waiting)."
+    },
+    "charge_mos": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 255,
+      "description": "The status code of the charge MOSFET as the battery management system reports it (0 off, 1 on, the rest a protection or a state)."
+    },
+    "discharge_mos": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 255,
+      "description": "The status code of the discharge MOSFET, as above."
     }
   }
 }
