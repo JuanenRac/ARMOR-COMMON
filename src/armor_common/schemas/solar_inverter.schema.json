@@ -284,6 +284,12 @@
           }
         }
       }
+    },
+    "bus_v": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1500,
+      "description": "The DC bus voltage inside the inverter; left out when the dialect does not say."
     }
   }
 }

@@ -69,6 +69,7 @@ export type SolarInverter = {
   total_load_percent?: number;
   total_charging_a?: number;
   units?: unknown[];
+  bus_v?: number;
 };
 
 export type SolarModule = {
@@ -109,6 +110,11 @@ export type SolarBattery = {
   energy_kwh?: number;
   cycles?: number;
   health_percent?: number;
+  power_w?: number;
+  balancing?: number;
+  protecting?: boolean;
+  charge_mos?: number;
+  discharge_mos?: number;
 };
 
 export type ElectricalChannel = {
