@@ -604,9 +604,9 @@ paths:
         '503': { description: The admin agent is not installed or not answering }
   /api/v1/admin/services/{id}/{action}:
     post:
-      summary: Start, stop, restart or reload one of those services (an administrator; written in the audit trail)
+      summary: Start, stop, restart, reload, pause or resume one of those services (an administrator; written in the audit trail)
       security: [{ admin: [] }]
-      parameters: [{ name: id, in: path, required: true, schema: { type: string } }, { name: action, in: path, required: true, schema: { type: string, enum: [start, stop, restart, reload] } }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }, { name: action, in: path, required: true, schema: { type: string, enum: [start, stop, restart, reload, pause, resume] } }]
       responses:
         '200': { description: Done }
         '404': { description: Not one of the services }
