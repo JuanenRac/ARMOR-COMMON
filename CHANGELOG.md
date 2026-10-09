@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.4.0] - The observation routes in the OpenAPI file
+
+- `openapi/armor-server-0.4.2.yaml` describes `/api/v1/ai/context`, `/api/v1/ai/cameras/{id}/frame` and `/api/v1/ai/observations` of ARMOR-SERVER 0.4.9, and the `aiBearer` security scheme.
+
 ## [0.3.9] - The notification routes in the OpenAPI file
 
 - `openapi/armor-server-0.4.2.yaml` describes `/api/v1/admin/notifications` and `/api/v1/admin/notifications/test` of ARMOR-SERVER 0.4.8.
