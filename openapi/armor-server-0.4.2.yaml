@@ -705,6 +705,21 @@ paths:
       responses:
         '200': { description: The job }
         '404': { description: Unknown job }
+  /api/v1/voice/status:
+    get:
+      summary: Whether written and spoken commands are available on this install (a voice gateway is set up)
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ available }' }
+  /api/v1/voice/command:
+    post:
+      summary: A written or spoken command (as text) - the voice gateway says which of its closed commands it is (arm, disarm, status, silence) and this server carries out what was accepted, with the session of the person; arm and disarm need a second turn with the confirmation token
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [text], properties: { text: { type: string, maxLength: 200 }, language: { type: string, enum: [en, es, de, fr, it, ja, zh] }, confirmation: { type: string } } } } } }
+      responses:
+        '200': { description: '{ accepted, executed, intent, outcome, speech, confirmation_token?, reason?, result? } - outcome is accepted, confirmation-needed, confirmation-refused or not-understood' }
+        '422': { description: No text, too long, or not a supported language }
+        '503': { description: No voice gateway is set up, or it does not answer }
   /api/v1/operator/session:
     post:
       summary: Exchange the operator token for a session cookie
