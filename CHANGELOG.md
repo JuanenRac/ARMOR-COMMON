@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.4.4] - The Zigbee bridge is the alarm node's own
+
+- **`main/zigbee_bridge.cpp` and `.hpp` are shared with ARMOR-ELECTRICAL only**; ARMOR-ALARM has its own copy with a hook for the node to hold the radio itself. `core/zigbee_bridge.hpp` stays shared. `sync_firmware_base.py check` passes for 52 files in 197 copies.
+
 ## [0.4.3] - The alarm messages, and a firmware base that every node shares
 
 - **Alarm contract (version 0):** `alarm.schema.json`, `alarm_command.schema.json` and `alarm_result.schema.json` for `armor/alarm/{node_id}/state | command | result`, the validators `validate_alarm_message`, `validate_alarm_command` and `validate_alarm_result`, 81 conformance vectors (the ones only the message rules refuse are marked), the generated TypeScript and Kotlin types, and a section in `docs/CONTRACTS.md`. A disarm carries no PIN.
