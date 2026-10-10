@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 - **Alarm contract (version 0):** `alarm.schema.json`, `alarm_command.schema.json` and `alarm_result.schema.json` for `armor/alarm/{node_id}/state | command | result`, the validators `validate_alarm_message`, `validate_alarm_command` and `validate_alarm_result`, 81 conformance vectors (the ones only the message rules refuse are marked), the generated TypeScript and Kotlin types, and a section in `docs/CONTRACTS.md`. A disarm carries no PIN.
 - **`firmware_base` carries the files every node shares:** the update from GitHub (`github_update`, `semver`, `release_assets`: a node picks the image of its own board, `armor_<kind>-<board>.bin`, and checks its SHA-256), the broker topic rule, the node-wide settings (`node_settings`, `config_common`), the base board's pins, relays and Zigbee radio bridge (`io_config`, `base_board`, `relay_bank`, `relay_remote`, `zigbee_bridge`, `relay_outputs`). `sync_firmware_base.py check` passes for 52 shared files in 199 copies.
+- **OpenAPI:** the file is now `openapi/armor-server-0.4.3.yaml`; it describes `POST /api/v1/alarm/state`, `GET /api/v1/alarm/nodes`, `GET /api/v1/alarm/commands` and `POST /api/v1/alarm/command`, and the firmware kinds include `alarm`.
 
 ## [0.4.2] - Battery management and inverter fields in the solar contract, and the new server routes
 
