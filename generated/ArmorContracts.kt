@@ -179,6 +179,55 @@ data class ElectricalResult(
     val token: String? = null
 )
 
+data class AlarmZone(
+    val id: String,
+    val name: String? = null,
+    val kind: String,
+    val state: String,
+    val bypassed: Boolean
+)
+
+data class AlarmEvent(
+    val agoS: Long,
+    val kind: String,
+    val zone: String? = null
+)
+
+data class Alarm(
+    val kind: String,
+    val nodeId: String,
+    val timestampMs: Long,
+    val phase: String,
+    val mode: String,
+    val siren: Boolean,
+    val lockedOut: Boolean,
+    val commandsEnabled: Boolean,
+    val zones: List<AlarmZone>,
+    val openZones: List<String>,
+    val events: List<AlarmEvent>
+)
+
+data class AlarmCommand(
+    val kind: String,
+    val nodeId: String,
+    val timestampMs: Long,
+    val commandId: String,
+    val action: String,
+    val mode: String? = null,
+    val force: Boolean? = null
+)
+
+data class AlarmResult(
+    val kind: String,
+    val nodeId: String,
+    val timestampMs: Long,
+    val commandId: String,
+    val action: String,
+    val accepted: Boolean,
+    val refusal: String,
+    val phase: String
+)
+
 data class NetworkInterface(
     val name: String,
     val ip: String,
