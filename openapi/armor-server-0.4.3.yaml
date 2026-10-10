@@ -531,6 +531,44 @@ paths:
         '409': { description: 'node_unavailable, node_not_switching, switch_fault, busy or not_armed' }
         '429': { description: Too many switch commands }
         '503': { description: 'mqtt_unavailable: the broker is not connected' }
+  /api/v1/alarm/state:
+    post:
+      summary: The state of an alarm node's panel (the `alarm` message of the shared contract, ingest token); the same message arrives over MQTT on armor/alarm/{node_id}/state. A field this server does not know is dropped and said in `ignored`.
+      security: [{ ingestBearer: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object } } } }
+      responses:
+        '202': { description: 'Accepted; { accepted, ignored? }' }
+        '400': { description: Not the contract's message }
+        '401': { description: Missing or wrong ingest token }
+  /api/v1/alarm/nodes:
+    get:
+      summary: The latest state of every alarm node ({ nodes, totals }); a node that has been silent for thirty seconds is stale
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The states and the sums (nodes, stale, armed, sounding) }
+  /api/v1/alarm/commands:
+    get:
+      summary: Whether the server may arm and disarm alarm nodes (off unless ARMOR_ALARM_COMMANDS=1), the commands still waiting for a node's answer, and what became of the latest ones ({ enabled, pending, recent })
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The status of the commands }
+  /api/v1/alarm/command:
+    post:
+      summary: >-
+        A command to the panel of one alarm node (an administrator only), published to armor/alarm/{node_id}/command (the `alarm_command` message of the shared contract): arm in away or stay
+        (optionally forced) or disarm. There is no PIN in it. Refused unless the server has the commands turned on, the node says in its state that it accepts them, and nothing is waiting for an
+        answer from it. Answered 202: the node's own answer arrives on armor/alarm/{node_id}/result and is shown by GET /api/v1/alarm/commands; an accepted command is not an armed alarm, only
+        the node's state says that.
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [node, action], properties: { node: { type: string }, action: { type: string, enum: [arm, disarm] }, mode: { type: string, enum: [away, stay] }, force: { type: boolean } } } } } }
+      responses:
+        '202': { description: 'Published; { accepted, command_id }' }
+        '400': { description: node and a valid action are required }
+        '403': { description: 'Not an administrator, or the commands are not turned on (code commands_disabled)' }
+        '404': { description: unknown_node }
+        '409': { description: 'node_unavailable, node_commands_off or busy' }
+        '429': { description: Too many alarm commands }
+        '503': { description: 'mqtt_unavailable: the broker is not connected' }
   /api/v1/network/state:
     post:
       summary: The state of the local network from an ARMOR-NETWORK node (the `network` message of the shared contract, ingest token); the same message arrives over MQTT on armor/network/{node_id}/state
@@ -739,9 +777,9 @@ paths:
         '422': { description: Not an image of an ESP32 application, or of a size that makes sense }
   /api/v1/admin/firmware/releases/{kind}:
     get:
-      summary: The newest release of the repository of a kind of node (radar, solar, electrical, hmi), downloaded and checked against the SHA-256 the release publishes (an administrator)
+      summary: The newest release of the repository of a kind of node (radar, solar, electrical, alarm, hmi), downloaded and checked against the SHA-256 the release publishes (an administrator)
       security: [{ admin: [] }]
-      parameters: [{ name: kind, in: path, required: true, schema: { type: string, enum: [radar, solar, electrical, hmi] } }]
+      parameters: [{ name: kind, in: path, required: true, schema: { type: string, enum: [radar, solar, electrical, alarm, hmi] } }]
       responses:
         '200': { description: '{ kind, repo, version, bytes, checksum }' }
         '404': { description: Unknown kind, or the repository has no release }
@@ -759,7 +797,7 @@ paths:
     post:
       summary: Update the firmware of one or more nodes of one kind, one at a time, from an uploaded image or the newest GitHub release, with the login of the nodes' own panel (used for the job, never kept) (an administrator)
       security: [{ admin: [] }]
-      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [kind, source, targets, panel_user, panel_password], properties: { kind: { type: string, enum: [radar, solar, electrical, hmi] }, source: { type: string, enum: [github, upload] }, upload_id: { type: string }, targets: { type: array, items: { type: object, required: [address], properties: { address: { type: string }, node_id: { type: string } } } }, panel_user: { type: string }, panel_password: { type: string } } } } } }
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [kind, source, targets, panel_user, panel_password], properties: { kind: { type: string, enum: [radar, solar, electrical, alarm, hmi] }, source: { type: string, enum: [github, upload] }, upload_id: { type: string }, targets: { type: array, items: { type: object, required: [address], properties: { address: { type: string }, node_id: { type: string } } } }, panel_user: { type: string }, panel_password: { type: string } } } } } }
       responses:
         '202': { description: '{ id } - the job runs in the background' }
         '409': { description: Another job is running }
