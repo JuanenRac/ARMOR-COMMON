@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## [0.4.2] - The service actions of the OpenAPI file
+## [0.4.2] - Battery management and inverter fields in the solar contract, and the new server routes
 
 - **Solar contract: what a battery management system and an inverter can add.** The battery stack takes `power_w`, `balancing` (cells being balanced), `protecting`, `charge_mos` and `discharge_mos`; the inverter takes `bus_v` (the DC bus). All optional, with new conformance vectors (valid and refused) and the regenerated types.
 - `openapi/armor-server-0.4.2.yaml`: the service administration route accepts `pause` and `resume` besides start, stop, restart and reload.
