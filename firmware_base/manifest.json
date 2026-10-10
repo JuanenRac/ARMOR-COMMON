@@ -397,14 +397,12 @@
     },
     "main/zigbee_bridge.cpp": {
       "targets": {
-        "ARMOR-ELECTRICAL": "main/zigbee_bridge.cpp",
-        "ARMOR-ALARM": "main/zigbee_bridge.cpp"
+        "ARMOR-ELECTRICAL": "main/zigbee_bridge.cpp"
       }
     },
     "main/zigbee_bridge.hpp": {
       "targets": {
-        "ARMOR-ELECTRICAL": "main/zigbee_bridge.hpp",
-        "ARMOR-ALARM": "main/zigbee_bridge.hpp"
+        "ARMOR-ELECTRICAL": "main/zigbee_bridge.hpp"
       }
     }
   }

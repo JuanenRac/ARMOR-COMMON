@@ -39,3 +39,7 @@ parts of the network and the broker link that only a radar node has (`mqtt_link`
 * The base is only as good as the projects' tests: a change to a shared file is tested by each project's host tests and built in each project's container, as any change.
 * The tool never builds anything and never touches a file that is not in the base.
 * The three projects have to be checked out next to ARMOR-COMMON (they are, for every other check of the family).
+
+## Files that are not shared with every node
+
+`main/zigbee_bridge.cpp` and `main/zigbee_bridge.hpp` are listed for ARMOR-ELECTRICAL only: ARMOR-ALARM keeps its own copy, which takes a hook for the node itself to speak Zigbee while the radio is its own (see ARMOR-ALARM's `docs/FAILOVER.md`). `core/zigbee_bridge.hpp` (who may connect, the arbiter, the reset sequence) is still shared by both.
