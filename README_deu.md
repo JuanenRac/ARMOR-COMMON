@@ -58,7 +58,7 @@ flowchart LR
 
 ```text
 ARMOR-COMMON/
-├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery, electrical)
+├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery, electrical, alarm)
 ├── conformance/        accepted and rejected payloads shared by every implementation
 ├── firmware_base/      the firmware that ARMOR-RADAR, ARMOR-SOLAR and ARMOR-ELECTRICAL share, once (synced into each by tools/sync_firmware_base.py)
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
@@ -78,7 +78,7 @@ python tools/make_conformance.py          # regenerate the vectors after editing
 python tools/sync_firmware_base.py check  # the firmware the node projects share has not drifted (see docs/FIRMWARE_BASE.md)
 ```
 
-Broker-Topics: `armor/node/{node_id}/telemetry | health | command | info`, `armor/solar/{node_id}/{device}/state` und `armor/electrical/{node_id}/state | command | result`. Siehe den [Vertragsleitfaden](docs/CONTRACTS.md). Der gemeinsame Starter erzeugt beim ersten ARMOR-SERVER-Lauf eine ignorierte `.env` mit zufälligen Geheimnissen und einem zufälligen Administratorpasswort; nichts wird gedruckt oder eingecheckt.
+Broker-Topics: `armor/node/{node_id}/telemetry | health | command | info`, `armor/solar/{node_id}/{device}/state` und `armor/electrical/{node_id}/state | command | result` and `armor/alarm/{node_id}/state | command | result`. Siehe den [Vertragsleitfaden](docs/CONTRACTS.md). Der gemeinsame Starter erzeugt beim ersten ARMOR-SERVER-Lauf eine ignorierte `.env` mit zufälligen Geheimnissen und einem zufälligen Administratorpasswort; nichts wird gedruckt oder eingecheckt.
 
 ## 🔗 Verwandte Projekte
 

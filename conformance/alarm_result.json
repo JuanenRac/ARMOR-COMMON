@@ -1,0 +1,298 @@
+{
+ "kind": "alarm_result",
+ "vectors": [
+  {
+   "name": "an arm, accepted",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "accepted": true,
+    "refusal": "none",
+    "phase": "exit_delay"
+   }
+  },
+  {
+   "name": "a disarm, accepted",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "disarm",
+    "accepted": true,
+    "refusal": "none",
+    "phase": "disarmed"
+   }
+  },
+  {
+   "name": "an arm refused: a zone is open",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "accepted": false,
+    "refusal": "zones_open",
+    "phase": "disarmed"
+   }
+  },
+  {
+   "name": "an arm refused: already armed",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "accepted": false,
+    "refusal": "not_disarmed",
+    "phase": "armed"
+   }
+  },
+  {
+   "name": "a disarm refused: not armed",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "disarm",
+    "accepted": false,
+    "refusal": "not_armed",
+    "phase": "disarmed"
+   }
+  },
+  {
+   "name": "a disarm refused: wrong PIN",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "disarm",
+    "accepted": false,
+    "refusal": "bad_pin",
+    "phase": "armed"
+   }
+  },
+  {
+   "name": "a disarm refused: locked out",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "disarm",
+    "accepted": false,
+    "refusal": "locked_out",
+    "phase": "alarm"
+   }
+  },
+  {
+   "name": "accepted with a refusal",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "accepted": true,
+    "refusal": "zones_open",
+    "phase": "exit_delay"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "refused with refusal none",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "accepted": false,
+    "refusal": "none",
+    "phase": "exit_delay"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a refusal outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "accepted": false,
+    "refusal": "welded",
+    "phase": "exit_delay"
+   }
+  },
+  {
+   "name": "an action outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "silence",
+    "accepted": true,
+    "refusal": "none",
+    "phase": "exit_delay"
+   }
+  },
+  {
+   "name": "a phase outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "accepted": true,
+    "refusal": "none",
+    "phase": "sleeping"
+   }
+  },
+  {
+   "name": "accepted as a string",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "accepted": "true",
+    "refusal": "none",
+    "phase": "exit_delay"
+   }
+  },
+  {
+   "name": "no phase",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "accepted": true,
+    "refusal": "none"
+   }
+  },
+  {
+   "name": "no refusal",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "accepted": true,
+    "phase": "exit_delay"
+   }
+  },
+  {
+   "name": "no accepted",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "refusal": "none",
+    "phase": "exit_delay"
+   }
+  },
+  {
+   "name": "no command id",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "action": "arm",
+    "accepted": true,
+    "refusal": "none",
+    "phase": "exit_delay"
+   }
+  },
+  {
+   "name": "a command id of fifteen digits",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee012345678",
+    "action": "arm",
+    "accepted": true,
+    "refusal": "none",
+    "phase": "exit_delay"
+   }
+  },
+  {
+   "name": "the kind of a command",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "accepted": true,
+    "refusal": "none",
+    "phase": "exit_delay"
+   }
+  },
+  {
+   "name": "a node id with a space",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "my node",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "accepted": true,
+    "refusal": "none",
+    "phase": "exit_delay"
+   }
+  },
+  {
+   "name": "an unknown field",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "accepted": true,
+    "refusal": "none",
+    "phase": "exit_delay",
+    "detail": "x"
+   }
+  }
+ ]
+}
