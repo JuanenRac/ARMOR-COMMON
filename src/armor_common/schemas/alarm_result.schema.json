@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/alarm-result-0.1.0.json",
+  "title": "A.R.M.O.R. answer of an alarm node to a command",
+  "description": "What a node answers to a command, published to armor/alarm/{node_id}/result (never retained): whether it accepted the request and, when it did not, why, and the phase the panel is in. Accepting an arm is not an armed alarm: only the state message says that.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "node_id",
+    "timestamp_ms",
+    "command_id",
+    "action",
+    "accepted",
+    "refusal",
+    "phase"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "alarm_result"
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "command_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{16}$",
+      "description": "The command_id of the command answered."
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "arm",
+        "disarm"
+      ]
+    },
+    "accepted": {
+      "type": "boolean"
+    },
+    "refusal": {
+      "type": "string",
+      "enum": [
+        "none",
+        "not_disarmed",
+        "zones_open",
+        "not_armed",
+        "bad_pin",
+        "locked_out"
+      ],
+      "description": "none exactly when the request was accepted."
+    },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "disarmed",
+        "exit_delay",
+        "armed",
+        "entry_delay",
+        "alarm"
+      ]
+    }
+  }
+}

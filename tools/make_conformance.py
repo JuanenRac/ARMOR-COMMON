@@ -59,6 +59,31 @@ def result(**changes):
     return base
 
 
+def alarm(**changes):
+    base = {"kind": "alarm", "node_id": "alarm-1", "timestamp_ms": 1000, "phase": "armed", "mode": "away", "siren": False, "locked_out": False, "commands_enabled": True,
+            "zones": [{"id": "front-door", "name": "Front door", "kind": "entry", "state": "normal", "bypassed": False},
+                      {"id": "window", "kind": "instant", "state": "normal", "bypassed": False}],
+            "open_zones": [], "events": [{"ago_s": 12, "kind": "armed"}]}
+    base.update(changes)
+    return base
+
+
+def zone(**changes):
+    return alarm(zones=[dict({"id": "front-door", "kind": "entry", "state": "normal", "bypassed": False}, **changes)], open_zones=[], events=[])
+
+
+def alarm_command(**changes):
+    base = {"kind": "alarm_command", "node_id": "alarm-1", "timestamp_ms": 7000, "command_id": "c0ffee0123456789", "action": "arm", "mode": "away"}
+    base.update(changes)
+    return base
+
+
+def alarm_result(**changes):
+    base = {"kind": "alarm_result", "node_id": "alarm-1", "timestamp_ms": 7100, "command_id": "c0ffee0123456789", "action": "arm", "accepted": True, "refusal": "none", "phase": "exit_delay"}
+    base.update(changes)
+    return base
+
+
 def net_device(**changes):
     base = {"id": "14:2e:5e:86:d9:62", "ip": "192.168.0.1", "mac": "14:2e:5e:86:d9:62", "vendor": "Sagemcom Broadband SAS", "hostname": "router", "kind": "router", "os": "network gear",
             "online": True, "first_seen_ms": 1790000000000, "last_seen_ms": 1790000060000, "latency_ms": 1.4,
@@ -400,6 +425,94 @@ cases = {
         ("the kind of a command", False, result(kind="electrical_command")),
         ("a node id with a space", False, result(node_id="my node")),
         ("an unknown field", False, result(detail="welded")),
+    ],
+    "alarm": [
+        ("an armed alarm", True, alarm()),
+        ("a disarmed panel", True, alarm(phase="disarmed", mode="disarmed", events=[])),
+        ("an exit delay in stay mode", True, alarm(phase="exit_delay", mode="stay")),
+        ("an alarm with the siren sounding", True, alarm(phase="alarm", siren=True, zones=[{"id": "window", "kind": "instant", "state": "triggered", "bypassed": False}],
+                                                       open_zones=["window"], events=[{"ago_s": 3, "kind": "alarm", "zone": "window"}])),
+        ("a locked-out panel", True, alarm(locked_out=True, events=[{"ago_s": 1, "kind": "locked_out"}])),
+        ("a node that takes no commands", True, alarm(commands_enabled=False)),
+        ("a zone that is bypassed", True, alarm(zones=[{"id": "window", "kind": "instant", "state": "triggered", "bypassed": True}], open_zones=[])),
+        ("a tamper", True, zone(state="tamper")),
+        ("an always zone", True, zone(kind="always")),
+        ("an interior zone", True, zone(kind="interior")),
+        ("no zones at all", True, alarm(zones=[], open_zones=[], events=[])),
+        ("ten events, the limit", True, alarm(events=[{"ago_s": i, "kind": "armed"} for i in range(10)])),
+        ("sixteen zones, the limit", True, alarm(zones=[{"id": f"z{i}", "kind": "instant", "state": "normal", "bypassed": False} for i in range(16)], open_zones=[])),
+        ("eleven events", False, alarm(events=[{"ago_s": i, "kind": "armed"} for i in range(11)])),
+        ("seventeen zones", False, alarm(zones=[{"id": f"z{i}", "kind": "instant", "state": "normal", "bypassed": False} for i in range(17)], open_zones=[])),
+        ("a phase outside the list", False, alarm(phase="sleeping")),
+        ("a mode outside the list", False, alarm(mode="night")),
+        ("a zone kind outside the list", False, zone(kind="glass")),
+        ("a zone state outside the list", False, zone(state="open")),
+        ("an event kind outside the list", False, alarm(events=[{"ago_s": 1, "kind": "reboot"}])),
+        ("an event told in the future", False, alarm(events=[{"ago_s": -1, "kind": "armed"}])),
+        ("a zone id with a space", False, zone(id="front door")),
+        ("an empty zone name", False, zone(name="")),
+        ("a zone without its bypass", False, alarm(zones=[{"id": "window", "kind": "instant", "state": "normal"}])),
+        ("no events", False, {k: v for k, v in alarm().items() if k != "events"}),
+        ("no open zones", False, {k: v for k, v in alarm().items() if k != "open_zones"}),
+        ("a siren as a string", False, alarm(siren="true")),
+        ("a node id with a space", False, alarm(node_id="my node")),
+        ("negative timestamp", False, alarm(timestamp_ms=-1)),
+        ("the kind of a command", False, alarm(kind="alarm_command")),
+        ("an unknown field", False, alarm(pin="1234")),
+        ("a zone id twice", False, alarm(zones=[{"id": "window", "kind": "instant", "state": "normal", "bypassed": False}, {"id": "window", "kind": "entry", "state": "normal", "bypassed": False}]), True),
+        ("an open zone that is not a zone", False, alarm(open_zones=["garage"]), True),
+        ("an open zone named twice", False, alarm(zones=[{"id": "window", "kind": "instant", "state": "triggered", "bypassed": False}], open_zones=["window", "window"]), True),
+        ("disarmed with a mode", False, alarm(phase="disarmed", mode="away"), True),
+        ("armed with no mode", False, alarm(phase="armed", mode="disarmed"), True),
+        ("a siren outside the alarm phase", False, alarm(siren=True), True),
+        ("an event about a zone that is not there", False, alarm(events=[{"ago_s": 1, "kind": "alarm", "zone": "garage"}]), True),
+    ],
+    "alarm_command": [
+        ("arm in away", True, alarm_command()),
+        ("arm in stay", True, alarm_command(mode="stay")),
+        ("arm and force", True, alarm_command(force=True)),
+        ("arm without forcing, said so", True, alarm_command(force=False)),
+        ("disarm", True, alarm_command(action="disarm", mode=None) if False else {k: v for k, v in alarm_command(action="disarm").items() if k != "mode"}),
+        ("an arm with no mode", False, {k: v for k, v in alarm_command().items() if k != "mode"}, True),
+        ("a disarm that carries a mode", False, alarm_command(action="disarm"), True),
+        ("a disarm that forces", False, {k: v for k, v in alarm_command(action="disarm", force=True).items() if k != "mode"}, True),
+        ("a mode outside the list", False, alarm_command(mode="night")),
+        ("an action outside the list", False, alarm_command(action="silence")),
+        ("uppercase action", False, alarm_command(action="ARM")),
+        ("a PIN in the command", False, alarm_command(pin="1234")),
+        ("a command id of fifteen digits", False, alarm_command(command_id="c0ffee012345678")),
+        ("a command id with capitals", False, alarm_command(command_id="C0FFEE0123456789")),
+        ("a command id that is not hexadecimal", False, alarm_command(command_id="c0ffeezzzzzzzzzz")),
+        ("no command id", False, {k: v for k, v in alarm_command().items() if k != "command_id"}),
+        ("no action", False, {k: v for k, v in alarm_command().items() if k != "action"}),
+        ("force as a string", False, alarm_command(force="yes")),
+        ("a node id with a space", False, alarm_command(node_id="my node")),
+        ("negative timestamp", False, alarm_command(timestamp_ms=-1)),
+        ("the kind of a state message", False, alarm_command(kind="alarm")),
+        ("a zone to bypass", False, alarm_command(zone="window")),
+    ],
+    "alarm_result": [
+        ("an arm, accepted", True, alarm_result()),
+        ("a disarm, accepted", True, alarm_result(action="disarm", phase="disarmed")),
+        ("an arm refused: a zone is open", True, alarm_result(accepted=False, refusal="zones_open", phase="disarmed")),
+        ("an arm refused: already armed", True, alarm_result(accepted=False, refusal="not_disarmed", phase="armed")),
+        ("a disarm refused: not armed", True, alarm_result(action="disarm", accepted=False, refusal="not_armed", phase="disarmed")),
+        ("a disarm refused: wrong PIN", True, alarm_result(action="disarm", accepted=False, refusal="bad_pin", phase="armed")),
+        ("a disarm refused: locked out", True, alarm_result(action="disarm", accepted=False, refusal="locked_out", phase="alarm")),
+        ("accepted with a refusal", False, alarm_result(refusal="zones_open"), True),
+        ("refused with refusal none", False, alarm_result(accepted=False), True),
+        ("a refusal outside the list", False, alarm_result(accepted=False, refusal="welded")),
+        ("an action outside the list", False, alarm_result(action="silence")),
+        ("a phase outside the list", False, alarm_result(phase="sleeping")),
+        ("accepted as a string", False, alarm_result(accepted="true")),
+        ("no phase", False, {k: v for k, v in alarm_result().items() if k != "phase"}),
+        ("no refusal", False, {k: v for k, v in alarm_result().items() if k != "refusal"}),
+        ("no accepted", False, {k: v for k, v in alarm_result().items() if k != "accepted"}),
+        ("no command id", False, {k: v for k, v in alarm_result().items() if k != "command_id"}),
+        ("a command id of fifteen digits", False, alarm_result(command_id="c0ffee012345678")),
+        ("the kind of a command", False, alarm_result(kind="alarm_command")),
+        ("a node id with a space", False, alarm_result(node_id="my node")),
+        ("an unknown field", False, alarm_result(detail="x")),
     ],
     "network": [
         ("a whole network state", True, network()),

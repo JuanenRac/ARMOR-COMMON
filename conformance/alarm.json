@@ -1,0 +1,1494 @@
+{
+ "kind": "alarm",
+ "vectors": [
+  {
+   "name": "an armed alarm",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a disarmed panel",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "disarmed",
+    "mode": "disarmed",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": []
+   }
+  },
+  {
+   "name": "an exit delay in stay mode",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "exit_delay",
+    "mode": "stay",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an alarm with the siren sounding",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "alarm",
+    "mode": "away",
+    "siren": true,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "triggered",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [
+     "window"
+    ],
+    "events": [
+     {
+      "ago_s": 3,
+      "kind": "alarm",
+      "zone": "window"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a locked-out panel",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": true,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 1,
+      "kind": "locked_out"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a node that takes no commands",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": false,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a zone that is bypassed",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "triggered",
+      "bypassed": true
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a tamper",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "kind": "entry",
+      "state": "tamper",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": []
+   }
+  },
+  {
+   "name": "an always zone",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "kind": "always",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": []
+   }
+  },
+  {
+   "name": "an interior zone",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "kind": "interior",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": []
+   }
+  },
+  {
+   "name": "no zones at all",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [],
+    "open_zones": [],
+    "events": []
+   }
+  },
+  {
+   "name": "ten events, the limit",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 0,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 1,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 2,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 3,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 4,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 5,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 6,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 7,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 8,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 9,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "sixteen zones, the limit",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "z0",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z1",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z2",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z3",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z4",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z5",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z6",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z7",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z8",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z9",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z10",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z11",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z12",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z13",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z14",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z15",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "eleven events",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 0,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 1,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 2,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 3,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 4,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 5,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 6,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 7,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 8,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 9,
+      "kind": "armed"
+     },
+     {
+      "ago_s": 10,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "seventeen zones",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "z0",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z1",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z2",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z3",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z4",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z5",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z6",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z7",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z8",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z9",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z10",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z11",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z12",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z13",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z14",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z15",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "z16",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a phase outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "sleeping",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a mode outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "night",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a zone kind outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "kind": "glass",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": []
+   }
+  },
+  {
+   "name": "a zone state outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "kind": "entry",
+      "state": "open",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": []
+   }
+  },
+  {
+   "name": "an event kind outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 1,
+      "kind": "reboot"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an event told in the future",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": -1,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a zone id with a space",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": []
+   }
+  },
+  {
+   "name": "an empty zone name",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false,
+      "name": ""
+     }
+    ],
+    "open_zones": [],
+    "events": []
+   }
+  },
+  {
+   "name": "a zone without its bypass",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal"
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "no events",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": []
+   }
+  },
+  {
+   "name": "no open zones",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a siren as a string",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": "true",
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a node id with a space",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "my node",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "negative timestamp",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": -1,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "the kind of a command",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an unknown field",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ],
+    "pin": "1234"
+   }
+  },
+  {
+   "name": "a zone id twice",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an open zone that is not a zone",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [
+     "garage"
+    ],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an open zone named twice",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "triggered",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [
+     "window",
+     "window"
+    ],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "disarmed with a mode",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "disarmed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "armed with no mode",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "disarmed",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a siren outside the alarm phase",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": true,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an event about a zone that is not there",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 1,
+      "kind": "alarm",
+      "zone": "garage"
+     }
+    ]
+   },
+   "schema_valid": true
+  }
+ ]
+}

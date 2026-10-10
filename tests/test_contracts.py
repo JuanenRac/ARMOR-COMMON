@@ -2,8 +2,8 @@ import json
 import unittest
 from pathlib import Path
 
-from armor_common import ContractError, decode, encode, validate_electrical_command, validate_electrical_message, validate_electrical_result, validate_network_message, validate_solar_message, validate_topic_and_payload
-from armor_common.contracts import load_schema, parse_electrical_topic, parse_network_topic, parse_solar_topic, parse_topic, validate_payload
+from armor_common import ContractError, decode, encode, validate_alarm_command, validate_alarm_message, validate_alarm_result, validate_electrical_command, validate_electrical_message, validate_electrical_result, validate_network_message, validate_solar_message, validate_topic_and_payload
+from armor_common.contracts import load_schema, parse_alarm_topic, parse_electrical_topic, parse_network_topic, parse_solar_topic, parse_topic, validate_payload
 from armor_common.schema import SchemaError, UnsupportedSchema, check_schema, validate
 
 CONFORMANCE = Path(__file__).resolve().parent.parent / "conformance"
@@ -12,6 +12,9 @@ MESSAGE_RULES = {
     "electrical": lambda payload: validate_electrical_message(f"armor/electrical/{payload['node_id']}/state", payload),
     "electrical_command": lambda payload: validate_electrical_command(f"armor/electrical/{payload['node_id']}/command", payload),
     "electrical_result": lambda payload: validate_electrical_result(f"armor/electrical/{payload['node_id']}/result", payload),
+    "alarm": lambda payload: validate_alarm_message(f"armor/alarm/{payload['node_id']}/state", payload),
+    "alarm_command": lambda payload: validate_alarm_command(f"armor/alarm/{payload['node_id']}/command", payload),
+    "alarm_result": lambda payload: validate_alarm_result(f"armor/alarm/{payload['node_id']}/result", payload),
     "network": lambda payload: validate_network_message(f"armor/network/{payload['node_id']}/state", payload),
 }
 
@@ -182,6 +185,46 @@ class SolarMessageTests(unittest.TestCase):
             validate_solar_message("armor/solar/solar-1/axpert-1/state", [self.inverter])
         with self.assertRaises(ContractError):
             validate_solar_message("armor/solar/solar-1/axpert-1/state", {**self.inverter, "kind": "battery"})   # the schema of a battery refuses an inverter's fields
+
+
+class AlarmMessageTests(unittest.TestCase):
+    """The messages of an alarm node: their topics and that each one agrees with its topic."""
+
+    state = json.loads((CONFORMANCE / "alarm.json").read_text(encoding="utf-8"))["vectors"][0]["payload"]
+    command = json.loads((CONFORMANCE / "alarm_command.json").read_text(encoding="utf-8"))["vectors"][0]["payload"]
+    result = json.loads((CONFORMANCE / "alarm_result.json").read_text(encoding="utf-8"))["vectors"][0]["payload"]
+
+    def test_the_topic_of_each_leaf_carries_the_node(self):
+        for leaf in ("state", "command", "result"):
+            self.assertEqual(parse_alarm_topic(f"armor/alarm/alarm-1/{leaf}", leaf), "alarm-1")
+        for topic, leaf in [("armor/alarm/alarm-1/command", "state"), ("armor/alarm/alarm-1/state", "command"), ("armor/alarm/alarm-1/set", "state"), ("armor/alarm/Node/state", "state"),
+                            ("armor/alarm/-x/result", "result"), ("armor/alarm/a/b/state", "state"), ("armor/alarm/alarm-1/state/extra", "state"), ("armor/electrical/alarm-1/state", "state"),
+                            ("armor/alarm//state", "state")]:
+            with self.subTest(topic=topic, leaf=leaf), self.assertRaises(ContractError):
+                parse_alarm_topic(topic, leaf)
+        with self.assertRaises(ContractError):
+            parse_alarm_topic("armor/alarm/alarm-1/set", "set")
+
+    def test_each_message_must_agree_with_its_topic(self):
+        validate_alarm_message("armor/alarm/alarm-1/state", self.state)
+        validate_alarm_command("armor/alarm/alarm-1/command", self.command)
+        validate_alarm_result("armor/alarm/alarm-1/result", self.result)
+        for check, topic, payload in [(validate_alarm_message, "armor/alarm/other/state", self.state), (validate_alarm_command, "armor/alarm/other/command", self.command),
+                                      (validate_alarm_result, "armor/alarm/other/result", self.result), (validate_alarm_message, "armor/alarm/alarm-1/result", self.state),
+                                      (validate_alarm_command, "armor/alarm/alarm-1/state", self.command), (validate_alarm_result, "armor/alarm/alarm-1/command", self.result),
+                                      (validate_alarm_message, "armor/alarm/alarm-1/state", [self.state])]:
+            with self.subTest(check=check.__name__, topic=topic), self.assertRaises(ContractError):
+                check(topic, payload)
+
+    def test_a_command_carries_a_mode_only_on_an_arm(self):
+        disarm = {k: v for k, v in self.command.items() if k not in ("mode", "force")} | {"action": "disarm"}
+        validate_alarm_command("armor/alarm/alarm-1/command", disarm)
+        with self.assertRaises(ContractError):
+            validate_alarm_command("armor/alarm/alarm-1/command", {**disarm, "mode": "away"})
+        with self.assertRaises(ContractError):
+            validate_alarm_command("armor/alarm/alarm-1/command", {**disarm, "force": True})
+        with self.assertRaises(ContractError):
+            validate_alarm_command("armor/alarm/alarm-1/command", {k: v for k, v in self.command.items() if k != "mode"})
 
 
 class ElectricalMessageTests(unittest.TestCase):

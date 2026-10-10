@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/alarm-0.1.0.json",
+  "title": "A.R.M.O.R. state of the alarm of one node",
+  "description": "What an ARMOR-ALARM node is doing: the phase and the mode of its panel, the siren, each zone and the last events. Published to armor/alarm/{node_id}/state (never retained). It carries a state, never a command: what the panel was asked to do travels in alarm_command.schema.json and what the node answered in alarm_result.schema.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "node_id",
+    "timestamp_ms",
+    "phase",
+    "mode",
+    "siren",
+    "locked_out",
+    "commands_enabled",
+    "zones",
+    "open_zones",
+    "events"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "alarm"
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "disarmed",
+        "exit_delay",
+        "armed",
+        "entry_delay",
+        "alarm"
+      ]
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "disarmed",
+        "away",
+        "stay"
+      ]
+    },
+    "siren": {
+      "type": "boolean",
+      "description": "Whether the siren is sounding now."
+    },
+    "locked_out": {
+      "type": "boolean",
+      "description": "Whether the panel is refusing every PIN for a while after wrong ones."
+    },
+    "commands_enabled": {
+      "type": "boolean",
+      "description": "Whether the node accepts the commands of the server at all (its own setting; the broker's access list is a second, independent switch)."
+    },
+    "zones": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "kind",
+          "state",
+          "bypassed"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "instant",
+              "entry",
+              "interior",
+              "always"
+            ]
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "triggered",
+              "tamper"
+            ]
+          },
+          "bypassed": {
+            "type": "boolean",
+            "description": "Whether the zone is left out of this arming."
+          }
+        }
+      }
+    },
+    "open_zones": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$"
+      },
+      "description": "The zones that would stop an arming right now."
+    },
+    "events": {
+      "type": "array",
+      "maxItems": 10,
+      "description": "The last events, oldest first, told as seconds ago because a node may have no clock.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ago_s",
+          "kind"
+        ],
+        "properties": {
+          "ago_s": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "armed",
+              "exit_delay_started",
+              "entry_delay_started",
+              "alarm",
+              "siren_timed_out",
+              "disarmed",
+              "bad_pin",
+              "locked_out",
+              "zone_bypassed"
+            ]
+          },
+          "zone": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$"
+          }
+        }
+      }
+    }
+  }
+}

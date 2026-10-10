@@ -35,6 +35,11 @@ ELECTRICAL_TOPIC_PREFIX = "armor/electrical/"
 ELECTRICAL_LEAVES = ("state", "command", "result")
 ELECTRICAL_KINDS = ("electrical", "electrical_command", "electrical_result")
 _TOKEN_ACTIONS = ("close_a", "close_b")
+# The alarm message (an ARMOR-ALARM node) has one topic per node: armor/alarm/{node_id}/state; the panel is commanded on armor/alarm/{node_id}/command (server -> node)
+# and answered on armor/alarm/{node_id}/result (node -> server).
+ALARM_TOPIC_PREFIX = "armor/alarm/"
+ALARM_LEAVES = ("state", "command", "result")
+ALARM_KINDS = ("alarm", "alarm_command", "alarm_result")
 # The network message (an ARMOR-NETWORK node watching the local network) has one topic per node: armor/network/{node_id}/state.
 NETWORK_TOPIC_PREFIX = "armor/network/"
 _DEVICE_CHARS = set("abcdefghijklmnopqrstuvwxyz0123456789-_")
@@ -44,7 +49,7 @@ _NODE_ID_CHARS = set("abcdefghijklmnopqrstuvwxyz0123456789-_")
 @lru_cache(maxsize=None)
 def load_schema(kind: str) -> dict[str, Any]:
     """The published schema of a message kind (``telemetry``, ``health``, ``command`` or ``info``)."""
-    if kind not in KINDS and kind not in _SOLAR_SCHEMAS and kind not in ELECTRICAL_KINDS and kind != "network":
+    if kind not in KINDS and kind not in _SOLAR_SCHEMAS and kind not in ELECTRICAL_KINDS and kind not in ALARM_KINDS and kind != "network":
         raise ContractError(f"unsupported topic kind {kind!r}")
     text = resources.files("armor_common").joinpath("schemas", f"{_SOLAR_SCHEMAS.get(kind, kind)}.schema.json").read_text(encoding="utf-8")
     schema = json.loads(text)
@@ -176,6 +181,70 @@ def validate_electrical_result(topic: str, payload: Mapping[str, object]) -> Non
         raise ContractError("the refusal is none exactly when the request was accepted")
     if ("token" in payload) != (accepted is True and payload.get("action") == "arm"):
         raise ContractError("a token is given only in the result of an accepted arm")
+
+
+def parse_alarm_topic(topic: str, leaf: str = "state") -> str:
+    """Split ``armor/alarm/{node_id}/{leaf}`` into ``node_id``; the leaf is ``state``, ``command`` or ``result``."""
+    if not isinstance(topic, str):
+        raise ContractError("topic must be a string")
+    if leaf not in ALARM_LEAVES:
+        raise ContractError("unsupported topic leaf")
+    parts = topic.split("/")
+    if len(parts) != 4 or parts[:2] != ["armor", "alarm"] or parts[3] != leaf:
+        raise ContractError(f"topic must be armor/alarm/{{node_id}}/{leaf}")
+    node_id = parts[2]
+    _check_node_id(node_id)
+    return node_id
+
+
+def _alarm_checked(topic: str, leaf: str, kind: str, payload: Mapping[str, object]) -> None:
+    node_id = parse_alarm_topic(topic, leaf)
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    if payload.get("node_id") != node_id:
+        raise ContractError("payload node_id must match the topic")
+    validate_payload(kind, payload)
+
+
+def validate_alarm_message(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate an alarm state: the topic, the schema, that the node matches, and the rules that join fields: a zone is named once, an open zone is a zone of the message,
+    the phase and the mode agree (disarmed exactly when disarmed), a siren means an alarm, and an event about a zone names a zone of the message."""
+    _alarm_checked(topic, "state", "alarm", payload)
+    zones = payload.get("zones")
+    ids = [item.get("id") for item in zones if isinstance(item, Mapping)] if isinstance(zones, list) else []
+    if len(ids) != len(set(ids)):
+        raise ContractError("a zone id must appear once")
+    open_zones = payload.get("open_zones")
+    if isinstance(open_zones, list):
+        if len(open_zones) != len(set(open_zones)):
+            raise ContractError("an open zone is named once")
+        if any(item not in ids for item in open_zones):
+            raise ContractError("an open zone must be a zone of the message")
+    if (payload.get("phase") == "disarmed") != (payload.get("mode") == "disarmed"):
+        raise ContractError("the mode is disarmed exactly when the phase is")
+    if payload.get("siren") is True and payload.get("phase") != "alarm":
+        raise ContractError("the siren sounds only in the alarm phase")
+    events = payload.get("events")
+    if isinstance(events, list):
+        for item in events:
+            if isinstance(item, Mapping) and "zone" in item and item["zone"] not in ids:
+                raise ContractError("an event about a zone names a zone of the message")
+
+
+def validate_alarm_command(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate a command to the panel: the topic, the schema, that the node matches, a mode exactly on an arm and force only on an arm."""
+    _alarm_checked(topic, "command", "alarm_command", payload)
+    if (payload.get("action") == "arm") != ("mode" in payload):
+        raise ContractError("a mode goes on an arm and on nothing else")
+    if payload.get("action") != "arm" and payload.get("force") is True:
+        raise ContractError("force goes on an arm and on nothing else")
+
+
+def validate_alarm_result(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate a node's answer: the topic, the schema, that the node matches, and refusal none exactly when accepted."""
+    _alarm_checked(topic, "result", "alarm_result", payload)
+    if payload.get("accepted") != (payload.get("refusal") == "none"):
+        raise ContractError("the refusal is none exactly when the request was accepted")
 
 
 def parse_network_topic(topic: str) -> str:

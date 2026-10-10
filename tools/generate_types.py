@@ -32,6 +32,9 @@ MESSAGES = {
     "electrical": ("Electrical", {"channels": "ElectricalChannel", "switches": "ElectricalSwitch"}),
     "electrical_command": ("ElectricalCommand", {}),
     "electrical_result": ("ElectricalResult", {}),
+    "alarm": ("Alarm", {"zones": "AlarmZone", "events": "AlarmEvent"}),
+    "alarm_command": ("AlarmCommand", {}),
+    "alarm_result": ("AlarmResult", {}),
     "network": ("Network", {"interface": "NetworkInterface", "internet": "NetworkInternet", "probes": "NetworkProbe", "last_outage": "NetworkOutage", "devices": "NetworkDevice",
                             "ports": "NetworkPort", "events": "NetworkEvent", "scan": "NetworkScan"}),
 }

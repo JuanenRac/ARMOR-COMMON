@@ -1,0 +1,273 @@
+{
+ "kind": "alarm_command",
+ "vectors": [
+  {
+   "name": "arm in away",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "away"
+   }
+  },
+  {
+   "name": "arm in stay",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay"
+   }
+  },
+  {
+   "name": "arm and force",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "away",
+    "force": true
+   }
+  },
+  {
+   "name": "arm without forcing, said so",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "away",
+    "force": false
+   }
+  },
+  {
+   "name": "disarm",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "disarm"
+   }
+  },
+  {
+   "name": "an arm with no mode",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a disarm that carries a mode",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "disarm",
+    "mode": "away"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a disarm that forces",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "disarm",
+    "force": true
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a mode outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "night"
+   }
+  },
+  {
+   "name": "an action outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "silence",
+    "mode": "away"
+   }
+  },
+  {
+   "name": "uppercase action",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "ARM",
+    "mode": "away"
+   }
+  },
+  {
+   "name": "a PIN in the command",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "away",
+    "pin": "1234"
+   }
+  },
+  {
+   "name": "a command id of fifteen digits",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee012345678",
+    "action": "arm",
+    "mode": "away"
+   }
+  },
+  {
+   "name": "a command id with capitals",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "C0FFEE0123456789",
+    "action": "arm",
+    "mode": "away"
+   }
+  },
+  {
+   "name": "a command id that is not hexadecimal",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffeezzzzzzzzzz",
+    "action": "arm",
+    "mode": "away"
+   }
+  },
+  {
+   "name": "no command id",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "action": "arm",
+    "mode": "away"
+   }
+  },
+  {
+   "name": "no action",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "mode": "away"
+   }
+  },
+  {
+   "name": "force as a string",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "away",
+    "force": "yes"
+   }
+  },
+  {
+   "name": "a node id with a space",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "my node",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "away"
+   }
+  },
+  {
+   "name": "negative timestamp",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": -1,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "away"
+   }
+  },
+  {
+   "name": "the kind of a state message",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "away"
+   }
+  },
+  {
+   "name": "a zone to bypass",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "away",
+    "zone": "window"
+   }
+  }
+ ]
+}
