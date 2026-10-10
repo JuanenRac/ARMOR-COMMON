@@ -58,7 +58,7 @@ flowchart LR
 
 ```text
 ARMOR-COMMON/
-├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery, electrical)
+├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery, electrical, alarm)
 ├── conformance/        accepted and rejected payloads shared by every implementation
 ├── firmware_base/      the firmware that ARMOR-RADAR, ARMOR-SOLAR and ARMOR-ELECTRICAL share, once (synced into each by tools/sync_firmware_base.py)
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
@@ -78,7 +78,7 @@ python tools/make_conformance.py          # regenerate the vectors after editing
 python tools/sync_firmware_base.py check  # the firmware the node projects share has not drifted (see docs/FIRMWARE_BASE.md)
 ```
 
-ブローカーのトピック：`armor/node/{node_id}/telemetry | health | command | info`、`armor/solar/{node_id}/{device}/state`、`armor/electrical/{node_id}/state | command | result`。[契約ガイド](docs/CONTRACTS.md)を参照。共有ランチャーは ARMOR-SERVER の初回実行時に、ランダムなシークレットとランダムな管理者パスワードを持つ無視される `.env` を作ります。何も表示もコミットもされません。
+ブローカーのトピック：`armor/node/{node_id}/telemetry | health | command | info`、`armor/solar/{node_id}/{device}/state`、`armor/electrical/{node_id}/state | command | result` and `armor/alarm/{node_id}/state | command | result`。[契約ガイド](docs/CONTRACTS.md)を参照。共有ランチャーは ARMOR-SERVER の初回実行時に、ランダムなシークレットとランダムな管理者パスワードを持つ無視される `.env` を作ります。何も表示もコミットもされません。
 
 ## 🔗 関連プロジェクト
 
