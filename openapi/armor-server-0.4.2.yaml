@@ -90,6 +90,18 @@ paths:
       parameters: [{ name: days, in: query, required: false, schema: { type: integer } }]
       responses:
         '200': { description: '{ days: [{ date, pv_kwh, load_kwh, battery_in_kwh, battery_out_kwh }] }' }
+  /api/v1/solar/alarms:
+    get:
+      summary: The levels at which batteries and inverters raise alarms (charge, cell spread, temperatures, wear, heat sink) and their defaults
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ settings, defaults }' }
+    put:
+      summary: Change those levels (a field that is left out goes back to its default; every one is range-checked)
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ settings, defaults }' }
+        '400': { description: A level out of its range, an unknown one, or a charge that ends below where it starts }
   /api/v1/solar/history:
     get:
       summary: The recent history of one solar device, a few numbers per sample, oldest first
