@@ -178,6 +178,55 @@ export type ElectricalResult = {
   token?: string;
 };
 
+export type AlarmZone = {
+  id: string;
+  name?: string;
+  kind: "instant" | "entry" | "interior" | "always";
+  state: "normal" | "triggered" | "tamper";
+  bypassed: boolean;
+};
+
+export type AlarmEvent = {
+  ago_s: number;
+  kind: "armed" | "exit_delay_started" | "entry_delay_started" | "alarm" | "siren_timed_out" | "disarmed" | "bad_pin" | "locked_out" | "zone_bypassed";
+  zone?: string;
+};
+
+export type Alarm = {
+  kind: string;
+  node_id: string;
+  timestamp_ms: number;
+  phase: "disarmed" | "exit_delay" | "armed" | "entry_delay" | "alarm";
+  mode: "disarmed" | "away" | "stay";
+  siren: boolean;
+  locked_out: boolean;
+  commands_enabled: boolean;
+  zones: AlarmZone[];
+  open_zones: string[];
+  events: AlarmEvent[];
+};
+
+export type AlarmCommand = {
+  kind: string;
+  node_id: string;
+  timestamp_ms: number;
+  command_id: string;
+  action: "arm" | "disarm";
+  mode?: "away" | "stay";
+  force?: boolean;
+};
+
+export type AlarmResult = {
+  kind: string;
+  node_id: string;
+  timestamp_ms: number;
+  command_id: string;
+  action: "arm" | "disarm";
+  accepted: boolean;
+  refusal: "none" | "not_disarmed" | "zones_open" | "not_armed" | "bad_pin" | "locked_out";
+  phase: "disarmed" | "exit_delay" | "armed" | "entry_delay" | "alarm";
+};
+
 export type NetworkInterface = {
   name: string;
   ip: string;
