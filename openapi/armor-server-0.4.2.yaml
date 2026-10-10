@@ -476,6 +476,12 @@ paths:
         '200': { description: '{ revision, updated_at, updated_by }' }
         '400': { description: The design is not an object, or too large }
         '409': { description: Someone else saved first; the answer carries `current` }
+  /api/v1/electrical/devices:
+    get:
+      summary: The devices of the house that measure or switch electricity (Zigbee plugs and breakers, meters, smart lights) with what they say, whether they can be switched and how much it matters
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ elements: [{ id, name, kind, protocol, location, online, last_seen, risk, on?, power_w?, voltage_v?, current_a?, energy_kwh?, switchable }], totals }' }
   /api/v1/electrical/readings:
     post:
       summary: A reading from an ARMOR-ELECTRICAL node (the `electrical` message of the shared contract, one entry per measured channel); the same message arrives over MQTT on armor/electrical/{node_id}/state
