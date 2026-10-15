@@ -70,7 +70,11 @@ data class SolarInverter(
     val totalLoadPercent: Double? = null,
     val totalChargingA: Double? = null,
     val units: List<Any>? = null,
-    val busV: Double? = null
+    val busV: Double? = null,
+    val serial: String? = null,
+    val firmware: String? = null,
+    val pvEnergyTotalWh: Double? = null,
+    val ratings: Map<String, Any>? = null
 )
 
 data class SolarModule(
