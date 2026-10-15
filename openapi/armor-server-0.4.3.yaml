@@ -183,6 +183,32 @@ paths:
         '204': { description: Deleted }
         '404': { description: Unknown user }
         '409': { description: Yourself, or the last administrator }
+  /api/v1/users/{id}/pin:
+    put:
+      summary: Set the PIN that disarms the system, and optionally a duress PIN, for a user (an administrator only); the PIN is never shown again
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [pin], properties: { pin: { type: string, pattern: '^[0-9]{4,10}$' }, duress_pin: { type: string, pattern: '^[0-9]{4,10}$' } } } } } }
+      responses:
+        '200': { description: 'The user, with hasPin and hasDuress' }
+        '400': { description: A PIN has 4 to 10 digits; the duress PIN must differ }
+        '404': { description: Unknown user }
+    delete:
+      summary: Remove the PIN and the duress PIN of a user (an administrator only)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: The user }
+        '404': { description: Unknown user }
+  /api/v1/account/pin:
+    put:
+      summary: Set or clear your own PIN (and duress PIN) after confirming the current password (rate limited)
+      security: [{ studio: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [currentPassword], properties: { currentPassword: { type: string }, pin: { type: string }, duress_pin: { type: string }, clear: { type: boolean } } } } } }
+      responses:
+        '200': { description: 'Your user, with hasPin and hasDuress' }
+        '400': { description: Invalid PIN }
+        '403': { description: The current password is not right }
   /api/v1/account:
     patch:
       summary: Change your own user name and password; the current password is required (rate limited)
@@ -210,12 +236,14 @@ paths:
         '401': { description: Not signed in }
   /api/v1/mode:
     post:
-      summary: Arm or disarm the system from Studio (an operator); the answer is the new state of the perimeter
+      summary: Arm or disarm the system from Studio (an operator); the answer is the new state of the perimeter. Disarming needs the PIN of the signed-in user when the user has one (always with ARMOR_DISARM_PIN=required); the duress PIN disarms and raises a critical alarm in silence.
       security: [{ operator: [] }]
-      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [mode], properties: { mode: { type: string, enum: [armed, disarmed] } } } } } }
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [mode], properties: { mode: { type: string, enum: [armed, disarmed] }, pin: { type: string, pattern: '^[0-9]{4,10}$' } } } } } }
       responses:
         '200': { description: The new state }
         '400': { description: Unknown mode }
+        '403': { description: 'The PIN is not right (code wrong_pin), or the user has none and the server requires one (pin_not_set)' }
+        '429': { description: 'Too many wrong PINs: locked for a minute, then five, then fifteen (code pin_locked, retry_after_s)' }
   /api/v1/devices:
     get:
       summary: The devices (sensors and actuators other than the radars and cameras), with the kinds and protocols A.R.M.O.R. knows; a command URL is never included
@@ -556,11 +584,11 @@ paths:
     post:
       summary: >-
         A command to the panel of one alarm node (an administrator only), published to armor/alarm/{node_id}/command (the `alarm_command` message of the shared contract): arm in away or stay
-        (optionally forced) or disarm. There is no PIN in it. Refused unless the server has the commands turned on, the node says in its state that it accepts them, and nothing is waiting for an
+        (optionally forced) or disarm. A disarm needs the `pin` of the signed-in user, checked by the server and never sent to the node (the message to the node has none). Refused unless the server has the commands turned on, the node says in its state that it accepts them, and nothing is waiting for an
         answer from it. Answered 202: the node's own answer arrives on armor/alarm/{node_id}/result and is shown by GET /api/v1/alarm/commands; an accepted command is not an armed alarm, only
         the node's state says that.
       security: [{ admin: [] }]
-      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [node, action], properties: { node: { type: string }, action: { type: string, enum: [arm, disarm] }, mode: { type: string, enum: [away, stay] }, force: { type: boolean } } } } } }
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [node, action], properties: { pin: { type: string }, node: { type: string }, action: { type: string, enum: [arm, disarm] }, mode: { type: string, enum: [away, stay] }, force: { type: boolean } } } } } }
       responses:
         '202': { description: 'Published; { accepted, command_id }' }
         '400': { description: node and a valid action are required }
@@ -892,9 +920,11 @@ paths:
         '204': { description: Session closed }
   /api/v1/camera-views:
     get:
-      summary: Cameras without username or credentials
+      summary: Cameras without username or credentials (an operator only: it holds the inventory of the cameras)
+      security: [{ operator: [] }]
       responses:
         '200': { description: Camera views }
+        '401': { description: Not signed in }
   /api/v1/cameras:
     get:
       summary: Cameras with username and credential flags (never the password)
