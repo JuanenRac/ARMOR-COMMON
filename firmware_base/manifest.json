@@ -404,6 +404,89 @@
       "targets": {
         "ARMOR-ELECTRICAL": "main/zigbee_bridge.hpp"
       }
+    },
+    "core/backoff.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/backoff.hpp",
+        "ARMOR-ELECTRICAL": "core/backoff.hpp",
+        "ARMOR-HMI": "core/backoff.hpp",
+        "ARMOR-RADAR": "main/core/backoff.hpp",
+        "ARMOR-ALARM": "core/backoff.hpp"
+      }
+    },
+    "core/improv.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/improv.hpp",
+        "ARMOR-ELECTRICAL": "core/improv.hpp",
+        "ARMOR-HMI": "core/improv.hpp",
+        "ARMOR-RADAR": "main/core/improv.hpp",
+        "ARMOR-ALARM": "core/improv.hpp"
+      }
+    },
+    "core/task_health.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/task_health.hpp",
+        "ARMOR-ELECTRICAL": "core/task_health.hpp",
+        "ARMOR-HMI": "core/task_health.hpp",
+        "ARMOR-RADAR": "main/core/task_health.hpp",
+        "ARMOR-ALARM": "core/task_health.hpp"
+      }
+    },
+    "core/central_link.hpp": {
+      "targets": {
+        "ARMOR-ELECTRICAL": "core/central_link.hpp",
+        "ARMOR-ALARM": "core/central_link.hpp"
+      }
+    },
+    "main/task_health.cpp": {
+      "targets": {
+        "ARMOR-SOLAR": "main/task_health.cpp",
+        "ARMOR-ELECTRICAL": "main/task_health.cpp",
+        "ARMOR-HMI": "main/task_health.cpp",
+        "ARMOR-RADAR": "main/task_health.cpp",
+        "ARMOR-ALARM": "main/task_health.cpp"
+      }
+    },
+    "main/task_health.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "main/task_health.hpp",
+        "ARMOR-ELECTRICAL": "main/task_health.hpp",
+        "ARMOR-HMI": "main/task_health.hpp",
+        "ARMOR-RADAR": "main/task_health.hpp",
+        "ARMOR-ALARM": "main/task_health.hpp"
+      }
+    },
+    "main/improv_serial.cpp": {
+      "targets": {
+        "ARMOR-SOLAR": "main/improv_serial.cpp",
+        "ARMOR-ELECTRICAL": "main/improv_serial.cpp",
+        "ARMOR-HMI": "main/improv_serial.cpp",
+        "ARMOR-RADAR": "main/improv_serial.cpp",
+        "ARMOR-ALARM": "main/improv_serial.cpp"
+      }
+    },
+    "main/improv_serial.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "main/improv_serial.hpp",
+        "ARMOR-ELECTRICAL": "main/improv_serial.hpp",
+        "ARMOR-HMI": "main/improv_serial.hpp",
+        "ARMOR-RADAR": "main/improv_serial.hpp",
+        "ARMOR-ALARM": "main/improv_serial.hpp"
+      }
+    },
+    "tests/test_base.cpp": {
+      "targets": {
+        "ARMOR-SOLAR": "tests/test_base.cpp",
+        "ARMOR-ELECTRICAL": "tests/test_base.cpp",
+        "ARMOR-HMI": "tests/test_base.cpp",
+        "ARMOR-ALARM": "tests/test_base.cpp"
+      }
+    },
+    "tests/test_central.cpp": {
+      "targets": {
+        "ARMOR-ELECTRICAL": "tests/test_central.cpp",
+        "ARMOR-ALARM": "tests/test_central.cpp"
+      }
     }
   }
 }

@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [0.4.5] - What an inverter says about itself, and more for the nodes' shared firmware
+
+- **`solar_inverter.schema.json` gains optional fields:** `serial` (8 to 20 letters and digits), `firmware` (up to 24 characters), `pv_energy_total_wh` (the energy the panels have made in all) and `ratings` (what the unit is rated for and how it is set: the rated output and voltages, the battery's bulk, float, low and recharge voltages, the charging currents, and four names: the type of battery, the input range, the priority of the output source and of the charger). Twenty-three new conformance vectors (the unknown-field vector now uses another field); the generated types are current.
+- **`firmware_base/`:** `core/backoff.hpp` (waits that grow between tries, used by the Wi-Fi and the broker links), `core/improv.hpp` and `main/improv_serial.*` (Improv Wi-Fi over the USB cable), `core/task_health.hpp` and `main/task_health.*` (the stack each task has left), `core/central_link.hpp` (the direct HTTP API for a central: the token and the relay request, for the electrical and alarm nodes), `remote.http` and `remote.token` in `core/io_config.hpp`, a direct way to move a relay by name in `main/relay_outputs.*`, and shared host tests (`tests/test_base.cpp`, `tests/test_central.cpp`).
+
 ## [0.4.4] - The Zigbee bridge is the alarm node's own
 
 - **`main/zigbee_bridge.cpp` and `.hpp` are shared with ARMOR-ELECTRICAL only**; ARMOR-ALARM has its own copy with a hook for the node to hold the radio itself. `core/zigbee_bridge.hpp` stays shared. `sync_firmware_base.py check` passes for 52 files in 197 copies.

@@ -290,6 +290,121 @@
       "minimum": 0,
       "maximum": 1500,
       "description": "The DC bus voltage inside the inverter; left out when the dialect does not say."
+    },
+    "serial": {
+      "type": "string",
+      "pattern": "^[0-9A-Za-z]{8,20}$",
+      "description": "The inverter's serial number (QID), when it says it."
+    },
+    "firmware": {
+      "type": "string",
+      "pattern": "^[0-9A-Za-z._-]{1,24}$",
+      "description": "The inverter's firmware version (QVFW), when it says it."
+    },
+    "pv_energy_total_wh": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1000000000000.0,
+      "description": "The energy the panels have made since the unit was new, in Wh as the protocol gives it (QET), when the unit says it."
+    },
+    "ratings": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "What the unit is rated for and how it is set (QPIRI), when it says it; every member is optional.",
+      "properties": {
+        "grid_rating_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "out_rating_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "out_rating_hz": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "out_rating_va": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "out_rating_w": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "battery_rating_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "battery_recharge_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "battery_under_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "battery_bulk_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "battery_float_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "max_charge_a": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2000
+        },
+        "max_ac_charge_a": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2000
+        },
+        "battery_type": {
+          "type": "string",
+          "enum": [
+            "agm",
+            "flooded",
+            "user"
+          ]
+        },
+        "input_range": {
+          "type": "string",
+          "enum": [
+            "appliance",
+            "ups"
+          ]
+        },
+        "output_priority": {
+          "type": "string",
+          "enum": [
+            "utility_first",
+            "solar_first",
+            "sbu"
+          ]
+        },
+        "charger_priority": {
+          "type": "string",
+          "enum": [
+            "utility_first",
+            "solar_first",
+            "solar_and_utility",
+            "solar_only"
+          ]
+        }
+      }
     }
   }
 }

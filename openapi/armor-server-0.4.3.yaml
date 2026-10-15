@@ -669,7 +669,7 @@ paths:
         '200': { description: '{ time_ms, systemd, services: [{ id, name, family, description, kind, state, sub_state?, unit?, enabled?, pid?, since_ms?, memory_bytes?, restarts?, port? }] }; systemd is false where the machine has none' }
   /api/v1/panel/summary:
     get:
-      summary: A few hundred bytes for the screens that cannot take the whole state (the touch panel, a watch) - the mode, the nodes online and the alarms that need a person, the ones nobody has acknowledged first
+      summary: A few hundred bytes for the screens that cannot take the whole state (the touch panel, a watch) - the mode, the nodes online, the alarms that need a person (the ones nobody has acknowledged first) and the energy of the house (the power of the panels and of the load, the battery's charge and power, and whether the solar equipment reports). The account of a wall panel (the `panel` role) may read this, change the mode and acknowledge alarms, and nothing else
       security: [{ operator: [] }]
       responses:
         '200': { description: The summary }
@@ -775,6 +775,19 @@ paths:
         '201': { description: '{ id, name, bytes, sha256 }' }
         '415': { description: Not sent as application/octet-stream }
         '422': { description: Not an image of an ESP32 application, or of a size that makes sense }
+  /api/v1/admin/installation:
+    get:
+      summary: The whole installation as one file - the cameras (without their passwords), the designs of the site, the electricity and the network, the rules, the automations, the devices, the solar equipment, the energy alarm levels and, for the record, the users' names and roles; never a password, token or key (an administrator)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: '{ format: armor-installation, version, exported_at, exported_by, parts }, sent as a download' }
+    post:
+      summary: Import an installation file. The designs, the rules and the energy alarm levels replace what is there (the designs keep their previous version); the cameras, automations, devices and solar equipment only add what is missing; the users are never imported. A part that does not check out is reported and skipped without spoiling the others (an administrator)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [bundle], properties: { bundle: { type: object }, parts: { type: array, items: { type: string, enum: [cameras, site, electrical, network, rules, automations, devices, solar_devices, energy_alarms, users] } } } } } } }
+      responses:
+        '200': { description: '{ applied, skipped, failed, cameras_need_credentials } - what was done, part by part' }
+        '400': { description: Not an installation file, or none of the parts asked for is known }
   /api/v1/admin/firmware/releases/{kind}:
     get:
       summary: The newest release of the repository of a kind of node (radar, solar, electrical, alarm, hmi), downloaded and checked against the SHA-256 the release publishes (an administrator)
