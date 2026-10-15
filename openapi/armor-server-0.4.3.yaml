@@ -671,6 +671,46 @@ paths:
         '200': { description: Saved }
         '400': { description: Not an object, or too large }
         '409': { description: Someone else saved a newer revision; the body has the current design }
+  /api/v1/alarm/design/versions:
+    get:
+      summary: The versions the server keeps of the alarm design (what it was before changes; newest first)
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ versions: [{ id, revision, saved_at, updated_by, counts }] }' }
+    delete:
+      summary: Forget every kept version of the alarm design (the current design is not touched)
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ removed } how many versions were forgotten' }
+  /api/v1/alarm/design/versions/{id}:
+    get:
+      summary: One version of the alarm design, whole; to take it back, save it as the current one
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: The document of that version }
+        '404': { description: Unknown version }
+    delete:
+      summary: Forget one kept version of the alarm design
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '204': { description: Forgotten }
+        '404': { description: Unknown version }
+  /api/v1/alarm/design:
+    get:
+      summary: The alarm design (the house's alarm drawn in Studio's Alarm Designer - panels, sensors, sirens, keypads and how they are joined) kept on the server ({ revision, updated_at, updated_by, alarm_design })
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The design, or revision 0 with a null alarm_design when none has been saved }
+    put:
+      summary: Save the alarm design; `revision` must be the one last read, or the save is refused with the current design (up to 768 kB). It is a drawing - nothing arms, disarms or sounds anything
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [revision, alarm_design], properties: { revision: { type: integer }, alarm_design: { type: object } } } } } }
+      responses:
+        '200': { description: Saved }
+        '400': { description: Not an object, or too large }
+        '409': { description: Someone else saved a newer revision; the body has the current design }
   /api/v1/system:
     get:
       summary: What the server is and how full it is - version, uptime, mode, counts of nodes, cameras, devices, alarms, automations, users and events, and the space media and the disk use

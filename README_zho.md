@@ -20,13 +20,13 @@
   <img src="https://img.shields.io/badge/License-GPL%203.0-blue.svg" alt="GPL 3.0">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-459-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Vectors-330-00E5FF.svg" alt="Vectors">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturity">
 </p>
 
 ---
 
-**诚实性检查 - 今天真正能运行的部分:** 模式、Python 验证器、459 个共享的一致性向量、生成的 TypeScript 和 Kotlin 类型以及共享的项目启动器都是真实的并经过测试（39 个测试）。Kotlin 文件已生成，但 ARMOR-ANDROID-CONTROL **尚未使用**；`set_thresholds` 命令只带一个 `sensitivity` 字段，因为在固件存在之前，真实的雷达参数尚未定义。
+**诚实性检查 - 今天真正能运行的部分:** 模式、Python 验证器、330 个共享的一致性向量、生成的 TypeScript 和 Kotlin 类型以及共享的项目启动器都是真实的并经过测试（36 个测试）。Kotlin 文件已生成，但 ARMOR-ANDROID-CONTROL **尚未使用**；`set_thresholds` 命令只带一个 `sensitivity` 字段，因为在固件存在之前，真实的雷达参数尚未定义。
 
 ---
 
@@ -34,13 +34,12 @@
 
 **ARMOR-COMMON** 掌管每条 A.R.M.O.R. 消息的含义。雷达节点、太阳能网关节点和模拟器产生这些消息；服务器、视觉 AI 和语音服务消费它们。如果两个项目对某个字段有分歧，由本仓库裁决。
 
-* **唯一的事实来源：** `src/armor_common/schemas/` 中的 JSON 模式，涵盖遥测、健康、命令、节点信息和两条太阳能消息（逆变器、带电芯和容量的电池）。校验器会拒绝未知字段；服务器在读取固件更新的节点时会忽略并统计它们。
+* **唯一的事实来源：** `src/armor_common/schemas/` 中的 JSON 模式，涵盖遥测、健康、命令、节点信息和两条太阳能消息（逆变器、带电芯和容量的电池）。未知字段在所有地方都会被拒绝。
 * **不会跳过任何规则的验证器：** 它直接解释模式，并拒绝使用其未实现关键字的模式。
-* **一致性向量：** 459 个被接受和被拒绝的负载，由每个实现运行（此处的 Python、ARMOR-SERVER 中的 TypeScript、ARMOR-SOLAR 的检查），因此偏差会让构建失败。
+* **一致性向量：** 330 个被接受和被拒绝的负载，由每个实现运行（此处的 Python、ARMOR-SERVER 中的 TypeScript、ARMOR-SOLAR 的检查），因此偏差会让构建失败。
 * **生成的客户端：** TypeScript 和 Kotlin 类型来自模式（`tools/generate_types.py --check` 使其保持最新）。
-* **HTTP 契约：** `openapi/armor-server-0.4.3.yaml` 描述服务器的每条路由、其访问规则和模式。
+* **HTTP 契约：** `openapi/armor-server-0.2.0.yaml` 描述服务器的每条路由、其访问规则和模式。
 * **共享启动器：** `tools/armor_project_tool.py` 让家族中的每个仓库都有相同的 `build`、`build-test` 和 `run` 流程。
-* **报警主机撤防时的报警是有效的：** 24 小时防区（烟雾、燃气、紧急按钮）或防拆告警在无人布防时也会鸣响；契约、校验器和向量都如此规定，服务器的 OpenAPI 文件描述了撤防 PIN。
 
 ## 🔄 架构
 
@@ -59,11 +58,11 @@ flowchart LR
 
 ```text
 ARMOR-COMMON/
-├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery, electrical, alarm)
+├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery, electrical)
 ├── conformance/        accepted and rejected payloads shared by every implementation
 ├── firmware_base/      the firmware that ARMOR-RADAR, ARMOR-SOLAR and ARMOR-ELECTRICAL share, once (synced into each by tools/sync_firmware_base.py)
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
-├── openapi/            armor-server-0.4.3.yaml
+├── openapi/            armor-server-0.2.0.yaml
 ├── tools/              armor_project_tool.py, generate_types.py, make_conformance.py, sync_firmware_base.py
 ├── tests/              unit tests and conformance runner
 └── docs/               contracts guide, the shared firmware base
@@ -73,13 +72,13 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 42 tests, 459 conformance vectors
+python -m unittest discover -s tests      # 39 tests, 330 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list
 python tools/sync_firmware_base.py check  # the firmware the node projects share has not drifted (see docs/FIRMWARE_BASE.md)
 ```
 
-代理主题：`armor/node/{node_id}/telemetry | health | command | info`、`armor/solar/{node_id}/{device}/state` 和 `armor/electrical/{node_id}/state | command | result` and `armor/alarm/{node_id}/state | command | result`。参见[契约指南](docs/CONTRACTS.md)。共享启动器在 ARMOR-SERVER 首次运行时创建被忽略的 `.env`，含随机机密和随机的管理员密码；不会打印或提交任何内容。
+代理主题：`armor/node/{node_id}/telemetry | health | command | info`、`armor/solar/{node_id}/{device}/state` 和 `armor/electrical/{node_id}/state | command | result`。参见[契约指南](docs/CONTRACTS.md)。共享启动器在 ARMOR-SERVER 首次运行时创建被忽略的 `.env`，含随机机密和随机的管理员密码；不会打印或提交任何内容。
 
 ## 🔗 相关项目
 
@@ -89,14 +88,12 @@ python tools/sync_firmware_base.py check  # the firmware the node projects share
 * **[ARMOR-RADAR](https://github.com/JuanenRac/ARMOR-RADAR)** - 适用于 ESP32-S3 的现场节点固件，带三个雷达和自带网页面板
 * **[ARMOR-SOLAR](https://github.com/JuanenRac/ARMOR-SOLAR)** - 太阳能逆变器与电池的协议，以及网关节点的消息
 * **[ARMOR-ELECTRICAL](https://github.com/JuanenRac/ARMOR-ELECTRICAL)** - 电气节点：电表、电网读数消息和开关规则
-* **[ARMOR-ALARM](https://github.com/JuanenRac/ARMOR-ALARM)** - 报警节点与报警主机：防区、布防、延时、警笛和 PIN，有无服务器均可
 * **[ARMOR-HMI](https://github.com/JuanenRac/ARMOR-HMI)** - 触摸面板：墙面屏幕上的系统状态、布防与确认，以及语音助手的所在
 * **[ARMOR-NETWORK](https://github.com/JuanenRac/ARMOR-NETWORK)** - 本地网络：其设备、互联网以及变化
 * **[ARMOR-SERVER](https://github.com/JuanenRac/ARMOR-SERVER)** - 中央协调器：遥测、报警、设备、太阳能读数和摄像头
 * **[ARMOR-STUDIO](https://github.com/JuanenRac/ARMOR-STUDIO)** - 网页控制台：摄像头、雷达、报警、太阳能和 2D/3D 场地设计器
 * **[ARMOR-ANDROID-CONTROL](https://github.com/JuanenRac/ARMOR-ANDROID-CONTROL)** - 带实时 2D/3D 雷达的 Android 操作员客户端
 * **[ARMOR-SERVER-AI](https://github.com/JuanenRac/ARMOR-SERVER-AI)** - 会解释决策且从不执行动作的视觉推理策略
-* **[ARMOR-VISION](https://github.com/JuanenRac/ARMOR-VISION)** - Jetson Orin NX 上的摄像头区域、遮罩与检测规则
 * **[ARMOR-VOICE-AI](https://github.com/JuanenRac/ARMOR-VOICE-AI)** - 带无法伪造确认的离线语音意图
 * **[ARMOR-HARDWARE](https://github.com/JuanenRac/ARMOR-HARDWARE)** - 外壳、电子器件和台架验收矩阵
 * **[ARMOR-DEVOPS](https://github.com/JuanenRac/ARMOR-DEVOPS)** - 部署、CM5 测试台、备份与 TLS
