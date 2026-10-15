@@ -802,7 +802,7 @@ paths:
       responses:
         '201': { description: '{ id, name, bytes, sha256 }' }
         '415': { description: Not sent as application/octet-stream }
-        '422': { description: Not an image of an ESP32 application, or of a size that makes sense }
+        '422': { description: 'Not an image of an ESP32 application, or of a size that makes sense; or an image for another kind of node (code wrong_image_kind, wrong_node_kind)' }
   /api/v1/admin/installation:
     get:
       summary: The whole installation as one file - the cameras (without their passwords), the designs of the site, the electricity and the network, the rules, the automations, the devices, the solar equipment, the energy alarm levels and, for the record, the users' names and roles; never a password, token or key (an administrator)
@@ -1059,6 +1059,7 @@ paths:
       parameters:
         - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 200 } }
         - { name: before, in: query, schema: { type: integer, minimum: 1 } }
+        - { name: after, in: query, schema: { type: integer, minimum: 1 }, description: 'Events after this id, oldest first (for a client that polls: it misses nothing); the answer carries next_after' }
         - { name: type, in: query, schema: { type: string, enum: [alert, node, camera, mode] } }
         - { name: node, in: query, schema: { type: string, pattern: '^[A-Za-z0-9._-]{1,80}$' }, description: Node or camera id }
         - { name: q, in: query, schema: { type: string, maxLength: 80 }, description: Case-insensitive part of the node or camera id }

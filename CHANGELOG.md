@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.4.7] - Audit round two: shared firmware base and project tool
+
+- The shared firmware base carries the session, broker and web-server fixes of the round, and the project tool knows ARMOR-VISION.
+
 ## [0.4.6] - An alarm with the central disarmed is a valid message
 
 - **`validate_alarm_message` accepts the alarm phase with the mode `disarmed`:** a smoke, gas or panic zone, or a tamper, sounds with nobody having armed the central, and the node says so. A disarmed panel still has the mode `disarmed`, and an arming or armed one still never has it. New conformance vectors: an alarm while disarmed (valid), an alarm while armed (valid), an exit delay with no mode (invalid).
