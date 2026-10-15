@@ -20,13 +20,13 @@
   <img src="https://img.shields.io/badge/License-GPL%203.0-blue.svg" alt="GPL 3.0">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-330-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Vectors-459-00E5FF.svg" alt="Vectors">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturity">
 </p>
 
 ---
 
-**正直さのチェック - 今日動いているもの:** スキーマ、Python の検証器、共有の 330 件の適合性ベクトル、生成された TypeScript と Kotlin の型、共有のプロジェクトランチャーは実在し、テストされています（39 件）。Kotlin のファイルは生成されていますが ARMOR-ANDROID-CONTROL では**まだ使われておらず**、`set_thresholds` コマンドは `sensitivity` という 1 つのフィールドしか持ちません。実際のレーダーのパラメーターはファームウェアができるまで定義されないからです。
+**正直さのチェック - 今日動いているもの:** スキーマ、Python の検証器、共有の 459 件の適合性ベクトル、生成された TypeScript と Kotlin の型、共有のプロジェクトランチャーは実在し、テストされています（39 件）。Kotlin のファイルは生成されていますが ARMOR-ANDROID-CONTROL では**まだ使われておらず**、`set_thresholds` コマンドは `sensitivity` という 1 つのフィールドしか持ちません。実際のレーダーのパラメーターはファームウェアができるまで定義されないからです。
 
 ---
 
@@ -34,12 +34,13 @@
 
 **ARMOR-COMMON** は A.R.M.O.R. のすべてのメッセージの意味を所有します。レーダーノード、太陽光ゲートウェイノード、シミュレーターがこれらのメッセージを作り、サーバー、視覚 AI、音声サービスが使います。2 つのプロジェクトがフィールドについて食い違ったら、このリポジトリが決めます。
 
-* **唯一の真実の源：** `src/armor_common/schemas/` の JSON スキーマ。テレメトリ、ヘルス、コマンド、ノード情報、そして 2 つの太陽光メッセージ（インバーター、セルと容量を持つバッテリー）。未知のフィールドはどこでも拒否されます。
+* **唯一の真実の源：** `src/armor_common/schemas/` の JSON スキーマ。テレメトリ、ヘルス、コマンド、ノード情報、そして 2 つの太陽光メッセージ（インバーター、セルと容量を持つバッテリー）。検証器は未知のフィールドを拒否します。新しいファームウェアのノードを読むサーバーは、それらを無視して数えます。
 * **規則を飛ばせない検証器：** スキーマを直接解釈し、実装していないキーワードを使うスキーマは拒否します。
-* **適合性ベクトル：** 受理と拒否の 330 件のペイロードを、各実装（ここでは Python、ARMOR-SERVER では TypeScript、ARMOR-SOLAR のチェック）が実行するので、ずれるとビルドが失敗します。
+* **適合性ベクトル：** 受理と拒否の 459 件のペイロードを、各実装（ここでは Python、ARMOR-SERVER では TypeScript、ARMOR-SOLAR のチェック）が実行するので、ずれるとビルドが失敗します。
 * **生成されたクライアント：** TypeScript と Kotlin の型はスキーマから作られます（`tools/generate_types.py --check` が最新に保ちます）。
 * **HTTP 契約：** `openapi/armor-server-0.4.3.yaml` は、サーバーのすべてのルート、そのアクセス規則、スキーマを記述します。
 * **共有ランチャー：** `tools/armor_project_tool.py` は、ファミリーのすべてのリポジトリに同じ `build`、`build-test`、`run` の流れを与えます。
+* **警報盤が解除中の警報も有効です：** 24 時間ゾーン（煙、ガス、パニック）や改ざんは、誰も警戒をセットしていなくても鳴ります。契約、検証器、ベクターがそれを定め、サーバーの OpenAPI ファイルは解除用 PIN を記述しています。
 
 ## 🔄 アーキテクチャ
 
@@ -72,7 +73,7 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 39 tests, 330 conformance vectors
+python -m unittest discover -s tests      # 42 tests, 459 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list
 python tools/sync_firmware_base.py check  # the firmware the node projects share has not drifted (see docs/FIRMWARE_BASE.md)
@@ -95,6 +96,7 @@ python tools/sync_firmware_base.py check  # the firmware the node projects share
 * **[ARMOR-STUDIO](https://github.com/JuanenRac/ARMOR-STUDIO)** - Web コンソール：カメラ、レーダー、アラーム、太陽光発電、2D/3D サイト設計
 * **[ARMOR-ANDROID-CONTROL](https://github.com/JuanenRac/ARMOR-ANDROID-CONTROL)** - リアルタイム 2D/3D レーダー付きの Android オペレータークライアント
 * **[ARMOR-SERVER-AI](https://github.com/JuanenRac/ARMOR-SERVER-AI)** - 判断を説明し、決して動作しない視覚推論ポリシー
+* **[ARMOR-VISION](https://github.com/JuanenRac/ARMOR-VISION)** - Jetson Orin NX 向けのカメラのゾーン、マスク、検知ルール
 * **[ARMOR-VOICE-AI](https://github.com/JuanenRac/ARMOR-VOICE-AI)** - 偽造できない確認を備えたオフライン音声インテント
 * **[ARMOR-HARDWARE](https://github.com/JuanenRac/ARMOR-HARDWARE)** - 筐体、電子部品、ベンチ受け入れマトリクス
 * **[ARMOR-DEVOPS](https://github.com/JuanenRac/ARMOR-DEVOPS)** - デプロイ、CM5 テストベンチ、バックアップ、TLS

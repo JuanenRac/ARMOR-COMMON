@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## [0.4.6] - An alarm with the central disarmed is a valid message
+
+- **`validate_alarm_message` accepts the alarm phase with the mode `disarmed`:** a smoke, gas or panic zone, or a tamper, sounds with nobody having armed the central, and the node says so. A disarmed panel still has the mode `disarmed`, and an arming or armed one still never has it. New conformance vectors: an alarm while disarmed (valid), an alarm while armed (valid), an exit delay with no mode (invalid).
+- `openapi/armor-server-0.4.3.yaml` describes the PIN of the mode, of the command to an alarm node and of the voice, the routes of the PIN of a user and of the account, and the answers 403 (`wrong_pin`, `pin_not_set`) and 429 (`pin_locked`).
+- `firmware_base/` carries the publish queue of `mqtt_link.cpp`, the watchdog settings and the relay task's watchdog subscription, so that the copies in the node projects stay identical.
+
 ## [0.4.5] - What an inverter says about itself, and more for the nodes' shared firmware
 
 - **`solar_inverter.schema.json` gains optional fields:** `serial` (8 to 20 letters and digits), `firmware` (up to 24 characters), `pv_energy_total_wh` (the energy the panels have made in all) and `ratings` (what the unit is rated for and how it is set: the rated output and voltages, the battery's bulk, float, low and recharge voltages, the charging currents, and four names: the type of battery, the input range, the priority of the output source and of the charger). Twenty-three new conformance vectors (the unknown-field vector now uses another field); the generated types are current.

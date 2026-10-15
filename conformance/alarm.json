@@ -1416,6 +1416,115 @@
    "schema_valid": true
   },
   {
+   "name": "an exit delay with no mode",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "exit_delay",
+    "mode": "disarmed",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an alarm while disarmed (smoke, panic or tamper)",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "alarm",
+    "mode": "disarmed",
+    "siren": true,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an alarm while armed",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "alarm",
+    "mode": "away",
+    "siren": true,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ]
+   }
+  },
+  {
    "name": "a siren outside the alarm phase",
    "valid": false,
    "payload": {
