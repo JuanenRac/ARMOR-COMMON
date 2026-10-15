@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here.
 
+## [0.4.9] - Maintenance routes in the contract, a changelog order check and the copy-log style of the node panels
+
+- The OpenAPI contract describes the maintenance routes (programs, updates, history, jobs, console).
+- `armor_ci_validate.py` checks that the versions of a CHANGELOG are in order and not repeated.
+- The firmware base panel has the style of the copy-log icon button.
+- The firmware base copies the firmware that runs into the other slot (`start_copy`, `copy_progress`, `slot_generation` in github_update) so that a node can keep both slots at the same version.
+
 ## [0.4.8] - Version scheme of four components from 0.8.0
 
 - The shared project tool and the validator know the numbering of the family: three components up to 0.7.9 and four from 0.8.0 (0.7.9 -> 0.8.0.0 -> 0.8.0.9 -> 0.8.1.0 ...), with no component ever reaching 10.
