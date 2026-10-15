@@ -2,7 +2,11 @@
 
 All notable changes to this project are documented here.
 
-## [0.4.7] - Audit round two: shared firmware base and project tool
+## [0.4.8] - Version scheme of four components from 0.8.0
+
+- The shared project tool and the validator know the numbering of the family: three components up to 0.7.9 and four from 0.8.0 (0.7.9 -> 0.8.0.0 -> 0.8.0.9 -> 0.8.1.0 ...), with no component ever reaching 10.
+
+## [0.4.7] - Shared firmware base and project tool
 
 - The shared firmware base carries the session, broker and web-server fixes of the round, and the project tool knows ARMOR-VISION.
 
