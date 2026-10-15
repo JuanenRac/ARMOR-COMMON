@@ -906,6 +906,126 @@ paths:
         '200': { description: '{ results: [{ channel, ok, detail }] }' }
         '409': { description: Nothing is configured }
         '422': { description: Unknown channel }
+  /api/v1/admin/maintenance/status:
+    get:
+      summary: Whether the maintenance helper (the root helper of ARMOR-DEVOPS that updates the programs and the system) is installed, and whether its console is on (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: '{ available, console, reason }' }
+        '503': { description: The maintenance helper is not installed or not answering }
+  /api/v1/admin/updates:
+    get:
+      summary: The programs of the machine with the version installed, the newest release on GitHub, a state for each, the operating system and the last operations (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: '{ components, system, running, history }' }
+        '503': { description: The maintenance helper is not installed or not answering }
+  /api/v1/admin/updates:
+    post:
+      summary: Update, reinstall or check programs from GitHub releases (hash checked, previous version kept), or the operating system (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { components: { type: array, items: { type: string } }, force: { type: boolean } } } } } }
+      responses:
+        '202': { description: '{ id } - the job runs in the background' }
+        '409': { description: Another job is running }
+        '503': { description: The maintenance helper is not installed or not answering }
+  /api/v1/admin/updates/{id}/rollback:
+    post:
+      summary: Put one program back to the version it had before its last update (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '202': { description: '{ id }' }
+        '503': { description: The maintenance helper is not installed or not answering }
+  /api/v1/admin/updates/history:
+    delete:
+      summary: Empty the list of the last operations (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: Emptied }
+        '503': { description: The maintenance helper is not installed or not answering }
+  /api/v1/admin/system/check:
+    post:
+      summary: Look for updates of the operating system (apt-get update) (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      responses:
+        '202': { description: '{ id } - the job runs in the background' }
+        '503': { description: The maintenance helper is not installed or not answering }
+  /api/v1/admin/system/upgrade:
+    post:
+      summary: Upgrade the operating system - `upgrade` (default), `full` (full-upgrade, what a plain upgrade keeps back) or `repair` (finish half-installed packages and fix dependencies) (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      requestBody: { required: false, content: { application/json: { schema: { type: object, properties: { mode: { type: string, enum: [upgrade, full, repair] } } } } } }
+      responses:
+        '202': { description: '{ id } - the job runs in the background' }
+        '422': { description: Unknown mode }
+        '503': { description: The maintenance helper is not installed or not answering }
+  /api/v1/admin/system/reboot:
+    post:
+      summary: Reboot the machine (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      responses:
+        '202': { description: Rebooting }
+        '503': { description: The maintenance helper is not installed or not answering }
+  /api/v1/admin/maintenance/jobs/{id}:
+    get:
+      summary: How a maintenance job stands - its steps, percent and the log from a given line (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: The job }
+        '404': { description: Unknown job }
+        '503': { description: The maintenance helper is not installed or not answering }
+  /api/v1/admin/console:
+    get:
+      summary: The state of the root console - on or off, locked or unlocked (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: '{ enabled, unlocked, locked_until }' }
+        '503': { description: The maintenance helper is not installed or not answering }
+  /api/v1/admin/console/unlock:
+    post:
+      summary: Unlock the root console with the administrator's password, for ten minutes; five wrong passwords close it for five minutes (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [password], properties: { password: { type: string } } } } } }
+      responses:
+        '200': { description: Unlocked }
+        '401': { description: Wrong password }
+        '423': { description: Too many failures }
+        '503': { description: The maintenance helper is not installed or not answering }
+  /api/v1/admin/console/lock:
+    post:
+      summary: Lock the root console again (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: Locked }
+        '503': { description: The maintenance helper is not installed or not answering }
+  /api/v1/admin/console/run:
+    post:
+      summary: Run one command as root with a time limit and a folder (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [command], properties: { command: { type: string }, cwd: { type: string }, timeout_s: { type: integer } } } } } }
+      responses:
+        '202': { description: '{ id }' }
+        '403': { description: The console is off or locked }
+        '503': { description: The maintenance helper is not installed or not answering }
+  /api/v1/admin/console/jobs/{id}:
+    get:
+      summary: The output of a console command from a given offset, and whether it ended (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: The job }
+        '404': { description: Unknown job }
+        '503': { description: The maintenance helper is not installed or not answering }
+  /api/v1/admin/console/jobs/{id}/cancel:
+    post:
+      summary: Stop a running console command (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: Stopped }
+        '503': { description: The maintenance helper is not installed or not answering }
   /api/v1/ai/context:
     get:
       summary: For the observation service (ARMOR-SERVER-AI, with its own token): the mode, the radar nodes with their tracks and light, and the cameras it can look at
