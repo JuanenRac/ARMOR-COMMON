@@ -20,13 +20,13 @@
   <img src="https://img.shields.io/badge/License-GPL%203.0-blue.svg" alt="GPL 3.0">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-330-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Vectors-459-00E5FF.svg" alt="Vectors">
   <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturity">
 </p>
 
 ---
 
-**Honesty check - what runs today:** The schemas, the Python validator, the 330 shared conformance vectors, the generated TypeScript and Kotlin types and the shared project launcher are real and tested (39 tests). The Kotlin file is generated but **not yet consumed** by ARMOR-ANDROID-CONTROL, and the `set_thresholds` command carries a single `sensitivity` field because the real radar parameters are not defined until firmware exists.
+**Honesty check - what runs today:** The schemas, the Python validator, the 459 shared conformance vectors, the generated TypeScript and Kotlin types and the shared project launcher are real and tested (42 tests). The Kotlin file is generated but **not yet consumed** by ARMOR-ANDROID-CONTROL, and the `set_thresholds` command carries a single `sensitivity` field because the real radar parameters are not defined until firmware exists.
 
 ---
 
@@ -34,12 +34,13 @@
 
 **ARMOR-COMMON** owns what every A.R.M.O.R. message means. Radar nodes, solar gateway nodes and the simulator produce these messages; the server, the visual AI and the voice service consume them. If two projects disagree about a field, this repository decides.
 
-* **One source of truth:** JSON Schemas in `src/armor_common/schemas/` for telemetry, health, command, node information and the two solar messages (inverter, battery with cells and capacities). Unknown fields are rejected everywhere.
+* **One source of truth:** JSON Schemas in `src/armor_common/schemas/` for telemetry, health, command, node information and the two solar messages (inverter, battery with cells and capacities). The validators reject unknown fields; the server, reading a node of a newer firmware, ignores and counts them.
 * **A validator that cannot skip a rule:** it interprets the schema directly and refuses a schema that uses a keyword it does not implement.
-* **Conformance vectors:** 330 accepted and rejected payloads run by every implementation (Python here, TypeScript in ARMOR-SERVER, the checks of ARMOR-SOLAR), so drift fails a build.
+* **Conformance vectors:** 459 accepted and rejected payloads run by every implementation (Python here, TypeScript in ARMOR-SERVER, the checks of ARMOR-SOLAR), so drift fails a build.
 * **Generated clients:** TypeScript and Kotlin types come from the schemas (`tools/generate_types.py --check` keeps them current).
 * **HTTP contract:** `openapi/armor-server-0.4.3.yaml` describes every server route, its access rule and its schema.
 * **Shared launcher:** `tools/armor_project_tool.py` gives every repository of the family the same `build`, `build-test` and `run` workflow.
+* **An alarm with the central disarmed is valid:** a 24-hour zone (smoke, gas, panic) or a tamper sounds with nobody having armed the central; the contract, the validators and the vectors say so, and the server's OpenAPI file describes the PIN to disarm.
 
 ## 🔄 Architecture
 
@@ -72,7 +73,7 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 39 tests, 330 conformance vectors
+python -m unittest discover -s tests      # 42 tests, 459 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list
 python tools/sync_firmware_base.py check  # the firmware the node projects share has not drifted (see docs/FIRMWARE_BASE.md)
@@ -95,6 +96,7 @@ Broker topics: `armor/node/{node_id}/telemetry | health | command | info`, `armo
 * **[ARMOR-STUDIO](https://github.com/JuanenRac/ARMOR-STUDIO)** - Web console: cameras, radar, alarms, solar energy and the 2D/3D site designer
 * **[ARMOR-ANDROID-CONTROL](https://github.com/JuanenRac/ARMOR-ANDROID-CONTROL)** - Android operator client with a live 2D/3D radar
 * **[ARMOR-SERVER-AI](https://github.com/JuanenRac/ARMOR-SERVER-AI)** - Visual inference policy that explains its decisions and never actuates
+* **[ARMOR-VISION](https://github.com/JuanenRac/ARMOR-VISION)** - Camera zones, masks and detection rules for the Jetson Orin NX
 * **[ARMOR-VOICE-AI](https://github.com/JuanenRac/ARMOR-VOICE-AI)** - Offline voice intents with a confirmation that cannot be forged
 * **[ARMOR-HARDWARE](https://github.com/JuanenRac/ARMOR-HARDWARE)** - Enclosures, electronics and the bench acceptance matrix
 * **[ARMOR-DEVOPS](https://github.com/JuanenRac/ARMOR-DEVOPS)** - Deployment, the CM5 test bench, backup and TLS

@@ -208,7 +208,7 @@ def _alarm_checked(topic: str, leaf: str, kind: str, payload: Mapping[str, objec
 
 def validate_alarm_message(topic: str, payload: Mapping[str, object]) -> None:
     """Validate an alarm state: the topic, the schema, that the node matches, and the rules that join fields: a zone is named once, an open zone is a zone of the message,
-    the phase and the mode agree (disarmed exactly when disarmed), a siren means an alarm, and an event about a zone names a zone of the message."""
+    the phase and the mode agree (a disarmed panel has the mode disarmed, an armed one does not; only the alarm phase may carry both), a siren means an alarm, and an event about a zone names a zone of the message."""
     _alarm_checked(topic, "state", "alarm", payload)
     zones = payload.get("zones")
     ids = [item.get("id") for item in zones if isinstance(item, Mapping)] if isinstance(zones, list) else []
@@ -220,8 +220,12 @@ def validate_alarm_message(topic: str, payload: Mapping[str, object]) -> None:
             raise ContractError("an open zone is named once")
         if any(item not in ids for item in open_zones):
             raise ContractError("an open zone must be a zone of the message")
-    if (payload.get("phase") == "disarmed") != (payload.get("mode") == "disarmed"):
-        raise ContractError("the mode is disarmed exactly when the phase is")
+    # A panel that is disarmed has the mode disarmed. The alarm phase may carry the mode disarmed too:
+    # a 24-hour zone (smoke, gas, panic) or a tamper sounds with nobody having armed the panel.
+    if payload.get("phase") == "disarmed" and payload.get("mode") != "disarmed":
+        raise ContractError("a disarmed panel has the mode disarmed")
+    if payload.get("phase") in ("exit_delay", "armed", "entry_delay") and payload.get("mode") == "disarmed":
+        raise ContractError("an arming or armed panel has a mode other than disarmed")
     if payload.get("siren") is True and payload.get("phase") != "alarm":
         raise ContractError("the siren sounds only in the alarm phase")
     events = payload.get("events")
