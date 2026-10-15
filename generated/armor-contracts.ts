@@ -70,6 +70,10 @@ export type SolarInverter = {
   total_charging_a?: number;
   units?: unknown[];
   bus_v?: number;
+  serial?: string;
+  firmware?: string;
+  pv_energy_total_wh?: number;
+  ratings?: Record<string, unknown>;
 };
 
 export type SolarModule = {
