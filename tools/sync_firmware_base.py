@@ -51,7 +51,8 @@ CANDIDATES = [
     "main/tls_cert.cpp", "main/tls_cert.hpp", "main/web_server.cpp", "main/web_server.hpp", "main/ble_provision.cpp", "main/ble_provision.hpp",
     "main/api_shared.cpp", "main/api_shared.hpp", "main/Kconfig.projbuild",
     "core/auth.hpp", "core/net_text.hpp", "core/netplan.hpp", "core/node_id.hpp", "core/web_policy.hpp", "core/json.hpp", "core/ble_frame.hpp", "core/ble_dispatch.hpp",
-    "core/board_s3.hpp",
+    "core/board_s3.hpp", "core/backoff.hpp", "core/improv.hpp", "core/task_health.hpp", "core/central_link.hpp",
+    "main/task_health.cpp", "main/task_health.hpp", "main/improv_serial.cpp", "main/improv_serial.hpp", "tests/test_base.cpp", "tests/test_central.cpp",
     "panel/index.html", "panel/style.css", "tools/pack_panel.py", "tools/build_node.sh",
     "partitions.csv", "sdkconfig.defaults", "sdkconfig.board.s3-wifi", "sdkconfig.board.s3-eth",
 ]
