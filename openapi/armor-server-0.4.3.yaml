@@ -524,6 +524,13 @@ paths:
       security: [{ operator: [] }]
       responses:
         '200': { description: The readings and the sums (grid power and energy, alarms) }
+  /api/v1/electrical/energy:
+    get:
+      summary: The energy of every electrical channel per day (the last N days, 30 by default), adding up only the difference between readings so a meter that wraps or is reset does not break the sum
+      security: [{ operator: [] }]
+      parameters: [{ name: days, in: query, schema: { type: integer, minimum: 1, maximum: 400 } }]
+      responses:
+        '200': { description: '{ channels: [{ node, channel, days: [{ day, kwh, resets }] }] }' }
   /api/v1/electrical/history:
     get:
       summary: The recent samples (voltage, current, power, energy) of one channel of one node, oldest first
@@ -723,6 +730,12 @@ paths:
       security: [{ operator: [] }]
       responses:
         '200': { description: The latest sample and its history }
+  /api/v1/preflight:
+    get:
+      summary: The check before arming - nodes that do not answer, silent panels, open zones, cameras that are down, open doors and windows and alarms nobody has seen - each finding blocking or only a warning; read only
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ ready, checked_at, blocking, warnings, issues: [{ kind, level, code, id, detail? }] }' }
   /api/v1/system/ingest:
     get:
       summary: What the nodes sent that the server took, refused or partly ignored (fields of a newer firmware), per topic, with the start of the last refused message
@@ -1213,6 +1226,17 @@ paths:
       summary: SHA-256 of the file as stored, for chain of custody
       security: [{ operator: [] }]
       responses: { '200': { description: '{ "sha256": hex }' }, '404': { description: Not found } }
+  /api/v1/media/{cameraId}/{kind}/{file}/proof:
+    parameters: [{ $ref: '#/components/parameters/MediaPath' }]
+    get:
+      summary: A signed proof of custody of one file - its size, its SHA-256 now, when it was made and every line of the audit trail about it - to hand over with the file
+      security: [{ operator: [] }]
+      responses: { '200': { description: '{ version, issued_at, issuer, file, custody, signature }' }, '404': { description: Not found } }
+  /api/v1/media/proof/verify:
+    post:
+      summary: Whether a proof of custody is exactly what this server signed and whether the file still has the digest it names
+      security: [{ operator: [] }]
+      responses: { '200': { description: '{ "genuine": boolean, "matches": boolean, "issued_at"? }' } }
   /api/v1/media/{cameraId}/{kind}/{file}/protected:
     parameters: [{ $ref: '#/components/parameters/MediaPath' }]
     put:
