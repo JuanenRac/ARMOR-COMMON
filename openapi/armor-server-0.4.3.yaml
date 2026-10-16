@@ -581,6 +581,19 @@ paths:
       security: [{ operator: [] }]
       responses:
         '200': { description: The states and the sums (nodes, stale, armed, sounding) }
+  /api/v1/capture-settings:
+    get:
+      summary: What the server takes by itself when a camera sees something while the perimeter is armed ({ settings: { enabled, photo, photo_count, photo_interval_s, video, video_seconds, cooldown_s }, recent: the latest captures })
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The settings and the latest automatic captures }
+    put:
+      summary: Set them (an administrator only). A photo (or photo_count of them, photo_interval_s apart, 1 to 60 and 1 to 300 seconds) and a video of video_seconds (3 to 300) are taken when the AI observation service reports something on a camera while the system is armed, and a camera is left alone for cooldown_s (5 to 3600) afterwards
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object } } } }
+      responses:
+        '200': { description: The settings as kept }
+        '400': { description: A value is out of range, not the right type or unknown }
   /api/v1/alarm/zone-links:
     get:
       summary: The Zigbee devices linked to zones of alarm panels ({ links: [{ device_id, node_id, zone_id }] })
