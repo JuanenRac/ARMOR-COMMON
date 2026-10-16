@@ -15,32 +15,48 @@
   <a href="README_por.md">🇵🇹 Português</a>
 </p>
 
-### Nachrichtenverträge, Validierung und der gemeinsame Projektstarter
+### Nachrichtenverträge, Validierung, die von den Knoten geteilte Firmware-Basis und der gemeinsame Projektstarter
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-GPL%203.0-blue.svg" alt="GPL 3.0">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-330-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Maturity-functional-00E5FF.svg" alt="Maturity">
+  <img src="https://img.shields.io/badge/Vectors-459-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Version-0.5.4-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
 ---
 
-**Ehrlichkeitsprüfung - was heute läuft:** Die Schemas, der Python-Validierer, die 330 gemeinsamen Konformitätsvektoren, die generierten TypeScript- und Kotlin-Typen und der gemeinsame Projektstarter sind real und getestet (36 Tests). Die Kotlin-Datei ist generiert, wird aber von ARMOR-ANDROID-CONTROL **noch nicht verwendet**, und der Befehl `set_thresholds` trägt nur ein Feld `sensitivity`, weil die echten Radarparameter erst definiert werden, wenn es Firmware gibt.
+**Ehrlichkeitsprüfung - was heute läuft:** Die Schemas (Telemetrie, Zustand, Befehl, Knoteninformation, Solar-Wechselrichter und -Batterie, Elektro, Alarm mit Befehl und Ergebnis sowie Netzwerk), der Python-Validator, die 459 Konformitätsvektoren, die erzeugten TypeScript- und Kotlin-Typen, die OpenAPI-Datei des Servers (135 Pfade), die von den fünf Knoten geteilte Firmware-Basis und der gemeinsame Projektstarter sind real und getestet (42 Tests). Die Kotlin-Datei wird erzeugt, aber **noch nicht verwendet** von ARMOR-ANDROID-CONTROL (das sein eigenes Parsen behält), und der Befehl `set_thresholds` trägt nur ein Feld `sensitivity`, weil die echten Radarparameter erst definiert sind, wenn Firmware existiert.
 
 ---
+
+## 📋 Auf einen Blick
+
+| | |
+|---|---|
+| Version | `0.5.4` |
+| Reifegrad | Etabliert |
+| Tests | 42 (`python -m unittest discover -s tests`) and 459 conformance vectors |
+| Technik | Python 3.11+ / JSON Schema / OpenAPI |
+| Auf echter Hardware | Seine Nachrichten sind die, die der echte Radarknoten, der CM5-Server, Studio und die Android-App täglich sprechen; die Nachrichten der anderen Knoten werden gegen Ersatz geprüft |
 
 ## 🎯 Überblick
 
 **ARMOR-COMMON** besitzt die Bedeutung jeder A.R.M.O.R.-Nachricht. Radarknoten, Solar-Gateway-Knoten und der Simulator erzeugen diese Nachrichten; der Server, die visuelle KI und der Sprachdienst verbrauchen sie. Wenn zwei Projekte über ein Feld uneins sind, entscheidet dieses Repository.
 
-* **Eine einzige Wahrheitsquelle:** JSON-Schemas in `src/armor_common/schemas/` für Telemetrie, Zustand, Befehl, Knoteninformation und die zwei Solarnachrichten (Wechselrichter, Batterie mit Zellen und Kapazitäten). Unbekannte Felder werden überall abgelehnt.
-* **Ein Validierer, der keine Regel überspringen kann:** er interpretiert das Schema direkt und lehnt ein Schema ab, das ein nicht implementiertes Schlüsselwort nutzt.
-* **Konformitätsvektoren:** 330 akzeptierte und abgelehnte Nutzlasten, von jeder Implementierung ausgeführt (hier Python, TypeScript in ARMOR-SERVER, die Prüfungen von ARMOR-SOLAR), sodass Abweichung den Build scheitern lässt.
-* **Generierte Clients:** TypeScript- und Kotlin-Typen entstehen aus den Schemas (`tools/generate_types.py --check` hält sie aktuell).
-* **HTTP-Vertrag:** `openapi/armor-server-0.2.0.yaml` beschreibt jede Serverroute, ihre Zugriffsregel und ihr Schema.
-* **Gemeinsamer Starter:** `tools/armor_project_tool.py` gibt jedem Repository der Familie denselben Ablauf `build`, `build-test` und `run`.
+* **Eine einzige Quelle der Wahrheit:** JSON-Schemas in `src/armor_common/schemas/` für Telemetrie, Zustand, Befehl, Knoteninformation, die beiden Solar-Nachrichten (Wechselrichter, Batterie mit Zellen und Kapazitäten), die Elektro-Nachrichten (Messwerte, Befehl, Ergebnis), die Alarmnachrichten (Zustand, Befehl, Ergebnis) und die Netzwerknachricht. Unbekannte Felder und unmögliche Kombinationen werden abgelehnt.
+* **Ein Validator, der keine Regel überspringen kann:** er interpretiert das Schema direkt und lehnt ein Schema ab, das ein nicht implementiertes Schlüsselwort verwendet.
+* **Konformitätsvektoren:** 459 akzeptierte und abgelehnte Nutzlasten, von jeder Implementierung ausgeführt (hier Python, TypeScript in ARMOR-SERVER, die Prüfungen der Firmware-Repositories), sodass eine Abweichung einen Build scheitern lässt.
+* **Erzeugte Clients:** TypeScript- und Kotlin-Typen entstehen aus den Schemas (`tools/generate_types.py --check` hält sie aktuell).
+* **HTTP-Vertrag:** `openapi/armor-server-0.4.3.yaml` beschreibt jede Route des Servers (135 Pfade), ihre Zugriffsregel und ihr Schema, und ARMOR-SERVER hat einen Test, dass keine fehlt.
+* **Firmware-Basis:** `firmware_base/` hält jede von den fünf Knoten geteilte Datei einmal (Netzwerk, Einstellungen und Benutzer, Panel-Server und Login, HTTPS-Zertifikat, Log, Bluetooth mit PIN-Kopplung, Prüfung signierter Updates, Uhr, Zigbee-Brücke, Relais); `tools/sync_firmware_base.py` schreibt sie in jeden Knoten und prüft, dass keine Kopie abweicht ([die Anleitung](docs/FIRMWARE_BASE.md), [signierte Firmware](docs/SIGNED_FIRMWARE.md)).
+* **Gemeinsamer Starter:** `tools/armor_project_tool.py` gibt jedem Repository der Familie denselben Ablauf `build`, `build-test` und `run`, und `tools/armor_ci_validate.py` dieselben CI-Prüfungen.
+
+## 🧩 Rolle in A.R.M.O.R.
+
+ARMOR-COMMON sorgt dafür, dass die Familie dieselbe Sprache spricht. Jede Nachricht zwischen einem Knoten und [ARMOR-SERVER](https://github.com/JuanenRac/ARMOR-SERVER) ist hier einmal definiert, mit den Vektoren, die jede Implementierung bestehen muss; hier lebt auch der HTTP-Vertrag des Servers; und die Firmware, die die fünf Knoten teilen ([ARMOR-RADAR](https://github.com/JuanenRac/ARMOR-RADAR), [ARMOR-SOLAR](https://github.com/JuanenRac/ARMOR-SOLAR), [ARMOR-ELECTRICAL](https://github.com/JuanenRac/ARMOR-ELECTRICAL), [ARMOR-ALARM](https://github.com/JuanenRac/ARMOR-ALARM), [ARMOR-HMI](https://github.com/JuanenRac/ARMOR-HMI)), wird einmal gehalten und von einem Werkzeug in sie kopiert. Es enthält kein Geheimnis und führt nichts in Produktion aus.
 
 ## 🔄 Architektur
 
@@ -71,15 +87,17 @@ ARMOR-COMMON/
 
 ## 🛠️ Entwicklungsumgebung
 
+**Voraussetzungen:** Python 3.11+
+
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 39 tests, 330 conformance vectors
+python -m unittest discover -s tests      # 42 tests, 459 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list
 python tools/sync_firmware_base.py check  # the firmware the node projects share has not drifted (see docs/FIRMWARE_BASE.md)
 ```
 
-Broker-Topics: `armor/node/{node_id}/telemetry | health | command | info`, `armor/solar/{node_id}/{device}/state` und `armor/electrical/{node_id}/state | command | result`. Siehe den [Vertragsleitfaden](docs/CONTRACTS.md). Der gemeinsame Starter erzeugt beim ersten ARMOR-SERVER-Lauf eine ignorierte `.env` mit zufälligen Geheimnissen und einem zufälligen Administratorpasswort; nichts wird gedruckt oder eingecheckt.
+Broker-Themen: `armor/node/{node_id}/telemetry | health | command | info`, `armor/solar/{node_id}/{device}/state`, `armor/electrical/{node_id}/state | command | result`, `armor/alarm/{node_id}/state | command | result` und `armor/network/{node_id}/state`. Siehe den [Vertragsleitfaden](docs/CONTRACTS.md). Der gemeinsame Starter legt beim ersten Start von ARMOR-SERVER eine ignorierte `.env` mit zufälligen Geheimnissen und einem zufälligen Administratorpasswort an; nichts wird ausgegeben oder eingecheckt.
 
 ## 🔗 Verwandte Projekte
 
@@ -89,12 +107,14 @@ Broker-Topics: `armor/node/{node_id}/telemetry | health | command | info`, `armo
 * **[ARMOR-RADAR](https://github.com/JuanenRac/ARMOR-RADAR)** - Feldknoten-Firmware für ESP32-S3 mit drei Radaren und eigenem Web-Panel
 * **[ARMOR-SOLAR](https://github.com/JuanenRac/ARMOR-SOLAR)** - Protokolle für Solar-Wechselrichter und -Batterien und die Nachrichten eines Gateway-Knotens
 * **[ARMOR-ELECTRICAL](https://github.com/JuanenRac/ARMOR-ELECTRICAL)** - Elektroknoten: Zähler, die Nachricht der Netzmesswerte und die Regeln fürs Schalten
+* **[ARMOR-ALARM](https://github.com/JuanenRac/ARMOR-ALARM)** - Alarmknoten und Alarmzentrale: Zonen, Scharfschalten, Verzögerungen, Sirene und PIN, mit dem Server oder ohne ihn
 * **[ARMOR-HMI](https://github.com/JuanenRac/ARMOR-HMI)** - Touch-Panel: der Systemzustand auf einem Wandbildschirm, Scharf- und Quittieren sowie das Zuhause des Sprachassistenten
 * **[ARMOR-NETWORK](https://github.com/JuanenRac/ARMOR-NETWORK)** - Das lokale Netzwerk: seine Geräte, das Internet und was sich ändert
 * **[ARMOR-SERVER](https://github.com/JuanenRac/ARMOR-SERVER)** - Zentraler Koordinator: Telemetrie, Alarme, Geräte, Solarmesswerte und Kameras
 * **[ARMOR-STUDIO](https://github.com/JuanenRac/ARMOR-STUDIO)** - Web-Konsole: Kameras, Radar, Alarme, Solarenergie und 2D/3D-Standortdesigner
 * **[ARMOR-ANDROID-CONTROL](https://github.com/JuanenRac/ARMOR-ANDROID-CONTROL)** - Android-Bedienclient mit Live-Radar in 2D/3D
 * **[ARMOR-SERVER-AI](https://github.com/JuanenRac/ARMOR-SERVER-AI)** - Visuelle Inferenzrichtlinie, die ihre Entscheidungen erklärt und nie handelt
+* **[ARMOR-VISION](https://github.com/JuanenRac/ARMOR-VISION)** - Kamerazonen, Masken und Erkennungsregeln für den Jetson Orin NX
 * **[ARMOR-VOICE-AI](https://github.com/JuanenRac/ARMOR-VOICE-AI)** - Offline-Sprachabsichten mit einer nicht fälschbaren Bestätigung
 * **[ARMOR-HARDWARE](https://github.com/JuanenRac/ARMOR-HARDWARE)** - Gehäuse, Elektronik und die Abnahmematrix am Prüfstand
 * **[ARMOR-DEVOPS](https://github.com/JuanenRac/ARMOR-DEVOPS)** - Bereitstellung, CM5-Prüfstand, Backup und TLS
