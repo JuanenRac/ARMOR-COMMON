@@ -646,6 +646,13 @@ paths:
       requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { token: { type: string } } } } } }
       responses:
         '200': { description: Not registered any more }
+  /api/v1/push/unregister:
+    post:
+      summary: The same as DELETE /api/v1/push/register, for a phone whose HTTP stack sends no body with DELETE
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { token: { type: string } } } } } }
+      responses:
+        '200': { description: Not registered any more }
   /api/v1/alarm/commands:
     get:
       summary: Whether the server may arm and disarm alarm nodes (off unless ARMOR_ALARM_COMMANDS=1), the commands still waiting for a node's answer, and what became of the latest ones ({ enabled, pending, recent })
