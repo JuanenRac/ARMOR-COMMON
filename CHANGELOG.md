@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.5.4] - The ignore zones routes in the OpenAPI file
+
+- The OpenAPI file documents GET and PUT /api/v1/cameras/{id}/ignore-zones.
+
 ## [0.5.3] - The capture settings in the OpenAPI file
 
 - The OpenAPI file documents GET and PUT /api/v1/capture-settings.
