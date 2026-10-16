@@ -18,7 +18,7 @@ a mismatch.
 | `telemetry` | node → server | `telemetry.schema.json`: node id, millisecond timestamp, ambient lux (0–200 000) and at most 15 tracks (5 per each of the 3 radar sensors). The limit stops an unbounded payload from exhausting a field node. |
 | `health` | node → server | `health.schema.json`: node id, timestamp, `online` flag |
 | `info` | node → server | `info.schema.json`: node id, timestamp, the operator's name for the node, its firmware version, its IPv4 address and the port of its web panel. It lets a console offer a link to the panel; it is sent when the node connects and now and then. |
-| `command` | server → node | `command.schema.json`: `calibrate`, `set_thresholds` (optional `sensitivity` 1–10) or `restart`. Commands are an allow-list: a subscriber rejects everything else before it reaches hardware control logic. |
+| `command` | server → node | `command.schema.json`: `calibrate`, `set_thresholds` (optional `sensitivity` 1–10) or `restart`. Commands are an allow-list: a subscriber rejects everything else before it reaches hardware control logic. **Reserved:** nothing publishes this topic and no node listens to it today; the contract is kept so that a command channel to the radar nodes can use it later. |
 
 All four use `additionalProperties: false`: an unknown field is an error, never
 silently ignored.

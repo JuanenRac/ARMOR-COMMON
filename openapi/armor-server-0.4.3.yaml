@@ -967,6 +967,14 @@ paths:
       responses:
         '202': { description: Rebooting }
         '503': { description: The maintenance helper is not installed or not answering }
+  /api/v1/admin/nodes/{id}/token:
+    get:
+      summary: The token of one node - HMAC of the shared ingest token with the node id, good only for that node - to provision a board (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: '{ node_id, token, strict }' }
+        '422': { description: Not a valid node id }
   /api/v1/admin/maintenance/jobs/{id}:
     get:
       summary: How a maintenance job stands - its steps, percent and the log from a given line (an administrator; written in the audit trail)
