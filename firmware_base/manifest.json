@@ -441,6 +441,24 @@
         "ARMOR-ELECTRICAL": "sdkconfig.board.s3-eth",
         "ARMOR-ALARM": "sdkconfig.board.s3-eth"
       }
+    },
+    "core/ed25519_verify.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/ed25519_verify.hpp",
+        "ARMOR-ELECTRICAL": "core/ed25519_verify.hpp",
+        "ARMOR-RADAR": "main/core/ed25519_verify.hpp",
+        "ARMOR-HMI": "core/ed25519_verify.hpp",
+        "ARMOR-ALARM": "core/ed25519_verify.hpp"
+      }
+    },
+    "core/fw_trust.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/fw_trust.hpp",
+        "ARMOR-ELECTRICAL": "core/fw_trust.hpp",
+        "ARMOR-RADAR": "main/core/fw_trust.hpp",
+        "ARMOR-HMI": "core/fw_trust.hpp",
+        "ARMOR-ALARM": "core/fw_trust.hpp"
+      }
     }
   }
 }
