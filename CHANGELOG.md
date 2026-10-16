@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.5.3] - The capture settings in the OpenAPI file
+
+- The OpenAPI file documents GET and PUT /api/v1/capture-settings.
+
 ## [0.5.2] - Bluetooth pairing with a PIN in the shared firmware base and the new routes in the OpenAPI file
 
 - The shared firmware base pairs over Bluetooth with a 6-digit PIN derived from the node's setup code (display only, authenticated link), and a test holds its range and spread; the five firmware projects take it from here.
