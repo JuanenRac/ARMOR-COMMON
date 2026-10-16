@@ -581,6 +581,19 @@ paths:
       security: [{ operator: [] }]
       responses:
         '200': { description: The states and the sums (nodes, stale, armed, sounding) }
+  /api/v1/alarm/zone-links:
+    get:
+      summary: The Zigbee devices linked to zones of alarm panels ({ links: [{ device_id, node_id, zone_id }] })
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The links }
+    put:
+      summary: Replace the links (an administrator only; at most 64, one device per zone). While this server holds the Zigbee radio it publishes each linked zone's state on armor/alarm/{node_id}/zigbee ({ zone, state "normal" | "triggered" | "tamper", battery_low }) on every change and every 30 seconds
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object } } } }
+      responses:
+        '200': { description: The links as kept }
+        '400': { description: A link is malformed, repeated or has an unknown field }
   /api/v1/alarm/commands:
     get:
       summary: Whether the server may arm and disarm alarm nodes (off unless ARMOR_ALARM_COMMANDS=1), the commands still waiting for a node's answer, and what became of the latest ones ({ enabled, pending, recent })
@@ -606,7 +619,7 @@ paths:
         '503': { description: 'mqtt_unavailable: the broker is not connected' }
   /api/v1/network/state:
     post:
-      summary: The state of the local network from an ARMOR-NETWORK node (the `network` message of the shared contract, ingest token); the same message arrives over MQTT on armor/network/{node_id}/state
+      summary: The state of the local network from an ARMOR-NETWORK node (the `network` message of the shared contract, ingest token); the same message arrives over MQTT on armor/network/{node_id}/state. The answer carries the waiting orders; the login of an inspection order comes only to a node that spoke with its own token, sealed for it (`auth_sealed`: base64 of nonce, cipher text and HMAC-SHA256 tag, key from that node's token)
       security: [{ ingestBearer: [] }]
       requestBody: { required: true, content: { application/json: { schema: { type: object } } } }
       responses:
