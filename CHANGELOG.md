@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here.
 
+## [0.5.0] - Firmware base: slot copy, background update check, serialised settings and a longer station pause cap
+
+- A firmware slot can be copied to the other one from the panel, and the update of a node waits for the image to be confirmed only after the node has an address or its own access point is reachable, rolling back after five minutes otherwise.
+- The station connection that was paused to leave the access point free retries after ten minutes at most instead of waiting forever.
+- The firmware check against GitHub runs in the background and the panel asks for its result, so a slow search no longer freezes the panel.
+- Saving the settings is serialised, so two browsers saving at once cannot mix their changes.
+- Logging out needs the page's own token, which stops another page from logging the panel out.
+- A session table can say whether a session is still alive, so the nodes drop the dead ones instead of keeping them until the table is full.
+
 ## [0.4.9] - Maintenance routes in the contract, a changelog order check and the copy-log style of the node panels
 
 - The OpenAPI contract describes the maintenance routes (programs, updates, history, jobs, console).
