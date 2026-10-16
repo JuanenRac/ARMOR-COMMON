@@ -581,6 +581,23 @@ paths:
       security: [{ operator: [] }]
       responses:
         '200': { description: The states and the sums (nodes, stale, armed, sounding) }
+  /api/v1/cameras/{id}/ignore-zones:
+    get:
+      summary: The parts of the camera's picture that the observation service does not look at ({ camera_id, zones: [{ x, y, w, h }] }, fractions of the picture from the top left)
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: The zones }
+        '404': { description: Unknown camera }
+    put:
+      summary: Replace them (an administrator only; at most 16 rectangles inside the picture). Nothing is cut from the video or the photos; only the movement detection leaves those pixels out
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object } } } }
+      responses:
+        '200': { description: The zones as kept }
+        '400': { description: A zone is not a rectangle inside the picture, or there are too many }
+        '404': { description: Unknown camera }
   /api/v1/capture-settings:
     get:
       summary: What the server takes by itself when a camera sees something while the perimeter is armed ({ settings: { enabled, photo, photo_count, photo_interval_s, video, video_seconds, cooldown_s }, recent: the latest captures })
