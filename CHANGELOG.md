@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [0.5.2] - Bluetooth pairing with a PIN in the shared firmware base and the new routes in the OpenAPI file
+
+- The shared firmware base pairs over Bluetooth with a 6-digit PIN derived from the node's setup code (display only, authenticated link), and a test holds its range and spread; the five firmware projects take it from here.
+- The OpenAPI file documents the Zigbee zone links route and that a login of the network inspection arrives sealed for the node.
+
 ## [0.5.1] - The check before arming, the proof of custody and the daily electrical energy in the contract
 
 - The OpenAPI file describes `GET /api/v1/preflight`, the signed proof of custody of an evidence file and its verification, and the energy of each electrical channel per day.
