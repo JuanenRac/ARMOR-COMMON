@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.5.1] - The check before arming, the proof of custody and the daily electrical energy in the contract
+
+- The OpenAPI file describes `GET /api/v1/preflight`, the signed proof of custody of an evidence file and its verification, and the energy of each electrical channel per day.
+
 ## [0.5.0] - Firmware base: slot copy, background update check, serialised settings and a longer station pause cap
 
 - A firmware slot can be copied to the other one from the panel, and the update of a node waits for the image to be confirmed only after the node has an address or its own access point is reachable, rolling back after five minutes otherwise.
