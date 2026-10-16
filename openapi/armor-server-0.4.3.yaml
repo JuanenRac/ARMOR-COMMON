@@ -624,6 +624,28 @@ paths:
       responses:
         '200': { description: The links as kept }
         '400': { description: A link is malformed, repeated or has an unknown field }
+  /api/v1/push/status:
+    get:
+      summary: Whether push to the phones through Firebase is on (it is only when the installation has its own service account) and how many phones are registered ({ enabled, devices })
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: The status }
+  /api/v1/push/register:
+    post:
+      summary: A phone registers the token that Firebase gave its app ({ token }), with its signed-in session (a viewer too). At most 50 phones are kept; the oldest makes room
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [token], properties: { token: { type: string } } } } } }
+      responses:
+        '200': { description: Already registered }
+        '201': { description: Registered }
+        '400': { description: The token is not valid }
+        '409': { description: Push is off on this installation }
+    delete:
+      summary: A phone takes its token back (when the person signs out)
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { token: { type: string } } } } } }
+      responses:
+        '200': { description: Not registered any more }
   /api/v1/alarm/commands:
     get:
       summary: Whether the server may arm and disarm alarm nodes (off unless ARMOR_ALARM_COMMANDS=1), the commands still waiting for a node's answer, and what became of the latest ones ({ enabled, pending, recent })
