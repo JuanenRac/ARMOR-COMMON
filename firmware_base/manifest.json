@@ -459,6 +459,44 @@
         "ARMOR-HMI": "core/fw_trust.hpp",
         "ARMOR-ALARM": "core/fw_trust.hpp"
       }
+    },
+    "core/broker_uri.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/broker_uri.hpp",
+        "ARMOR-ELECTRICAL": "core/broker_uri.hpp",
+        "ARMOR-HMI": "core/broker_uri.hpp",
+        "ARMOR-ALARM": "core/broker_uri.hpp"
+      }
+    },
+    "core/node_settings.hpp": {
+      "targets": {
+        "ARMOR-ELECTRICAL": "core/node_settings.hpp",
+        "ARMOR-ALARM": "core/node_settings.hpp"
+      }
+    },
+    "core/base_board.hpp": {
+      "targets": {
+        "ARMOR-ELECTRICAL": "core/base_board.hpp",
+        "ARMOR-ALARM": "core/base_board.hpp"
+      }
+    },
+    "core/relay_remote.hpp": {
+      "targets": {
+        "ARMOR-ELECTRICAL": "core/relay_remote.hpp",
+        "ARMOR-ALARM": "core/relay_remote.hpp"
+      }
+    },
+    "core/zigbee_bridge.hpp": {
+      "targets": {
+        "ARMOR-ELECTRICAL": "core/zigbee_bridge.hpp",
+        "ARMOR-ALARM": "core/zigbee_bridge.hpp"
+      }
+    },
+    "core/central_link.hpp": {
+      "targets": {
+        "ARMOR-ELECTRICAL": "core/central_link.hpp",
+        "ARMOR-ALARM": "core/central_link.hpp"
+      }
     }
   }
 }

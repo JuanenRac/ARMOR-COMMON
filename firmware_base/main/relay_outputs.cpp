@@ -11,6 +11,7 @@
 #include <mutex>
 extern "C" {
 #include "driver/gpio.h"
+#include "esp_rom_gpio.h"
 #include "esp_log.h"
 #include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
@@ -85,7 +86,11 @@ void start(const config::IoSettings& settings, const std::string& node_id) {
   for (std::size_t i = 0; i < board::kRelayCount; ++i) {
     if (!g_bank->enabled(i)) continue;
     const gpio_num_t pin = static_cast<gpio_num_t>(g_bank->pin(i));
-    gpio_reset_pin(pin);
+    // gpio_reset_pin would switch the pull-up on until the direction is set, which is a pulse of the wrong level for a relay that is closed by a high one (and a solid-state one
+    // would follow it): the pad is only given to the GPIO, its pulls are off, the level is written, and then the pin becomes an output.
+    esp_rom_gpio_pad_select_gpio(static_cast<std::uint32_t>(pin));
+    gpio_pullup_dis(pin);
+    gpio_pulldown_dis(pin);
     gpio_set_level(pin, g_bank->open_level(i) ? 1 : 0);   // first the level, then the direction
     gpio_set_direction(pin, GPIO_MODE_OUTPUT);
     ESP_LOGI(kTag, "relay %u (%s) on GPIO %d, open", static_cast<unsigned>(i + 1), settings.relays[i].name.c_str(), static_cast<int>(pin));

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/alarm-zone-feed-0.1.0.json",
+  "title": "A.R.M.O.R. state of a Zigbee sensor, told to the panel of an alarm node",
+  "description": "What the server tells an ARMOR-ALARM panel about the Zigbee sensor linked to one of its zones, on armor/alarm/{node_id}/zigbee (never retained), while the server holds the Zigbee radio: the zone, whether its sensor is normal, triggered or tampered with, and whether its battery is low. It is information towards the panel and never a command: it cannot arm, disarm or sound anything by itself. The node of the topic is the panel's; the message does not repeat it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "zone",
+    "state",
+    "battery_low"
+  ],
+  "properties": {
+    "zone": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$"
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "normal",
+        "triggered",
+        "tamper"
+      ]
+    },
+    "battery_low": {
+      "type": "boolean"
+    }
+  }
+}

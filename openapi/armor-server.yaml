@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: A.R.M.O.R. Server API
-  version: 0.4.2
+  version: 0.5.5
   description: >-
     The HTTP surface of ARMOR-SERVER. Message bodies reference the JSON Schemas
     published in src/armor_common/schemas, which are the single source of truth.
@@ -63,7 +63,7 @@ paths:
         '201': { description: Declared }
         '400': { description: Invalid input }
         '401': { description: Operator authorization is required }
-        '409': { description: The node and device exist with another kind, or there are too many devices }
+        '409': { description: 'The node and device exist with another kind, or there are too many devices' }
   /api/v1/solar/devices/{node}/{device}:
     delete:
       summary: Forget a declared solar device and its readings
@@ -101,7 +101,7 @@ paths:
       security: [{ operator: [] }]
       responses:
         '200': { description: '{ settings, defaults }' }
-        '400': { description: A level out of its range, an unknown one, or a charge that ends below where it starts }
+        '400': { description: 'A level out of its range, an unknown one, or a charge that ends below where it starts' }
   /api/v1/solar/history:
     get:
       summary: The recent history of one solar device, a few numbers per sample, oldest first
@@ -162,8 +162,8 @@ paths:
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/NewUser' } } } }
       responses:
         '201': { description: The new user }
-        '400': { description: Invalid user name, password or role }
-        '409': { description: User name already in use, or too many users }
+        '400': { description: 'Invalid user name, password or role' }
+        '409': { description: 'User name already in use, or too many users' }
   /api/v1/users/{id}:
     patch:
       summary: Rename a user, set a new password or change the role (an administrator only). The user's other sessions end when the password or role changes.
@@ -174,7 +174,7 @@ paths:
         '200': { description: The user }
         '400': { description: Invalid value }
         '404': { description: Unknown user }
-        '409': { description: Name taken, or it would leave no administrator }
+        '409': { description: 'Name taken, or it would leave no administrator' }
     delete:
       summary: Delete a user (an administrator only; never yourself or the last administrator)
       security: [{ admin: [] }]
@@ -182,7 +182,7 @@ paths:
       responses:
         '204': { description: Deleted }
         '404': { description: Unknown user }
-        '409': { description: Yourself, or the last administrator }
+        '409': { description: 'Yourself, or the last administrator' }
   /api/v1/users/{id}/pin:
     put:
       summary: Set the PIN that disarms the system, and optionally a duress PIN, for a user (an administrator only); the PIN is never shown again
@@ -216,7 +216,7 @@ paths:
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/AccountChange' } } } }
       responses:
         '200': { description: 'Your user { id, username, role }' }
-        '400': { description: Invalid value, or nothing to change }
+        '400': { description: 'Invalid value, or nothing to change' }
         '401': { description: Not signed in }
         '403': { description: The current password is wrong }
   /api/v1/preferences:
@@ -256,8 +256,8 @@ paths:
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DeviceInput' } } } }
       responses:
         '201': { description: The device }
-        '400': { description: Invalid kind, name, topic or URL }
-        '409': { description: Id already in use, or too many devices }
+        '400': { description: 'Invalid kind, name, topic or URL' }
+        '409': { description: 'Id already in use, or too many devices' }
   /api/v1/devices/state:
     post:
       summary: A device reports its state (an ingest token)
@@ -294,7 +294,7 @@ paths:
         '200': { description: '{ ok, via, command, device }' }
         '400': { description: The kind does not take that command }
         '404': { description: Unknown device }
-        '409': { description: No command channel, or the device refused }
+        '409': { description: 'No command channel, or the device refused' }
   /api/v1/devices/{id}/state:
     post:
       summary: Set a device's state by hand, to try an alarm or an automation; audited
@@ -421,8 +421,8 @@ paths:
       summary: Hand an ARMOR-NETWORK node a manual order (a sweep now, a ping, a traceroute, a wake-up, the ports or the web page of one device); the node gets it in the answer to its next message
       security: [{ operator: [] }]
       responses:
-        '202': { description: The order, queued }
-        '400': { description: An order that does not exist, a device the node does not know, a device with no MAC to wake, a port that is not one }
+        '202': { description: 'The order, queued' }
+        '400': { description: 'An order that does not exist, a device the node does not know, a device with no MAC to wake, a port that is not one' }
         '404': { description: No such network node }
         '409': { description: The node is not reporting }
     get:
@@ -481,28 +481,28 @@ paths:
       summary: The site design kept on the server ({ revision, updated_at, updated_by, site })
       security: [{ operator: [] }]
       responses:
-        '200': { description: The design, or revision 0 with a null site when none has been saved }
+        '200': { description: 'The design, or revision 0 with a null site when none has been saved' }
     put:
       summary: Save the site design; `revision` must be the one last read, or the save is refused with the current design (up to 768 kB)
       security: [{ operator: [] }]
       requestBody: { required: true, content: { application/json: { schema: { type: object, required: [revision, site], properties: { revision: { type: integer }, site: { type: object } } } } } }
       responses:
         '200': { description: '{ revision, updated_at, updated_by }' }
-        '400': { description: The site is not an object, or too large }
+        '400': { description: 'The site is not an object, or too large' }
         '409': { description: Someone else saved first; the answer carries `current` }
   /api/v1/electrical/design:
     get:
       summary: The electrical design (the house's electrical diagram) kept on the server ({ revision, updated_at, updated_by, electrical })
       security: [{ operator: [] }]
       responses:
-        '200': { description: The design, or revision 0 with a null electrical when none has been saved }
+        '200': { description: 'The design, or revision 0 with a null electrical when none has been saved' }
     put:
       summary: Save the electrical design; `revision` must be the one last read, or the save is refused with the current design (up to 768 kB). Kept apart from the site design.
       security: [{ operator: [] }]
       requestBody: { required: true, content: { application/json: { schema: { type: object, required: [revision, electrical], properties: { revision: { type: integer }, electrical: { type: object } } } } } }
       responses:
         '200': { description: '{ revision, updated_at, updated_by }' }
-        '400': { description: The design is not an object, or too large }
+        '400': { description: 'The design is not an object, or too large' }
         '409': { description: Someone else saved first; the answer carries `current` }
   /api/v1/electrical/devices:
     get:
@@ -523,7 +523,7 @@ paths:
       summary: The latest reading of every electrical node ({ nodes, totals }); a node that has been silent for a minute is stale
       security: [{ operator: [] }]
       responses:
-        '200': { description: The readings and the sums (grid power and energy, alarms) }
+        '200': { description: 'The readings and the sums (grid power and energy, alarms)' }
   /api/v1/electrical/energy:
     get:
       summary: The energy of every electrical channel per day (the last N days, 30 by default), adding up only the difference between readings so a meter that wraps or is reset does not break the sum
@@ -560,7 +560,7 @@ paths:
       requestBody: { required: true, content: { application/json: { schema: { type: object, required: [node, switch, action], properties: { node: { type: string }, switch: { type: string }, action: { type: string, enum: [arm, close_a, close_b, open, acknowledge] } } } } } }
       responses:
         '202': { description: 'Published; { accepted, command_id }' }
-        '400': { description: node, switch and a valid action are required }
+        '400': { description: 'node, switch and a valid action are required' }
         '403': { description: 'Not an administrator, or switching is not turned on (code switching_disabled)' }
         '404': { description: 'unknown_node or unknown_switch' }
         '409': { description: 'node_unavailable, node_not_switching, switch_fault, busy or not_armed' }
@@ -570,7 +570,7 @@ paths:
     post:
       summary: The state of an alarm node's panel (the `alarm` message of the shared contract, ingest token); the same message arrives over MQTT on armor/alarm/{node_id}/state. A field this server does not know is dropped and said in `ignored`.
       security: [{ ingestBearer: [] }]
-      requestBody: { required: true, content: { application/json: { schema: { type: object } } } }
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '../src/armor_common/schemas/alarm.schema.json' } } } }
       responses:
         '202': { description: 'Accepted; { accepted, ignored? }' }
         '400': { description: Not the contract's message }
@@ -580,10 +580,10 @@ paths:
       summary: The latest state of every alarm node ({ nodes, totals }); a node that has been silent for thirty seconds is stale
       security: [{ operator: [] }]
       responses:
-        '200': { description: The states and the sums (nodes, stale, armed, sounding) }
+        '200': { description: 'The states and the sums (nodes, stale, armed, sounding)' }
   /api/v1/cameras/{id}/ignore-zones:
     get:
-      summary: The parts of the camera's picture that the observation service does not look at ({ camera_id, zones: [{ x, y, w, h }] }, fractions of the picture from the top left)
+      summary: 'The parts of the camera''s picture that the observation service does not look at ({ camera_id, zones: [{ x, y, w, h }] }, fractions of the picture from the top left)'
       security: [{ operator: [] }]
       parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
       responses:
@@ -596,11 +596,11 @@ paths:
       requestBody: { required: true, content: { application/json: { schema: { type: object } } } }
       responses:
         '200': { description: The zones as kept }
-        '400': { description: A zone is not a rectangle inside the picture, or there are too many }
+        '400': { description: 'A zone is not a rectangle inside the picture, or there are too many' }
         '404': { description: Unknown camera }
   /api/v1/capture-settings:
     get:
-      summary: What the server takes by itself when a camera sees something while the perimeter is armed ({ settings: { enabled, photo, photo_count, photo_interval_s, video, video_seconds, cooldown_s }, recent: the latest captures })
+      summary: 'What the server takes by itself when a camera sees something while the perimeter is armed ({ settings: { enabled, photo, photo_count, photo_interval_s, video, video_seconds, cooldown_s }, recent: the latest captures })'
       security: [{ operator: [] }]
       responses:
         '200': { description: The settings and the latest automatic captures }
@@ -610,10 +610,10 @@ paths:
       requestBody: { required: true, content: { application/json: { schema: { type: object } } } }
       responses:
         '200': { description: The settings as kept }
-        '400': { description: A value is out of range, not the right type or unknown }
+        '400': { description: 'A value is out of range, not the right type or unknown' }
   /api/v1/alarm/zone-links:
     get:
-      summary: The Zigbee devices linked to zones of alarm panels ({ links: [{ device_id, node_id, zone_id }] })
+      summary: 'The Zigbee devices linked to zones of alarm panels ({ links: [{ device_id, node_id, zone_id }] })'
       security: [{ operator: [] }]
       responses:
         '200': { description: The links }
@@ -623,7 +623,7 @@ paths:
       requestBody: { required: true, content: { application/json: { schema: { type: object } } } }
       responses:
         '200': { description: The links as kept }
-        '400': { description: A link is malformed, repeated or has an unknown field }
+        '400': { description: 'A link is malformed, repeated or has an unknown field' }
   /api/v1/push/status:
     get:
       summary: Whether push to the phones through Firebase is on (it is only when the installation has its own service account) and how many phones are registered ({ enabled, devices })
@@ -678,9 +678,9 @@ paths:
         '503': { description: 'mqtt_unavailable: the broker is not connected' }
   /api/v1/network/state:
     post:
-      summary: The state of the local network from an ARMOR-NETWORK node (the `network` message of the shared contract, ingest token); the same message arrives over MQTT on armor/network/{node_id}/state. The answer carries the waiting orders; the login of an inspection order comes only to a node that spoke with its own token, sealed for it (`auth_sealed`: base64 of nonce, cipher text and HMAC-SHA256 tag, key from that node's token)
+      summary: 'The state of the local network from an ARMOR-NETWORK node (the `network` message of the shared contract, ingest token); the same message arrives over MQTT on armor/network/{node_id}/state. The answer carries the waiting orders; the login of an inspection order comes only to a node that spoke with its own token, sealed for it (`auth_sealed`: base64 of nonce, cipher text and HMAC-SHA256 tag, key from that node''s token)'
       security: [{ ingestBearer: [] }]
-      requestBody: { required: true, content: { application/json: { schema: { type: object } } } }
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '../src/armor_common/schemas/network.schema.json' } } } }
       responses:
         '202': { description: Accepted }
         '400': { description: The message does not follow the contract }
@@ -741,14 +741,14 @@ paths:
       summary: The network design (the house's network drawn in Studio's Network Designer) kept on the server ({ revision, updated_at, updated_by, network })
       security: [{ operator: [] }]
       responses:
-        '200': { description: The design, or revision 0 with a null network when none has been saved }
+        '200': { description: 'The design, or revision 0 with a null network when none has been saved' }
     put:
       summary: Save the network design; `revision` must be the one last read, or the save is refused with the current design (up to 768 kB)
       security: [{ operator: [] }]
       requestBody: { required: true, content: { application/json: { schema: { type: object, required: [revision, network], properties: { revision: { type: integer }, network: { type: object } } } } } }
       responses:
         '200': { description: Saved }
-        '400': { description: Not an object, or too large }
+        '400': { description: 'Not an object, or too large' }
         '409': { description: Someone else saved a newer revision; the body has the current design }
   /api/v1/alarm/design/versions:
     get:
@@ -781,14 +781,14 @@ paths:
       summary: The alarm design (the house's alarm drawn in Studio's Alarm Designer - panels, sensors, sirens, keypads and how they are joined) kept on the server ({ revision, updated_at, updated_by, alarm_design })
       security: [{ operator: [] }]
       responses:
-        '200': { description: The design, or revision 0 with a null alarm_design when none has been saved }
+        '200': { description: 'The design, or revision 0 with a null alarm_design when none has been saved' }
     put:
       summary: Save the alarm design; `revision` must be the one last read, or the save is refused with the current design (up to 768 kB). It is a drawing - nothing arms, disarms or sounds anything
       security: [{ operator: [] }]
       requestBody: { required: true, content: { application/json: { schema: { type: object, required: [revision, alarm_design], properties: { revision: { type: integer }, alarm_design: { type: object } } } } } }
       responses:
         '200': { description: Saved }
-        '400': { description: Not an object, or too large }
+        '400': { description: 'Not an object, or too large' }
         '409': { description: Someone else saved a newer revision; the body has the current design }
   /api/v1/system:
     get:
@@ -940,7 +940,7 @@ paths:
       requestBody: { required: true, content: { application/json: { schema: { type: object, required: [bundle], properties: { bundle: { type: object }, parts: { type: array, items: { type: string, enum: [cameras, site, electrical, network, rules, automations, devices, solar_devices, energy_alarms, users] } } } } } } }
       responses:
         '200': { description: '{ applied, skipped, failed, cameras_need_credentials } - what was done, part by part' }
-        '400': { description: Not an installation file, or none of the parts asked for is known }
+        '400': { description: 'Not an installation file, or none of the parts asked for is known' }
   /api/v1/admin/firmware/releases/{kind}:
     get:
       summary: The newest release of the repository of a kind of node (radar, solar, electrical, alarm, hmi), downloaded and checked against the SHA-256 the release publishes (an administrator)
@@ -948,8 +948,8 @@ paths:
       parameters: [{ name: kind, in: path, required: true, schema: { type: string, enum: [radar, solar, electrical, alarm, hmi] } }]
       responses:
         '200': { description: '{ kind, repo, version, bytes, checksum }' }
-        '404': { description: Unknown kind, or the repository has no release }
-        '422': { description: The release has no image or no hash file, or the image does not match its hash }
+        '404': { description: 'Unknown kind, or the repository has no release' }
+        '422': { description: 'The release has no image or no hash file, or the image does not match its hash' }
         '502': { description: GitHub could not be reached }
   /api/v1/admin/firmware/probe:
     post:
@@ -967,7 +967,7 @@ paths:
       responses:
         '202': { description: '{ id } - the job runs in the background' }
         '409': { description: Another job is running }
-        '422': { description: Unknown kind or source, not a local address, no login, or an unknown upload }
+        '422': { description: 'Unknown kind or source, not a local address, no login, or an unknown upload' }
   /api/v1/admin/firmware/jobs/{id}:
     get:
       summary: How a firmware job stands - its state and, for every node, where it is and the version before and after (an administrator)
@@ -1121,7 +1121,7 @@ paths:
         '503': { description: The maintenance helper is not installed or not answering }
   /api/v1/ai/context:
     get:
-      summary: For the observation service (ARMOR-SERVER-AI, with its own token): the mode, the radar nodes with their tracks and light, and the cameras it can look at
+      summary: 'For the observation service (ARMOR-SERVER-AI, with its own token): the mode, the radar nodes with their tracks and light, and the cameras it can look at'
       security: [{ aiBearer: [] }]
       responses:
         '200': { description: '{ mode, nodes: [{ id, online, targets, lux }], cameras: [{ id, name }] }' }
@@ -1157,8 +1157,8 @@ paths:
       requestBody: { required: true, content: { application/json: { schema: { type: object, required: [text], properties: { text: { type: string, maxLength: 200 }, language: { type: string, enum: [en, es, de, fr, it, ja, zh] }, confirmation: { type: string } } } } } }
       responses:
         '200': { description: '{ accepted, executed, intent, outcome, speech, confirmation_token?, reason?, result? } - outcome is accepted, confirmation-needed, confirmation-refused or not-understood' }
-        '422': { description: No text, too long, or not a supported language }
-        '503': { description: No voice gateway is set up, or it does not answer }
+        '422': { description: 'No text, too long, or not a supported language' }
+        '503': { description: 'No voice gateway is set up, or it does not answer' }
   /api/v1/operator/session:
     post:
       summary: Exchange the operator token for a session cookie
@@ -1173,7 +1173,7 @@ paths:
         '204': { description: Session closed }
   /api/v1/camera-views:
     get:
-      summary: Cameras without username or credentials (an operator only: it holds the inventory of the cameras)
+      summary: 'Cameras without username or credentials (an operator only: it holds the inventory of the cameras)'
       security: [{ operator: [] }]
       responses:
         '200': { description: Camera views }
@@ -1283,7 +1283,7 @@ paths:
         '200': { description: Number deleted }
         '400': { description: Unknown kind }
   /api/v1/media/{cameraId}/{kind}/{file}:
-    parameters: [{ $ref: '#/components/parameters/MediaPath' }]
+    parameters: [{ $ref: '#/components/parameters/MediaCamera' }, { $ref: '#/components/parameters/MediaKind' }, { $ref: '#/components/parameters/MediaFile' }]
     get:
       summary: Download or play one item
       security: [{ operator: [] }]
@@ -1293,13 +1293,13 @@ paths:
       security: [{ operator: [] }]
       responses: { '204': { description: Deleted }, '409': { description: Protected }, '404': { description: Not found } }
   /api/v1/media/{cameraId}/{kind}/{file}/sha256:
-    parameters: [{ $ref: '#/components/parameters/MediaPath' }]
+    parameters: [{ $ref: '#/components/parameters/MediaCamera' }, { $ref: '#/components/parameters/MediaKind' }, { $ref: '#/components/parameters/MediaFile' }]
     get:
       summary: SHA-256 of the file as stored, for chain of custody
       security: [{ operator: [] }]
       responses: { '200': { description: '{ "sha256": hex }' }, '404': { description: Not found } }
   /api/v1/media/{cameraId}/{kind}/{file}/proof:
-    parameters: [{ $ref: '#/components/parameters/MediaPath' }]
+    parameters: [{ $ref: '#/components/parameters/MediaCamera' }, { $ref: '#/components/parameters/MediaKind' }, { $ref: '#/components/parameters/MediaFile' }]
     get:
       summary: A signed proof of custody of one file - its size, its SHA-256 now, when it was made and every line of the audit trail about it - to hand over with the file
       security: [{ operator: [] }]
@@ -1310,7 +1310,7 @@ paths:
       security: [{ operator: [] }]
       responses: { '200': { description: '{ "genuine": boolean, "matches": boolean, "issued_at"? }' } }
   /api/v1/media/{cameraId}/{kind}/{file}/protected:
-    parameters: [{ $ref: '#/components/parameters/MediaPath' }]
+    parameters: [{ $ref: '#/components/parameters/MediaCamera' }, { $ref: '#/components/parameters/MediaKind' }, { $ref: '#/components/parameters/MediaFile' }]
     put:
       summary: Protect or unprotect an item from automatic pruning
       security: [{ operator: [] }]
@@ -1335,6 +1335,19 @@ paths:
         '200': { description: A page of events }
         '400': { description: Invalid filter }
         '401': { description: Operator authorization is required }
+    delete:
+      summary: Permanently remove history (administrator, audited)
+      description: Needs `confirm=delete`. `scope=all` removes every event (optionally only one `type`); `scope=older-than` removes those older than `days`.
+      parameters:
+        - { name: confirm, in: query, required: true, schema: { type: string, enum: [delete] } }
+        - { name: scope, in: query, required: true, schema: { type: string, enum: [all, older-than] } }
+        - { name: days, in: query, schema: { type: integer, minimum: 1, maximum: 3650 } }
+        - { name: type, in: query, schema: { type: string, enum: [alert, node, camera, mode] } }
+      responses:
+        '200': { description: How many events were removed and how many remain }
+        '400': { description: Missing confirmation or invalid scope }
+        '401': { description: Authorization is required }
+        '403': { description: Only an administrator may remove history }
   /api/v1/nodes/{id}:
     delete:
       summary: Forget a decommissioned node (operator, audited)
@@ -1350,25 +1363,13 @@ paths:
       summary: Reachability of every configured camera (operator)
       description: Seen by the watchdog with a plain TCP probe of the RTSP and ONVIF ports; a camera is offline after consecutive failed checks.
       responses:
-        '200': { description: Status, time since it changed and consecutive failures per camera }
-        '401': { description: Operator authorization is required }
-    delete:
-      summary: Permanently remove history (operator, audited)
-      description: Needs `confirm=delete`. `scope=all` removes every event (optionally only one `type`); `scope=older-than` removes those older than `days`.
-      parameters:
-        - { name: confirm, in: query, required: true, schema: { type: string, enum: [delete] } }
-        - { name: scope, in: query, required: true, schema: { type: string, enum: [all, older-than] } }
-        - { name: days, in: query, schema: { type: integer, minimum: 1, maximum: 3650 } }
-        - { name: type, in: query, schema: { type: string, enum: [alert, node, camera, mode] } }
-      responses:
-        '200': { description: How many events were removed and how many remain }
-        '400': { description: Missing confirmation or invalid scope }
+        '200': { description: 'Status, time since it changed and consecutive failures per camera' }
         '401': { description: Operator authorization is required }
   /api/v1/history/summary:
     get:
       summary: Counts of the events held and of the last 24 hours (operator)
       responses:
-        '200': { description: Total, by type, oldest and newest time, and last-24-hour counters }
+        '200': { description: 'Total, by type, oldest and newest time, and last-24-hour counters' }
         '401': { description: Operator authorization is required }
   /api/v1/rules:
     get:
@@ -1390,17 +1391,27 @@ components:
     ingestBearer: { type: http, scheme: bearer, description: ARMOR_INGEST_TOKEN }
     controlBearer: { type: http, scheme: bearer, description: ARMOR_CONTROL_TOKEN }
     operatorBearer: { type: http, scheme: bearer, description: ARMOR_OPERATOR_TOKEN }
-    aiBearer: { type: http, scheme: bearer, description: ARMOR_AI_TOKEN - the observation service, which opens only the /api/v1/ai routes }
-    operator: { type: apiKey, in: cookie, name: armor_studio_session, description: Studio session, operator session or operator bearer token }
+    aiBearer: { type: http, scheme: bearer, description: 'ARMOR_AI_TOKEN - the observation service, which opens only the /api/v1/ai routes' }
+    operator: { type: apiKey, in: cookie, name: armor_studio_session, description: 'Studio session, operator session or operator bearer token' }
     studio: { type: apiKey, in: cookie, name: armor_studio_session, description: A signed-in Studio user }
     admin: { type: apiKey, in: cookie, name: armor_studio_session, description: A signed-in Studio user with the admin role (bearer tokens do not qualify) }
   parameters:
     CameraId: { name: id, in: path, required: true, schema: { type: string, pattern: '^[A-Za-z0-9._-]{3,80}$' } }
-    MediaPath:
+    MediaCamera:
       name: cameraId
       in: path
       required: true
-      description: Also takes {kind} (snapshots or recordings) and {file}
+      schema: { type: string }
+    MediaKind:
+      name: kind
+      in: path
+      required: true
+      description: snapshots or recordings
+      schema: { type: string, enum: [snapshots, recordings] }
+    MediaFile:
+      name: file
+      in: path
+      required: true
       schema: { type: string }
   schemas:
     DeviceState:
@@ -1540,8 +1551,8 @@ components:
                   properties:
                     sensor_id: { type: integer }
                     track_id: { type: integer }
-                    x_mm: { type: number, description: Sideways, millimetres }
-                    y_mm: { type: number, description: Forward, millimetres }
+                    x_mm: { type: number, description: 'Sideways, millimetres' }
+                    y_mm: { type: number, description: 'Forward, millimetres' }
                     speed_mm_s: { type: number }
                     counted: { type: boolean }
               alert_level: { type: string, enum: [normal, review, high] }

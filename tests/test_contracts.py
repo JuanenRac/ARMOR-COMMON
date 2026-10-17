@@ -2,8 +2,8 @@ import json
 import unittest
 from pathlib import Path
 
-from armor_common import ContractError, decode, encode, validate_alarm_command, validate_alarm_message, validate_alarm_result, validate_electrical_command, validate_electrical_message, validate_electrical_result, validate_network_message, validate_solar_message, validate_topic_and_payload
-from armor_common.contracts import load_schema, parse_alarm_topic, parse_electrical_topic, parse_network_topic, parse_solar_topic, parse_topic, validate_payload
+from armor_common import ContractError, decode, encode, validate_alarm_command, validate_alarm_message, validate_alarm_result, validate_alarm_zone_feed, validate_device_message, validate_network_orders, validate_server_alert, validate_electrical_command, validate_electrical_message, validate_electrical_result, validate_network_message, validate_solar_message, validate_topic_and_payload
+from armor_common.contracts import load_schema, parse_alarm_topic, parse_device_topic, parse_electrical_topic, parse_network_topic, parse_solar_topic, parse_topic, validate_payload
 from armor_common.schema import SchemaError, UnsupportedSchema, check_schema, validate
 
 CONFORMANCE = Path(__file__).resolve().parent.parent / "conformance"
@@ -16,6 +16,10 @@ MESSAGE_RULES = {
     "alarm_command": lambda payload: validate_alarm_command(f"armor/alarm/{payload['node_id']}/command", payload),
     "alarm_result": lambda payload: validate_alarm_result(f"armor/alarm/{payload['node_id']}/result", payload),
     "network": lambda payload: validate_network_message(f"armor/network/{payload['node_id']}/state", payload),
+    "alarm_zone_feed": lambda payload: validate_alarm_zone_feed("armor/alarm/alarm-1/zigbee", payload),
+    "device_state": lambda payload: validate_device_message("armor/device/electrical-1/lights/state", payload),
+    "server_alert": lambda payload: validate_server_alert("armor/server/alert", payload),
+    "network_orders": validate_network_orders,
 }
 
 
@@ -355,13 +359,111 @@ class NetworkMessageTests(unittest.TestCase):
         validate_network_message(self.topic, {**self.network, "devices": [{"id": "ip-192-168-0-9", "ip": "192.168.0.9", "online": True, "first_seen_ms": 1, "last_seen_ms": 1}]})
 
 
-def test_a_node_id_is_limited_the_same_way_in_every_topic():
-    from armor_common.contracts import ContractError, parse_topic
+class TopicsWithoutAJsonObjectTests(unittest.TestCase):
+    """The topics of a relay and of the panel's Zigbee feed, and what is published on armor/server/alert."""
 
-    assert parse_topic("armor/node/" + "a" * 64 + "/telemetry")[0] == "a" * 64
-    for bad in ("a" * 65, "-lead", "_lead", "Upper"):
-        try:
-            parse_topic(f"armor/node/{bad}/telemetry")
-        except ContractError:
-            continue
-        raise AssertionError(f"{bad!r} was accepted")
+    def test_the_topics_of_a_relay(self):
+        for leaf in ("state", "availability", "set"):
+            self.assertEqual(parse_device_topic(f"armor/device/electrical-1/lights/{leaf}"), ("electrical-1", "lights", leaf))
+        for bad in ("armor/device/electrical-1/lights", "armor/device/electrical-1/lights/other", "armor/device/Upper/lights/state", "armor/device/electrical-1/Lights/state", "armor/device/electrical-1/lights/state/x", "armor/node/electrical-1/lights/state", "armor/device/electrical-1/" + "r" * 33 + "/state", "armor/device/electrical-1/lights\n/state"):
+            with self.subTest(bad=bad), self.assertRaises(ContractError):
+                parse_device_topic(bad)
+
+    def test_what_a_relay_is_told_and_says(self):
+        validate_device_message("armor/device/electrical-1/lights/state", {"on": True})
+        for word in ("ON", "off", " Toggle ", "true", "False", "1", "0"):
+            validate_device_message("armor/device/electrical-1/lights/set", word)
+        for word in ("", "2", "dim", "ON\x00", "pulse 5", 1, True, None, {"on": True}):
+            with self.subTest(word=word), self.assertRaises(ContractError):
+                validate_device_message("armor/device/electrical-1/lights/set", word)
+        validate_device_message("armor/device/electrical-1/lights/availability", "online")
+        validate_device_message("armor/device/electrical-1/lights/availability", "offline")
+        for word in ("Online", "up", "", None):
+            with self.subTest(availability=word), self.assertRaises(ContractError):
+                validate_device_message("armor/device/electrical-1/lights/availability", word)
+        with self.assertRaises(ContractError):
+            validate_device_message("armor/device/electrical-1/lights/state", "ON")
+
+    def test_the_zigbee_feed_belongs_to_the_topic_of_a_panel(self):
+        validate_alarm_zone_feed("armor/alarm/alarm-1/zigbee", {"zone": "front-door", "state": "normal", "battery_low": False})
+        for bad_topic in ("armor/alarm/alarm-1/state", "armor/alarm/Alarm/zigbee", "armor/alarm/alarm-1/zigbee/x"):
+            with self.subTest(topic=bad_topic), self.assertRaises(ContractError):
+                validate_alarm_zone_feed(bad_topic, {"zone": "z", "state": "normal", "battery_low": False})
+        # the leaf "zigbee" is not a leaf of the other alarm messages
+        with self.assertRaises(ContractError):
+            validate_alarm_message("armor/alarm/alarm-1/zigbee", {})
+
+    def test_the_alert_goes_on_one_topic(self):
+        message = {"service": "armor-server", "event": "alert.test", "at": "1970-01-01T00:00:00.000Z", "mode": "armed"}
+        validate_server_alert("armor/server/alert", message)
+        with self.assertRaises(ContractError):
+            validate_server_alert("armor/server/other", message)
+
+    def test_the_answer_of_the_network_orders_never_carries_a_login_in_clear(self):
+        validate_network_orders({"accepted": True, "commands": []})
+        with self.assertRaises(ContractError):
+            validate_network_orders({"accepted": True, "commands": [{"id": "c1", "type": "inspect", "device_id": "d", "ip": "192.168.0.2", "auth": {"user": "admin", "password": "x"}}]})
+        with self.assertRaises(ContractError):
+            validate_network_orders([])
+
+
+class NodeIdTests(unittest.TestCase):
+    def test_a_node_id_is_limited_the_same_way_in_every_topic(self):
+        self.assertEqual(parse_topic("armor/node/" + "a" * 64 + "/telemetry")[0], "a" * 64)
+        for bad in ("a" * 65, "-lead", "_lead", "Upper", "line\n"):
+            with self.subTest(bad=bad), self.assertRaises(ContractError):
+                parse_topic(f"armor/node/{bad}/telemetry")
+
+
+class PatternTests(unittest.TestCase):
+    """A pattern means what JSON Schema (ECMA-262) says, which is what the server and the firmware apply."""
+
+    def test_a_line_feed_at_the_end_is_not_the_end_of_the_text(self):
+        schema = {"type": "string", "pattern": "^[a-z0-9]+$"}
+        validate("abc", schema)
+        for text in ("abc\n", "abc\r\n"):
+            with self.subTest(text=text), self.assertRaises(SchemaError):
+                validate(text, schema)
+
+    def test_the_classes_are_ascii(self):
+        schema = {"type": "string", "pattern": "^\\d+$"}
+        validate("123", schema)
+        with self.assertRaises(SchemaError):
+            validate("\u0663\u0662", schema)   # Arabic-Indic digits
+
+    def test_the_messages_that_carry_a_text_refuse_a_line_feed(self):
+        with self.assertRaises(ContractError):
+            validate_topic_and_payload("armor/node/north-1/info", {"node_id": "north-1", "timestamp_ms": 1, "name": "N", "firmware": "1.2.3\n", "ip": "10.0.0.1", "port": 80})
+        with self.assertRaises(ContractError):
+            validate_topic_and_payload("armor/node/north-1/info", {"node_id": "north-1", "timestamp_ms": 1, "name": "N", "firmware": "1.2.3", "ip": "10.0.0.1\n", "port": 80})
+        with self.assertRaises(ContractError):
+            validate_alarm_command("armor/alarm/alarm-1/command", {"kind": "alarm_command", "node_id": "alarm-1", "timestamp_ms": 1, "command_id": "0123456789abcdef\n", "action": "arm", "mode": "away"})
+
+    def test_a_firmware_version_has_three_numbers_or_four(self):
+        info = {"node_id": "north-1", "timestamp_ms": 1, "name": "N", "ip": "10.0.0.1", "port": 80}
+        for good in ("0.7.9", "0.8.0.0", "0.8.1.3"):
+            validate_topic_and_payload("armor/node/north-1/info", {**info, "firmware": good})
+        for bad in ("0.8", "0.8.0.0.1", "v0.8.0", "0.8.0."):
+            with self.subTest(bad=bad), self.assertRaises(ContractError):
+                validate_topic_and_payload("armor/node/north-1/info", {**info, "firmware": bad})
+
+
+class SchemaCheckTests(unittest.TestCase):
+    """A schema that says something this validator would not check is refused, not ignored."""
+
+    def test_the_forms_of_a_keyword_that_are_not_implemented_are_refused(self):
+        for bad in ({"items": [{"type": "string"}]}, {"required": "x"}, {"enum": []}, {"type": "text"}, {"minimum": "1"}, {"maxItems": -1}, {"pattern": 5}, {"properties": []}, {"properties": {"a": 3}}):
+            with self.subTest(bad=bad), self.assertRaises(UnsupportedSchema):
+                check_schema(bad)
+        check_schema({"type": ["string", "null"], "properties": {"a": {"type": "integer", "minimum": 0}}, "required": ["a"], "items": {"type": "string"}})
+
+    def test_the_published_schema_a_caller_gets_is_its_own_copy(self):
+        load_schema("health")["required"].append("tampered")
+        self.assertNotIn("tampered", load_schema("health")["required"])
+        validate_payload("health", {"node_id": "north-1", "timestamp_ms": 5, "online": True})
+
+    def test_a_document_that_repeats_a_name_is_refused(self):
+        with self.assertRaises(ValueError):
+            decode('{"topic":"armor/node/a/health","payload":{"node_id":"a","timestamp_ms":1,"online":true,"online":false}}')
+        topic, payload = decode(encode("armor/node/a/health", {"node_id": "a", "timestamp_ms": 1, "online": True}))
+        self.assertEqual((topic, payload["online"]), ("armor/node/a/health", True))
