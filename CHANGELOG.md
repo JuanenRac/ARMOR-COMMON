@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here.
 
+## [0.5.7] - The firmware base: the networks that may use a node's panel, wrong passwords counted per person, and the panels with relative paths
+
+- `core/admin_sources.hpp` (new, shared by the five nodes): the list of networks that may use a node's panel - empty means the private ranges of a house, otherwise addresses and networks separated by commas - with the parser, the rules and 74 new host checks (the default ranges, the edges of each range, a stray comma, too many entries, a list that cannot be read never lets everybody in).
+- `core/auth.hpp`: `user_key()`, the key under which the wrong passwords of one person are counted, so a guess against an account is slowed down from any address; checked in the base tests.
+- `panel/index.html` uses relative paths, so the panel of a node opens both directly and behind the server's proxy; the five panels do the same in their own files.
+- The settings of ELECTRICAL and ALARM (`core/node_settings.hpp`) carry `web.admin_sources`; SOLAR, HMI and RADAR have it in their own configuration with the same rules.
+
 ## [0.5.6] - A sign-in from outside is an alert of the server, and the routes of the node panels, the VPN and the dynamic DNS name are in the contract
 
 - The alert of the server has a new event, `login.remote`, with the person (`login_user`) and the address (`login_from`); the validator demands both, and there are two more conformance vectors (a sign-in from outside, and one that names no one).

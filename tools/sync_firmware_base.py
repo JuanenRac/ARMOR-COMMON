@@ -55,7 +55,7 @@ CANDIDATES = [
     "core/node_settings.hpp", "core/config_common.hpp", "core/io_config.hpp", "core/base_board.hpp", "core/relay_bank.hpp", "core/relay_remote.hpp", "core/zigbee_bridge.hpp", "main/relay_outputs.cpp", "main/relay_outputs.hpp", "main/zigbee_bridge.cpp", "main/zigbee_bridge.hpp", "main/github_update.cpp", "main/github_update.hpp", "core/semver.hpp", "core/release_assets.hpp", "core/mqtt_topic.hpp", "tests/test_release.cpp", "main/mqtt_link.cpp", "main/mqtt_link.hpp", "main/network.cpp", "main/network.hpp", "main/node_store.cpp", "main/node_store.hpp",
     "main/tls_cert.cpp", "main/tls_cert.hpp", "main/web_server.cpp", "main/web_server.hpp", "main/ble_provision.cpp", "main/ble_provision.hpp",
     "main/api_shared.cpp", "main/api_shared.hpp", "main/Kconfig.projbuild",
-    "core/auth.hpp", "core/net_text.hpp", "core/netplan.hpp", "core/node_id.hpp", "core/web_policy.hpp", "core/json.hpp", "core/ble_frame.hpp", "core/ble_dispatch.hpp",
+    "core/auth.hpp", "core/admin_sources.hpp", "core/net_text.hpp", "core/netplan.hpp", "core/node_id.hpp", "core/web_policy.hpp", "core/json.hpp", "core/ble_frame.hpp", "core/ble_dispatch.hpp",
     "core/board_s3.hpp", "core/backoff.hpp", "core/improv.hpp", "core/task_health.hpp", "core/central_link.hpp",
     "main/task_health.cpp", "main/task_health.hpp", "main/improv_serial.cpp", "main/improv_serial.hpp", "tests/test_base.cpp", "tests/test_central.cpp",
     "panel/index.html", "panel/style.css", "tools/pack_panel.py", "tools/build_node.sh",

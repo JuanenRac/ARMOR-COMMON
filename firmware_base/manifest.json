@@ -497,6 +497,15 @@
         "ARMOR-ELECTRICAL": "core/central_link.hpp",
         "ARMOR-ALARM": "core/central_link.hpp"
       }
+    },
+    "core/admin_sources.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/admin_sources.hpp",
+        "ARMOR-ELECTRICAL": "core/admin_sources.hpp",
+        "ARMOR-RADAR": "main/core/admin_sources.hpp",
+        "ARMOR-HMI": "core/admin_sources.hpp",
+        "ARMOR-ALARM": "core/admin_sources.hpp"
+      }
     }
   }
 }
