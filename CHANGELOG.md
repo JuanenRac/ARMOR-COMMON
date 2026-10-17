@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [0.5.8] - The project manifest is documented, with the optional requires field
+
+- docs/PROJECT_MANIFEST.md (new) describes every key of armor.project.json, including the optional requires field: the projects that must be installed, and built, before this one. The field is optional, a manifest without it is unchanged, and the shared CI checks ignore it.
+- A test keeps the page in step with the keys the CI checks require.
+
 ## [0.5.7] - The firmware base: the networks that may use a node's panel, wrong passwords counted per person, and the panels with relative paths
 
 - `core/admin_sources.hpp` (new, shared by the five nodes): the list of networks that may use a node's panel - empty means the private ranges of a house, otherwise addresses and networks separated by commas - with the parser, the rules and 74 new host checks (the default ranges, the edges of each range, a stray comma, too many entries, a list that cannot be read never lets everybody in).
