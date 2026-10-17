@@ -20,6 +20,36 @@
    }
   },
   {
+   "name": "a wall panel",
+   "valid": true,
+   "payload": {
+    "node_id": "hall-panel",
+    "timestamp_ms": 5,
+    "online": true,
+    "kind": "panel"
+   }
+  },
+  {
+   "name": "a radar that says it is one",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 5,
+    "online": true,
+    "kind": "radar"
+   }
+  },
+  {
+   "name": "a kind that does not exist",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 5,
+    "online": true,
+    "kind": "toaster"
+   }
+  },
+  {
    "name": "string online flag",
    "valid": false,
    "payload": {

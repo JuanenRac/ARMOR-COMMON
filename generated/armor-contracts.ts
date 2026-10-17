@@ -165,6 +165,7 @@ export type ElectricalChannel = {
   current_a?: number;
   power_w?: number;
   energy_kwh?: number;
+  power_estimated?: boolean;
   frequency_hz?: number;
   power_factor?: number;
   state?: "closed" | "open" | "unknown";
@@ -222,7 +223,7 @@ export type AlarmZone = {
   id: string;
   name?: string;
   kind: "instant" | "entry" | "interior" | "always";
-  state: "normal" | "triggered" | "tamper";
+  state: "normal" | "triggered" | "tamper" | "trouble";
   bypassed: boolean;
 };
 

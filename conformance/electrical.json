@@ -404,6 +404,38 @@
    }
   },
   {
+   "name": "a power that the node only estimated",
+   "valid": true,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "power_estimated": true
+     }
+    ]
+   }
+  },
+  {
+   "name": "power_estimated that is not a boolean",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "power_estimated": "yes"
+     }
+    ]
+   }
+  },
+  {
    "name": "power factor above 1",
    "valid": false,
    "payload": {

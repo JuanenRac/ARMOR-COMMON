@@ -97,8 +97,10 @@
             "enum": [
               "normal",
               "triggered",
-              "tamper"
-            ]
+              "tamper",
+              "trouble"
+            ],
+            "description": "trouble: the node cannot read the zone (its converter or input does not answer); the zone is not guarding, it does not sound the siren and it stops an arming unless it is left out."
           },
           "bypassed": {
             "type": "boolean",
