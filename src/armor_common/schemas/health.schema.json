@@ -1,7 +1,33 @@
 {
-  "$schema":"https://json-schema.org/draft/2020-12/schema",
-  "$id":"https://armor.local/schemas/health-0.1.0.json",
-  "title":"A.R.M.O.R. field-node health",
-  "type":"object","additionalProperties":false,"required":["node_id","timestamp_ms","online"],
-  "properties":{"node_id":{"type":"string","pattern":"^[a-z0-9][a-z0-9_-]{0,63}$"},"timestamp_ms":{"type":"integer","minimum":0},"online":{"type":"boolean"}}
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/health-0.1.0.json",
+  "title": "A.R.M.O.R. field-node health",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "node_id",
+    "timestamp_ms",
+    "online"
+  ],
+  "properties": {
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "online": {
+      "type": "boolean"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "radar",
+        "panel"
+      ],
+      "description": "What sends it: a radar (the default, absent means radar) or a wall panel (ARMOR-HMI). A panel is not a field node of the perimeter: the server keeps it apart, so it does not count as a radar and its silence is not a node down."
+    }
+  }
 }

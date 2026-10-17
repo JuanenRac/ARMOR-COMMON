@@ -262,6 +262,54 @@
    }
   },
   {
+   "name": "a zone that cannot be read",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "kind": "entry",
+      "state": "trouble",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": []
+   }
+  },
+  {
+   "name": "a zone state that is not one of the four",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "kind": "entry",
+      "state": "broken",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": []
+   }
+  },
+  {
    "name": "an always zone",
    "valid": true,
    "payload": {
