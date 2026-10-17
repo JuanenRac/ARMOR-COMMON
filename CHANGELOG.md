@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [0.6.1] - The contracts know the silence of a siren
+
+- alarm_command.schema.json and alarm_result.schema.json accept the action silence (no mode, no force, no PIN, like a disarm); alarm.schema.json lists the event kind siren_silenced.
+- Conformance vectors for a silence, its refusals and the new event; generated TypeScript and Kotlin types refreshed; CONTRACTS.md and the server OpenAPI file describe the new action.
+
 ## [0.6.0] - A zone can be in trouble, a channel can be an estimate and a wall panel says what it is
 
 - The alarm zone state has a fourth value, trouble: the node cannot read the zone, so it is not guarding.

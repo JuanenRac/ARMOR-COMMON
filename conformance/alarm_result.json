@@ -86,6 +86,34 @@
    }
   },
   {
+   "name": "a silence, accepted",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "silence",
+    "accepted": true,
+    "refusal": "none",
+    "phase": "alarm"
+   }
+  },
+  {
+   "name": "a silence refused: wrong PIN",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_result",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee0123456789",
+    "action": "silence",
+    "accepted": false,
+    "refusal": "bad_pin",
+    "phase": "alarm"
+   }
+  },
+  {
    "name": "a disarm refused: locked out",
    "valid": true,
    "payload": {
@@ -151,7 +179,7 @@
     "node_id": "alarm-1",
     "timestamp_ms": 7100,
     "command_id": "c0ffee0123456789",
-    "action": "silence",
+    "action": "mute",
     "accepted": true,
     "refusal": "none",
     "phase": "exit_delay"

@@ -37,7 +37,8 @@
       "type": "string",
       "enum": [
         "arm",
-        "disarm"
+        "disarm",
+        "silence"
       ]
     },
     "accepted": {

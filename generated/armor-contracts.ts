@@ -19,6 +19,7 @@ export type Health = {
   node_id: string;
   timestamp_ms: number;
   online: boolean;
+  kind?: "radar" | "panel";
 };
 
 export type Command = {
@@ -229,7 +230,7 @@ export type AlarmZone = {
 
 export type AlarmEvent = {
   ago_s: number;
-  kind: "armed" | "exit_delay_started" | "entry_delay_started" | "alarm" | "siren_timed_out" | "disarmed" | "bad_pin" | "locked_out" | "zone_bypassed";
+  kind: "armed" | "exit_delay_started" | "entry_delay_started" | "alarm" | "siren_timed_out" | "disarmed" | "bad_pin" | "locked_out" | "zone_bypassed" | "siren_silenced";
   zone?: string;
 };
 
@@ -252,7 +253,7 @@ export type AlarmCommand = {
   node_id: string;
   timestamp_ms: number;
   command_id: string;
-  action: "arm" | "disarm";
+  action: "arm" | "disarm" | "silence";
   mode?: "away" | "stay";
   force?: boolean;
 };
@@ -262,7 +263,7 @@ export type AlarmResult = {
   node_id: string;
   timestamp_ms: number;
   command_id: string;
-  action: "arm" | "disarm";
+  action: "arm" | "disarm" | "silence";
   accepted: boolean;
   refusal: "none" | "not_disarmed" | "zones_open" | "not_armed" | "bad_pin" | "locked_out";
   phase: "disarmed" | "exit_delay" | "armed" | "entry_delay" | "alarm";

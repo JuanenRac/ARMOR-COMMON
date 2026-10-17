@@ -137,6 +137,47 @@
    }
   },
   {
+   "name": "an alarm whose siren was silenced with the PIN",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "alarm",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 9,
+      "kind": "alarm",
+      "zone": "window"
+     },
+     {
+      "ago_s": 2,
+      "kind": "siren_silenced"
+     }
+    ]
+   }
+  },
+  {
    "name": "a locked-out panel",
    "valid": true,
    "payload": {
