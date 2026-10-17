@@ -37,8 +37,43 @@ export type Info = {
   port: number;
 };
 
+export type SolarInverterUnits = {
+  unit: number;
+  serial?: string;
+  mode: "power_on" | "standby" | "line" | "battery" | "fault" | "power_saving" | "shutdown" | "unknown";
+  fault_code?: string;
+  grid_v?: number;
+  out_v?: number;
+  out_va?: number;
+  out_w?: number;
+  load_percent?: number;
+  battery_v?: number;
+  battery_percent?: number;
+  pv_v?: number;
+  charging_a?: number;
+};
+
+export type SolarInverterRatings = {
+  grid_rating_v?: number;
+  out_rating_v?: number;
+  out_rating_hz?: number;
+  out_rating_va?: number;
+  out_rating_w?: number;
+  battery_rating_v?: number;
+  battery_recharge_v?: number;
+  battery_under_v?: number;
+  battery_bulk_v?: number;
+  battery_float_v?: number;
+  max_charge_a?: number;
+  max_ac_charge_a?: number;
+  battery_type?: "agm" | "flooded" | "user";
+  input_range?: "appliance" | "ups";
+  output_priority?: "utility_first" | "solar_first" | "sbu";
+  charger_priority?: "utility_first" | "solar_first" | "solar_and_utility" | "solar_only";
+};
+
 export type SolarInverter = {
-  kind: string;
+  kind: "inverter";
   node_id: string;
   device: string;
   timestamp_ms: number;
@@ -68,12 +103,12 @@ export type SolarInverter = {
   total_out_va?: number;
   total_load_percent?: number;
   total_charging_a?: number;
-  units?: unknown[];
+  units?: SolarInverterUnits[];
   bus_v?: number;
   serial?: string;
   firmware?: string;
   pv_energy_total_wh?: number;
-  ratings?: Record<string, unknown>;
+  ratings?: SolarInverterRatings;
 };
 
 export type SolarModule = {
@@ -93,7 +128,7 @@ export type SolarModule = {
 };
 
 export type SolarBattery = {
-  kind: string;
+  kind: "battery";
   node_id: string;
   device: string;
   timestamp_ms: number;
@@ -138,7 +173,7 @@ export type ElectricalChannel = {
 
 export type ElectricalSwitch = {
   id: string;
-  kind: string;
+  kind: "transfer";
   label?: string;
   source_a?: string;
   source_b?: string;
@@ -152,7 +187,7 @@ export type ElectricalSwitch = {
 };
 
 export type Electrical = {
-  kind: string;
+  kind: "electrical";
   node_id: string;
   timestamp_ms: number;
   switching_enabled?: boolean;
@@ -161,7 +196,7 @@ export type Electrical = {
 };
 
 export type ElectricalCommand = {
-  kind: string;
+  kind: "electrical_command";
   node_id: string;
   timestamp_ms: number;
   command_id: string;
@@ -171,7 +206,7 @@ export type ElectricalCommand = {
 };
 
 export type ElectricalResult = {
-  kind: string;
+  kind: "electrical_result";
   node_id: string;
   timestamp_ms: number;
   command_id: string;
@@ -197,7 +232,7 @@ export type AlarmEvent = {
 };
 
 export type Alarm = {
-  kind: string;
+  kind: "alarm";
   node_id: string;
   timestamp_ms: number;
   phase: "disarmed" | "exit_delay" | "armed" | "entry_delay" | "alarm";
@@ -211,7 +246,7 @@ export type Alarm = {
 };
 
 export type AlarmCommand = {
-  kind: string;
+  kind: "alarm_command";
   node_id: string;
   timestamp_ms: number;
   command_id: string;
@@ -221,7 +256,7 @@ export type AlarmCommand = {
 };
 
 export type AlarmResult = {
-  kind: string;
+  kind: "alarm_result";
   node_id: string;
   timestamp_ms: number;
   command_id: string;
@@ -305,8 +340,31 @@ export type NetworkScan = {
   duration_ms?: number;
 };
 
+export type NetworkPublic = {
+  ip: string;
+  hostname?: string;
+  city?: string;
+  region?: string;
+  country?: string;
+  org?: string;
+  timezone?: string;
+  checked_ms: number;
+  changed_ms?: number;
+};
+
+export type NetworkResults = {
+  id: string;
+  type: "scan_now" | "ping" | "traceroute" | "wake" | "ports" | "http" | "inspect";
+  ok: boolean;
+  finished_ms: number;
+  device_id?: string;
+  output?: string;
+  ports?: NetworkPort[];
+  latency_ms?: number;
+};
+
 export type Network = {
-  kind: string;
+  kind: "network";
   node_id: string;
   timestamp_ms: number;
   interface: NetworkInterface;
@@ -314,8 +372,8 @@ export type Network = {
   devices: NetworkDevice[];
   events?: NetworkEvent[];
   scan?: NetworkScan;
-  public?: Record<string, unknown>;
-  results?: unknown[];
+  public?: NetworkPublic;
+  results?: NetworkResults[];
 };
 
 export const MAX_TARGETS = 15;

@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/network-orders-0.1.0.json",
+  "title": "A.R.M.O.R. answer of the server to a message of the network node",
+  "description": "The answer of POST /api/v1/network/state: the message was accepted, and the manual orders an operator gave the node that wait for it (at most four, each handed out once). An order that is about a device names it; an `inspect` that uses the login kept for the device carries it SEALED with the token of this node alone (`auth_sealed`, base64) - never in clear.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "accepted",
+    "commands"
+  ],
+  "properties": {
+    "accepted": {
+      "type": "boolean",
+      "const": true
+    },
+    "commands": {
+      "type": "array",
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "scan_now",
+              "ping",
+              "traceroute",
+              "wake",
+              "ports",
+              "http",
+              "inspect"
+            ]
+          },
+          "device_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "ip": {
+            "type": "string",
+            "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
+          },
+          "mac": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{2}(:[0-9a-f]{2}){5}$"
+          },
+          "port": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "auth_sealed": {
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 2048,
+            "pattern": "^[A-Za-z0-9+/]+={0,2}$"
+          }
+        }
+      }
+    }
+  }
+}

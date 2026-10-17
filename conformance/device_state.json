@@ -1,0 +1,53 @@
+{
+ "kind": "device_state",
+ "vectors": [
+  {
+   "name": "a relay that is on",
+   "valid": true,
+   "payload": {
+    "on": true
+   }
+  },
+  {
+   "name": "a relay that is off",
+   "valid": true,
+   "payload": {
+    "on": false
+   }
+  },
+  {
+   "name": "the word instead of the flag",
+   "valid": false,
+   "payload": {
+    "on": "ON"
+   }
+  },
+  {
+   "name": "a number instead of the flag",
+   "valid": false,
+   "payload": {
+    "on": 1
+   }
+  },
+  {
+   "name": "an unknown field",
+   "valid": false,
+   "payload": {
+    "on": true,
+    "level": 3
+   }
+  },
+  {
+   "name": "no field",
+   "valid": false,
+   "payload": {}
+  },
+  {
+   "name": "not an object",
+   "valid": false,
+   "payload": [
+    true
+   ]
+  }
+ ]
+}

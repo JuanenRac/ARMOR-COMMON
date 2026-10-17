@@ -9,7 +9,7 @@
 * GPL-3.0-or-later - see LICENSE
 *****************************************************************************
 
-The three node projects (ARMOR-RADAR, ARMOR-SOLAR, ARMOR-ELECTRICAL) grew from one base, and a fix made in one used to have to be made three times. The files
+The node projects (ARMOR-RADAR, ARMOR-SOLAR, ARMOR-ELECTRICAL, ARMOR-ALARM, ARMOR-HMI) grew from one base, and a fix made in one used to have to be made in each. The files
 they share are kept here, once, in `firmware_base/`, with the name of the project written as placeholders; this tool writes them into every project that uses
 them, and `check` says when a copy has drifted (a fix made in one project only). A project keeps its own copy in its own tree, so each builds on its own, exactly as
 before: nothing is shared at build time.
@@ -21,6 +21,11 @@ before: nothing is shared at build time.
 
 The project's name appears in a shared file in four forms, each with a placeholder: ARMOR-SOLAR (@PROJECT@), armor-solar (@project-@), armor_solar (@project_@) and solar
 (@kind@). A file that says something else in one project than in the others (a route of the panel, a topic of the broker) is not shared: it stays the project's own.
+
+`import` makes the base on its own: for each file it tries the text as it is (apart from the three unambiguous forms of the name) and the text with the short name turned into @kind@,
+and takes whichever makes more projects agree. The short name is a plain word ("solar", "alarm") that a comment may use about ANOTHER node ("the electrical node and the alarm node"),
+and turning every one into @kind@ made two identical files differ. When a file needs @kind@ in some places and the plain word in others, write the base by hand: `import` keeps a
+base file that has an @kind@ written by hand (it says so) and `sync` and `check` use it as it is. A file that is almost the same in two projects but not shared is listed as a near miss.
 """
 from __future__ import annotations
 
@@ -65,10 +70,10 @@ def project_path(project: str, candidate: str) -> str:
     return candidate
 
 
-def to_base(text: str, project: str) -> str:
-    """A project's file with its name turned into placeholders (line endings as LF)."""
+def to_base(text: str, project: str, short_name: bool = True) -> str:
+    """A project's file with its name turned into placeholders (line endings as LF). `short_name` False leaves the plain word ("solar") as it is: only the three unambiguous forms."""
     text = text.replace("\r\n", "\n")
-    for form, placeholder in zip(PROJECTS[project], PLACEHOLDERS):
+    for form, placeholder in list(zip(PROJECTS[project], PLACEHOLDERS))[: 4 if short_name else 3]:
         text = text.replace(form, placeholder)
     return text
 
@@ -98,15 +103,25 @@ def do_import(root: Path) -> int:
     """Makes the base: a candidate that is identical (once the name is turned into placeholders) in two or more projects is shared by exactly those."""
     files: dict[str, dict[str, str]] = {}
     for candidate in CANDIDATES:
-        found: dict[str, str] = {}
+        existing = BASE_DIR / candidate
+        if existing.is_file() and "@kind@" in read_text(existing) and candidate in load_manifest()["files"]:
+            # written by hand with the plain word where it is another node's and @kind@ where it is the project's own: import cannot make it again, so it keeps it
+            files[candidate] = load_manifest()["files"][candidate]
+            print(f"kept, its @kind@ was written by hand: {candidate}")
+            continue
+        sources: dict[str, str] = {}
         for project in PROJECTS:
             path = root / project / project_path(project, candidate)
             if path.is_file():
-                found[project] = to_base(read_text(path), project)
-        groups: dict[str, list[str]] = {}
-        for project, content in found.items():
-            groups.setdefault(content, []).append(project)
-        best = max(groups.items(), key=lambda item: (len(item[1]), "ARMOR-SOLAR" in item[1]), default=None)
+                sources[project] = read_text(path)
+        best = None
+        for short_name in (False, True):   # the text as it is first: on a tie it wins, because nothing in it is guessed
+            groups: dict[str, list[str]] = {}
+            for project, text in sources.items():
+                groups.setdefault(to_base(text, project, short_name), []).append(project)
+            grouped = max(groups.items(), key=lambda item: (len(item[1]), "ARMOR-SOLAR" in item[1]), default=None)
+            if grouped is not None and (best is None or len(grouped[1]) > len(best[1])):
+                best = grouped
         if best is None or len(best[1]) < 2:
             continue
         content, projects = best
@@ -115,10 +130,30 @@ def do_import(root: Path) -> int:
         target.write_bytes(content.encode("utf-8"))
         files[candidate] = {"targets": {project: project_path(project, candidate) for project in PROJECTS if project in projects}}
     MANIFEST.write_text(json.dumps({"files": files}, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    for stale in sorted(p for p in BASE_DIR.rglob("*") if p.is_file() and p != MANIFEST and str(p.relative_to(BASE_DIR)).replace("\\", "/") not in files):
+    for stale in sorted(p for p in BASE_DIR.rglob("*") if p.is_file() and p != MANIFEST and "_unshared" not in p.relative_to(BASE_DIR).parts and str(p.relative_to(BASE_DIR)).replace("\\", "/") not in files):
         print(f"not shared any more, left in place: {stale.relative_to(BASE_DIR)}")
     print(f"{len(files)} files shared ({sum(len(v['targets']) for v in files.values())} copies)")
+    for candidate, projects in near_misses(root, files):
+        print(f"near miss, not shared: {candidate} ({', '.join(projects)} differ in a few lines)")
     return 0
+
+
+def near_misses(root: Path, shared: dict) -> list[tuple[str, list[str]]]:
+    """Candidates that are not shared although two projects have them with almost the same text (at most 12 lines apart): the kind of file that used to leave the base without a word."""
+    import difflib
+    out: list[tuple[str, list[str]]] = []
+    for candidate in CANDIDATES:
+        if candidate in shared:
+            continue
+        texts = {project: to_base(read_text(root / project / project_path(project, candidate)), project, False).split("\n")
+                 for project in PROJECTS if (root / project / project_path(project, candidate)).is_file()}
+        names = sorted(texts)
+        for index, first in enumerate(names):
+            for second in names[index + 1:]:
+                changed = sum(1 for line in difflib.unified_diff(texts[first], texts[second], lineterm="", n=0) if line[:1] in "+-" and line[:3] not in ("+++", "---"))
+                if 0 < changed <= 24:
+                    out.append((candidate, [first.removeprefix("ARMOR-"), second.removeprefix("ARMOR-")]))
+    return out
 
 
 def drift(root: Path) -> list[str]:
@@ -167,6 +202,8 @@ def do_status() -> int:
         print(f"{candidate:32} {', '.join(p.removeprefix('ARMOR-') for p in entry['targets'])}")
     own = [c for c in CANDIDATES if c not in load_manifest()["files"]]
     print("\nnot shared (each project's own): " + ", ".join(own))
+    for candidate, projects in near_misses(ROOT, load_manifest()["files"]):
+        print(f"near miss: {candidate} ({', '.join(projects)} differ in a few lines)")
     return 0
 
 
