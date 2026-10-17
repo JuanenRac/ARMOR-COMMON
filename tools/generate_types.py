@@ -7,6 +7,12 @@ The schemas are the single source of truth; the generated files must never be
 edited by hand. ``--check`` fails when a generated file is out of date, which
 is how CI keeps the clients honest.
 
+The Kotlin properties keep the exact names of the JSON fields (``node_id``), so any
+library that maps by name reads the messages as they are, with a backtick around the
+few names that Kotlin reserves (``interface``). A field that always has one value (the
+``kind`` of a message) is that literal in TypeScript and the default in Kotlin; every
+object inside a message gets a type of its own, named after the field that holds it.
+
     python tools/generate_types.py           # write generated/
     python tools/generate_types.py --check   # verify generated/ is current
 """
@@ -46,6 +52,33 @@ class Field:
         self.name, self.schema, self.required, self.nested = name, schema, required, nested
 
 
+KOTLIN_HARD_KEYWORDS = {"as", "break", "class", "continue", "do", "else", "false", "for", "fun", "if", "in", "interface", "is", "null", "object", "package", "return", "super", "this", "throw",
+                        "true", "try", "typealias", "typeof", "val", "var", "when", "while"}
+
+
+def pascal(name: str) -> str:
+    return "".join(part.capitalize() for part in name.split("_"))
+
+
+def complete(schema: dict, nested: dict[str, str], parent: str) -> dict[str, str]:
+    """`nested` plus a type name for every object (or list of objects) inside the schema that has no name yet: the parent's name and the field's."""
+    full = dict(nested)
+
+    def walk(node: dict, owner: str) -> None:
+        for prop, child in node.get("properties", {}).items():
+            item = child.get("items", child) if child.get("type") == "array" else child
+            if isinstance(item, dict) and item.get("type") == "object" and item.get("properties"):
+                full.setdefault(prop, owner + pascal(prop))
+                walk(item, full[prop])
+
+    walk(schema, parent)
+    return full
+
+
+def kt_name(name: str) -> str:
+    return f"`{name}`" if name in KOTLIN_HARD_KEYWORDS else name
+
+
 def fields_of(schema: dict, nested: dict[str, str]) -> list[Field]:
     required = set(schema.get("required", []))
     return [Field(name, child, name in required, nested.get(name)) for name, child in schema["properties"].items()]
@@ -53,6 +86,8 @@ def fields_of(schema: dict, nested: dict[str, str]) -> list[Field]:
 
 def ts_type(field: Field) -> str:
     schema = field.schema
+    if "const" in schema:
+        return json.dumps(schema["const"])
     if "enum" in schema:
         return " | ".join(json.dumps(value) for value in schema["enum"])
     kind = schema["type"]
@@ -75,6 +110,12 @@ def kt_type(field: Field) -> str:
     return {"string": "String", "integer": "Long", "number": "Double", "boolean": "Boolean"}[kind]
 
 
+def kt_property(field: Field) -> str:
+    """One Kotlin property: its JSON name, its type, and its default (a fixed value for a field that always has the same one; null for an optional field)."""
+    default = f" = {json.dumps(field.schema['const'])}" if "const" in field.schema and field.required else ("" if field.required else "? = null")
+    return f"    val {kt_name(field.name)}: {kt_type(field)}{default}"
+
+
 def nested_types(schema: dict, nested: dict[str, str], emitted: set[str]):
     """The named types inside a schema, the deepest first: (type name, its schema). A property named in `nested` is an object or an array of objects."""
     for prop, type_name in nested.items():
@@ -87,16 +128,12 @@ def nested_types(schema: dict, nested: dict[str, str], emitted: set[str]):
         yield type_name, item
 
 
-def camel(name: str) -> str:
-    head, *rest = name.split("_")
-    return head + "".join(part.capitalize() for part in rest)
-
-
 def render_typescript(docs: dict[str, dict]) -> str:
     out = [f"/** {HEADER} */", ""]
     emitted: set[str] = set()
-    for key, (name, nested) in MESSAGES.items():
+    for key, (name, declared) in MESSAGES.items():
         schema = docs[key]
+        nested = complete(schema, declared, name)
         for type_name, item in nested_types(schema, nested, emitted):
             out.append(f"export type {type_name} = {{")
             out += [f"  {f.name}{'' if f.required else '?'}: {ts_type(f)};" for f in fields_of(item, nested)]
@@ -118,19 +155,20 @@ def render_typescript(docs: dict[str, dict]) -> str:
 def render_kotlin(docs: dict[str, dict]) -> str:
     out = ["// " + HEADER, "package es.electrohobby3d.armor.contracts", ""]
     emitted: set[str] = set()
-    for key, (name, nested) in MESSAGES.items():
+    for key, (name, declared) in MESSAGES.items():
         schema = docs[key]
+        nested = complete(schema, declared, name)
         for type_name, item in nested_types(schema, nested, emitted):
-            body = ",\n".join(f"    val {camel(f.name)}: {kt_type(f)}{'' if f.required else '? = null'}" for f in fields_of(item, nested))
+            body = ",\n".join(kt_property(f) for f in fields_of(item, nested))
             out += [f"data class {type_name}(", body, ")", ""]
-        body = ",\n".join(f"    val {camel(f.name)}: {kt_type(f)}{'' if f.required else '? = null'}" for f in fields_of(schema, nested))
+        body = ",\n".join(kt_property(f) for f in fields_of(schema, nested))
         out += [f"data class {name}(", body, ")", ""]
     limits = docs["telemetry"]["properties"]
     commands = ", ".join(json.dumps(value) for value in docs["command"]["properties"]["command"]["enum"])
     out += [
         "object ContractLimits {",
         f"    const val MAX_TARGETS = {limits['targets']['maxItems']}",
-        f"    const val MAX_LUX = {limits['lux']['maximum']}.0",
+        f"    const val MAX_LUX = {float(limits['lux']['maximum'])!r}",
         f"    val COMMANDS = listOf({commands})",
         "}",
         "",

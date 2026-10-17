@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/device-state-0.1.0.json",
+  "title": "A.R.M.O.R. state of a relay of a node, as a device",
+  "description": "What a node says about one of its relays on armor/device/{node_id}/{relay}/state: whether it is on (closed). The same relay says `online` or `offline` on armor/device/{node_id}/{relay}/availability and is told ON, OFF or TOGGLE on armor/device/{node_id}/{relay}/set (see validate_device_message).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "on"
+  ],
+  "properties": {
+    "on": {
+      "type": "boolean"
+    }
+  }
+}

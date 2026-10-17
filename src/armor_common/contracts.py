@@ -9,6 +9,8 @@ the topic shape and that the topic's node id equals the payload's.
 
 from __future__ import annotations
 
+import copy
+import ipaddress
 import json
 from collections.abc import Mapping
 from functools import lru_cache
@@ -38,18 +40,29 @@ _TOKEN_ACTIONS = ("close_a", "close_b")
 # The alarm message (an ARMOR-ALARM node) has one topic per node: armor/alarm/{node_id}/state; the panel is commanded on armor/alarm/{node_id}/command (server -> node)
 # and answered on armor/alarm/{node_id}/result (node -> server).
 ALARM_TOPIC_PREFIX = "armor/alarm/"
-ALARM_LEAVES = ("state", "command", "result")
+ALARM_LEAVES = ("state", "command", "result", "zigbee")   # "zigbee": what the server tells the panel about the Zigbee sensor of a zone (alarm_zone_feed)
 ALARM_KINDS = ("alarm", "alarm_command", "alarm_result")
 # The network message (an ARMOR-NETWORK node watching the local network) has one topic per node: armor/network/{node_id}/state.
 NETWORK_TOPIC_PREFIX = "armor/network/"
+# A relay of a node is a device of the device layer: armor/device/{node_id}/{relay}/state | availability | set. The server's alert goes out on armor/server/alert.
+DEVICE_TOPIC_PREFIX = "armor/device/"
+DEVICE_LEAVES = ("state", "availability", "set")
+SERVER_ALERT_TOPIC = "armor/server/alert"
+_RELAY_COMMANDS = ("on", "off", "true", "false", "1", "0", "toggle")
+_EXTRA_SCHEMAS = ("alarm_zone_feed", "device_state", "server_alert", "network_orders")
+_PRIVATE_RANGES = tuple(ipaddress.ip_network(text) for text in ("10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"))
 _DEVICE_CHARS = set("abcdefghijklmnopqrstuvwxyz0123456789-_")
 _NODE_ID_CHARS = set("abcdefghijklmnopqrstuvwxyz0123456789-_")
 
 
-@lru_cache(maxsize=None)
 def load_schema(kind: str) -> dict[str, Any]:
-    """The published schema of a message kind (``telemetry``, ``health``, ``command`` or ``info``)."""
-    if kind not in KINDS and kind not in _SOLAR_SCHEMAS and kind not in ELECTRICAL_KINDS and kind not in ALARM_KINDS and kind != "network":
+    """The published schema of a message kind (``telemetry``, ``health``, ``command`` or ``info``). A copy: the one the validators use is shared and must not be changed by a caller."""
+    return copy.deepcopy(_published_schema(kind))
+
+
+@lru_cache(maxsize=None)
+def _published_schema(kind: str) -> dict[str, Any]:
+    if kind not in KINDS and kind not in _SOLAR_SCHEMAS and kind not in ELECTRICAL_KINDS and kind not in ALARM_KINDS and kind not in _EXTRA_SCHEMAS and kind != "network":
         raise ContractError(f"unsupported topic kind {kind!r}")
     text = resources.files("armor_common").joinpath("schemas", f"{_SOLAR_SCHEMAS.get(kind, kind)}.schema.json").read_text(encoding="utf-8")
     schema = json.loads(text)
@@ -60,7 +73,7 @@ def load_schema(kind: str) -> dict[str, Any]:
 def validate_payload(kind: str, payload: Mapping[str, object]) -> None:
     """Validate a payload against its schema only (no topic)."""
     try:
-        validate(payload, load_schema(kind))
+        validate(payload, _published_schema(kind))
     except SchemaError as error:
         raise ContractError(str(error)) from error
 
@@ -272,6 +285,14 @@ def validate_network_message(topic: str, payload: Mapping[str, object]) -> None:
     if payload.get("node_id") != node_id:
         raise ContractError("payload node_id must match the topic")
     validate_payload("network", payload)
+    interface = payload.get("interface")
+    if isinstance(interface, Mapping) and isinstance(interface.get("cidr"), str):
+        try:
+            watched = ipaddress.ip_network(interface["cidr"], strict=False)
+        except ValueError:
+            raise ContractError("interface.cidr is not a network") from None
+        if not any(watched.subnet_of(private) for private in _PRIVATE_RANGES):
+            raise ContractError("the network a node watches is a private range (10/8, 172.16/12 or 192.168/16)")
     devices = payload.get("devices")
     if isinstance(devices, list):
         ids = [item.get("id") for item in devices if isinstance(item, Mapping)]
@@ -299,3 +320,79 @@ def validate_network_message(topic: str, payload: Mapping[str, object]) -> None:
                 raise ContractError("only internet_up and gateway_up say how long it was down")
             if item.get("kind") in ("port_opened", "port_closed") and "port" not in item:
                 raise ContractError("a port event names the port")
+
+
+def validate_alarm_zone_feed(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate what the server tells a panel about the Zigbee sensor of one of its zones: the topic ``armor/alarm/{node_id}/zigbee`` and the schema (the node is the topic's)."""
+    parse_alarm_topic(topic, "zigbee")
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    validate_payload("alarm_zone_feed", payload)
+
+
+def parse_device_topic(topic: str) -> tuple[str, str, str]:
+    """Split ``armor/device/{node_id}/{relay}/{leaf}`` into ``(node_id, relay, leaf)``; the leaf is ``state``, ``availability`` or ``set``."""
+    if not isinstance(topic, str):
+        raise ContractError("topic must be a string")
+    parts = topic.split("/")
+    if len(parts) != 5 or parts[:2] != ["armor", "device"] or parts[4] not in DEVICE_LEAVES:
+        raise ContractError("topic must be armor/device/{node_id}/{relay}/state, availability or set")
+    node_id, relay, leaf = parts[2], parts[3], parts[4]
+    _check_node_id(node_id)
+    if not relay or not set(relay) <= _DEVICE_CHARS or relay[0] in "-_" or len(relay) > 32:
+        raise ContractError("relay must use lowercase letters, digits, '-' or '_' (at most 32)")
+    return node_id, relay, leaf
+
+
+def validate_device_message(topic: str, payload: object) -> None:
+    """Validate a message about a relay of a node: its state ``{"on": true}`` (a JSON object), its availability (the text ``online`` or ``offline``) or the command it is given
+    (``ON``, ``OFF`` or ``TOGGLE``, in any case, with ``true``, ``false``, ``1`` and ``0`` as other ways to say the first two)."""
+    _node_id, _relay, leaf = parse_device_topic(topic)
+    if leaf == "state":
+        if not isinstance(payload, Mapping):
+            raise ContractError("the state of a relay is an object")
+        validate_payload("device_state", payload)
+    elif leaf == "availability":
+        if payload not in ("online", "offline"):
+            raise ContractError("availability is online or offline")
+    elif not isinstance(payload, str) or payload.strip().lower() not in _RELAY_COMMANDS:
+        raise ContractError("a relay is told ON, OFF or TOGGLE")
+
+
+def validate_server_alert(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate an alert of the server: its topic and its schema, and that what an event names is there (a node event names its node, a camera event its camera, an alarm its id and code)."""
+    if topic != SERVER_ALERT_TOPIC:
+        raise ContractError(f"the alert is published on {SERVER_ALERT_TOPIC}")
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    validate_payload("server_alert", payload)
+    event = payload.get("event")
+    if event in ("node.offline", "node.stale", "alert.raised", "alert.cleared") and "node_id" not in payload:
+        raise ContractError("a node event names the node")
+    if event == "camera.offline" and "camera_id" not in payload:
+        raise ContractError("a camera event names the camera")
+    if event in ("alarm.raised", "alarm.escalated") and not {"alarm_id", "code", "severity"} <= set(payload):
+        raise ContractError("an alarm event names the alarm, its code and its severity")
+    if payload.get("silent") is True and event != "alarm.raised":
+        raise ContractError("only a raised alarm is silent")
+
+
+def validate_network_orders(payload: Mapping[str, object]) -> None:
+    """Validate the answer of the server to a message of the network node: the schema, an order about a device names it, and a sealed login goes only with an ``inspect``."""
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    validate_payload("network_orders", payload)
+    for order in payload.get("commands", []):
+        if order.get("type") in ("ping", "wake", "ports", "http", "inspect") and not {"device_id", "ip"} <= set(order):
+            raise ContractError("an order about a device names the device and its address")
+        if order.get("type") == "scan_now" and ({"device_id", "ip", "mac", "port"} & set(order)):
+            raise ContractError("a sweep is about the whole network, not a device")
+        if order.get("type") == "wake" and "mac" not in order:
+            raise ContractError("a wake-up needs the MAC address")
+        if "port" in order and order.get("type") not in ("http", "inspect"):
+            raise ContractError("only a look at a web page or an inspection names a port")
+        if "auth_sealed" in order and order.get("type") != "inspect":
+            raise ContractError("a sealed login goes only with an inspection")
+    ids = [order.get("id") for order in payload.get("commands", [])]
+    if len(ids) != len(set(ids)):
+        raise ContractError("an order id must appear once")

@@ -84,6 +84,47 @@ class ImportTests(unittest.TestCase):
         self.assertEqual(tool.do_check(fx.root), 0)
 
 
+class SharedNamesTests(unittest.TestCase):
+    def test_a_comment_about_another_node_does_not_stop_a_file_from_being_shared(self):
+        fx = Fixture(self)
+        for project in ("ARMOR-ELECTRICAL", "ARMOR-ALARM"):
+            # identical in both, and each says the other's plain name ("alarm", "electrical"): turning every plain name into @kind@ made them differ
+            fx.put(project, "core/relay_remote.hpp", "// used by the electrical node and the alarm node\nconstexpr int kThing = 1;\n")
+        self.assertEqual(tool.do_import(fx.root), 0)
+        manifest = json.loads(tool.MANIFEST.read_text(encoding="utf-8"))["files"]
+        self.assertEqual(sorted(manifest["core/relay_remote.hpp"]["targets"]), ["ARMOR-ALARM", "ARMOR-ELECTRICAL"])
+        self.assertEqual(tool.do_check(fx.root), 0)
+
+    def test_the_plain_name_is_a_placeholder_when_that_is_what_makes_the_files_agree(self):
+        fx = Fixture(self)
+        for project in ("ARMOR-ELECTRICAL", "ARMOR-ALARM", "ARMOR-SOLAR"):
+            fx.put(project, "main/entropy.cpp", f"// the {tool.PROJECTS[project][3]} node\n")
+        tool.do_import(fx.root)
+        manifest = json.loads(tool.MANIFEST.read_text(encoding="utf-8"))["files"]
+        self.assertEqual(len(manifest["main/entropy.cpp"]["targets"]), 3)
+        self.assertEqual((tool.BASE_DIR / "main" / "entropy.cpp").read_text(encoding="utf-8"), "// the @kind@ node\n")
+
+    def test_a_base_written_by_hand_survives_an_import(self):
+        fx = Fixture(self)
+        text = "// for the electrical node and the alarm node\nconst char* id = \"@kind@-1\";\n"
+        for project in ("ARMOR-ELECTRICAL", "ARMOR-ALARM"):
+            fx.put(project, "core/node_settings.hpp", tool.from_base(text, project))
+        (tool.BASE_DIR / "core").mkdir(parents=True)
+        (tool.BASE_DIR / "core" / "node_settings.hpp").write_text(text, encoding="utf-8")
+        tool.MANIFEST.write_text(json.dumps({"files": {"core/node_settings.hpp": {"targets": {p: "core/node_settings.hpp" for p in ("ARMOR-ELECTRICAL", "ARMOR-ALARM")}}}}), encoding="utf-8")
+        self.assertEqual(tool.drift(fx.root), [])
+        tool.do_import(fx.root)
+        self.assertEqual((tool.BASE_DIR / "core" / "node_settings.hpp").read_text(encoding="utf-8"), text)
+        self.assertEqual(sorted(json.loads(tool.MANIFEST.read_text(encoding="utf-8"))["files"]["core/node_settings.hpp"]["targets"]), ["ARMOR-ALARM", "ARMOR-ELECTRICAL"])
+
+    def test_a_file_that_is_almost_the_same_is_reported(self):
+        fx = Fixture(self)
+        body = "".join(f"line {number}\n" for number in range(40))
+        fx.put("ARMOR-ELECTRICAL", "core/io_config.hpp", body)
+        fx.put("ARMOR-ALARM", "core/io_config.hpp", body + "int network_host;\n")
+        self.assertEqual(tool.near_misses(fx.root, {}), [("core/io_config.hpp", ["ALARM", "ELECTRICAL"])])
+
+
 class CheckAndSyncTests(unittest.TestCase):
     def shared(self) -> Fixture:
         fx = Fixture(self)

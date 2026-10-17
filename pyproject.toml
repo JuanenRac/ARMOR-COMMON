@@ -4,9 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "armor-common"
-version = "0.5.4"
+version = "0.5.5"
 description = "A.R.M.O.R. shared contracts and validation"
 requires-python = ">=3.11"
+
+[project.optional-dependencies]
+contract-tests = ["pyyaml>=6", "openapi-spec-validator>=0.7"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
