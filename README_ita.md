@@ -22,7 +22,7 @@
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
   <img src="https://img.shields.io/badge/Vectors-525-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Version-0.5.7-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Version-0.5.8-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
@@ -36,7 +36,7 @@
 
 | | |
 |---|---|
-| Versione | `0.5.7` |
+| Versione | `0.5.8` |
 | Maturità | Consolidato |
 | Test | 79 (`python -m unittest discover -s tests`) and 525 conformance vectors |
 | Tecnologia | Python 3.11+ / JSON Schema / OpenAPI |
