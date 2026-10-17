@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [0.6.2] - An optional encrypted link to the broker in the shared node base
+
+- firmware_base carries mqtt_tls.hpp (what a stored authority may look like: exactly one certificate in PEM, at most 2 KB, and what the settings must say when TLS is on), the mqtt.tls and mqtt.ca_pem settings of the nodes that share node_settings.hpp, the connection in mqtt_link.cpp that trusts only that authority and checks the broker's name, and the textarea style of the panel.
+- tests/test_mqtt_tls.cpp is shared by the five nodes and checks the settings of each. sync_firmware_base.py keeps every copy identical.
+
 ## [0.6.1] - The contracts know the silence of a siren
 
 - alarm_command.schema.json and alarm_result.schema.json accept the action silence (no mode, no force, no PIN, like a disarm); alarm.schema.json lists the event kind siren_silenced.
