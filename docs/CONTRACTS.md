@@ -30,7 +30,7 @@ payload repeats `node_id` and `device`; a mismatch is refused. The payload's `ki
 
 | Kind | Schema |
 |---|---|
-| `inverter` | `solar_inverter.schema.json`: the mode, the grid and output figures, the battery side (voltage, signed current, percentage), the panels' voltage, current and power, the temperature, three flags and the names of the active warnings |
+| `inverter` | `solar_inverter.schema.json`: the mode, the grid and output figures, the battery side (voltage, signed current, percentage), the panels' voltage, current and power, the temperature, three flags and the names of the active warnings (`warnings_known: false` says that the inverter's dialect cannot ask for them, so an empty list means unknown and not none) |
 | `battery` | `solar_battery.schema.json`: how many modules are present (0 to 16) and, when there are, the state, voltage, current, temperature range, cell range, mean state of charge and alarm, and one entry per module (with, when the node reads them, the voltage of each cell and the module's temperature sensors). With no module present the message carries no other reading |
 
 An inverter message may also carry a second PV input (`pv2_v`, `pv2_a`, `pv2_w`; `pv_w` is then the sum of both) and, for a parallel system, `units` (up to ten entries) with the totals `total_out_w`, `total_out_va`, `total_load_percent` and `total_charging_a`; all of these are optional.

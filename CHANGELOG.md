@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.5.9] - An inverter can say that its warnings are unknown
+
+The solar inverter message has an optional boolean warnings_known: false says that the inverter dialect cannot ask for its warnings (REVO), so an empty list means unknown and not none; absent means true. Two conformance vectors (527 in all), the generated types and the contract page describe it.
+
 ## [0.5.8] - The project manifest is documented, with the optional requires field
 
 - docs/PROJECT_MANIFEST.md (new) describes every key of armor.project.json, including the optional requires field: the projects that must be installed, and built, before this one. The field is optional, a manifest without it is unchanged, and the shared CI checks ignore it.

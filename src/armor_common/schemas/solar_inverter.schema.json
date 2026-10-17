@@ -154,6 +154,10 @@
       },
       "description": "Names of the active warnings and faults."
     },
+    "warnings_known": {
+      "type": "boolean",
+      "description": "False when the inverter's dialect has no way to ask for its warnings (the REVO dialect has no warning query): warnings is then empty because it is unknown, not because there are none. Absent means true."
+    },
     "pv2_v": {
       "type": "number",
       "minimum": 0,
