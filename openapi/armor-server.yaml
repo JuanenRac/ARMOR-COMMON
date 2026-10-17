@@ -1159,6 +1159,27 @@ paths:
         '200': { description: '{ accepted, executed, intent, outcome, speech, confirmation_token?, reason?, result? } - outcome is accepted, confirmation-needed, confirmation-refused or not-understood' }
         '422': { description: 'No text, too long, or not a supported language' }
         '503': { description: 'No voice gateway is set up, or it does not answer' }
+  /api/v1/voice/turn:
+    post:
+      summary: One spoken turn from the wall panel - the audio goes to the voice gateway on this machine and its answer comes back as it is; authenticated with the voice token, not with a session
+      security: []
+      parameters:
+        - { name: X-Armor-Voice-Token, in: header, required: true, schema: { type: string } }
+        - { name: X-Armor-Language, in: header, required: false, schema: { type: string, enum: [en, es, de, fr, it, ja, zh, pt] } }
+      requestBody: { required: true, content: { 'audio/L16;rate=16000': { schema: { type: string, format: binary, maxLength: 480000 } } } }
+      responses:
+        '200': { description: '{ heard, reply, audio? } - audio is base64 16 kHz 16-bit mono PCM' }
+        '401': { description: 'The voice token is wrong' }
+        '411': { description: 'No audio' }
+        '413': { description: 'More than 480 000 bytes (15 seconds)' }
+        '503': { description: 'No voice gateway is set up, or it does not answer' }
+  /api/v1/voice/v1/turn:
+    post:
+      summary: The same as /api/v1/voice/turn, at the path a panel builds when its voice address is this server plus /api/v1/voice
+      security: []
+      requestBody: { required: true, content: { 'audio/L16;rate=16000': { schema: { type: string, format: binary } } } }
+      responses:
+        '200': { description: 'See /api/v1/voice/turn' }
   /api/v1/operator/session:
     post:
       summary: Exchange the operator token for a session cookie
