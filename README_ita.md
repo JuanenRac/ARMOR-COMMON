@@ -21,14 +21,14 @@
   <img src="https://img.shields.io/badge/License-GPL%203.0-blue.svg" alt="GPL 3.0">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-523-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Version-0.5.5-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Vectors-525-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Version-0.5.6-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
 ---
 
-**Controllo di onestà - cosa funziona oggi:** Gli schemi (telemetria, salute, comando, informazioni del nodo, inverter e batteria solari, elettrico, allarme con il suo comando e risultato, e rete), il validatore Python, i 523 vettori di conformità, i tipi TypeScript e Kotlin generati, il file OpenAPI del server (136 percorsi), la base firmware condivisa dai cinque nodi e il lanciatore di progetto condiviso sono reali e provati (79 test). Il file Kotlin è generato ma **non ancora consumato** da ARMOR-ANDROID-CONTROL (che mantiene una propria lettura), e il comando `set_thresholds` porta un solo campo `sensitivity` perché i veri parametri del radar non sono definiti finché non esiste il firmware.
+**Controllo di onestà - cosa funziona oggi:** Gli schemi (telemetria, salute, comando, informazioni del nodo, inverter e batteria solari, elettrico, allarme con il suo comando e risultato, e rete), il validatore Python, i 525 vettori di conformità, i tipi TypeScript e Kotlin generati, il file OpenAPI del server (136 percorsi), la base firmware condivisa dai cinque nodi e il lanciatore di progetto condiviso sono reali e provati (79 test). Il file Kotlin è generato ma **non ancora consumato** da ARMOR-ANDROID-CONTROL (che mantiene una propria lettura), e il comando `set_thresholds` porta un solo campo `sensitivity` perché i veri parametri del radar non sono definiti finché non esiste il firmware.
 
 ---
 
@@ -36,9 +36,9 @@
 
 | | |
 |---|---|
-| Versione | `0.5.5` |
+| Versione | `0.5.6` |
 | Maturità | Consolidato |
-| Test | 79 (`python -m unittest discover -s tests`) and 523 conformance vectors |
+| Test | 79 (`python -m unittest discover -s tests`) and 525 conformance vectors |
 | Tecnologia | Python 3.11+ / JSON Schema / OpenAPI |
 | Su hardware reale | Solo il nodo radar ha girato su una scheda: i suoi messaggi sono quelli che parlano ogni giorno il server CM5, Studio e l'app Android; i messaggi degli altri nodi sono controllati contro sostituti |
 
@@ -48,7 +48,7 @@
 
 * **Un'unica fonte di verità:** schemi JSON in `src/armor_common/schemas/` per telemetria, salute, comando, informazioni del nodo, i due messaggi solari (inverter, batteria con celle e capacità), i messaggi elettrici (letture, comando, risultato), i messaggi di allarme (stato, comando, risultato) e il messaggio di rete. I campi sconosciuti e le combinazioni impossibili sono rifiutati.
 * **Un validatore che non può saltare una regola:** interpreta direttamente lo schema e rifiuta uno schema che usa una parola chiave che non implementa.
-* **Vettori di conformità:** 523 carichi accettati e rifiutati eseguiti da ogni implementazione (Python qui, TypeScript in ARMOR-SERVER, i controlli dei repository firmware), così una deriva fa fallire una compilazione.
+* **Vettori di conformità:** 525 carichi accettati e rifiutati eseguiti da ogni implementazione (Python qui, TypeScript in ARMOR-SERVER, i controlli dei repository firmware), così una deriva fa fallire una compilazione.
 * **Client generati:** i tipi TypeScript e Kotlin vengono dagli schemi (`tools/generate_types.py --check` li mantiene aggiornati).
 * **Contratto HTTP:** `openapi/armor-server.yaml` descrive ogni rotta del server (136 percorsi), la sua regola di accesso e il suo schema, e ARMOR-SERVER ha un test che nessuna manchi.
 * **Base firmware:** `firmware_base/` tiene una sola volta ogni file condiviso dai cinque nodi (rete, impostazioni e utenti, server del pannello web e accesso, certificato HTTPS, registro, Bluetooth con abbinamento a PIN, controllo degli aggiornamenti firmati; relè e Zigbee per i nodi che li hanno); `tools/sync_firmware_base.py` lo scrive in ogni nodo e controlla che nessuna copia sia derivata ([la guida](docs/FIRMWARE_BASE.md), [firmware firmato](docs/SIGNED_FIRMWARE.md)).
@@ -91,7 +91,7 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 79 tests, 523 conformance vectors
+python -m unittest discover -s tests      # 79 tests, 525 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list (--check: they are current)
 python tools/sync_firmware_base.py check  # the firmware the node projects share has not drifted (see docs/FIRMWARE_BASE.md)

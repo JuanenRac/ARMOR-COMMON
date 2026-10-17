@@ -680,6 +680,8 @@ cases = {
         ("a camera that went offline", True, {"service": "armor-server", "event": "camera.offline", "at": "1970-01-01T00:00:00.000Z", "mode": "armed", "camera_id": "cam-01"}),
         ("a test", True, {"service": "armor-server", "event": "alert.test", "at": "1970-01-01T00:00:00.000Z", "mode": "disarmed"}),
         ("a silent alarm", True, {"service": "armor-server", "event": "alarm.raised", "at": "1970-01-01T00:00:00.000Z", "mode": "armed", "alarm_id": "a2", "severity": "critical", "code": "duress_disarm", "alarm_node_id": "alarm-1", "silent": True}),
+        ("a sign-in from outside the house", True, {"service": "armor-server", "event": "login.remote", "at": "1970-01-01T00:00:00.000Z", "mode": "armed", "login_user": "admin", "login_from": "203.0.113.9"}),
+        ("a sign-in from outside that names no one", False, {"service": "armor-server", "event": "login.remote", "at": "1970-01-01T00:00:00.000Z", "mode": "armed", "login_from": "203.0.113.9"}, True),
         ("another service", False, server_alert(service="someone-else")),
         ("an event that does not exist", False, server_alert(event="alarm.imagined")),
         ("a mode that does not exist", False, server_alert(mode="armed-away")),

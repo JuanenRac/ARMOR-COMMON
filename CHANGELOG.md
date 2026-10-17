@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [0.5.6] - A sign-in from outside is an alert of the server, and the routes of the node panels, the VPN and the dynamic DNS name are in the contract
+
+- The alert of the server has a new event, `login.remote`, with the person (`login_user`) and the address (`login_from`); the validator demands both, and there are two more conformance vectors (a sign-in from outside, and one that names no one).
+- The OpenAPI file describes the panel of a node through the server (`/api/v1/nodes/{nodeId}/panel/{path}`), the list of node panels and the look at a node's certificate, and the routes that set up the VPN and the dynamic DNS name.
+
 ## [0.5.5] - Strict patterns, a valid HTTP contract, signed manifests and firmware that agrees with itself
 
 - **Patterns mean what JSON Schema says.** The Python validator used to accept a text with a line feed at the end where the server and the firmware refuse it, and to read `\d` as any digit of any script; `$` is now the end of the text and the classes are ASCII. A schema that holds a keyword with a value this validator does not understand (`"required": "x"`, a list in `items`) is refused, the schema a caller gets is its own copy, and an envelope that repeats a field name is refused.

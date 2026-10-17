@@ -64,6 +64,30 @@
    }
   },
   {
+   "name": "a sign-in from outside the house",
+   "valid": true,
+   "payload": {
+    "service": "armor-server",
+    "event": "login.remote",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "login_user": "admin",
+    "login_from": "203.0.113.9"
+   }
+  },
+  {
+   "name": "a sign-in from outside that names no one",
+   "valid": false,
+   "payload": {
+    "service": "armor-server",
+    "event": "login.remote",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "login_from": "203.0.113.9"
+   },
+   "schema_valid": true
+  },
+  {
    "name": "another service",
    "valid": false,
    "payload": {

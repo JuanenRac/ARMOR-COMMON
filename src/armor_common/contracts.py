@@ -373,6 +373,8 @@ def validate_server_alert(topic: str, payload: Mapping[str, object]) -> None:
         raise ContractError("a camera event names the camera")
     if event in ("alarm.raised", "alarm.escalated") and not {"alarm_id", "code", "severity"} <= set(payload):
         raise ContractError("an alarm event names the alarm, its code and its severity")
+    if event == "login.remote" and not {"login_user", "login_from"} <= set(payload):
+        raise ContractError("a sign-in from outside names the person and the address")
     if payload.get("silent") is True and event != "alarm.raised":
         raise ContractError("only a raised alarm is silent")
 

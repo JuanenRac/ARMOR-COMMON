@@ -27,6 +27,7 @@
         "alarm.raised",
         "alarm.escalated",
         "automation.notify",
+        "login.remote",
         "alert.test"
       ]
     },
@@ -108,6 +109,16 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 80
+    },
+    "login_user": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "login_from": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
     }
   }
 }

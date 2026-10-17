@@ -1251,6 +1251,99 @@ paths:
       summary: What the server sees of this request - the address, whether it counts as local or remote, whether the cookie is Secure, the proxy setting, the policy - to check a remote set-up from a phone on mobile data
       responses:
         '200': { description: '{ ip, origin, session_origin, protocol, forwarded_for, cookie_secure, trust_proxy, totp_policy, totp_enabled, remote_session_ttl_s, remote_idle_s, elevation_s }' }
+  /api/v1/nodes/{nodeId}/panel/{path}:
+    parameters:
+      - { name: nodeId, in: path, required: true, schema: { type: string } }
+      - { name: path, in: path, required: true, schema: { type: string } }
+    get:
+      summary: The web panel of a field node, through the server (administrators; from outside the house a new proof of identity opens it). The address of the node comes from /api/v1/admin/node-panels, never from the request; the cookie of the node stays on the server
+      responses:
+        '200': { description: 'What the node answered, with the server''s own security headers' }
+        '400': { description: 'Bad path (code bad_path)' }
+        '403': { description: 'Elevation needed, or only from the house or the VPN (code remote_policy)' }
+        '404': { description: 'The panel is not registered' }
+        '409': { description: 'The certificate of the node is not trusted yet (code not_pinned)' }
+        '502': { description: 'The node does not answer, or shows another certificate (code fingerprint_mismatch)' }
+    post:
+      summary: A write to the panel of a node (written in the audit trail, without its content); the same rules as the read, bodies up to 64 KB (8 MB for the firmware and the settings import)
+      responses:
+        '200': { description: 'What the node answered' }
+        '413': { description: 'Too large' }
+    put: { summary: 'Same as post', responses: { '200': { description: 'What the node answered' } } }
+    delete: { summary: 'Same as post', responses: { '200': { description: 'What the node answered' } } }
+  /api/v1/admin/node-panels:
+    get:
+      summary: The nodes whose panel can be opened through the server (administrators)
+      responses:
+        '200': { description: '{ panels: [{ id, address, scheme, port, fingerprint?, label? }] }' }
+  /api/v1/admin/node-panels/{id}:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string } }
+    put:
+      summary: Register or change a node panel - an address of the house (10/8, 172.16/12, 192.168/16), http or https; changing the address forgets the trusted certificate
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [address, scheme], properties: { address: { type: string }, scheme: { type: string, enum: [http, https] }, port: { type: integer }, fingerprint: { type: string }, label: { type: string } } } } } }
+      responses:
+        '200': { description: 'The panel as kept' }
+        '422': { description: 'Not valid (code invalid_panel)' }
+    delete:
+      summary: Take a node panel off the list
+      responses:
+        '204': { description: 'Removed' }
+  /api/v1/admin/node-panels/{id}/fingerprint:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string } }
+    post:
+      summary: Look at the certificate the node shows (SHA-256) and, with trust true, remember it as the one to demand
+      requestBody: { required: false, content: { application/json: { schema: { type: object, properties: { trust: { type: boolean } } } } } }
+      responses:
+        '200': { description: '{ fingerprint, trusted, previous, changed }' }
+        '502': { description: 'The node does not answer' }
+  /api/v1/admin/remote:
+    get:
+      summary: The state of the way in from outside the house - the VPN (WireGuard - set up or not, running, devices) and the dynamic DNS name - as the maintenance agent reports it, with no key and no token
+      responses:
+        '200': { description: '{ wireguard: { tool, script, configured, running, qr, peers, endpoint?, subnet?, port?, lan?, route_lan? }, ddns: { script, configured, provider?, name?, last_address? } }' }
+        '503': { description: 'The maintenance agent is not there' }
+  /api/v1/admin/remote/wireguard/setup:
+    post:
+      summary: Set up the VPN (a new proof of identity from outside)
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [endpoint], properties: { endpoint: { type: string }, port: { type: integer }, lan: { type: string }, subnet: { type: string }, route_lan: { type: string } } } } } }
+      responses:
+        '200': { description: 'The state' }
+        '422': { description: 'Not valid' }
+  /api/v1/admin/remote/wireguard/peers:
+    post:
+      summary: Add a device to the VPN and get its configuration (it holds a private key; never cached)
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [name], properties: { name: { type: string }, full_tunnel: { type: boolean } } } } } }
+      responses:
+        '201': { description: '{ name, config, qr_svg }' }
+  /api/v1/admin/remote/wireguard/peers/{name}:
+    parameters:
+      - { name: name, in: path, required: true, schema: { type: string } }
+    get:
+      summary: The configuration of a device again
+      responses:
+        '200': { description: '{ name, config, qr_svg }' }
+    delete:
+      summary: Take a device off the VPN
+      responses:
+        '200': { description: '{ ok }' }
+  /api/v1/admin/remote/ddns/setup:
+    post:
+      summary: Keep a name pointing at the house (DuckDNS, Cloudflare or any address to call); the token is not written in the audit trail
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [provider], properties: { provider: { type: string, enum: [duckdns, cloudflare, url] }, domain: { type: string }, token: { type: string }, zone: { type: string }, record_name: { type: string }, url: { type: string } } } } } }
+      responses:
+        '200': { description: 'The state' }
+  /api/v1/admin/remote/ddns/update:
+    post:
+      summary: Tell the provider the current address now
+      responses:
+        '200': { description: 'The state' }
+  /api/v1/admin/remote/ddns/remove:
+    post:
+      summary: Stop updating the name
+      responses:
+        '200': { description: 'The state' }
   /api/v1/operator/session:
     post:
       summary: Exchange the operator token for a session cookie
