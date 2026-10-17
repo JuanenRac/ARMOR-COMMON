@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: A.R.M.O.R. Server API
-  version: 0.6.1
+  version: 0.6.2
   description: >-
     The HTTP surface of ARMOR-SERVER. Message bodies reference the JSON Schemas
     published in src/armor_common/schemas, which are the single source of truth.
@@ -828,7 +828,7 @@ paths:
         '200': { description: The summary }
   /api/v1/system/connection:
     get:
-      summary: Where the server listens and where Studio is served - the active address and ports, the saved ones and whether a restart is needed (an administrator)
+      summary: Where the server listens and where Studio is served - the active address and ports, the saved ones and whether a restart is needed, and whether the link to the broker is encrypted with the fingerprint of the pinned authority (mqtt_tls) (an administrator)
       security: [{ admin: [] }]
       responses:
         '200': { description: The active and the saved connection settings }

@@ -506,6 +506,24 @@
         "ARMOR-HMI": "core/admin_sources.hpp",
         "ARMOR-ALARM": "core/admin_sources.hpp"
       }
+    },
+    "core/mqtt_tls.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/mqtt_tls.hpp",
+        "ARMOR-ELECTRICAL": "core/mqtt_tls.hpp",
+        "ARMOR-RADAR": "main/core/mqtt_tls.hpp",
+        "ARMOR-HMI": "core/mqtt_tls.hpp",
+        "ARMOR-ALARM": "core/mqtt_tls.hpp"
+      }
+    },
+    "tests/test_mqtt_tls.cpp": {
+      "targets": {
+        "ARMOR-SOLAR": "tests/test_mqtt_tls.cpp",
+        "ARMOR-ELECTRICAL": "tests/test_mqtt_tls.cpp",
+        "ARMOR-RADAR": "tests/test_mqtt_tls.cpp",
+        "ARMOR-HMI": "tests/test_mqtt_tls.cpp",
+        "ARMOR-ALARM": "tests/test_mqtt_tls.cpp"
+      }
     }
   }
 }
