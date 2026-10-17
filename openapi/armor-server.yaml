@@ -1180,6 +1180,77 @@ paths:
       requestBody: { required: true, content: { 'audio/L16;rate=16000': { schema: { type: string, format: binary } } } }
       responses:
         '200': { description: 'See /api/v1/voice/turn' }
+  /api/v1/studio/session/totp:
+    post:
+      summary: The second step of the sign-in - the challenge the first step gave and a code of the authenticator app (or a recovery code); the session cookie is set only now
+      security: []
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [challenge, code], properties: { challenge: { type: string }, code: { type: string } } } } } }
+      responses:
+        '201': { description: 'Signed in: { expiresAt, user }' }
+        '401': { description: 'The code is not right, or the challenge expired (code bad_code or challenge_expired)' }
+        '429': { description: 'Too many wrong codes (code totp_locked)' }
+  /api/v1/studio/sessions:
+    get:
+      summary: The sessions of the signed-in person (when, from where - local or remote -, which browser), the current one marked
+      responses:
+        '200': { description: '{ sessions: [{ id, created, last_seen, origin, ip, agent, current }] }' }
+  /api/v1/studio/sessions/{id}:
+    delete:
+      summary: End one session of the person by its short id
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '204': { description: 'Ended' }
+        '404': { description: 'No such session' }
+  /api/v1/studio/sessions/end-others:
+    post:
+      summary: End every session of the person except this one
+      responses:
+        '204': { description: 'Ended' }
+  /api/v1/studio/elevate:
+    post:
+      summary: A new proof of identity (the password, or a code when the second factor is on and the session is remote) that lets critical actions through for a few minutes
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { password: { type: string }, code: { type: string } } } } } }
+      responses:
+        '200': { description: '{ elevated_for_s }' }
+        '401': { description: 'Not right (code bad_proof)' }
+  /api/v1/studio/totp:
+    get:
+      summary: Whether the second factor is on for the person, how many recovery codes are left, and the policy of the server
+      responses:
+        '200': { description: '{ enabled, recovery_left, policy }' }
+    delete:
+      summary: Turn the second factor off (needs the password); the other sessions end
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [password], properties: { password: { type: string } } } } } }
+      responses:
+        '204': { description: 'Off' }
+        '401': { description: 'The password is not right' }
+  /api/v1/studio/totp/setup:
+    post:
+      summary: Start the second factor - needs the password; answers the secret and the otpauth address (a QR for the authenticator app)
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [password], properties: { password: { type: string } } } } } }
+      responses:
+        '200': { description: '{ secret, uri }' }
+        '401': { description: 'The password is not right' }
+        '409': { description: 'Already on' }
+  /api/v1/studio/totp/enable:
+    post:
+      summary: Confirm the second factor with the first code of the app; answers the ten recovery codes, shown once
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [code], properties: { code: { type: string } } } } } }
+      responses:
+        '200': { description: '{ enabled: true, recovery_codes }' }
+        '401': { description: 'The code is not right' }
+  /api/v1/users/{id}/totp:
+    delete:
+      summary: An administrator turns off the second factor of a user who lost the phone and the recovery codes
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '204': { description: 'Off' }
+        '404': { description: 'No such user' }
+  /api/v1/remote/check:
+    get:
+      summary: What the server sees of this request - the address, whether it counts as local or remote, whether the cookie is Secure, the proxy setting, the policy - to check a remote set-up from a phone on mobile data
+      responses:
+        '200': { description: '{ ip, origin, session_origin, protocol, forwarded_for, cookie_secure, trust_proxy, totp_policy, totp_enabled, remote_session_ttl_s, remote_idle_s, elevation_s }' }
   /api/v1/operator/session:
     post:
       summary: Exchange the operator token for a session cookie
