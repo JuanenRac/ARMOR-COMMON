@@ -96,6 +96,7 @@ export type SolarInverter = {
   pv_charging: boolean;
   load_on: boolean;
   warnings: string[];
+  warnings_known?: boolean;
   pv2_v?: number;
   pv2_a?: number;
   pv2_w?: number;
