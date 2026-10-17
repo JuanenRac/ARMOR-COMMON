@@ -1,0 +1,111 @@
+{
+ "kind": "alarm_zone_feed",
+ "vectors": [
+  {
+   "name": "a closed door",
+   "valid": true,
+   "payload": {
+    "zone": "front-door",
+    "state": "normal",
+    "battery_low": false
+   }
+  },
+  {
+   "name": "a triggered sensor with a low battery",
+   "valid": true,
+   "payload": {
+    "zone": "front-door",
+    "state": "triggered",
+    "battery_low": true
+   }
+  },
+  {
+   "name": "a tampered sensor",
+   "valid": true,
+   "payload": {
+    "zone": "front-door",
+    "state": "tamper",
+    "battery_low": false
+   }
+  },
+  {
+   "name": "a zone name of 32 characters",
+   "valid": true,
+   "payload": {
+    "zone": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+    "state": "triggered",
+    "battery_low": false
+   }
+  },
+  {
+   "name": "a zone name of 33 characters",
+   "valid": false,
+   "payload": {
+    "zone": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+    "state": "triggered",
+    "battery_low": false
+   }
+  },
+  {
+   "name": "an uppercase zone",
+   "valid": false,
+   "payload": {
+    "zone": "Front",
+    "state": "triggered",
+    "battery_low": false
+   }
+  },
+  {
+   "name": "a line feed at the end of the zone",
+   "valid": false,
+   "payload": {
+    "zone": "front\n",
+    "state": "triggered",
+    "battery_low": false
+   }
+  },
+  {
+   "name": "a state that is not one",
+   "valid": false,
+   "payload": {
+    "zone": "front-door",
+    "state": "open",
+    "battery_low": false
+   }
+  },
+  {
+   "name": "a battery that is not a flag",
+   "valid": false,
+   "payload": {
+    "zone": "front-door",
+    "state": "triggered",
+    "battery_low": "no"
+   }
+  },
+  {
+   "name": "the node repeated inside",
+   "valid": false,
+   "payload": {
+    "zone": "front-door",
+    "state": "triggered",
+    "battery_low": false,
+    "node_id": "alarm-1"
+   }
+  },
+  {
+   "name": "a missing battery flag",
+   "valid": false,
+   "payload": {
+    "zone": "front-door",
+    "state": "triggered"
+   }
+  },
+  {
+   "name": "not an object",
+   "valid": false,
+   "payload": [
+    1
+   ]
+  }
+ ]
+}

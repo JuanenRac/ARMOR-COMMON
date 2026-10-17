@@ -1,0 +1,335 @@
+{
+ "kind": "network_orders",
+ "vectors": [
+  {
+   "name": "one order about a device",
+   "valid": true,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c0123456789",
+      "type": "ping",
+      "device_id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1"
+     }
+    ]
+   }
+  },
+  {
+   "name": "no order waiting",
+   "valid": true,
+   "payload": {
+    "accepted": true,
+    "commands": []
+   }
+  },
+  {
+   "name": "a sweep",
+   "valid": true,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c1",
+      "type": "scan_now"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an inspection with a sealed login",
+   "valid": true,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c0123456789",
+      "type": "inspect",
+      "device_id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1",
+      "port": 80,
+      "auth_sealed": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a wake-up with the MAC",
+   "valid": true,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c0123456789",
+      "type": "wake",
+      "device_id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1",
+      "mac": "14:2e:5e:86:d9:62"
+     }
+    ]
+   }
+  },
+  {
+   "name": "four orders, the most at once",
+   "valid": true,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c0",
+      "type": "scan_now"
+     },
+     {
+      "id": "c1",
+      "type": "scan_now"
+     },
+     {
+      "id": "c2",
+      "type": "scan_now"
+     },
+     {
+      "id": "c3",
+      "type": "scan_now"
+     }
+    ]
+   }
+  },
+  {
+   "name": "five orders",
+   "valid": false,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c0",
+      "type": "scan_now"
+     },
+     {
+      "id": "c1",
+      "type": "scan_now"
+     },
+     {
+      "id": "c2",
+      "type": "scan_now"
+     },
+     {
+      "id": "c3",
+      "type": "scan_now"
+     },
+     {
+      "id": "c4",
+      "type": "scan_now"
+     }
+    ]
+   }
+  },
+  {
+   "name": "not accepted",
+   "valid": false,
+   "payload": {
+    "accepted": false,
+    "commands": [
+     {
+      "id": "c0123456789",
+      "type": "ping",
+      "device_id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an unknown order",
+   "valid": false,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c0123456789",
+      "type": "format",
+      "device_id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an address with a leading zero",
+   "valid": false,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c0123456789",
+      "type": "ping",
+      "device_id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.01"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a port of 0",
+   "valid": false,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c0123456789",
+      "type": "http",
+      "device_id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1",
+      "port": 0
+     }
+    ]
+   }
+  },
+  {
+   "name": "a sealed login in clear text",
+   "valid": false,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c0123456789",
+      "type": "inspect",
+      "device_id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1",
+      "auth": "admin:1234"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a sealed login that is too short",
+   "valid": false,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c0123456789",
+      "type": "inspect",
+      "device_id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1",
+      "auth_sealed": "AAAA"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an unknown field",
+   "valid": false,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c0123456789",
+      "type": "ping",
+      "device_id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1"
+     }
+    ],
+    "extra": true
+   }
+  },
+  {
+   "name": "an order about a device that names none",
+   "valid": false,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c1",
+      "type": "ping"
+     }
+    ]
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a sweep about a device",
+   "valid": false,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c0123456789",
+      "type": "scan_now",
+      "device_id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1"
+     }
+    ]
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a wake-up without a MAC",
+   "valid": false,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c0123456789",
+      "type": "wake",
+      "device_id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1"
+     }
+    ]
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a port on a ping",
+   "valid": false,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c0123456789",
+      "type": "ping",
+      "device_id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1",
+      "port": 80
+     }
+    ]
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a sealed login on a ping",
+   "valid": false,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c0123456789",
+      "type": "ping",
+      "device_id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1",
+      "auth_sealed": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+     }
+    ]
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an order twice",
+   "valid": false,
+   "payload": {
+    "accepted": true,
+    "commands": [
+     {
+      "id": "c1",
+      "type": "scan_now"
+     },
+     {
+      "id": "c1",
+      "type": "scan_now"
+     }
+    ]
+   },
+   "schema_valid": true
+  }
+ ]
+}

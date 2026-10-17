@@ -1,0 +1,212 @@
+{
+ "kind": "server_alert",
+ "vectors": [
+  {
+   "name": "a device alarm",
+   "valid": true,
+   "payload": {
+    "service": "armor-server",
+    "event": "alarm.raised",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "alarm_id": "a1",
+    "severity": "critical",
+    "code": "smoke",
+    "device_id": "smoke-1"
+   }
+  },
+  {
+   "name": "a node that went high",
+   "valid": true,
+   "payload": {
+    "service": "armor-server",
+    "event": "alert.raised",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "node_id": "north-1",
+    "targets": 2
+   }
+  },
+  {
+   "name": "a camera that went offline",
+   "valid": true,
+   "payload": {
+    "service": "armor-server",
+    "event": "camera.offline",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "camera_id": "cam-01"
+   }
+  },
+  {
+   "name": "a test",
+   "valid": true,
+   "payload": {
+    "service": "armor-server",
+    "event": "alert.test",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "disarmed"
+   }
+  },
+  {
+   "name": "a silent alarm",
+   "valid": true,
+   "payload": {
+    "service": "armor-server",
+    "event": "alarm.raised",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "alarm_id": "a2",
+    "severity": "critical",
+    "code": "duress_disarm",
+    "alarm_node_id": "alarm-1",
+    "silent": true
+   }
+  },
+  {
+   "name": "another service",
+   "valid": false,
+   "payload": {
+    "service": "someone-else",
+    "event": "alarm.raised",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "alarm_id": "a1",
+    "severity": "critical",
+    "code": "smoke",
+    "device_id": "smoke-1"
+   }
+  },
+  {
+   "name": "an event that does not exist",
+   "valid": false,
+   "payload": {
+    "service": "armor-server",
+    "event": "alarm.imagined",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "alarm_id": "a1",
+    "severity": "critical",
+    "code": "smoke",
+    "device_id": "smoke-1"
+   }
+  },
+  {
+   "name": "a mode that does not exist",
+   "valid": false,
+   "payload": {
+    "service": "armor-server",
+    "event": "alarm.raised",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed-away",
+    "alarm_id": "a1",
+    "severity": "critical",
+    "code": "smoke",
+    "device_id": "smoke-1"
+   }
+  },
+  {
+   "name": "a severity that does not exist",
+   "valid": false,
+   "payload": {
+    "service": "armor-server",
+    "event": "alarm.raised",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "alarm_id": "a1",
+    "severity": "urgent",
+    "code": "smoke",
+    "device_id": "smoke-1"
+   }
+  },
+  {
+   "name": "silent set to false",
+   "valid": false,
+   "payload": {
+    "service": "armor-server",
+    "event": "alarm.raised",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "alarm_id": "a1",
+    "severity": "critical",
+    "code": "smoke",
+    "device_id": "smoke-1",
+    "silent": false
+   }
+  },
+  {
+   "name": "an unknown field",
+   "valid": false,
+   "payload": {
+    "service": "armor-server",
+    "event": "alarm.raised",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "alarm_id": "a1",
+    "severity": "critical",
+    "code": "smoke",
+    "device_id": "smoke-1",
+    "extra": 1
+   }
+  },
+  {
+   "name": "a missing time",
+   "valid": false,
+   "payload": {
+    "service": "armor-server",
+    "event": "alarm.raised",
+    "mode": "armed",
+    "alarm_id": "a1",
+    "severity": "critical",
+    "code": "smoke",
+    "device_id": "smoke-1"
+   }
+  },
+  {
+   "name": "a node event that names no node",
+   "valid": false,
+   "payload": {
+    "service": "armor-server",
+    "event": "node.offline",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a camera event that names no camera",
+   "valid": false,
+   "payload": {
+    "service": "armor-server",
+    "event": "camera.offline",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an alarm that does not say which",
+   "valid": false,
+   "payload": {
+    "service": "armor-server",
+    "event": "alarm.raised",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "device_id": "smoke-1"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a silent test",
+   "valid": false,
+   "payload": {
+    "service": "armor-server",
+    "event": "alert.test",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "silent": true
+   },
+   "schema_valid": true
+  }
+ ]
+}

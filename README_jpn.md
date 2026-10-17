@@ -21,14 +21,14 @@
   <img src="https://img.shields.io/badge/License-GPL%203.0-blue.svg" alt="GPL 3.0">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-459-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Version-0.5.4-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Vectors-523-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Version-0.5.5-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
 ---
 
-**正直さのチェック - 今日動いているもの:** スキーマ（テレメトリ、状態、コマンド、ノード情報、ソーラーのインバーターとバッテリー、電気、コマンドと結果を含む警報、ネットワーク）、Python の検証器、459 個の適合ベクトル、生成された TypeScript と Kotlin の型、サーバーの OpenAPI ファイル（135 パス）、5 つのノードが共有するファームウェア基盤、共通のプロジェクトランチャーは実在し、テストされています（42 件）。Kotlin ファイルは生成されますが ARMOR-ANDROID-CONTROL では**まだ使われていません**（独自の解析を保持）。`set_thresholds` コマンドは `sensitivity` フィールド 1 つだけを持ちます。実際のレーダーパラメーターはファームウェアができるまで定義できないためです。
+**正直さのチェック - 今日動いているもの:** スキーマ（テレメトリ、状態、コマンド、ノード情報、ソーラーのインバーターとバッテリー、電気、コマンドと結果を含む警報、ネットワーク）、Python の検証器、523 個の適合ベクトル、生成された TypeScript と Kotlin の型、サーバーの OpenAPI ファイル（136 パス）、5 つのノードが共有するファームウェア基盤、共通のプロジェクトランチャーは実在し、テストされています（79 件）。Kotlin ファイルは生成されますが ARMOR-ANDROID-CONTROL では**まだ使われていません**（独自の解析を保持）。`set_thresholds` コマンドは `sensitivity` フィールド 1 つだけを持ちます。実際のレーダーパラメーターはファームウェアができるまで定義できないためです。
 
 ---
 
@@ -36,11 +36,11 @@
 
 | | |
 |---|---|
-| バージョン | `0.5.4` |
+| バージョン | `0.5.5` |
 | 成熟度 | 確立 |
-| テスト | 42 (`python -m unittest discover -s tests`) and 459 conformance vectors |
+| テスト | 79 (`python -m unittest discover -s tests`) and 523 conformance vectors |
 | 技術 | Python 3.11+ / JSON Schema / OpenAPI |
-| 実機での確認 | そのメッセージは、実際のレーダーノード、CM5 サーバー、Studio、Android アプリが毎日話しているもので、他のノードのメッセージは代替に対して検査されます |
+| 実機での確認 | 基板上で動いたのはレーダーノードだけです。そのメッセージは CM5 サーバー、Studio、Android アプリが毎日話しているもので、他のノードのメッセージは代替に対して検査されます |
 
 ## 🎯 概要
 
@@ -48,10 +48,10 @@
 
 * **唯一の信頼できる情報源：**`src/armor_common/schemas/` の JSON Schema。テレメトリ、状態、コマンド、ノード情報、2 つのソーラーメッセージ（インバーター、セルと容量を含むバッテリー）、電気メッセージ（測定値、コマンド、結果）、警報メッセージ（状態、コマンド、結果）、ネットワークメッセージ。未知のフィールドや不可能な組み合わせは拒否されます。
 * **ルールを飛ばせない検証器：**スキーマを直接解釈し、実装していないキーワードを使うスキーマを拒否します。
-* **適合ベクトル：**受理と拒否の 459 個のペイロードをすべての実装（ここでは Python、ARMOR-SERVER では TypeScript、ファームウェアリポジトリの検査）が実行するため、ずれがあればビルドが失敗します。
+* **適合ベクトル：**受理と拒否の 523 個のペイロードをすべての実装（ここでは Python、ARMOR-SERVER では TypeScript、ファームウェアリポジトリの検査）が実行するため、ずれがあればビルドが失敗します。
 * **生成されるクライアント：**TypeScript と Kotlin の型はスキーマから作られます（`tools/generate_types.py --check` で最新に保ちます）。
-* **HTTP コントラクト：**`openapi/armor-server-0.4.3.yaml` はサーバーのすべてのルート（135 パス）、そのアクセスルール、スキーマを記述し、ARMOR-SERVER には抜けがないことのテストがあります。
-* **ファームウェア基盤：**`firmware_base/` は 5 つのノードが共有する各ファイル（ネットワーク、設定とユーザー、Web パネルのサーバーとログイン、HTTPS 証明書、ログ、PIN ペアリング付き Bluetooth、署名付きアップデートの検査、時計、Zigbee ブリッジ、リレー）を 1 か所に保持し、`tools/sync_firmware_base.py` が各ノードに書き込んでコピーのずれがないか検査します（[ガイド](docs/FIRMWARE_BASE.md)、[署名付きファームウェア](docs/SIGNED_FIRMWARE.md)）。
+* **HTTP コントラクト：**`openapi/armor-server.yaml` はサーバーのすべてのルート（136 パス）、そのアクセスルール、スキーマを記述し、ARMOR-SERVER には抜けがないことのテストがあります。
+* **ファームウェア基盤：**`firmware_base/` は 5 つのノードが共有する各ファイル（ネットワーク、設定とユーザー、Web パネルのサーバーとログイン、HTTPS 証明書、ログ、PIN ペアリング付き Bluetooth、署名付きアップデートの検査、リレーと Zigbee は備えるノードのみ）を 1 か所に保持し、`tools/sync_firmware_base.py` が各ノードに書き込んでコピーのずれがないか検査します（[ガイド](docs/FIRMWARE_BASE.md)、[署名付きファームウェア](docs/SIGNED_FIRMWARE.md)）。
 * **共通ランチャー：**`tools/armor_project_tool.py` はファミリーの全リポジトリに同じ `build`、`build-test`、`run` の流れを、`tools/armor_ci_validate.py` に同じ CI 検査を提供します。
 
 ## 🧩 A.R.M.O.R. での役割
@@ -68,19 +68,19 @@ flowchart LR
     V --> P
     V --> T["ARMOR-SERVER tests"]
     V --> X["ARMOR-SOLAR and ARMOR-ELECTRICAL checks"]
-    S --> O["OpenAPI 0.2.0"]
+    S --> O["OpenAPI (HTTP contract)"]
 ```
 
 ## 📂 リポジトリの構成
 
 ```text
 ARMOR-COMMON/
-├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery, electrical)
+├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (the node messages, the alarm, electrical and network ones, the relay, zone-feed, alert and orders ones)
 ├── conformance/        accepted and rejected payloads shared by every implementation
-├── firmware_base/      the firmware that ARMOR-RADAR, ARMOR-SOLAR and ARMOR-ELECTRICAL share, once (synced into each by tools/sync_firmware_base.py)
+├── firmware_base/      the firmware that the five nodes share, once (synced into each by tools/sync_firmware_base.py)
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
-├── openapi/            armor-server-0.2.0.yaml
-├── tools/              armor_project_tool.py, generate_types.py, make_conformance.py, sync_firmware_base.py
+├── openapi/            armor-server.yaml
+├── tools/              armor_project_tool.py, generate_types.py, make_conformance.py, sync_firmware_base.py, release_firmware.py, firmware_sign.mjs
 ├── tests/              unit tests and conformance runner
 └── docs/               contracts guide, the shared firmware base
 ```
@@ -91,9 +91,9 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 42 tests, 459 conformance vectors
+python -m unittest discover -s tests      # 79 tests, 523 conformance vectors
 python tools/generate_types.py --check    # generated types are current
-python tools/make_conformance.py          # regenerate the vectors after editing the case list
+python tools/make_conformance.py          # regenerate the vectors after editing the case list (--check: they are current)
 python tools/sync_firmware_base.py check  # the firmware the node projects share has not drifted (see docs/FIRMWARE_BASE.md)
 ```
 

@@ -21,14 +21,14 @@
   <img src="https://img.shields.io/badge/License-GPL%203.0-blue.svg" alt="GPL 3.0">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-459-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Version-0.5.4-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Vectors-523-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Version-0.5.5-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
 ---
 
-**诚实性检查 - 今天真正能运行的部分:** 各模式（遥测、健康、命令、节点信息、太阳能逆变器和电池、电气、带命令和结果的报警、网络）、Python 验证器、459 个一致性向量、生成的 TypeScript 和 Kotlin 类型、服务器的 OpenAPI 文件（135 个路径）、五个节点共用的固件基础以及共享的项目启动器都是真实的并经过测试（42 个测试）。Kotlin 文件已生成，但 ARMOR-ANDROID-CONTROL **尚未使用**（它保留自己的解析），`set_thresholds` 命令只带一个 `sensitivity` 字段，因为真实的雷达参数要等固件存在才能确定。
+**诚实性检查 - 今天真正能运行的部分:** 各模式（遥测、健康、命令、节点信息、太阳能逆变器和电池、电气、带命令和结果的报警、网络）、Python 验证器、523 个一致性向量、生成的 TypeScript 和 Kotlin 类型、服务器的 OpenAPI 文件（136 个路径）、五个节点共用的固件基础以及共享的项目启动器都是真实的并经过测试（79 个测试）。Kotlin 文件已生成，但 ARMOR-ANDROID-CONTROL **尚未使用**（它保留自己的解析），`set_thresholds` 命令只带一个 `sensitivity` 字段，因为真实的雷达参数要等固件存在才能确定。
 
 ---
 
@@ -36,11 +36,11 @@
 
 | | |
 |---|---|
-| 版本 | `0.5.4` |
+| 版本 | `0.5.5` |
 | 成熟度 | 成熟 |
-| 测试 | 42 (`python -m unittest discover -s tests`) and 459 conformance vectors |
+| 测试 | 79 (`python -m unittest discover -s tests`) and 523 conformance vectors |
 | 技术栈 | Python 3.11+ / JSON Schema / OpenAPI |
-| 真实硬件 | 它的消息就是真实的雷达节点、CM5 服务器、Studio 和 Android 应用每天使用的消息；其他节点的消息对照替身检查 |
+| 真实硬件 | 只有雷达节点在电路板上运行过：它的消息就是 CM5 服务器、Studio 和 Android 应用每天使用的消息；其他节点的消息对照替身检查 |
 
 ## 🎯 概述
 
@@ -48,10 +48,10 @@
 
 * **唯一的事实来源：**`src/armor_common/schemas/` 中的 JSON Schema，涵盖遥测、健康、命令、节点信息、两种太阳能消息（逆变器、含电芯和容量的电池）、电气消息（读数、命令、结果）、报警消息（状态、命令、结果）和网络消息。未知字段和不可能的组合会被拒绝。
 * **无法跳过规则的验证器：**它直接解释模式，并拒绝使用了它未实现的关键字的模式。
-* **一致性向量：**459 个被接受和被拒绝的负载，由每个实现运行（这里是 Python，ARMOR-SERVER 中是 TypeScript，以及固件仓库的检查），因此偏差会让构建失败。
+* **一致性向量：**523 个被接受和被拒绝的负载，由每个实现运行（这里是 Python，ARMOR-SERVER 中是 TypeScript，以及固件仓库的检查），因此偏差会让构建失败。
 * **生成的客户端：**TypeScript 和 Kotlin 类型来自模式（`tools/generate_types.py --check` 保持其最新）。
-* **HTTP 契约：**`openapi/armor-server-0.4.3.yaml` 描述服务器的每条路由（135 个路径）、其访问规则和模式，ARMOR-SERVER 有测试确保没有遗漏。
-* **固件基础：**`firmware_base/` 把五个节点共用的每个文件只保存一次（网络、设置和用户、网页面板服务器和登录、HTTPS 证书、日志、带 PIN 配对的蓝牙、签名更新检查、时钟、Zigbee 桥、继电器）；`tools/sync_firmware_base.py` 把它写入每个节点并检查没有副本偏离（[指南](docs/FIRMWARE_BASE.md)，[签名固件](docs/SIGNED_FIRMWARE.md)）。
+* **HTTP 契约：**`openapi/armor-server.yaml` 描述服务器的每条路由（136 个路径）、其访问规则和模式，ARMOR-SERVER 有测试确保没有遗漏。
+* **固件基础：**`firmware_base/` 把五个节点共用的每个文件只保存一次（网络、设置和用户、网页面板服务器和登录、HTTPS 证书、日志、带 PIN 配对的蓝牙、签名更新检查；继电器和 Zigbee 仅限具备它们的节点）；`tools/sync_firmware_base.py` 把它写入每个节点并检查没有副本偏离（[指南](docs/FIRMWARE_BASE.md)，[签名固件](docs/SIGNED_FIRMWARE.md)）。
 * **共享启动器：**`tools/armor_project_tool.py` 为家族的每个仓库提供相同的 `build`、`build-test` 和 `run` 流程，`tools/armor_ci_validate.py` 提供相同的 CI 检查。
 
 ## 🧩 在 A.R.M.O.R. 中的角色
@@ -68,19 +68,19 @@ flowchart LR
     V --> P
     V --> T["ARMOR-SERVER tests"]
     V --> X["ARMOR-SOLAR and ARMOR-ELECTRICAL checks"]
-    S --> O["OpenAPI 0.2.0"]
+    S --> O["OpenAPI (HTTP contract)"]
 ```
 
 ## 📂 仓库结构
 
 ```text
 ARMOR-COMMON/
-├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery, electrical)
+├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (the node messages, the alarm, electrical and network ones, the relay, zone-feed, alert and orders ones)
 ├── conformance/        accepted and rejected payloads shared by every implementation
-├── firmware_base/      the firmware that ARMOR-RADAR, ARMOR-SOLAR and ARMOR-ELECTRICAL share, once (synced into each by tools/sync_firmware_base.py)
+├── firmware_base/      the firmware that the five nodes share, once (synced into each by tools/sync_firmware_base.py)
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
-├── openapi/            armor-server-0.2.0.yaml
-├── tools/              armor_project_tool.py, generate_types.py, make_conformance.py, sync_firmware_base.py
+├── openapi/            armor-server.yaml
+├── tools/              armor_project_tool.py, generate_types.py, make_conformance.py, sync_firmware_base.py, release_firmware.py, firmware_sign.mjs
 ├── tests/              unit tests and conformance runner
 └── docs/               contracts guide, the shared firmware base
 ```
@@ -91,9 +91,9 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 42 tests, 459 conformance vectors
+python -m unittest discover -s tests      # 79 tests, 523 conformance vectors
 python tools/generate_types.py --check    # generated types are current
-python tools/make_conformance.py          # regenerate the vectors after editing the case list
+python tools/make_conformance.py          # regenerate the vectors after editing the case list (--check: they are current)
 python tools/sync_firmware_base.py check  # the firmware the node projects share has not drifted (see docs/FIRMWARE_BASE.md)
 ```
 

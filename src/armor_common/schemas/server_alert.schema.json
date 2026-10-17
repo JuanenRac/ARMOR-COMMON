@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/server-alert-0.1.0.json",
+  "title": "A.R.M.O.R. alert of the server",
+  "description": "What ARMOR-SERVER publishes on armor/server/alert (never retained) and sends to its webhook when something is worth waking someone for. A silent alarm (a duress disarm) never goes to the broker, so `silent` is never seen on the topic; it exists for the places that do carry silent news.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "service",
+    "event",
+    "at",
+    "mode"
+  ],
+  "properties": {
+    "service": {
+      "type": "string",
+      "const": "armor-server"
+    },
+    "event": {
+      "type": "string",
+      "enum": [
+        "alert.raised",
+        "alert.cleared",
+        "node.offline",
+        "node.stale",
+        "camera.offline",
+        "alarm.raised",
+        "alarm.escalated",
+        "automation.notify",
+        "alert.test"
+      ]
+    },
+    "at": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "armed",
+        "disarmed"
+      ]
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "camera_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "targets": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "minutes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "alarm_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "warning"
+      ]
+    },
+    "code": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,63}$"
+    },
+    "device_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "solar_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "electrical_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "alarm_node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "network_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "silent": {
+      "type": "boolean",
+      "const": true
+    },
+    "automation": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    }
+  }
+}

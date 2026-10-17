@@ -21,14 +21,14 @@
   <img src="https://img.shields.io/badge/License-GPL%203.0-blue.svg" alt="GPL 3.0">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-459-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Version-0.5.4-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Vectors-523-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Version-0.5.5-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
 ---
 
-**Honesty check - what runs today:** The schemas (telemetry, health, command, node information, solar inverter and battery, electrical, alarm with its command and result, and network), the Python validator, the 459 conformance vectors, the generated TypeScript and Kotlin types, the OpenAPI file of the server (135 paths), the firmware base shared by the five nodes and the shared project launcher are real and tested (42 tests). The Kotlin file is generated but **not yet consumed** by ARMOR-ANDROID-CONTROL (which keeps its own parsing), and the `set_thresholds` command carries a single `sensitivity` field because the real radar parameters are not defined until firmware exists.
+**Honesty check - what runs today:** The schemas (telemetry, health, command, node information, solar inverter and battery, electrical, alarm with its command and result, and network), the Python validator, the 523 conformance vectors, the generated TypeScript and Kotlin types, the OpenAPI file of the server (136 paths), the firmware base shared by the five nodes and the shared project launcher are real and tested (79 tests). The Kotlin file is generated but **not yet consumed** by ARMOR-ANDROID-CONTROL (which keeps its own parsing), and the `set_thresholds` command carries a single `sensitivity` field because the real radar parameters are not defined until firmware exists.
 
 ---
 
@@ -36,11 +36,11 @@
 
 | | |
 |---|---|
-| Version | `0.5.4` |
+| Version | `0.5.5` |
 | Maturity | Established |
-| Tests | 42 (`python -m unittest discover -s tests`) and 459 conformance vectors |
+| Tests | 79 (`python -m unittest discover -s tests`) and 523 conformance vectors |
 | Stack | Python 3.11+ / JSON Schema / OpenAPI |
-| On real hardware | Its messages are the ones the real radar node, the CM5 server, Studio and the Android app speak every day; the other nodes' messages are checked against stand-ins |
+| On real hardware | Only the radar node has run on a board: its messages are the ones the CM5 server, Studio and the Android app speak every day; the messages of the other nodes are checked against stand-ins |
 
 ## 🎯 Overview
 
@@ -48,10 +48,10 @@
 
 * **One source of truth:** JSON Schemas in `src/armor_common/schemas/` for telemetry, health, command, node information, the two solar messages (inverter, battery with cells and capacities), the electrical messages (readings, command, result), the alarm messages (state, command, result) and the network message. Unknown fields and impossible combinations are refused.
 * **A validator that cannot skip a rule:** it interprets the schema directly and refuses a schema that uses a keyword it does not implement.
-* **Conformance vectors:** 459 accepted and rejected payloads run by every implementation (Python here, TypeScript in ARMOR-SERVER, the checks of the firmware repositories), so drift fails a build.
+* **Conformance vectors:** 523 accepted and rejected payloads run by every implementation (Python here, TypeScript in ARMOR-SERVER, the checks of the firmware repositories), so drift fails a build.
 * **Generated clients:** TypeScript and Kotlin types come from the schemas (`tools/generate_types.py --check` keeps them current).
-* **HTTP contract:** `openapi/armor-server-0.4.3.yaml` describes every server route (135 paths), its access rule and its schema, and ARMOR-SERVER has a test that no route is missing from it.
-* **Firmware base:** `firmware_base/` keeps each file the five nodes share (network, settings and users, web panel server and login, HTTPS certificate, log, Bluetooth with PIN pairing, signed-update check, clock, Zigbee bridge, relays) once; `tools/sync_firmware_base.py` writes it into every node and checks that no copy drifted ([the guide](docs/FIRMWARE_BASE.md), [signed firmware](docs/SIGNED_FIRMWARE.md)).
+* **HTTP contract:** `openapi/armor-server.yaml` describes every server route (136 paths), its access rule and its schema, and ARMOR-SERVER has a test that no route is missing from it.
+* **Firmware base:** `firmware_base/` keeps each file the five nodes share (network, settings and users, web panel server and login, HTTPS certificate, log, Bluetooth with PIN pairing, signed-update check; relays and Zigbee for the nodes that have them) once; `tools/sync_firmware_base.py` writes it into every node and checks that no copy drifted ([the guide](docs/FIRMWARE_BASE.md), [signed firmware](docs/SIGNED_FIRMWARE.md)).
 * **Shared launcher:** `tools/armor_project_tool.py` gives every repository of the family the same `build`, `build-test` and `run` workflow, and `tools/armor_ci_validate.py` the same CI checks.
 
 ## 🧩 Role in A.R.M.O.R.
@@ -68,19 +68,19 @@ flowchart LR
     V --> P
     V --> T["ARMOR-SERVER tests"]
     V --> X["ARMOR-SOLAR and ARMOR-ELECTRICAL checks"]
-    S --> O["OpenAPI 0.2.0"]
+    S --> O["OpenAPI (HTTP contract)"]
 ```
 
 ## 📂 Repository Structure
 
 ```text
 ARMOR-COMMON/
-├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (telemetry, health, command, info, solar_inverter, solar_battery, electrical)
+├── src/armor_common/   contracts, schema (validator), envelope, schemas/*.json (the node messages, the alarm, electrical and network ones, the relay, zone-feed, alert and orders ones)
 ├── conformance/        accepted and rejected payloads shared by every implementation
-├── firmware_base/      the firmware that ARMOR-RADAR, ARMOR-SOLAR and ARMOR-ELECTRICAL share, once (synced into each by tools/sync_firmware_base.py)
+├── firmware_base/      the firmware that the five nodes share, once (synced into each by tools/sync_firmware_base.py)
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
-├── openapi/            armor-server-0.2.0.yaml
-├── tools/              armor_project_tool.py, generate_types.py, make_conformance.py, sync_firmware_base.py
+├── openapi/            armor-server.yaml
+├── tools/              armor_project_tool.py, generate_types.py, make_conformance.py, sync_firmware_base.py, release_firmware.py, firmware_sign.mjs
 ├── tests/              unit tests and conformance runner
 └── docs/               contracts guide, the shared firmware base
 ```
@@ -91,9 +91,9 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 42 tests, 459 conformance vectors
+python -m unittest discover -s tests      # 79 tests, 523 conformance vectors
 python tools/generate_types.py --check    # generated types are current
-python tools/make_conformance.py          # regenerate the vectors after editing the case list
+python tools/make_conformance.py          # regenerate the vectors after editing the case list (--check: they are current)
 python tools/sync_firmware_base.py check  # the firmware the node projects share has not drifted (see docs/FIRMWARE_BASE.md)
 ```
 

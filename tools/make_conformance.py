@@ -6,6 +6,7 @@ Kotlin in ARMOR-ANDROID-CONTROL) must accept every ``valid`` vector and reject
 every other one. Adding a case here is how a contract gets tightened.
 """
 import json
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1] / "conformance"
@@ -109,6 +110,28 @@ def network(**changes):
     return base
 
 
+def zone_feed(**changes):
+    base = {"zone": "front-door", "state": "triggered", "battery_low": False}
+    base.update(changes)
+    return base
+
+
+def server_alert(**changes):
+    base = {"service": "armor-server", "event": "alarm.raised", "at": "1970-01-01T00:00:00.000Z", "mode": "armed", "alarm_id": "a1", "severity": "critical", "code": "smoke", "device_id": "smoke-1"}
+    base.update(changes)
+    return base
+
+
+def orders(**changes):
+    base = {"accepted": True, "commands": [{"id": "c0123456789", "type": "ping", "device_id": "14:2e:5e:86:d9:62", "ip": "192.168.0.1"}]}
+    base.update(changes)
+    return base
+
+
+def order(**changes):
+    return orders(commands=[dict({"id": "c0123456789", "type": "ping", "device_id": "14:2e:5e:86:d9:62", "ip": "192.168.0.1"}, **changes)])
+
+
 def internet(**changes):
     return network(internet=dict(network()["internet"], **changes))
 
@@ -151,6 +174,7 @@ cases = {
         ("negative coordinates and speed", True, telemetry(targets=[dict(track, x_mm=-5000, y_mm=-1, speed_mm_s=-785.4)])),
         ("node id with digits, dash and underscore", True, telemetry(node_id="node_2-b")),
         ("sixteen targets", False, telemetry(targets=[dict(track) for _ in range(16)])),
+        ("node id with a line feed at the end", False, telemetry(node_id="north-1\n")),
         ("uppercase node id", False, telemetry(node_id="North-1")),
         ("node id starting with a dash", False, telemetry(node_id="-north")),
         ("node id too long", False, telemetry(node_id="a" * 65)),
@@ -195,8 +219,13 @@ cases = {
         ("uppercase node id", False, info(node_id="North-1")),
         ("empty name", False, info(name="")),
         ("name of 49 characters", False, info(name="n" * 49)),
+        ("firmware with four parts, from 0.8.0 on", True, info(firmware="0.8.0.1")),
         ("firmware with a v", False, info(firmware="v0.2.3")),
         ("firmware with two parts", False, info(firmware="0.2")),
+        ("firmware with five parts", False, info(firmware="0.8.0.1.2")),
+        ("firmware with a line feed at the end", False, info(firmware="0.2.3\n")),
+        ("address with a line feed at the end", False, info(ip="192.168.0.181\n")),
+        ("node id with a line feed at the end", False, info(node_id="north-1\n")),
         ("address with three parts", False, info(ip="192.168.0")),
         ("address above 255", False, info(ip="192.168.0.256")),
         ("address with a leading zero", False, info(ip="192.168.0.01")),
@@ -618,6 +647,72 @@ cases = {
         ("a device event that names no device", False, network(events=[{"id": "e8", "kind": "new_device", "at_ms": 1}]), True),
         ("a duration on an event that is not an end", False, network(events=[net_event(id="e9", outage_s=5)]), True),
         ("a port event that names no port", False, network(events=[net_event(id="e10", kind="port_opened")]), True),
+        ("a network that is not a private range", False, network(interface=dict(network()["interface"], cidr="8.8.8.0/24")), True),
+        ("a network wider than a private range", False, network(interface=dict(network()["interface"], cidr="0.0.0.0/0")), True),
+        ("a private range of 172.16", True, network(interface=dict(network()["interface"], cidr="172.16.4.0/24"))),
+    ],
+    "alarm_zone_feed": [
+        ("a closed door", True, zone_feed(state="normal")),
+        ("a triggered sensor with a low battery", True, zone_feed(battery_low=True)),
+        ("a tampered sensor", True, zone_feed(state="tamper")),
+        ("a zone name of 32 characters", True, zone_feed(zone="z" * 32)),
+        ("a zone name of 33 characters", False, zone_feed(zone="z" * 33)),
+        ("an uppercase zone", False, zone_feed(zone="Front")),
+        ("a line feed at the end of the zone", False, zone_feed(zone="front\n")),
+        ("a state that is not one", False, zone_feed(state="open")),
+        ("a battery that is not a flag", False, zone_feed(battery_low="no")),
+        ("the node repeated inside", False, zone_feed(node_id="alarm-1")),
+        ("a missing battery flag", False, without(zone_feed(), "battery_low")),
+        ("not an object", False, [1]),
+    ],
+    "device_state": [
+        ("a relay that is on", True, {"on": True}),
+        ("a relay that is off", True, {"on": False}),
+        ("the word instead of the flag", False, {"on": "ON"}),
+        ("a number instead of the flag", False, {"on": 1}),
+        ("an unknown field", False, {"on": True, "level": 3}),
+        ("no field", False, {}),
+        ("not an object", False, [True]),
+    ],
+    "server_alert": [
+        ("a device alarm", True, server_alert()),
+        ("a node that went high", True, {"service": "armor-server", "event": "alert.raised", "at": "1970-01-01T00:00:00.000Z", "mode": "armed", "node_id": "north-1", "targets": 2}),
+        ("a camera that went offline", True, {"service": "armor-server", "event": "camera.offline", "at": "1970-01-01T00:00:00.000Z", "mode": "armed", "camera_id": "cam-01"}),
+        ("a test", True, {"service": "armor-server", "event": "alert.test", "at": "1970-01-01T00:00:00.000Z", "mode": "disarmed"}),
+        ("a silent alarm", True, {"service": "armor-server", "event": "alarm.raised", "at": "1970-01-01T00:00:00.000Z", "mode": "armed", "alarm_id": "a2", "severity": "critical", "code": "duress_disarm", "alarm_node_id": "alarm-1", "silent": True}),
+        ("another service", False, server_alert(service="someone-else")),
+        ("an event that does not exist", False, server_alert(event="alarm.imagined")),
+        ("a mode that does not exist", False, server_alert(mode="armed-away")),
+        ("a severity that does not exist", False, server_alert(severity="urgent")),
+        ("silent set to false", False, server_alert(silent=False)),
+        ("an unknown field", False, server_alert(extra=1)),
+        ("a missing time", False, without(server_alert(), "at")),
+        ("a node event that names no node", False, {"service": "armor-server", "event": "node.offline", "at": "1970-01-01T00:00:00.000Z", "mode": "armed"}, True),
+        ("a camera event that names no camera", False, {"service": "armor-server", "event": "camera.offline", "at": "1970-01-01T00:00:00.000Z", "mode": "armed"}, True),
+        ("an alarm that does not say which", False, {"service": "armor-server", "event": "alarm.raised", "at": "1970-01-01T00:00:00.000Z", "mode": "armed", "device_id": "smoke-1"}, True),
+        ("a silent test", False, {"service": "armor-server", "event": "alert.test", "at": "1970-01-01T00:00:00.000Z", "mode": "armed", "silent": True}, True),
+    ],
+    "network_orders": [
+        ("one order about a device", True, orders()),
+        ("no order waiting", True, orders(commands=[])),
+        ("a sweep", True, orders(commands=[{"id": "c1", "type": "scan_now"}])),
+        ("an inspection with a sealed login", True, order(type="inspect", port=80, auth_sealed="A" * 64)),
+        ("a wake-up with the MAC", True, order(type="wake", mac="14:2e:5e:86:d9:62")),
+        ("four orders, the most at once", True, orders(commands=[{"id": f"c{i}", "type": "scan_now"} for i in range(4)])),
+        ("five orders", False, orders(commands=[{"id": f"c{i}", "type": "scan_now"} for i in range(5)])),
+        ("not accepted", False, orders(accepted=False)),
+        ("an unknown order", False, order(type="format")),
+        ("an address with a leading zero", False, order(ip="192.168.0.01")),
+        ("a port of 0", False, order(type="http", port=0)),
+        ("a sealed login in clear text", False, order(type="inspect", auth="admin:1234")),
+        ("a sealed login that is too short", False, order(type="inspect", auth_sealed="AAAA")),
+        ("an unknown field", False, orders(extra=True)),
+        ("an order about a device that names none", False, orders(commands=[{"id": "c1", "type": "ping"}]), True),
+        ("a sweep about a device", False, order(type="scan_now"), True),
+        ("a wake-up without a MAC", False, order(type="wake"), True),
+        ("a port on a ping", False, order(port=80), True),
+        ("a sealed login on a ping", False, order(auth_sealed="A" * 64), True),
+        ("an order twice", False, orders(commands=[{"id": "c1", "type": "scan_now"}, {"id": "c1", "type": "scan_now"}]), True),
     ],
     "command": [
         ("calibrate", True, {"node_id": "north-1", "timestamp_ms": 9, "command": "calibrate"}),
@@ -632,10 +727,24 @@ cases = {
     ],
 }
 
-ROOT.mkdir(exist_ok=True)
+CHECK = "--check" in sys.argv[1:]
+stale: list[str] = []
+if not CHECK:
+    ROOT.mkdir(exist_ok=True)
 for kind, entries in cases.items():
     # A fourth item, True, marks a payload the schema accepts and the message-level rule refuses (a token where none belongs, a switch named twice).
     vectors = [{"name": name, "valid": valid, "payload": payload, **({"schema_valid": True} if extra else {})} for name, valid, payload, *extra in entries]
     schema_kind = {"solar_inverter": "inverter", "solar_battery": "battery"}.get(kind, kind)   # the solar files are named after their schema, and carry the payload's kind
-    (ROOT / f"{kind}.json").write_text(json.dumps({"kind": schema_kind, "vectors": vectors}, indent=1) + "\n", encoding="utf-8", newline="\n")
-    print(kind, len(vectors), "vectors")
+    text = json.dumps({"kind": schema_kind, "vectors": vectors}, indent=1) + "\n"
+    if CHECK:
+        path = ROOT / f"{kind}.json"
+        if not path.is_file() or path.read_text(encoding="utf-8").replace("\r\n", "\n") != text:
+            stale.append(f"{kind}.json")
+    else:
+        (ROOT / f"{kind}.json").write_text(text, encoding="utf-8", newline="\n")
+        print(kind, len(vectors), "vectors")
+if CHECK:
+    if stale:
+        print("CONFORMANCE=FAIL these files are not what tools/make_conformance.py writes (run it): " + ", ".join(stale))
+        sys.exit(1)
+    print(f"CONFORMANCE=PASS {len(cases)} files are current")
