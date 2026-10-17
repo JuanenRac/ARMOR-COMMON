@@ -113,7 +113,18 @@
    }
   },
   {
-   "name": "an action outside the list",
+   "name": "silence the siren",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "silence"
+   }
+  },
+  {
+   "name": "a silence that carries a mode",
    "valid": false,
    "payload": {
     "kind": "alarm_command",
@@ -121,6 +132,32 @@
     "timestamp_ms": 7000,
     "command_id": "c0ffee0123456789",
     "action": "silence",
+    "mode": "away"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a silence that forces",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "silence",
+    "force": true
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an action outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "mute",
     "mode": "away"
    }
   },

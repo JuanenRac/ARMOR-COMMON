@@ -19,7 +19,8 @@ data class Telemetry(
 data class Health(
     val node_id: String,
     val timestamp_ms: Long,
-    val online: Boolean
+    val online: Boolean,
+    val kind: String? = null
 )
 
 data class Command(

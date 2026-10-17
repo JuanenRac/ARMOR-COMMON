@@ -145,7 +145,8 @@
               "disarmed",
               "bad_pin",
               "locked_out",
-              "zone_bypassed"
+              "zone_bypassed",
+              "siren_silenced"
             ]
           },
           "zone": {

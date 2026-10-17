@@ -655,7 +655,7 @@ paths:
         '200': { description: Not registered any more }
   /api/v1/alarm/commands:
     get:
-      summary: Whether the server may arm and disarm alarm nodes (off unless ARMOR_ALARM_COMMANDS=1), the commands still waiting for a node's answer, and what became of the latest ones ({ enabled, pending, recent })
+      summary: Whether the server may arm, disarm and silence alarm nodes (off unless ARMOR_ALARM_COMMANDS=1), the commands still waiting for a node's answer, and what became of the latest ones ({ enabled, pending, recent })
       security: [{ operator: [] }]
       responses:
         '200': { description: The status of the commands }
@@ -663,11 +663,11 @@ paths:
     post:
       summary: >-
         A command to the panel of one alarm node (an administrator only), published to armor/alarm/{node_id}/command (the `alarm_command` message of the shared contract): arm in away or stay
-        (optionally forced) or disarm. A disarm needs the `pin` of the signed-in user, checked by the server and never sent to the node (the message to the node has none). Refused unless the server has the commands turned on, the node says in its state that it accepts them, and nothing is waiting for an
+        (optionally forced), disarm, or silence the siren (the system stays armed and the alarm stays latched; as sensitive as a disarm). A disarm or a silence needs the `pin` of the signed-in user, checked by the server (a wrong one counts toward the same lockout as a wrong disarm PIN) and never sent to the node (the message to the node has none). Refused unless the server has the commands turned on, the node says in its state that it accepts them, and nothing is waiting for an
         answer from it. Answered 202: the node's own answer arrives on armor/alarm/{node_id}/result and is shown by GET /api/v1/alarm/commands; an accepted command is not an armed alarm, only
         the node's state says that.
       security: [{ admin: [] }]
-      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [node, action], properties: { pin: { type: string }, node: { type: string }, action: { type: string, enum: [arm, disarm] }, mode: { type: string, enum: [away, stay] }, force: { type: boolean } } } } } }
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [node, action], properties: { pin: { type: string }, node: { type: string }, action: { type: string, enum: [arm, disarm, silence] }, mode: { type: string, enum: [away, stay] }, force: { type: boolean } } } } } }
       responses:
         '202': { description: 'Published; { accepted, command_id }' }
         '400': { description: node and a valid action are required }
