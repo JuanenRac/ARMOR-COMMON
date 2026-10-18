@@ -371,7 +371,8 @@
         "ARMOR-SOLAR": "tests/test_base.cpp",
         "ARMOR-ELECTRICAL": "tests/test_base.cpp",
         "ARMOR-HMI": "tests/test_base.cpp",
-        "ARMOR-ALARM": "tests/test_base.cpp"
+        "ARMOR-ALARM": "tests/test_base.cpp",
+        "ARMOR-RADAR": "tests/test_base.cpp"
       }
     },
     "tests/test_central.cpp": {
@@ -550,6 +551,21 @@
         "ARMOR-RADAR": "main/node_health.hpp",
         "ARMOR-HMI": "main/node_health.hpp",
         "ARMOR-ALARM": "main/node_health.hpp"
+      }
+    },
+    "tests/test_shared.cpp": {
+      "targets": {
+        "ARMOR-SOLAR": "tests/test_shared.cpp",
+        "ARMOR-ELECTRICAL": "tests/test_shared.cpp",
+        "ARMOR-RADAR": "tests/test_shared.cpp",
+        "ARMOR-HMI": "tests/test_shared.cpp",
+        "ARMOR-ALARM": "tests/test_shared.cpp"
+      }
+    },
+    "tests/test_shared_node.cpp": {
+      "targets": {
+        "ARMOR-ELECTRICAL": "tests/test_shared_node.cpp",
+        "ARMOR-ALARM": "tests/test_shared_node.cpp"
       }
     }
   }
