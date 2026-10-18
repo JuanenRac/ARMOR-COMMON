@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## [0.6.6] - Stored passwords follow their host
+
+- The shared node settings tie the stored broker password, and the password of each backup broker, to the host it was typed for: pointing them at another host without a new password clears it. Same-host edits keep it.
+- The shared settings refuse an access point bandwidth other than 20 or 40 MHz, and the list of networks that may use the panel refuses parts with a leading zero.
+- The shared tests check both rules, and the known-gap checks of the shared node tests are ordinary checks now.
+
 ## [0.6.5] - Connection and system events of the history
 
 - New schemas `connection_event` (a client of a kind - Studio, the Android app, the panel of a node, the voice service or another - that was first seen, signed in, was refused, signed out or whose session ended or expired), `system_event` (a node that appears, returns, changes firmware or disappears; the broker link; settings; services; updates; arming, disarming and silencing with the profile; backups) and `connection_client` (one entry of the list of clients, with its last sign of life and its open sessions). The words are a fixed list and no field can hold a secret; the address and the user agent are for administrators only.
