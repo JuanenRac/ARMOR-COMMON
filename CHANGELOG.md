@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here.
 
+## [0.6.7] - Wider login table and stricter text in the shared node base
+
+- The shared login throttle keeps thirty-two sources (it kept eight), so a handful of busy addresses, or the people counted next to them, no longer crowd out the rest; a blocked source is still never pushed out.
+- The over-the-air download limit is the size of an application slot (3 MiB), so an image that cannot fit is refused as a bad size before the slot is erased instead of failing inside the write.
+- The shared JSON reader refuses malformed UTF-8 (a lead byte without its continuation, overlong forms, raw surrogates, anything above U+10FFFF) and documents of more than 4096 values; a number of a billion or more keeps its digits when it is written.
+- A set-up code compiled in with letters in lower case is stored in capitals, the form the panel's page sends, so it can be used to set the node up.
+- The comment of the relay command topics says what the code does: the broker may send ON or OFF, and TOGGLE exists only on the node's own HTTP API.
+- Shared tests for the new limits (the table of sources, the UTF-8 forms, the number of values, large numbers).
+- The shared base is written into the five node projects again, so all copies stay identical.
+
 ## [0.6.6] - Stored passwords follow their host
 
 - The shared node settings tie the stored broker password, and the password of each backup broker, to the host it was typed for: pointing them at another host without a new password clears it. Same-host edits keep it.
