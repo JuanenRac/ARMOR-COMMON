@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: A.R.M.O.R. Server API
-  version: 0.6.4
+  version: 0.6.5
   description: >-
     The HTTP surface of ARMOR-SERVER. Message bodies reference the JSON Schemas
     published in src/armor_common/schemas, which are the single source of truth.
@@ -1601,12 +1601,16 @@ paths:
     get:
       security: [{ operator: [] }]
       summary: Event history, newest first (operator)
-      description: Alert-level, node-status and security-mode changes. `before` is an event id; use `next_before` to page.
+      description: Alert-level, node-status, camera, device, alarm and security-mode changes, and the connections of clients (Studio sessions, the Android app, the panels of nodes, the voice service) and the events of the system (nodes that appear or disappear, the broker, settings, services, updates, arming, backups). `before` is an event id; use `next_before` to page. The address and the user agent of a connection are in the answer for an administrator only; no password, token, cookie or PIN is ever recorded.
       parameters:
         - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 200 } }
         - { name: before, in: query, schema: { type: integer, minimum: 1 } }
         - { name: after, in: query, schema: { type: integer, minimum: 1 }, description: 'Events after this id, oldest first (for a client that polls: it misses nothing); the answer carries next_after' }
-        - { name: type, in: query, schema: { type: string, enum: [alert, node, camera, mode] } }
+        - { name: type, in: query, schema: { type: string, enum: [alert, node, camera, mode, device, alarm, connection, system] } }
+        - { name: category, in: query, schema: { type: string, enum: [node, broker, settings, service, update, alarm, backup] }, description: 'Only the events of the system of this category (implies type=system)' }
+        - { name: kind, in: query, schema: { type: string, enum: [studio, android, node, voice, other] }, description: 'Only the connections of this kind of client (implies type=connection)' }
+        - { name: client, in: query, schema: { type: string, pattern: '^[0-9a-f]{16}$' }, description: 'Only the connections of this client (implies type=connection)' }
+        - { name: user, in: query, schema: { type: string, maxLength: 60 }, description: 'Only what this user did or what happened to this user (connections and system events)' }
         - { name: node, in: query, schema: { type: string, pattern: '^[A-Za-z0-9._-]{1,80}$' }, description: Node or camera id }
         - { name: q, in: query, schema: { type: string, maxLength: 80 }, description: Case-insensitive part of the node or camera id }
         - { name: level, in: query, schema: { type: string, enum: [normal, review, high] }, description: Alerts that moved to this level }
@@ -1625,7 +1629,7 @@ paths:
         - { name: confirm, in: query, required: true, schema: { type: string, enum: [delete] } }
         - { name: scope, in: query, required: true, schema: { type: string, enum: [all, older-than] } }
         - { name: days, in: query, schema: { type: integer, minimum: 1, maximum: 3650 } }
-        - { name: type, in: query, schema: { type: string, enum: [alert, node, camera, mode] } }
+        - { name: type, in: query, schema: { type: string, enum: [alert, node, camera, mode, device, alarm, connection, system] } }
       responses:
         '200': { description: How many events were removed and how many remain, content: { application/json: { schema: { $ref: '#/components/schemas/HistoryRemoved' } } } }
         '400': { description: Missing confirmation or invalid scope, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
@@ -1650,10 +1654,24 @@ paths:
       responses:
         '200': { description: 'Status, time since it changed and consecutive failures per camera', content: { application/json: { schema: { $ref: '#/components/schemas/CameraStatusList' } } } }
         '401': { description: Operator authorization is required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+  /api/v1/history/connections:
+    get:
+      security: [{ operator: [] }]
+      summary: Every client the server has seen, with when it was last seen and its open sessions (operator)
+      description: The Studio sessions, the Android app, the panels of the nodes, the voice service and any other client, newest first. The address and the user agent are given to an administrator only.
+      parameters:
+        - { name: kind, in: query, schema: { type: string, enum: [studio, android, node, voice, other] } }
+        - { name: user, in: query, schema: { type: string, maxLength: 60 } }
+        - { name: active, in: query, schema: { type: string, enum: ['1'] }, description: 'Only the clients with an open session' }
+      responses:
+        '200': { description: The clients, content: { application/json: { schema: { $ref: '#/components/schemas/ConnectionList' } } } }
+        '400': { description: Invalid filter, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '401': { description: Operator authorization is required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
   /api/v1/history/summary:
     get:
       security: [{ operator: [] }]
       summary: Counts of the events held and of the last 24 hours (operator)
+      description: The total, the span and the last 24 hours count the events the history shows by default; the connection and system events are counted apart, in `by_type`.
       responses:
         '200': { description: 'Total, by type, oldest and newest time, and last-24-hour counters', content: { application/json: { schema: { $ref: '#/components/schemas/HistorySummary' } } } }
         '401': { description: Operator authorization is required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
@@ -2987,7 +3005,7 @@ components:
       type: object
       required: [events, next_before]
       properties:
-        events: { type: array, items: { $ref: '#/components/schemas/ArmorEvent' } }
+        events: { type: array, items: { anyOf: [ { $ref: '#/components/schemas/ConnectionEvent' }, { $ref: '#/components/schemas/SystemEvent' }, { $ref: '#/components/schemas/ArmorEvent' } ] } }
         next_before: { type: [integer, 'null'] }
         next_after: { type: [integer, 'null'] }
     ArmorEvent:
@@ -2998,7 +3016,15 @@ components:
       properties:
         id: { type: integer }
         at: { type: string, format: date-time }
-        type: { type: string, enum: [alert, node, camera, mode, device, alarm] }
+        type: { type: string, enum: [alert, node, camera, mode, device, alarm, connection, system] }
+    ConnectionEvent: { $ref: '../src/armor_common/schemas/connection_event.schema.json' }
+    SystemEvent: { $ref: '../src/armor_common/schemas/system_event.schema.json' }
+    ConnectionClient: { $ref: '../src/armor_common/schemas/connection_client.schema.json' }
+    ConnectionList:
+      type: object
+      required: [clients]
+      properties:
+        clients: { type: array, items: { $ref: '#/components/schemas/ConnectionClient' } }
     HistorySummary:
       type: object
       required: [total, oldest_at, newest_at, by_type, last_24h]
@@ -3006,7 +3032,7 @@ components:
         total: { type: integer }
         oldest_at: { type: [string, 'null'] }
         newest_at: { type: [string, 'null'] }
-        by_type: { type: object, additionalProperties: { type: integer }, description: Events per type (alert, node, camera, mode, device, alarm) }
+        by_type: { type: object, additionalProperties: { type: integer }, description: Events per type (alert, node, camera, mode, device, alarm, connection, system) }
         last_24h:
           type: object
           required: [events, high_alerts, node_incidents, camera_incidents]

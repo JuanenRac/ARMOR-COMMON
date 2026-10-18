@@ -1,0 +1,310 @@
+{
+ "kind": "connection_event",
+ "vectors": [
+  {
+   "name": "a sign-in to Studio",
+   "valid": true,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "login",
+    "client_kind": "studio",
+    "client_id": "0123456789abcdef",
+    "user": "ana",
+    "origin": "local",
+    "two_factor": false
+   }
+  },
+  {
+   "name": "a sign-in with the second factor",
+   "valid": true,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "login",
+    "client_kind": "studio",
+    "client_id": "0123456789abcdef",
+    "user": "ana",
+    "origin": "remote",
+    "two_factor": true
+   }
+  },
+  {
+   "name": "a sign-in the administrator sees with its address",
+   "valid": true,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "login",
+    "client_kind": "studio",
+    "client_id": "0123456789abcdef",
+    "user": "ana",
+    "origin": "local",
+    "two_factor": false,
+    "ip": "192.168.0.20",
+    "agent": "Mozilla/5.0"
+   }
+  },
+  {
+   "name": "a refused sign-in",
+   "valid": true,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "login_failed",
+    "client_kind": "studio",
+    "client_id": "0123456789abcdef",
+    "user": "ana",
+    "origin": "local",
+    "two_factor": false
+   }
+  },
+  {
+   "name": "a wrong code of the second factor",
+   "valid": true,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "second_factor_failed",
+    "client_kind": "studio",
+    "client_id": "0123456789abcdef",
+    "user": "ana",
+    "origin": "local",
+    "two_factor": false
+   }
+  },
+  {
+   "name": "an app seen for the first time",
+   "valid": true,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "first_seen",
+    "client_kind": "android",
+    "client_id": "0123456789abcdef",
+    "user": "ana",
+    "origin": "local",
+    "two_factor": false,
+    "app_version": "0.6.6"
+   }
+  },
+  {
+   "name": "the panel of a node opened",
+   "valid": true,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "panel_opened",
+    "client_kind": "node",
+    "client_id": "0123456789abcdef",
+    "user": "ana",
+    "origin": "local",
+    "two_factor": false,
+    "subject": "radar-1"
+   }
+  },
+  {
+   "name": "a client with no user",
+   "valid": true,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "login",
+    "client_kind": "voice",
+    "client_id": "0123456789abcdef",
+    "origin": "local",
+    "two_factor": false
+   }
+  },
+  {
+   "name": "a session that expired",
+   "valid": true,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "session_expired",
+    "client_kind": "studio",
+    "client_id": "0123456789abcdef",
+    "user": "ana",
+    "origin": "local",
+    "two_factor": false
+   }
+  },
+  {
+   "name": "an action outside the list",
+   "valid": false,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "hijacked",
+    "client_kind": "studio",
+    "client_id": "0123456789abcdef",
+    "user": "ana",
+    "origin": "local",
+    "two_factor": false
+   }
+  },
+  {
+   "name": "a client kind outside the list",
+   "valid": false,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "login",
+    "client_kind": "toaster",
+    "client_id": "0123456789abcdef",
+    "user": "ana",
+    "origin": "local",
+    "two_factor": false
+   }
+  },
+  {
+   "name": "a client id that is not a hash",
+   "valid": false,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "login",
+    "client_kind": "studio",
+    "client_id": "ana",
+    "user": "ana",
+    "origin": "local",
+    "two_factor": false
+   }
+  },
+  {
+   "name": "another type",
+   "valid": false,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "action": "login",
+    "client_kind": "studio",
+    "client_id": "0123456789abcdef",
+    "user": "ana",
+    "origin": "local",
+    "two_factor": false
+   }
+  },
+  {
+   "name": "a password in the event",
+   "valid": false,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "login",
+    "client_kind": "studio",
+    "client_id": "0123456789abcdef",
+    "user": "ana",
+    "origin": "local",
+    "two_factor": false,
+    "password": "secret"
+   }
+  },
+  {
+   "name": "a token in the event",
+   "valid": false,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "login",
+    "client_kind": "studio",
+    "client_id": "0123456789abcdef",
+    "user": "ana",
+    "origin": "local",
+    "two_factor": false,
+    "token": "abc"
+   }
+  },
+  {
+   "name": "a user of 61 characters",
+   "valid": false,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "login",
+    "client_kind": "studio",
+    "client_id": "0123456789abcdef",
+    "user": "uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",
+    "origin": "local",
+    "two_factor": false
+   }
+  },
+  {
+   "name": "an application version with a space",
+   "valid": false,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "login",
+    "client_kind": "studio",
+    "client_id": "0123456789abcdef",
+    "user": "ana",
+    "origin": "local",
+    "two_factor": false,
+    "app_version": "0.6 6"
+   }
+  },
+  {
+   "name": "an id of zero",
+   "valid": false,
+   "payload": {
+    "id": 0,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "login",
+    "client_kind": "studio",
+    "client_id": "0123456789abcdef",
+    "user": "ana",
+    "origin": "local",
+    "two_factor": false
+   }
+  },
+  {
+   "name": "no action",
+   "valid": false,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "client_kind": "studio",
+    "client_id": "0123456789abcdef",
+    "user": "ana",
+    "origin": "local",
+    "two_factor": false
+   }
+  },
+  {
+   "name": "the second factor as a number",
+   "valid": false,
+   "payload": {
+    "id": 7,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "action": "login",
+    "client_kind": "studio",
+    "client_id": "0123456789abcdef",
+    "user": "ana",
+    "origin": "local",
+    "two_factor": 1
+   }
+  }
+ ]
+}

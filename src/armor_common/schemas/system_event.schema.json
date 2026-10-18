@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/system-event-0.1.0.json",
+  "title": "A.R.M.O.R. system event of the history",
+  "description": "One line of the server's history about the system itself: a node that appears or disappears (with its firmware), the broker connection, a setting that was changed (who and what, never the value), a service that changed state, an update, the alarm armed, disarmed or silenced (with the profile), a backup. The words are a fixed list; there is no free text, so a secret cannot get in.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "at",
+    "type",
+    "category",
+    "action"
+  ],
+  "properties": {
+    "id": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "at": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+    },
+    "type": {
+      "type": "string",
+      "const": "system"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "node",
+        "broker",
+        "settings",
+        "service",
+        "update",
+        "alarm",
+        "backup"
+      ]
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "appeared",
+        "returned",
+        "disappeared",
+        "firmware_changed",
+        "connected",
+        "disconnected",
+        "created",
+        "changed",
+        "removed",
+        "started",
+        "stopped",
+        "restarted",
+        "checked",
+        "installed",
+        "rolled_back",
+        "armed",
+        "disarmed",
+        "silenced",
+        "acknowledged",
+        "arm_requested",
+        "disarm_requested",
+        "silence_requested",
+        "backup_made",
+        "backup_restored"
+      ]
+    },
+    "subject": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "description": "What it is about: a node, a service, the name of a setting area."
+    },
+    "by": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60,
+      "description": "Who did it, when a person did."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+)?$"
+    },
+    "previous_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+)?$"
+    },
+    "profile": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "allowed",
+        "denied",
+        "failed"
+      ]
+    }
+  }
+}

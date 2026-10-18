@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/connection-client-0.1.0.json",
+  "title": "A.R.M.O.R. client that has connected to the server",
+  "description": "One entry of the list of every device or application the server has seen: when it was first and last seen, how many sessions it has open now and how many sign-ins worked or were refused. The address (`ip`) and the user agent (`agent`) are for administrators only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "kind",
+    "first_seen",
+    "last_seen",
+    "active_sessions",
+    "logins_ok",
+    "logins_failed"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{16}$"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "studio",
+        "android",
+        "node",
+        "voice",
+        "other"
+      ]
+    },
+    "user": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "description": "For the panel of a node: the node."
+    },
+    "app_version": {
+      "type": "string",
+      "pattern": "^[0-9A-Za-z._-]{1,24}$"
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "local",
+        "remote"
+      ]
+    },
+    "two_factor": {
+      "type": "boolean"
+    },
+    "first_seen": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+    },
+    "last_seen": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+    },
+    "last_failure": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+    },
+    "active_sessions": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "logins_ok": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "logins_failed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ip": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "Administrators only."
+    },
+    "agent": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "description": "Administrators only."
+    }
+  }
+}

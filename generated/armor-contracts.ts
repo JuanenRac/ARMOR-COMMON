@@ -308,6 +308,54 @@ export type NodeHealth = {
   last_error?: string;
 };
 
+export type ConnectionEvent = {
+  id: number;
+  at: string;
+  type: "connection";
+  action: "first_seen" | "login" | "login_failed" | "second_factor_failed" | "logout" | "session_ended" | "session_expired" | "panel_opened";
+  client_kind: "studio" | "android" | "node" | "voice" | "other";
+  client_id: string;
+  user?: string;
+  origin?: "local" | "remote";
+  two_factor?: boolean;
+  app_version?: string;
+  subject?: string;
+  ip?: string;
+  agent?: string;
+};
+
+export type SystemEvent = {
+  id: number;
+  at: string;
+  type: "system";
+  category: "node" | "broker" | "settings" | "service" | "update" | "alarm" | "backup";
+  action: "appeared" | "returned" | "disappeared" | "firmware_changed" | "connected" | "disconnected" | "created" | "changed" | "removed" | "started" | "stopped" | "restarted" | "checked" | "installed" | "rolled_back" | "armed" | "disarmed" | "silenced" | "acknowledged" | "arm_requested" | "disarm_requested" | "silence_requested" | "backup_made" | "backup_restored";
+  subject?: string;
+  by?: string;
+  version?: string;
+  previous_version?: string;
+  profile?: string;
+  outcome?: "allowed" | "denied" | "failed";
+};
+
+export type ConnectionClient = {
+  id: string;
+  kind: "studio" | "android" | "node" | "voice" | "other";
+  user?: string;
+  label?: string;
+  app_version?: string;
+  origin?: "local" | "remote";
+  two_factor?: boolean;
+  first_seen: string;
+  last_seen: string;
+  last_failure?: string;
+  active_sessions: number;
+  logins_ok: number;
+  logins_failed: number;
+  ip?: string;
+  agent?: string;
+};
+
 export type NetworkInterface = {
   name: string;
   ip: string;

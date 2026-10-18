@@ -1,0 +1,273 @@
+{
+ "kind": "system_event",
+ "vectors": [
+  {
+   "name": "a node that appeared",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "appeared",
+    "subject": "alarm-1",
+    "version": "0.3.7"
+   }
+  },
+  {
+   "name": "a node that went away",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "disappeared",
+    "subject": "alarm-1",
+    "version": "0.3.7"
+   }
+  },
+  {
+   "name": "a node whose firmware changed",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "firmware_changed",
+    "subject": "alarm-1",
+    "version": "0.3.8",
+    "previous_version": "0.3.7"
+   }
+  },
+  {
+   "name": "the broker lost",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "broker",
+    "action": "disconnected",
+    "subject": "mqtt",
+    "version": "0.3.7"
+   }
+  },
+  {
+   "name": "a setting changed by somebody",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "settings",
+    "action": "changed",
+    "subject": "rules",
+    "version": "0.3.7",
+    "by": "ana"
+   }
+  },
+  {
+   "name": "a service restarted",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "service",
+    "action": "restarted",
+    "subject": "armor-server",
+    "version": "0.3.7",
+    "by": "ana"
+   }
+  },
+  {
+   "name": "an update installed",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "update",
+    "action": "installed",
+    "subject": "armor-server",
+    "version": "0.7.2"
+   }
+  },
+  {
+   "name": "the alarm armed with a profile",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "alarm",
+    "action": "arm_requested",
+    "subject": "alarm-1",
+    "version": "0.3.7",
+    "profile": "night",
+    "by": "ana"
+   }
+  },
+  {
+   "name": "the siren silenced",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "alarm",
+    "action": "silence_requested",
+    "subject": "alarm-1",
+    "version": "0.3.7"
+   }
+  },
+  {
+   "name": "a backup made",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "backup",
+    "action": "backup_made",
+    "subject": "alarm-1",
+    "version": "0.3.7"
+   }
+  },
+  {
+   "name": "a refused change",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "settings",
+    "action": "changed",
+    "subject": "alarm-1",
+    "version": "0.3.7",
+    "outcome": "denied"
+   }
+  },
+  {
+   "name": "a category outside the list",
+   "valid": false,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "weather",
+    "action": "appeared",
+    "subject": "alarm-1",
+    "version": "0.3.7"
+   }
+  },
+  {
+   "name": "an action outside the list",
+   "valid": false,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "exploded",
+    "subject": "alarm-1",
+    "version": "0.3.7"
+   }
+  },
+  {
+   "name": "a free text",
+   "valid": false,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "appeared",
+    "subject": "alarm-1",
+    "version": "0.3.7",
+    "detail": "password=hunter2"
+   }
+  },
+  {
+   "name": "a value of the setting",
+   "valid": false,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "appeared",
+    "subject": "alarm-1",
+    "version": "0.3.7",
+    "value": "1234"
+   }
+  },
+  {
+   "name": "a version that is not a version",
+   "valid": false,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "appeared",
+    "subject": "alarm-1",
+    "version": "latest"
+   }
+  },
+  {
+   "name": "a profile with capitals",
+   "valid": false,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "appeared",
+    "subject": "alarm-1",
+    "version": "0.3.7",
+    "profile": "Night"
+   }
+  },
+  {
+   "name": "a subject of 81 characters",
+   "valid": false,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "appeared",
+    "subject": "sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+    "version": "0.3.7"
+   }
+  },
+  {
+   "name": "another type",
+   "valid": false,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "connection",
+    "category": "node",
+    "action": "appeared",
+    "subject": "alarm-1",
+    "version": "0.3.7"
+   }
+  },
+  {
+   "name": "no category",
+   "valid": false,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "action": "appeared",
+    "subject": "alarm-1",
+    "version": "0.3.7"
+   }
+  }
+ ]
+}

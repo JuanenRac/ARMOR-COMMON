@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## [0.6.5] - Connection and system events of the history
+
+- New schemas `connection_event` (a client of a kind - Studio, the Android app, the panel of a node, the voice service or another - that was first seen, signed in, was refused, signed out or whose session ended or expired), `system_event` (a node that appears, returns, changes firmware or disappears; the broker link; settings; services; updates; arming, disarming and silencing with the profile; backups) and `connection_client` (one entry of the list of clients, with its last sign of life and its open sessions). The words are a fixed list and no field can hold a secret; the address and the user agent are for administrators only.
+- Conformance vectors for the three (51 more, accepted and refused), the generated TypeScript and Kotlin types, and the OpenAPI description of `GET /api/v1/history/connections` and of the new filters of `GET /api/v1/history` (`category`, `kind`, `client`, `user`, `all` and the types `connection` and `system`).
+- The contract lists the types of event that were missing in the filter of the history (`device` and `alarm`) and says that the totals of the summary count the events shown by default.
+
 ## [0.6.4] - The HTTP contract types every message
 
 - openapi/armor-server.yaml: every request body, answer and error names a component schema (no bare object bodies); one error schema for all refusals, a status-text schema for the routes that answer with the bare status, and an explicit access rule on every operation (including the public ones and the stream ticket).

@@ -118,3 +118,7 @@ contract describes (method and path).
 `python -m unittest discover -s tests` and `python tools/generate_types.py`.
 4. Update every implementation until its conformance test passes. 5. Bump the
 schema `$id` version when the change is not backwards compatible.
+
+## Connection and system events of the history
+
+`connection_event`, `system_event` and `connection_client` describe what the history of the server says about the clients that connect to it (a Studio session, the Android app, the panel of a node, the voice service) and about the system itself (a node that appears or disappears with its firmware, the broker link, a setting that changed, a service, an update, the alarm armed or silenced). They are published for the clients that read `GET /api/v1/history` and `GET /api/v1/history/connections`; they are not MQTT messages. Their words are a fixed list and none of them has a field where a secret could go; the address and the user agent are written for administrators only and the server takes them out of the answer to anybody else.

@@ -186,6 +186,24 @@ def without(payload, key):
     return {name: value for name, value in payload.items() if name != key}
 
 
+def connection_event(**changes):
+    base = {"id": 7, "at": "2026-01-01T10:00:00.000Z", "type": "connection", "action": "login", "client_kind": "studio", "client_id": "0123456789abcdef", "user": "ana", "origin": "local", "two_factor": False}
+    base.update(changes)
+    return base
+
+
+def system_event(**changes):
+    base = {"id": 8, "at": "2026-01-01T10:00:00.000Z", "type": "system", "category": "node", "action": "appeared", "subject": "alarm-1", "version": "0.3.7"}
+    base.update(changes)
+    return base
+
+
+def connection_client(**changes):
+    base = {"id": "0123456789abcdef", "kind": "android", "user": "ana", "app_version": "0.6.6", "first_seen": "2026-01-01T10:00:00.000Z", "last_seen": "2026-01-02T10:00:00.000Z", "active_sessions": 1, "logins_ok": 3, "logins_failed": 0}
+    base.update(changes)
+    return base
+
+
 cases = {
     "telemetry": [
         ("minimal, no targets", True, telemetry(targets=[])),
@@ -850,6 +868,63 @@ cases = {
         ("zones that are not a list", False, profile(zones={"id": "x"})),
         ("a zone named twice", False, profile(zones=[{"id": "x", "armed": True}, {"id": "x", "armed": False}]), True),
         ("a zone left out that has a delay", False, profile(zones=[{"id": "x", "armed": False, "delay": "instant"}]), True),
+    ],
+    "connection_event": [
+        ("a sign-in to Studio", True, connection_event()),
+        ("a sign-in with the second factor", True, connection_event(two_factor=True, origin="remote")),
+        ("a sign-in the administrator sees with its address", True, connection_event(ip="192.168.0.20", agent="Mozilla/5.0")),
+        ("a refused sign-in", True, connection_event(action="login_failed")),
+        ("a wrong code of the second factor", True, connection_event(action="second_factor_failed")),
+        ("an app seen for the first time", True, connection_event(action="first_seen", client_kind="android", app_version="0.6.6")),
+        ("the panel of a node opened", True, connection_event(action="panel_opened", client_kind="node", subject="radar-1")),
+        ("a client with no user", True, {k: v for k, v in connection_event(client_kind="voice").items() if k != "user"}),
+        ("a session that expired", True, connection_event(action="session_expired")),
+        ("an action outside the list", False, connection_event(action="hijacked")),
+        ("a client kind outside the list", False, connection_event(client_kind="toaster")),
+        ("a client id that is not a hash", False, connection_event(client_id="ana")),
+        ("another type", False, connection_event(type="system")),
+        ("a password in the event", False, connection_event(password="secret")),
+        ("a token in the event", False, connection_event(token="abc")),
+        ("a user of 61 characters", False, connection_event(user="u" * 61)),
+        ("an application version with a space", False, connection_event(app_version="0.6 6")),
+        ("an id of zero", False, connection_event(id=0)),
+        ("no action", False, {k: v for k, v in connection_event().items() if k != "action"}),
+        ("the second factor as a number", False, connection_event(two_factor=1)),
+    ],
+    "system_event": [
+        ("a node that appeared", True, system_event()),
+        ("a node that went away", True, system_event(action="disappeared")),
+        ("a node whose firmware changed", True, system_event(action="firmware_changed", version="0.3.8", previous_version="0.3.7")),
+        ("the broker lost", True, system_event(category="broker", action="disconnected", subject="mqtt")),
+        ("a setting changed by somebody", True, system_event(category="settings", action="changed", subject="rules", by="ana")),
+        ("a service restarted", True, system_event(category="service", action="restarted", subject="armor-server", by="ana")),
+        ("an update installed", True, system_event(category="update", action="installed", subject="armor-server", version="0.7.2")),
+        ("the alarm armed with a profile", True, system_event(category="alarm", action="arm_requested", subject="alarm-1", profile="night", by="ana")),
+        ("the siren silenced", True, system_event(category="alarm", action="silence_requested", subject="alarm-1")),
+        ("a backup made", True, system_event(category="backup", action="backup_made")),
+        ("a refused change", True, system_event(category="settings", action="changed", outcome="denied")),
+        ("a category outside the list", False, system_event(category="weather")),
+        ("an action outside the list", False, system_event(action="exploded")),
+        ("a free text", False, system_event(detail="password=hunter2")),
+        ("a value of the setting", False, system_event(value="1234")),
+        ("a version that is not a version", False, system_event(version="latest")),
+        ("a profile with capitals", False, system_event(profile="Night")),
+        ("a subject of 81 characters", False, system_event(subject="s" * 81)),
+        ("another type", False, system_event(type="connection")),
+        ("no category", False, {k: v for k, v in system_event().items() if k != "category"}),
+    ],
+    "connection_client": [
+        ("the Android app of a person", True, connection_client()),
+        ("a Studio with its address, for an administrator", True, connection_client(kind="studio", ip="10.0.0.5", agent="Mozilla/5.0", origin="local")),
+        ("a client that was refused once", True, connection_client(logins_failed=1, last_failure="2026-01-02T09:00:00.000Z")),
+        ("the voice service with no user", True, {k: v for k, v in connection_client(kind="voice").items() if k not in ("user", "app_version")}),
+        ("the panel of a node", True, connection_client(kind="node", label="radar-1")),
+        ("a negative count of sessions", False, connection_client(active_sessions=-1)),
+        ("a count as text", False, connection_client(logins_ok="3")),
+        ("a kind outside the list", False, connection_client(kind="fridge")),
+        ("an id that is not a hash", False, connection_client(id="123")),
+        ("a cookie in the client", False, connection_client(cookie="abc")),
+        ("no last seen", False, {k: v for k, v in connection_client().items() if k != "last_seen"}),
     ],
     "command": [
         ("calibrate", True, {"node_id": "north-1", "timestamp_ms": 9, "command": "calibrate"}),

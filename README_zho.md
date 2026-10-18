@@ -21,14 +21,14 @@
   <img src="https://img.shields.io/badge/License-GPL%203.0-blue.svg" alt="GPL 3.0">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-534-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Version-0.6.4-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Vectors-685-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Version-0.6.5-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
 ---
 
-**诚实性检查 - 今天真正能运行的部分:** 各模式（遥测、健康、命令、节点信息、太阳能逆变器和电池、电气、带命令和结果的报警、网络）、Python 验证器、534 个一致性向量、生成的 TypeScript 和 Kotlin 类型、服务器的 OpenAPI 文件（136 个路径）、五个节点共用的固件基础以及共享的项目启动器都是真实的并经过测试（79 个测试）。Kotlin 文件已生成，但 ARMOR-ANDROID-CONTROL **尚未使用**（它保留自己的解析），`set_thresholds` 命令只带一个 `sensitivity` 字段，因为真实的雷达参数要等固件存在才能确定。
+**诚实性检查 - 今天真正能运行的部分:** 各模式（遥测、健康、命令、节点信息、太阳能逆变器和电池、电气、带命令和结果的报警、网络）、Python 验证器、685 个一致性向量、生成的 TypeScript 和 Kotlin 类型、服务器的 OpenAPI 文件（136 个路径）、五个节点共用的固件基础以及共享的项目启动器都是真实的并经过测试（89 个测试）。Kotlin 文件已生成，但 ARMOR-ANDROID-CONTROL **尚未使用**（它保留自己的解析），`set_thresholds` 命令只带一个 `sensitivity` 字段，因为真实的雷达参数要等固件存在才能确定。
 
 ---
 
@@ -36,9 +36,9 @@
 
 | | |
 |---|---|
-| 版本 | `0.6.4` |
+| 版本 | `0.6.5` |
 | 成熟度 | 成熟 |
-| 测试 | 79 (`python -m unittest discover -s tests`) and 534 conformance vectors |
+| 测试 | 89 (`python -m unittest discover -s tests`) and 685 conformance vectors |
 | 技术栈 | Python 3.11+ / JSON Schema / OpenAPI |
 | 真实硬件 | 只有雷达节点在电路板上运行过：它的消息就是 CM5 服务器、Studio 和 Android 应用每天使用的消息；其他节点的消息对照替身检查 |
 
@@ -48,13 +48,14 @@
 
 * **唯一的事实来源：**`src/armor_common/schemas/` 中的 JSON Schema，涵盖遥测、健康、命令、节点信息、两种太阳能消息（逆变器、含电芯和容量的电池）、电气消息（读数、命令、结果）、报警消息（状态、命令、结果）和网络消息。未知字段和不可能的组合会被拒绝。
 * **无法跳过规则的验证器：**它直接解释模式，并拒绝使用了它未实现的关键字的模式。
-* **一致性向量：**534 个被接受和被拒绝的负载，由每个实现运行（这里是 Python，ARMOR-SERVER 中是 TypeScript，以及固件仓库的检查），因此偏差会让构建失败。
+* **一致性向量：**685 个被接受和被拒绝的负载，由每个实现运行（这里是 Python，ARMOR-SERVER 中是 TypeScript，以及固件仓库的检查），因此偏差会让构建失败。
 * **生成的客户端：**TypeScript 和 Kotlin 类型来自模式（`tools/generate_types.py --check` 保持其最新）。
-* **HTTP 契约：**`openapi/armor-server.yaml` 描述服务器的每条路由（162 个路径、214 个操作）、其访问规则，以及每个请求体、响应和错误的具名模式；测试会检查服务器注册的路由与其描述的路由完全一致（方法和路径）。
+* **HTTP 契约：**`openapi/armor-server.yaml` 描述服务器的每条路由（163 个路径、215 个操作）、其访问规则，以及每个请求体、响应和错误的具名模式；测试会检查服务器注册的路由与其描述的路由完全一致（方法和路径）。
 * **固件基础：**`firmware_base/` 把五个节点共用的每个文件只保存一次（网络、设置和用户、网页面板服务器和登录、HTTPS 证书、日志、带 PIN 配对的蓝牙、签名更新检查；继电器和 Zigbee 仅限具备它们的节点）；`tools/sync_firmware_base.py` 把它写入每个节点并检查没有副本偏离（[指南](docs/FIRMWARE_BASE.md)，[签名固件](docs/SIGNED_FIRMWARE.md)）。
 * **共享启动器：**`tools/armor_project_tool.py` 为家族的每个仓库提供相同的 `build`、`build-test` 和 `run` 流程，`tools/armor_ci_validate.py` 提供相同的 CI 检查。
 * **共享节点基础中可选的与代理的 TLS 连接:** `firmware_base` 包含 `mqtt.tls` 开关和 `mqtt.ca_pem` 文本(一个 PEM 证书,最大 2 KB,经过校验)、只信任该机构并检查代理名称的连接,以及五个节点共用的主机测试;默认关闭。
 * **节点健康与布防配置：** `node_health` 消息（雷达、太阳能、电气、报警或壁挂面板节点发送相同的报告）和 `arm_profile`（布防命令中带有的命名布防方式：哪些分区守护、延时、警笛以及服务器通知的力度）都有自己的模式、一致性向量、生成的 TypeScript 与 Kotlin 类型、OpenAPI 路由，以及生成报告的共享固件代码。
+* **历史中的连接事件与系统事件：** 模式 `connection_event`、`system_event` 和 `connection_client`（服务器历史对连接的客户端和系统本身的描述，词汇固定，没有可以放入机密的字段）、其一致性向量、生成的 TypeScript 与 Kotlin 类型，以及列出客户端的 OpenAPI 路由。
 
 ## 🧩 在 A.R.M.O.R. 中的角色
 
@@ -93,7 +94,7 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 79 tests, 534 conformance vectors
+python -m unittest discover -s tests      # 89 tests, 685 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list (--check: they are current)
 python tools/sync_firmware_base.py check  # the firmware the node projects share has not drifted (see docs/FIRMWARE_BASE.md)

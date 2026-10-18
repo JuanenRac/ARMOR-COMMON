@@ -42,6 +42,9 @@ MESSAGES = {
     "alarm_command": ("AlarmCommand", {"profile": "ArmProfile", "zones": "ArmProfileZone"}),
     "alarm_result": ("AlarmResult", {}),
     "node_health": ("NodeHealth", {}),
+    "connection_event": ("ConnectionEvent", {}),
+    "system_event": ("SystemEvent", {}),
+    "connection_client": ("ConnectionClient", {}),
     "network": ("Network", {"interface": "NetworkInterface", "internet": "NetworkInternet", "probes": "NetworkProbe", "last_outage": "NetworkOutage", "devices": "NetworkDevice",
                             "ports": "NetworkPort", "events": "NetworkEvent", "scan": "NetworkScan"}),
 }
