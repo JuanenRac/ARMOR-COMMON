@@ -155,6 +155,15 @@
           }
         }
       }
+    },
+    "arm_profiles": {
+      "type": "boolean",
+      "description": "true when the node understands the arming profiles of the arm command. A node that does not say it (an older firmware) must be armed without a profile."
+    },
+    "profile": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,15}$",
+      "description": "The id of the arming profile the panel is armed (or arming) with; absent when it was armed without one or is not armed."
     }
   }
 }

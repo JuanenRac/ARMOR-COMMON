@@ -2,7 +2,7 @@ import json
 import unittest
 from pathlib import Path
 
-from armor_common import ContractError, decode, encode, validate_alarm_command, validate_alarm_message, validate_alarm_result, validate_alarm_zone_feed, validate_device_message, validate_network_orders, validate_server_alert, validate_electrical_command, validate_electrical_message, validate_electrical_result, validate_network_message, validate_solar_message, validate_topic_and_payload
+from armor_common import ContractError, decode, encode, validate_arm_profile, validate_node_health, validate_alarm_command, validate_alarm_message, validate_alarm_result, validate_alarm_zone_feed, validate_device_message, validate_network_orders, validate_server_alert, validate_electrical_command, validate_electrical_message, validate_electrical_result, validate_network_message, validate_solar_message, validate_topic_and_payload
 from armor_common.contracts import load_schema, parse_alarm_topic, parse_device_topic, parse_electrical_topic, parse_network_topic, parse_solar_topic, parse_topic, validate_payload
 from armor_common.schema import SchemaError, UnsupportedSchema, check_schema, validate
 
@@ -20,6 +20,8 @@ MESSAGE_RULES = {
     "device_state": lambda payload: validate_device_message("armor/device/electrical-1/lights/state", payload),
     "server_alert": lambda payload: validate_server_alert("armor/server/alert", payload),
     "network_orders": validate_network_orders,
+    "node_health": lambda payload: validate_node_health(f"armor/health/{payload['node_id']}", payload),
+    "arm_profile": validate_arm_profile,
 }
 
 

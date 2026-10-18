@@ -1614,6 +1614,230 @@
    }
   },
   {
+   "name": "a node that understands arming profiles",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ],
+    "arm_profiles": true
+   }
+  },
+  {
+   "name": "armed with a profile",
+   "valid": true,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "stay",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ],
+    "arm_profiles": true,
+    "profile": "night"
+   }
+  },
+  {
+   "name": "a profile id with capitals",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ],
+    "profile": "Night"
+   }
+  },
+  {
+   "name": "a profile id of seventeen characters",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ],
+    "profile": "aaaaaaaaaaaaaaaaa"
+   }
+  },
+  {
+   "name": "arm_profiles as a string",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "armed",
+    "mode": "away",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ],
+    "arm_profiles": "yes"
+   }
+  },
+  {
+   "name": "a profile on a panel that is not armed",
+   "valid": false,
+   "payload": {
+    "kind": "alarm",
+    "node_id": "alarm-1",
+    "timestamp_ms": 1000,
+    "phase": "disarmed",
+    "mode": "disarmed",
+    "siren": false,
+    "locked_out": false,
+    "commands_enabled": true,
+    "zones": [
+     {
+      "id": "front-door",
+      "name": "Front door",
+      "kind": "entry",
+      "state": "normal",
+      "bypassed": false
+     },
+     {
+      "id": "window",
+      "kind": "instant",
+      "state": "normal",
+      "bypassed": false
+     }
+    ],
+    "open_zones": [],
+    "events": [
+     {
+      "ago_s": 12,
+      "kind": "armed"
+     }
+    ],
+    "profile": "night"
+   },
+   "schema_valid": true
+  },
+  {
    "name": "a siren outside the alarm phase",
    "valid": false,
    "payload": {

@@ -22,7 +22,7 @@
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
   <img src="https://img.shields.io/badge/Vectors-534-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Version-0.6.2-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Version-0.6.3-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
@@ -36,7 +36,7 @@
 
 | | |
 |---|---|
-| 版本 | `0.6.2` |
+| 版本 | `0.6.3` |
 | 成熟度 | 成熟 |
 | 测试 | 79 (`python -m unittest discover -s tests`) and 534 conformance vectors |
 | 技术栈 | Python 3.11+ / JSON Schema / OpenAPI |
@@ -54,6 +54,7 @@
 * **固件基础：**`firmware_base/` 把五个节点共用的每个文件只保存一次（网络、设置和用户、网页面板服务器和登录、HTTPS 证书、日志、带 PIN 配对的蓝牙、签名更新检查；继电器和 Zigbee 仅限具备它们的节点）；`tools/sync_firmware_base.py` 把它写入每个节点并检查没有副本偏离（[指南](docs/FIRMWARE_BASE.md)，[签名固件](docs/SIGNED_FIRMWARE.md)）。
 * **共享启动器：**`tools/armor_project_tool.py` 为家族的每个仓库提供相同的 `build`、`build-test` 和 `run` 流程，`tools/armor_ci_validate.py` 提供相同的 CI 检查。
 * **共享节点基础中可选的与代理的 TLS 连接:** `firmware_base` 包含 `mqtt.tls` 开关和 `mqtt.ca_pem` 文本(一个 PEM 证书,最大 2 KB,经过校验)、只信任该机构并检查代理名称的连接,以及五个节点共用的主机测试;默认关闭。
+* **节点健康与布防配置：** `node_health` 消息（雷达、太阳能、电气、报警或壁挂面板节点发送相同的报告）和 `arm_profile`（布防命令中带有的命名布防方式：哪些分区守护、延时、警笛以及服务器通知的力度）都有自己的模式、一致性向量、生成的 TypeScript 与 Kotlin 类型、OpenAPI 路由，以及生成报告的共享固件代码。
 
 ## 🧩 在 A.R.M.O.R. 中的角色
 

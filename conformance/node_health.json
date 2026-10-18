@@ -1,0 +1,835 @@
+{
+ "kind": "node_health",
+ "vectors": [
+  {
+   "name": "an alarm node on a cable",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "a radar on Wi-Fi",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "north-1",
+    "timestamp_ms": 9000,
+    "family": "radar",
+    "firmware": "0.3.6",
+    "board": "s3-wifi",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "wifi",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "rssi_dbm": -61
+   }
+  },
+  {
+   "name": "a solar node",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "family": "solar",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "an electrical node",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "electrical-1",
+    "timestamp_ms": 9000,
+    "family": "electrical",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "a wall panel",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "hall-panel",
+    "timestamp_ms": 9000,
+    "family": "hmi",
+    "firmware": "0.3.6",
+    "board": "lcd7box",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "wifi",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "rssi_dbm": -61
+   }
+  },
+  {
+   "name": "a four part firmware version",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.8.0.1",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "the minimum a node must say",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1
+   }
+  },
+  {
+   "name": "a node that has logged an error",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "last_error": "mqtt: the broker refused the identity"
+   }
+  },
+  {
+   "name": "a node that restarted after a crash",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 12,
+    "reset_reason": "panic",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "a node with no link",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "none",
+    "link_up": false,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "a Wi-Fi link that is down",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "wifi",
+    "link_up": false,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "a node that reconnected nine times",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 9,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "the least heap equals the heap free",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 142000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "a reset reason outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "cosmic_ray",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "a family outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "toaster",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "the kind of another message",
+   "valid": false,
+   "payload": {
+    "kind": "health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "a firmware that is not a version",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "latest",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "a firmware of five parts",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.8.0.1.2",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "a negative uptime",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": -1,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "an uptime as a string",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": "1d",
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "a negative heap",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": -1,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "a link outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "lte",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "a link flag as a number",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": 1,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "a signal stronger than zero",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "wifi",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "rssi_dbm": 5
+   }
+  },
+  {
+   "name": "a signal weaker than -120",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "wifi",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "rssi_dbm": -121
+   }
+  },
+  {
+   "name": "an empty board",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "a board of thirty-three characters",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "an empty error",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "last_error": ""
+   }
+  },
+  {
+   "name": "an error of 97 characters",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "last_error": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+   }
+  },
+  {
+   "name": "sixty-five tasks short of stack",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 65
+   }
+  },
+  {
+   "name": "no firmware",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "no reset reason",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "no reconnect count",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "a node id with a space",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "my node",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "a negative timestamp",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": -1,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   }
+  },
+  {
+   "name": "an unknown field",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "temp_c": 41
+   }
+  },
+  {
+   "name": "a command in a report",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "command": "restart"
+   }
+  },
+  {
+   "name": "the least heap above the heap free",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 150000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a signal on a cable",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "rssi_dbm": -50
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a signal on a Wi-Fi link that is down",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "wifi",
+    "link_up": false,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "rssi_dbm": -50
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "no link but the link is up",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "none",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0
+   },
+   "schema_valid": true
+  }
+ ]
+}

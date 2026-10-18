@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: A.R.M.O.R. Server API
-  version: 0.6.2
+  version: 0.6.3
   description: >-
     The HTTP surface of ARMOR-SERVER. Message bodies reference the JSON Schemas
     published in src/armor_common/schemas, which are the single source of truth.
@@ -123,6 +123,35 @@ paths:
         '202': { description: Accepted }
         '400': { description: Invalid payload }
         '401': { description: Authentication failure }
+  /api/v1/node-health:
+    post:
+      summary: 'The health report of a node of any family - radar, solar, electrical, alarm or hmi (the `node_health` message of the shared contract, ingest token); the same message arrives over MQTT on armor/health/{node_id}. A field this server does not know is dropped and said in `ignored`.'
+      security: [{ ingestBearer: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '../src/armor_common/schemas/node_health.schema.json' } } } }
+      responses:
+        '202': { description: 'Accepted; { accepted, ignored? }' }
+        '400': { description: Not the contract's message }
+        '401': { description: Missing or wrong ingest token }
+    get:
+      summary: 'The latest report of every node with what the server makes of it ({ nodes, waiting, totals, levels }): the status (ok, warning, or stale after three minutes without a report), the warnings (node_low_memory, node_frequent_resets, node_link_flapping, node_weak_signal), the restarts of the last day, the levels the server judges by, and the nodes that are known but have sent no report yet (an older firmware)'
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The health of the nodes }
+  /api/v1/node-health/{id}:
+    get:
+      summary: One node with the history of its memory and signal (up to 120 reports) and the log of its restarts, newest first
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: The node }
+        '404': { description: Unknown node }
+    delete:
+      summary: Forget a node that was taken away, with its health warnings (an administrator only)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '204': { description: Forgotten }
+        '404': { description: Unknown node }
   /api/v1/control/{mode}:
     post:
       summary: Arm or disarm
@@ -653,6 +682,21 @@ paths:
       requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { token: { type: string } } } } } }
       responses:
         '200': { description: Not registered any more }
+  /api/v1/alarm/profiles:
+    get:
+      summary: 'The arming profiles - the named ways of arming an alarm panel (Away, Home, Night and the owner''s own) - with the revision of the list ({ revision, updated_at, updated_by, profiles, max }); each is an `arm_profile` of the shared contract'
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The profiles }
+    put:
+      summary: 'Replace the whole list of profiles (an administrator only): at most eight, an id once, and away and stay always present with their own base. `revision` is the one the editor read; another change in between is a 409 with the current list, never a silent overwrite. Editing a profile arms nothing and changes nothing on a panel that is already armed.'
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [profiles], properties: { revision: { type: integer }, profiles: { type: array, maxItems: 8, items: { $ref: '../src/armor_common/schemas/arm_profile.schema.json' } } } } } } }
+      responses:
+        '200': { description: 'Saved; the new list' }
+        '400': { description: 'invalid_profiles: the list does not follow the contract' }
+        '403': { description: Not an administrator }
+        '409': { description: 'conflict: the profiles changed since they were read; { current }' }
   /api/v1/alarm/commands:
     get:
       summary: Whether the server may arm, disarm and silence alarm nodes (off unless ARMOR_ALARM_COMMANDS=1), the commands still waiting for a node's answer, and what became of the latest ones ({ enabled, pending, recent })
@@ -667,13 +711,13 @@ paths:
         answer from it. Answered 202: the node's own answer arrives on armor/alarm/{node_id}/result and is shown by GET /api/v1/alarm/commands; an accepted command is not an armed alarm, only
         the node's state says that.
       security: [{ admin: [] }]
-      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [node, action], properties: { pin: { type: string }, node: { type: string }, action: { type: string, enum: [arm, disarm, silence] }, mode: { type: string, enum: [away, stay] }, force: { type: boolean } } } } } }
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [node, action], properties: { pin: { type: string }, node: { type: string }, action: { type: string, enum: [arm, disarm, silence] }, mode: { type: string, enum: [away, stay] }, force: { type: boolean }, profile: { type: string, description: 'The id of an arming profile (GET /api/v1/alarm/profiles); only on an arm. Its base is the mode, which may then be left out. The server puts the whole profile inside the command to the node, and only a node whose state says arm_profiles: true is sent one.' } } } } } }
       responses:
         '202': { description: 'Published; { accepted, command_id }' }
         '400': { description: node and a valid action are required }
         '403': { description: 'Not an administrator, or the commands are not turned on (code commands_disabled)' }
-        '404': { description: unknown_node }
-        '409': { description: 'node_unavailable, node_commands_off or busy' }
+        '404': { description: 'unknown_node, or unknown_profile' }
+        '409': { description: 'node_unavailable, node_commands_off, busy or profiles_unsupported (the node does not understand arming profiles)' }
         '429': { description: Too many alarm commands }
         '503': { description: 'mqtt_unavailable: the broker is not connected' }
   /api/v1/network/state:

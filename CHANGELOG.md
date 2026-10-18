@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here.
 
+## [0.6.3] - Node health and arming profiles
+
+- node_health.schema.json (new): the same health report for a radar, a solar, an electrical, an alarm and a wall-panel node, published to armor/health/{node_id}; validate_node_health also checks the rules that join fields (the least heap is never above the free heap, a signal only on a Wi-Fi link that is up, no link is a link that is down).
+- arm_profile.schema.json (new): a named way of arming a panel (base away or stay, per-zone armed and delay, exit and entry delays, siren, notification level), and alarm_command.schema.json accepts it as the optional profile of an arm, whose base must be the mode. The alarm state gains the optional arm_profiles and profile.
+- Conformance vectors for both (41 and 23, plus 26 for the command and 6 for the state), generated TypeScript and Kotlin types, the OpenAPI routes of node health and of the profiles, and CONTRACTS.md describe them. Everything is additive: a message without the new fields is read as before.
+- Firmware base: core/node_health.hpp, main/node_health.hpp and main/node_health.cpp are shared by the five nodes, mqtt_link.cpp counts the connections to the broker, and tests/test_base.cpp tests the reset reasons, the link choice, the last error of a log and the JSON of the report.
+
 ## [0.6.2] - An optional encrypted link to the broker in the shared node base
 
 - firmware_base carries mqtt_tls.hpp (what a stored authority may look like: exactly one certificate in PEM, at most 2 KB, and what the settings must say when TLS is on), the mqtt.tls and mqtt.ca_pem settings of the nodes that share node_settings.hpp, the connection in mqtt_link.cpp that trusts only that authority and checks the broker's name, and the textarea style of the panel.

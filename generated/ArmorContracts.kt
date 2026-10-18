@@ -246,7 +246,26 @@ data class Alarm(
     val commands_enabled: Boolean,
     val zones: List<AlarmZone>,
     val open_zones: List<String>,
-    val events: List<AlarmEvent>
+    val events: List<AlarmEvent>,
+    val arm_profiles: Boolean? = null,
+    val profile: String? = null
+)
+
+data class ArmProfileZone(
+    val id: String,
+    val armed: Boolean? = null,
+    val delay: String? = null
+)
+
+data class ArmProfile(
+    val id: String,
+    val name: String,
+    val base: String,
+    val exit_delay_s: Long? = null,
+    val entry_delay_s: Long? = null,
+    val siren: Boolean? = null,
+    val notify: String? = null,
+    val zones: List<ArmProfileZone>? = null
 )
 
 data class AlarmCommand(
@@ -256,7 +275,8 @@ data class AlarmCommand(
     val command_id: String,
     val action: String,
     val mode: String? = null,
-    val force: Boolean? = null
+    val force: Boolean? = null,
+    val profile: ArmProfile? = null
 )
 
 data class AlarmResult(
@@ -268,6 +288,25 @@ data class AlarmResult(
     val accepted: Boolean,
     val refusal: String,
     val phase: String
+)
+
+data class NodeHealth(
+    val kind: String = "node_health",
+    val node_id: String,
+    val timestamp_ms: Long,
+    val family: String,
+    val firmware: String,
+    val board: String? = null,
+    val uptime_s: Long,
+    val reset_reason: String,
+    val heap_free: Long,
+    val heap_min: Long,
+    val link: String,
+    val link_up: Boolean,
+    val rssi_dbm: Long? = null,
+    val broker_reconnects: Long,
+    val low_stack_tasks: Long? = null,
+    val last_error: String? = null
 )
 
 data class NetworkInterface(
