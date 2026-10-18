@@ -104,9 +104,13 @@ The schema cannot say the rules that join two fields (a token on the closing act
 
 ## HTTP
 
-`openapi/armor-server-0.4.3.yaml` describes every route of ARMOR-SERVER, who may
-call it and which schema its body follows. ARMOR-SERVER's tests fail when a
-registered route is missing from it.
+`openapi/armor-server.yaml` describes every route of ARMOR-SERVER, who may call
+it (an explicit security list on every operation) and a named schema for every
+request body, answer and error; the examples in the schemas are checked against
+them. `tests/test_openapi.py` fails when the contract is not valid OpenAPI, when
+a body is described as a bare object, and, with ARMOR-SERVER checked out next to
+this repository, when the routes the server registers differ from the ones the
+contract describes (method and path).
 
 ## Changing a contract
 

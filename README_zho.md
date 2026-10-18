@@ -22,7 +22,7 @@
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
   <img src="https://img.shields.io/badge/Vectors-534-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Version-0.6.3-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Version-0.6.4-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
@@ -36,7 +36,7 @@
 
 | | |
 |---|---|
-| 版本 | `0.6.3` |
+| 版本 | `0.6.4` |
 | 成熟度 | 成熟 |
 | 测试 | 79 (`python -m unittest discover -s tests`) and 534 conformance vectors |
 | 技术栈 | Python 3.11+ / JSON Schema / OpenAPI |
@@ -50,7 +50,7 @@
 * **无法跳过规则的验证器：**它直接解释模式，并拒绝使用了它未实现的关键字的模式。
 * **一致性向量：**534 个被接受和被拒绝的负载，由每个实现运行（这里是 Python，ARMOR-SERVER 中是 TypeScript，以及固件仓库的检查），因此偏差会让构建失败。
 * **生成的客户端：**TypeScript 和 Kotlin 类型来自模式（`tools/generate_types.py --check` 保持其最新）。
-* **HTTP 契约：**`openapi/armor-server.yaml` 描述服务器的每条路由（136 个路径）、其访问规则和模式，ARMOR-SERVER 有测试确保没有遗漏。
+* **HTTP 契约：**`openapi/armor-server.yaml` 描述服务器的每条路由（162 个路径、214 个操作）、其访问规则，以及每个请求体、响应和错误的具名模式；测试会检查服务器注册的路由与其描述的路由完全一致（方法和路径）。
 * **固件基础：**`firmware_base/` 把五个节点共用的每个文件只保存一次（网络、设置和用户、网页面板服务器和登录、HTTPS 证书、日志、带 PIN 配对的蓝牙、签名更新检查；继电器和 Zigbee 仅限具备它们的节点）；`tools/sync_firmware_base.py` 把它写入每个节点并检查没有副本偏离（[指南](docs/FIRMWARE_BASE.md)，[签名固件](docs/SIGNED_FIRMWARE.md)）。
 * **共享启动器：**`tools/armor_project_tool.py` 为家族的每个仓库提供相同的 `build`、`build-test` 和 `run` 流程，`tools/armor_ci_validate.py` 提供相同的 CI 检查。
 * **共享节点基础中可选的与代理的 TLS 连接:** `firmware_base` 包含 `mqtt.tls` 开关和 `mqtt.ca_pem` 文本(一个 PEM 证书,最大 2 KB,经过校验)、只信任该机构并检查代理名称的连接,以及五个节点共用的主机测试;默认关闭。
