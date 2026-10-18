@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here.
 
+## [0.6.4] - The HTTP contract types every message
+
+- openapi/armor-server.yaml: every request body, answer and error names a component schema (no bare object bodies); one error schema for all refusals, a status-text schema for the routes that answer with the bare status, and an explicit access rule on every operation (including the public ones and the stream ticket).
+- The GET of /api/v1/admin/updates was hidden by a duplicated path key and is described again; the voice command lists the Portuguese language; the console state matches what the server answers.
+- Examples in the schemas are checked against their schemas, and the file is validated with its relative references resolved.
+- tests/test_openapi.py reads the route table of ARMOR-SERVER when it is checked out next to this repository and fails when a route (method and path) is registered but not described, or described but not registered.
+- CI installs jsonschema with the other contract-test tools.
+
 ## [0.6.3] - Node health and arming profiles
 
 - node_health.schema.json (new): the same health report for a radar, a solar, an electrical, an alarm and a wall-panel node, published to armor/health/{node_id}; validate_node_health also checks the rules that join fields (the least heap is never above the free heap, a signal only on a Wi-Fi link that is up, no link is a link that is down).

@@ -22,7 +22,7 @@
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
   <img src="https://img.shields.io/badge/Vectors-534-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Version-0.6.3-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Version-0.6.4-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
@@ -36,7 +36,7 @@
 
 | | |
 |---|---|
-| Version | `0.6.3` |
+| Version | `0.6.4` |
 | Reifegrad | Etabliert |
 | Tests | 79 (`python -m unittest discover -s tests`) and 534 conformance vectors |
 | Technik | Python 3.11+ / JSON Schema / OpenAPI |
@@ -50,7 +50,7 @@
 * **Ein Validator, der keine Regel überspringen kann:** er interpretiert das Schema direkt und lehnt ein Schema ab, das ein nicht implementiertes Schlüsselwort verwendet.
 * **Konformitätsvektoren:** 534 akzeptierte und abgelehnte Nutzlasten, von jeder Implementierung ausgeführt (hier Python, TypeScript in ARMOR-SERVER, die Prüfungen der Firmware-Repositories), sodass eine Abweichung einen Build scheitern lässt.
 * **Erzeugte Clients:** TypeScript- und Kotlin-Typen entstehen aus den Schemas (`tools/generate_types.py --check` hält sie aktuell).
-* **HTTP-Vertrag:** `openapi/armor-server.yaml` beschreibt jede Route des Servers (136 Pfade), ihre Zugriffsregel und ihr Schema, und ARMOR-SERVER hat einen Test, dass keine fehlt.
+* **HTTP-Vertrag:** `openapi/armor-server.yaml` beschreibt jede Route des Servers (162 Pfade, 214 Operationen), ihre Zugriffsregel und ein benanntes Schema für jeden Anfragekörper, jede Antwort und jeden Fehler, und ein Test prüft, dass die vom Server registrierten Routen genau die beschriebenen sind (Methode und Pfad).
 * **Firmware-Basis:** `firmware_base/` hält jede von den fünf Knoten geteilte Datei einmal (Netzwerk, Einstellungen und Benutzer, Panel-Server und Login, HTTPS-Zertifikat, Log, Bluetooth mit PIN-Kopplung, Prüfung signierter Updates; Relais und Zigbee in den Knoten, die sie haben); `tools/sync_firmware_base.py` schreibt sie in jeden Knoten und prüft, dass keine Kopie abweicht ([die Anleitung](docs/FIRMWARE_BASE.md), [signierte Firmware](docs/SIGNED_FIRMWARE.md)).
 * **Gemeinsamer Starter:** `tools/armor_project_tool.py` gibt jedem Repository der Familie denselben Ablauf `build`, `build-test` und `run`, und `tools/armor_ci_validate.py` dieselben CI-Prüfungen.
 * **Optionale TLS-Verbindung zum Broker in der gemeinsamen Knotenbasis:** `firmware_base` enthält den Schalter `mqtt.tls` und den Text `mqtt.ca_pem` (ein PEM-Zertifikat, höchstens 2 KB, geprüft), die Verbindung, die nur dieser Stelle vertraut und den Namen des Brokers prüft, und die Host-Tests, die sich die fünf Knoten teilen; standardmäßig aus.
