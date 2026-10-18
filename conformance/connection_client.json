@@ -1,0 +1,173 @@
+{
+ "kind": "connection_client",
+ "vectors": [
+  {
+   "name": "the Android app of a person",
+   "valid": true,
+   "payload": {
+    "id": "0123456789abcdef",
+    "kind": "android",
+    "user": "ana",
+    "app_version": "0.6.6",
+    "first_seen": "2026-01-01T10:00:00.000Z",
+    "last_seen": "2026-01-02T10:00:00.000Z",
+    "active_sessions": 1,
+    "logins_ok": 3,
+    "logins_failed": 0
+   }
+  },
+  {
+   "name": "a Studio with its address, for an administrator",
+   "valid": true,
+   "payload": {
+    "id": "0123456789abcdef",
+    "kind": "studio",
+    "user": "ana",
+    "app_version": "0.6.6",
+    "first_seen": "2026-01-01T10:00:00.000Z",
+    "last_seen": "2026-01-02T10:00:00.000Z",
+    "active_sessions": 1,
+    "logins_ok": 3,
+    "logins_failed": 0,
+    "ip": "10.0.0.5",
+    "agent": "Mozilla/5.0",
+    "origin": "local"
+   }
+  },
+  {
+   "name": "a client that was refused once",
+   "valid": true,
+   "payload": {
+    "id": "0123456789abcdef",
+    "kind": "android",
+    "user": "ana",
+    "app_version": "0.6.6",
+    "first_seen": "2026-01-01T10:00:00.000Z",
+    "last_seen": "2026-01-02T10:00:00.000Z",
+    "active_sessions": 1,
+    "logins_ok": 3,
+    "logins_failed": 1,
+    "last_failure": "2026-01-02T09:00:00.000Z"
+   }
+  },
+  {
+   "name": "the voice service with no user",
+   "valid": true,
+   "payload": {
+    "id": "0123456789abcdef",
+    "kind": "voice",
+    "first_seen": "2026-01-01T10:00:00.000Z",
+    "last_seen": "2026-01-02T10:00:00.000Z",
+    "active_sessions": 1,
+    "logins_ok": 3,
+    "logins_failed": 0
+   }
+  },
+  {
+   "name": "the panel of a node",
+   "valid": true,
+   "payload": {
+    "id": "0123456789abcdef",
+    "kind": "node",
+    "user": "ana",
+    "app_version": "0.6.6",
+    "first_seen": "2026-01-01T10:00:00.000Z",
+    "last_seen": "2026-01-02T10:00:00.000Z",
+    "active_sessions": 1,
+    "logins_ok": 3,
+    "logins_failed": 0,
+    "label": "radar-1"
+   }
+  },
+  {
+   "name": "a negative count of sessions",
+   "valid": false,
+   "payload": {
+    "id": "0123456789abcdef",
+    "kind": "android",
+    "user": "ana",
+    "app_version": "0.6.6",
+    "first_seen": "2026-01-01T10:00:00.000Z",
+    "last_seen": "2026-01-02T10:00:00.000Z",
+    "active_sessions": -1,
+    "logins_ok": 3,
+    "logins_failed": 0
+   }
+  },
+  {
+   "name": "a count as text",
+   "valid": false,
+   "payload": {
+    "id": "0123456789abcdef",
+    "kind": "android",
+    "user": "ana",
+    "app_version": "0.6.6",
+    "first_seen": "2026-01-01T10:00:00.000Z",
+    "last_seen": "2026-01-02T10:00:00.000Z",
+    "active_sessions": 1,
+    "logins_ok": "3",
+    "logins_failed": 0
+   }
+  },
+  {
+   "name": "a kind outside the list",
+   "valid": false,
+   "payload": {
+    "id": "0123456789abcdef",
+    "kind": "fridge",
+    "user": "ana",
+    "app_version": "0.6.6",
+    "first_seen": "2026-01-01T10:00:00.000Z",
+    "last_seen": "2026-01-02T10:00:00.000Z",
+    "active_sessions": 1,
+    "logins_ok": 3,
+    "logins_failed": 0
+   }
+  },
+  {
+   "name": "an id that is not a hash",
+   "valid": false,
+   "payload": {
+    "id": "123",
+    "kind": "android",
+    "user": "ana",
+    "app_version": "0.6.6",
+    "first_seen": "2026-01-01T10:00:00.000Z",
+    "last_seen": "2026-01-02T10:00:00.000Z",
+    "active_sessions": 1,
+    "logins_ok": 3,
+    "logins_failed": 0
+   }
+  },
+  {
+   "name": "a cookie in the client",
+   "valid": false,
+   "payload": {
+    "id": "0123456789abcdef",
+    "kind": "android",
+    "user": "ana",
+    "app_version": "0.6.6",
+    "first_seen": "2026-01-01T10:00:00.000Z",
+    "last_seen": "2026-01-02T10:00:00.000Z",
+    "active_sessions": 1,
+    "logins_ok": 3,
+    "logins_failed": 0,
+    "cookie": "abc"
+   }
+  },
+  {
+   "name": "no last seen",
+   "valid": false,
+   "payload": {
+    "id": "0123456789abcdef",
+    "kind": "android",
+    "user": "ana",
+    "app_version": "0.6.6",
+    "first_seen": "2026-01-01T10:00:00.000Z",
+    "active_sessions": 1,
+    "logins_ok": 3,
+    "logins_failed": 0
+   }
+  }
+ ]
+}

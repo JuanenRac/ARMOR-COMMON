@@ -309,6 +309,54 @@ data class NodeHealth(
     val last_error: String? = null
 )
 
+data class ConnectionEvent(
+    val id: Long,
+    val at: String,
+    val type: String = "connection",
+    val action: String,
+    val client_kind: String,
+    val client_id: String,
+    val user: String? = null,
+    val origin: String? = null,
+    val two_factor: Boolean? = null,
+    val app_version: String? = null,
+    val subject: String? = null,
+    val ip: String? = null,
+    val agent: String? = null
+)
+
+data class SystemEvent(
+    val id: Long,
+    val at: String,
+    val type: String = "system",
+    val category: String,
+    val action: String,
+    val subject: String? = null,
+    val by: String? = null,
+    val version: String? = null,
+    val previous_version: String? = null,
+    val profile: String? = null,
+    val outcome: String? = null
+)
+
+data class ConnectionClient(
+    val id: String,
+    val kind: String,
+    val user: String? = null,
+    val label: String? = null,
+    val app_version: String? = null,
+    val origin: String? = null,
+    val two_factor: Boolean? = null,
+    val first_seen: String,
+    val last_seen: String,
+    val last_failure: String? = null,
+    val active_sessions: Long,
+    val logins_ok: Long,
+    val logins_failed: Long,
+    val ip: String? = null,
+    val agent: String? = null
+)
+
 data class NetworkInterface(
     val name: String,
     val ip: String,
