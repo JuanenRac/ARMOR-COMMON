@@ -49,7 +49,9 @@ DEVICE_TOPIC_PREFIX = "armor/device/"
 DEVICE_LEAVES = ("state", "availability", "set")
 SERVER_ALERT_TOPIC = "armor/server/alert"
 _RELAY_COMMANDS = ("on", "off", "true", "false", "1", "0", "toggle")
-_EXTRA_SCHEMAS = ("alarm_zone_feed", "device_state", "server_alert", "network_orders")
+# The health report of a node of any family has one topic per node: armor/health/{node_id} (node -> server). It is not the presence message of a radar (armor/node/{node_id}/health).
+NODE_HEALTH_TOPIC_PREFIX = "armor/health/"
+_EXTRA_SCHEMAS = ("alarm_zone_feed", "device_state", "server_alert", "network_orders", "node_health", "arm_profile")
 _PRIVATE_RANGES = tuple(ipaddress.ip_network(text) for text in ("10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"))
 _DEVICE_CHARS = set("abcdefghijklmnopqrstuvwxyz0123456789-_")
 _NODE_ID_CHARS = set("abcdefghijklmnopqrstuvwxyz0123456789-_")
@@ -241,6 +243,8 @@ def validate_alarm_message(topic: str, payload: Mapping[str, object]) -> None:
         raise ContractError("an arming or armed panel has a mode other than disarmed")
     if payload.get("siren") is True and payload.get("phase") != "alarm":
         raise ContractError("the siren sounds only in the alarm phase")
+    if "profile" in payload and payload.get("mode") == "disarmed":
+        raise ContractError("a panel that is not armed has no arming profile")
     events = payload.get("events")
     if isinstance(events, list):
         for item in events:
@@ -248,13 +252,35 @@ def validate_alarm_message(topic: str, payload: Mapping[str, object]) -> None:
                 raise ContractError("an event about a zone names a zone of the message")
 
 
+def validate_arm_profile(profile: Mapping[str, object]) -> None:
+    """Validate an arming profile: the schema, and that a zone is named once and that a zone that is not guarding says nothing about its delay."""
+    if not isinstance(profile, Mapping):
+        raise ContractError("a profile must be an object")
+    validate_payload("arm_profile", profile)
+    zones = profile.get("zones")
+    if isinstance(zones, list):
+        ids = [item.get("id") for item in zones if isinstance(item, Mapping)]
+        if len(ids) != len(set(ids)):
+            raise ContractError("a zone is named once in a profile")
+        for item in zones:
+            if isinstance(item, Mapping) and item.get("armed") is False and "delay" in item:
+                raise ContractError("a zone that is left out has no delay")
+
+
 def validate_alarm_command(topic: str, payload: Mapping[str, object]) -> None:
-    """Validate a command to the panel: the topic, the schema, that the node matches, a mode exactly on an arm and force only on an arm."""
+    """Validate a command to the panel: the topic, the schema, that the node matches, a mode exactly on an arm, force and a profile only on an arm, and a profile whose base is the mode."""
     _alarm_checked(topic, "command", "alarm_command", payload)
     if (payload.get("action") == "arm") != ("mode" in payload):
         raise ContractError("a mode goes on an arm and on nothing else")
     if payload.get("action") != "arm" and payload.get("force") is True:
         raise ContractError("force goes on an arm and on nothing else")
+    profile = payload.get("profile")
+    if profile is not None:
+        if payload.get("action") != "arm":
+            raise ContractError("a profile goes on an arm and on nothing else")
+        validate_arm_profile(profile)   # type: ignore[arg-type]
+        if profile.get("base") != payload.get("mode"):   # type: ignore[union-attr]
+            raise ContractError("the base of the profile is the mode of the arm")
 
 
 def validate_alarm_result(topic: str, payload: Mapping[str, object]) -> None:
@@ -262,6 +288,34 @@ def validate_alarm_result(topic: str, payload: Mapping[str, object]) -> None:
     _alarm_checked(topic, "result", "alarm_result", payload)
     if payload.get("accepted") != (payload.get("refusal") == "none"):
         raise ContractError("the refusal is none exactly when the request was accepted")
+
+
+def parse_health_topic(topic: str) -> str:
+    """Split ``armor/health/{node_id}`` into ``node_id``."""
+    if not isinstance(topic, str):
+        raise ContractError("topic must be a string")
+    parts = topic.split("/")
+    if len(parts) != 3 or parts[:2] != ["armor", "health"]:
+        raise ContractError("topic must be armor/health/{node_id}")
+    _check_node_id(parts[2])
+    return parts[2]
+
+
+def validate_node_health(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate the health report of a node: the topic, the schema, that the node matches, and the rules that join fields: the least heap is never more than the free heap,
+    a signal strength only on a Wi-Fi link that is up, and no link means a link that is down."""
+    node_id = parse_health_topic(topic)
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    if payload.get("node_id") != node_id:
+        raise ContractError("payload node_id must match the topic")
+    validate_payload("node_health", payload)
+    if payload["heap_min"] > payload["heap_free"]:   # type: ignore[operator]
+        raise ContractError("the least heap is never more than the heap free now")
+    if payload["link"] == "none" and payload["link_up"] is not False:
+        raise ContractError("no link means a link that is down")
+    if "rssi_dbm" in payload and not (payload["link"] == "wifi" and payload["link_up"] is True):
+        raise ContractError("a signal strength goes only with a Wi-Fi link that is up")
 
 
 def parse_network_topic(topic: str) -> str:

@@ -246,6 +246,25 @@ export type Alarm = {
   zones: AlarmZone[];
   open_zones: string[];
   events: AlarmEvent[];
+  arm_profiles?: boolean;
+  profile?: string;
+};
+
+export type ArmProfileZone = {
+  id: string;
+  armed?: boolean;
+  delay?: "instant" | "entry";
+};
+
+export type ArmProfile = {
+  id: string;
+  name: string;
+  base: "away" | "stay";
+  exit_delay_s?: number;
+  entry_delay_s?: number;
+  siren?: boolean;
+  notify?: "urgent" | "normal";
+  zones?: ArmProfileZone[];
 };
 
 export type AlarmCommand = {
@@ -256,6 +275,7 @@ export type AlarmCommand = {
   action: "arm" | "disarm" | "silence";
   mode?: "away" | "stay";
   force?: boolean;
+  profile?: ArmProfile;
 };
 
 export type AlarmResult = {
@@ -267,6 +287,25 @@ export type AlarmResult = {
   accepted: boolean;
   refusal: "none" | "not_disarmed" | "zones_open" | "not_armed" | "bad_pin" | "locked_out";
   phase: "disarmed" | "exit_delay" | "armed" | "entry_delay" | "alarm";
+};
+
+export type NodeHealth = {
+  kind: "node_health";
+  node_id: string;
+  timestamp_ms: number;
+  family: "radar" | "solar" | "electrical" | "alarm" | "hmi";
+  firmware: string;
+  board?: string;
+  uptime_s: number;
+  reset_reason: "power_on" | "external" | "software" | "panic" | "int_wdt" | "task_wdt" | "other_wdt" | "deep_sleep" | "brownout" | "sdio" | "usb" | "jtag" | "efuse" | "power_glitch" | "cpu_lockup" | "unknown";
+  heap_free: number;
+  heap_min: number;
+  link: "wifi" | "ethernet" | "none";
+  link_up: boolean;
+  rssi_dbm?: number;
+  broker_reconnects: number;
+  low_stack_tasks?: number;
+  last_error?: string;
 };
 
 export type NetworkInterface = {

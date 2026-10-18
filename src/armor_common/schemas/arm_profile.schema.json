@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/arm-profile-0.1.0.json",
+  "title": "A.R.M.O.R. arming profile",
+  "description": "A named way of arming an alarm panel: Away, Home, Night or one the owner made. It chooses which zones guard, whether a zone alarms at once or after the entry delay, the exit and entry delays, whether the siren sounds and how loudly the server tells people. The server keeps the profiles and puts the chosen one inside the arm command (alarm_command.schema.json, property profile), so the node needs nothing stored in advance; an arm without a profile behaves as it always did. A profile never changes who may disarm, the PIN, the lockout, a forced arming or a zone in trouble.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "name",
+    "base"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,15}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "base": {
+      "type": "string",
+      "enum": [
+        "away",
+        "stay"
+      ],
+      "description": "The mode of the panel while this profile is armed (what the state message calls mode), and the default of the zones that say nothing: away guards every zone, stay leaves the interior ones out."
+    },
+    "exit_delay_s": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 300,
+      "description": "Seconds to leave. Absent: the node's own setting."
+    },
+    "entry_delay_s": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 300,
+      "description": "Seconds to disarm after an entry zone opens. Absent: the node's own setting."
+    },
+    "siren": {
+      "type": "boolean",
+      "description": "Whether an intrusion sounds the siren. false: a silent alarm (it is still latched, recorded and notified). Smoke, panic and tamper always sound. Absent: true."
+    },
+    "notify": {
+      "type": "string",
+      "enum": [
+        "urgent",
+        "normal"
+      ],
+      "description": "How loudly the server tells people when this profile sounds: urgent is a critical alarm (escalated until somebody answers), normal a high one. Absent: urgent. Only the server reads it."
+    },
+    "zones": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$"
+          },
+          "armed": {
+            "type": "boolean",
+            "description": "Whether the zone guards in this profile. Absent: what its kind and the base say (an interior zone guards in away and not in stay, the others always). An always zone (smoke, panic) and a tamper are never switched off by a profile."
+          },
+          "delay": {
+            "type": "string",
+            "enum": [
+              "instant",
+              "entry"
+            ],
+            "description": "instant: the zone sounds the alarm at once. entry: it starts the entry delay first. Absent: what its kind says."
+          }
+        }
+      },
+      "description": "What this profile says about zones that differ from the default; a zone the node does not have is ignored."
+    }
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/node-health-0.1.0.json",
+  "title": "A.R.M.O.R. health report of one node",
+  "description": "How one node of any family (radar, solar, electrical, alarm, hmi) is doing, in the same words for all of them: how long it has been up and why it last restarted, how much memory it has, the link it reaches the network by, how often it lost the broker and the last thing it complained of. Published to armor/health/{node_id} every minute or so (never retained). It is not the presence message of a radar (health.schema.json, armor/node/{node_id}/health): that one says only whether the node is there. A report is information: it carries no command and nothing is decided by it on the node.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "node_id",
+    "timestamp_ms",
+    "family",
+    "firmware",
+    "uptime_s",
+    "reset_reason",
+    "heap_free",
+    "heap_min",
+    "link",
+    "link_up",
+    "broker_reconnects"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "node_health"
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "family": {
+      "type": "string",
+      "enum": [
+        "radar",
+        "solar",
+        "electrical",
+        "alarm",
+        "hmi"
+      ],
+      "description": "What kind of node says it."
+    },
+    "firmware": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+)?$",
+      "description": "The firmware version, three parts or four from 0.8.0."
+    },
+    "board": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32,
+      "description": "The board profile the firmware was built for (s3-wifi, s3-eth, lcd7box ...)."
+    },
+    "uptime_s": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Seconds since the node started. A value smaller than the one before is a restart."
+    },
+    "reset_reason": {
+      "type": "string",
+      "enum": [
+        "power_on",
+        "external",
+        "software",
+        "panic",
+        "int_wdt",
+        "task_wdt",
+        "other_wdt",
+        "deep_sleep",
+        "brownout",
+        "sdio",
+        "usb",
+        "jtag",
+        "efuse",
+        "power_glitch",
+        "cpu_lockup",
+        "unknown"
+      ],
+      "description": "Why the node started this time: power_on, external (the reset pin), software (a restart it asked for, an update included), panic, int_wdt, task_wdt, other_wdt, deep_sleep, brownout, sdio, usb, jtag, efuse, power_glitch, cpu_lockup or unknown."
+    },
+    "heap_free": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Bytes of heap free now."
+    },
+    "heap_min": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "The least heap that has been free since the node started, in bytes (never more than heap_free)."
+    },
+    "link": {
+      "type": "string",
+      "enum": [
+        "wifi",
+        "ethernet",
+        "none"
+      ],
+      "description": "How the node reaches the network: the Wi-Fi station, the Ethernet port, or neither."
+    },
+    "link_up": {
+      "type": "boolean",
+      "description": "Whether that link is up (associated, or a cable with a carrier) and has an address; false whenever link is none."
+    },
+    "rssi_dbm": {
+      "type": "integer",
+      "minimum": -120,
+      "maximum": 0,
+      "description": "Wi-Fi signal strength in dBm; only on a Wi-Fi link that is up."
+    },
+    "broker_reconnects": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How many times the node has connected to the broker since it started (the first connection counts one, so a node that never lost it says 1)."
+    },
+    "low_stack_tasks": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 64,
+      "description": "How many tasks of the node have less than 512 bytes of stack left at their worst."
+    },
+    "last_error": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 96,
+      "description": "The last error the node logged, cut to fit; absent when it has logged none since it started."
+    }
+  }
+}

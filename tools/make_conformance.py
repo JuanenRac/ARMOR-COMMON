@@ -85,6 +85,28 @@ def alarm_result(**changes):
     return base
 
 
+def node_health(**changes):
+    base = {"kind": "node_health", "node_id": "alarm-1", "timestamp_ms": 9000, "family": "alarm", "firmware": "0.3.6", "board": "s3-eth", "uptime_s": 86400, "reset_reason": "power_on",
+            "heap_free": 142000, "heap_min": 98000, "link": "ethernet", "link_up": True, "broker_reconnects": 1, "low_stack_tasks": 0}
+    base.update(changes)
+    return base
+
+
+def wifi_health(**changes):
+    return node_health(**dict({"link": "wifi", "rssi_dbm": -61}, **changes))
+
+
+def profile(**changes):
+    base = {"id": "night", "name": "Night", "base": "stay", "entry_delay_s": 45, "siren": True, "notify": "urgent",
+            "zones": [{"id": "hall-motion", "armed": True}, {"id": "front-door", "delay": "entry"}, {"id": "garage", "armed": False}]}
+    base.update(changes)
+    return base
+
+
+def alarm_profile_command(**changes):
+    return alarm_command(**dict({"mode": "stay", "profile": profile()}, **changes))
+
+
 def net_device(**changes):
     base = {"id": "14:2e:5e:86:d9:62", "ip": "192.168.0.1", "mac": "14:2e:5e:86:d9:62", "vendor": "Sagemcom Broadband SAS", "hostname": "router", "kind": "router", "os": "network gear",
             "online": True, "first_seen_ms": 1790000000000, "last_seen_ms": 1790000060000, "latency_ms": 1.4,
@@ -527,6 +549,12 @@ cases = {
         ("an exit delay with no mode", False, alarm(phase="exit_delay", mode="disarmed"), True),
         ("an alarm while disarmed (smoke, panic or tamper)", True, alarm(phase="alarm", mode="disarmed", siren=True)),
         ("an alarm while armed", True, alarm(phase="alarm", mode="away", siren=True)),
+        ("a node that understands arming profiles", True, alarm(arm_profiles=True)),
+        ("armed with a profile", True, alarm(mode="stay", arm_profiles=True, profile="night")),
+        ("a profile id with capitals", False, alarm(profile="Night")),
+        ("a profile id of seventeen characters", False, alarm(profile="a" * 17)),
+        ("arm_profiles as a string", False, alarm(arm_profiles="yes")),
+        ("a profile on a panel that is not armed", False, alarm(phase="disarmed", mode="disarmed", profile="night"), True),
         ("a siren outside the alarm phase", False, alarm(siren=True), True),
         ("an event about a zone that is not there", False, alarm(events=[{"ago_s": 1, "kind": "alarm", "zone": "garage"}]), True),
     ],
@@ -556,6 +584,30 @@ cases = {
         ("negative timestamp", False, alarm_command(timestamp_ms=-1)),
         ("the kind of a state message", False, alarm_command(kind="alarm")),
         ("a zone to bypass", False, alarm_command(zone="window")),
+        ("arm in stay with a profile", True, alarm_profile_command()),
+        ("a profile with the base only", True, alarm_command(mode="away", profile={"id": "away", "name": "Away", "base": "away"})),
+        ("a profile with every field", True, alarm_profile_command(profile=profile(exit_delay_s=0, entry_delay_s=300, siren=False, notify="normal"))),
+        ("a profile with sixteen zones", True, alarm_profile_command(profile=profile(zones=[{"id": f"z{i}", "armed": True} for i in range(16)]))),
+        ("a profile with no zones", True, alarm_profile_command(profile=profile(zones=[]))),
+        ("a forced arm with a profile", True, alarm_profile_command(force=True)),
+        ("a profile with seventeen zones", False, alarm_profile_command(profile=profile(zones=[{"id": f"z{i}", "armed": True} for i in range(17)]))),
+        ("a profile without a name", False, alarm_profile_command(profile={k: v for k, v in profile().items() if k != "name"})),
+        ("a profile without a base", False, alarm_profile_command(profile={k: v for k, v in profile().items() if k != "base"})),
+        ("a profile with an empty name", False, alarm_profile_command(profile=profile(name=""))),
+        ("a profile name of thirty-three characters", False, alarm_profile_command(profile=profile(name="n" * 33))),
+        ("a base outside the list", False, alarm_profile_command(profile=profile(base="night"))),
+        ("an entry delay of 301 seconds", False, alarm_profile_command(profile=profile(entry_delay_s=301))),
+        ("a negative exit delay", False, alarm_profile_command(profile=profile(exit_delay_s=-1))),
+        ("a siren as a string", False, alarm_profile_command(profile=profile(siren="off"))),
+        ("a notify level outside the list", False, alarm_profile_command(profile=profile(notify="silent"))),
+        ("a zone delay outside the list", False, alarm_profile_command(profile=profile(zones=[{"id": "garage", "delay": "later"}]))),
+        ("a zone override with no zone", False, alarm_profile_command(profile=profile(zones=[{"armed": True}]))),
+        ("an unknown field in a profile", False, alarm_profile_command(profile=profile(pin="1234"))),
+        ("an unknown field in a zone override", False, alarm_profile_command(profile=profile(zones=[{"id": "garage", "armed": True, "name": "x"}]))),
+        ("a profile whose base is not the mode", False, alarm_command(mode="away", profile=profile()), True),
+        ("a profile on a disarm", False, {k: v for k, v in alarm_profile_command(action="disarm").items() if k != "mode"}, True),
+        ("a zone named twice in a profile", False, alarm_profile_command(profile=profile(zones=[{"id": "garage", "armed": False}, {"id": "garage", "armed": True}])), True),
+        ("a zone left out that has a delay", False, alarm_profile_command(profile=profile(zones=[{"id": "garage", "armed": False, "delay": "entry"}])), True),
     ],
     "alarm_result": [
         ("an arm, accepted", True, alarm_result()),
@@ -730,6 +782,74 @@ cases = {
         ("a port on a ping", False, order(port=80), True),
         ("a sealed login on a ping", False, order(auth_sealed="A" * 64), True),
         ("an order twice", False, orders(commands=[{"id": "c1", "type": "scan_now"}, {"id": "c1", "type": "scan_now"}]), True),
+    ],
+    "node_health": [
+        ("an alarm node on a cable", True, node_health()),
+        ("a radar on Wi-Fi", True, wifi_health(family="radar", node_id="north-1", board="s3-wifi")),
+        ("a solar node", True, node_health(family="solar", node_id="solar-1")),
+        ("an electrical node", True, node_health(family="electrical", node_id="electrical-1")),
+        ("a wall panel", True, wifi_health(family="hmi", node_id="hall-panel", board="lcd7box")),
+        ("a four part firmware version", True, node_health(firmware="0.8.0.1")),
+        ("the minimum a node must say", True, {k: v for k, v in node_health().items() if k not in ("board", "low_stack_tasks")}),
+        ("a node that has logged an error", True, node_health(last_error="mqtt: the broker refused the identity")),
+        ("a node that restarted after a crash", True, node_health(reset_reason="panic", uptime_s=12)),
+        ("a node with no link", True, node_health(link="none", link_up=False)),
+        ("a Wi-Fi link that is down", True, node_health(link="wifi", link_up=False)),
+        ("a node that reconnected nine times", True, node_health(broker_reconnects=9)),
+        ("the least heap equals the heap free", True, node_health(heap_min=142000)),
+        ("a reset reason outside the list", False, node_health(reset_reason="cosmic_ray")),
+        ("a family outside the list", False, node_health(family="toaster")),
+        ("the kind of another message", False, node_health(kind="health")),
+        ("a firmware that is not a version", False, node_health(firmware="latest")),
+        ("a firmware of five parts", False, node_health(firmware="0.8.0.1.2")),
+        ("a negative uptime", False, node_health(uptime_s=-1)),
+        ("an uptime as a string", False, node_health(uptime_s="1d")),
+        ("a negative heap", False, node_health(heap_free=-1)),
+        ("a link outside the list", False, node_health(link="lte")),
+        ("a link flag as a number", False, node_health(link_up=1)),
+        ("a signal stronger than zero", False, wifi_health(rssi_dbm=5)),
+        ("a signal weaker than -120", False, wifi_health(rssi_dbm=-121)),
+        ("an empty board", False, node_health(board="")),
+        ("a board of thirty-three characters", False, node_health(board="b" * 33)),
+        ("an empty error", False, node_health(last_error="")),
+        ("an error of 97 characters", False, node_health(last_error="e" * 97)),
+        ("sixty-five tasks short of stack", False, node_health(low_stack_tasks=65)),
+        ("no firmware", False, {k: v for k, v in node_health().items() if k != "firmware"}),
+        ("no reset reason", False, {k: v for k, v in node_health().items() if k != "reset_reason"}),
+        ("no reconnect count", False, {k: v for k, v in node_health().items() if k != "broker_reconnects"}),
+        ("a node id with a space", False, node_health(node_id="my node")),
+        ("a negative timestamp", False, node_health(timestamp_ms=-1)),
+        ("an unknown field", False, node_health(temp_c=41)),
+        ("a command in a report", False, node_health(command="restart")),
+        ("the least heap above the heap free", False, node_health(heap_min=150000), True),
+        ("a signal on a cable", False, node_health(rssi_dbm=-50), True),
+        ("a signal on a Wi-Fi link that is down", False, node_health(link="wifi", link_up=False, rssi_dbm=-50), True),
+        ("no link but the link is up", False, node_health(link="none", link_up=True), True),
+    ],
+    "arm_profile": [
+        ("a night profile", True, profile()),
+        ("the base only", True, {"id": "away", "name": "Away", "base": "away"}),
+        ("a silent profile", True, profile(siren=False, notify="normal")),
+        ("a zone switched on in stay", True, {"id": "home", "name": "Home", "base": "stay", "zones": [{"id": "hall", "armed": True}]}),
+        ("a zone with a delay", True, profile(zones=[{"id": "back-door", "delay": "instant"}])),
+        ("a zone with nothing to say", True, profile(zones=[{"id": "hall"}])),
+        ("a custom id with an underscore and a dash", True, profile(id="custom_1-b")),
+        ("an id of sixteen characters", True, profile(id="a" * 16)),
+        ("an id of seventeen characters", False, profile(id="a" * 17)),
+        ("an id starting with a dash", False, profile(id="-night")),
+        ("an id with capitals", False, profile(id="Night")),
+        ("a name of thirty-two characters", True, profile(name="n" * 32)),
+        ("a name of thirty-three characters", False, profile(name="n" * 33)),
+        ("no id", False, {k: v for k, v in profile().items() if k != "id"}),
+        ("a base of disarmed", False, profile(base="disarmed")),
+        ("a delay of 300 seconds", True, profile(entry_delay_s=300, exit_delay_s=300)),
+        ("a delay of 301 seconds", False, profile(exit_delay_s=301)),
+        ("a fractional delay", False, profile(entry_delay_s=1.5)),
+        ("notify as a boolean", False, profile(notify=True)),
+        ("an unknown field", False, profile(armed=True)),
+        ("zones that are not a list", False, profile(zones={"id": "x"})),
+        ("a zone named twice", False, profile(zones=[{"id": "x", "armed": True}, {"id": "x", "armed": False}]), True),
+        ("a zone left out that has a delay", False, profile(zones=[{"id": "x", "armed": False, "delay": "instant"}]), True),
     ],
     "command": [
         ("calibrate", True, {"node_id": "north-1", "timestamp_ms": 9, "command": "calibrate"}),

@@ -524,6 +524,33 @@
         "ARMOR-HMI": "tests/test_mqtt_tls.cpp",
         "ARMOR-ALARM": "tests/test_mqtt_tls.cpp"
       }
+    },
+    "core/node_health.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/node_health.hpp",
+        "ARMOR-ELECTRICAL": "core/node_health.hpp",
+        "ARMOR-RADAR": "main/core/node_health.hpp",
+        "ARMOR-HMI": "core/node_health.hpp",
+        "ARMOR-ALARM": "core/node_health.hpp"
+      }
+    },
+    "main/node_health.cpp": {
+      "targets": {
+        "ARMOR-SOLAR": "main/node_health.cpp",
+        "ARMOR-ELECTRICAL": "main/node_health.cpp",
+        "ARMOR-RADAR": "main/node_health.cpp",
+        "ARMOR-HMI": "main/node_health.cpp",
+        "ARMOR-ALARM": "main/node_health.cpp"
+      }
+    },
+    "main/node_health.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "main/node_health.hpp",
+        "ARMOR-ELECTRICAL": "main/node_health.hpp",
+        "ARMOR-RADAR": "main/node_health.hpp",
+        "ARMOR-HMI": "main/node_health.hpp",
+        "ARMOR-ALARM": "main/node_health.hpp"
+      }
     }
   }
 }

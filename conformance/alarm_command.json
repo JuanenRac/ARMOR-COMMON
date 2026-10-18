@@ -305,6 +305,870 @@
     "mode": "away",
     "zone": "window"
    }
+  },
+  {
+   "name": "arm in stay with a profile",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "hall-motion",
+       "armed": true
+      },
+      {
+       "id": "front-door",
+       "delay": "entry"
+      },
+      {
+       "id": "garage",
+       "armed": false
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "a profile with the base only",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "away",
+    "profile": {
+     "id": "away",
+     "name": "Away",
+     "base": "away"
+    }
+   }
+  },
+  {
+   "name": "a profile with every field",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 300,
+     "siren": false,
+     "notify": "normal",
+     "zones": [
+      {
+       "id": "hall-motion",
+       "armed": true
+      },
+      {
+       "id": "front-door",
+       "delay": "entry"
+      },
+      {
+       "id": "garage",
+       "armed": false
+      }
+     ],
+     "exit_delay_s": 0
+    }
+   }
+  },
+  {
+   "name": "a profile with sixteen zones",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "z0",
+       "armed": true
+      },
+      {
+       "id": "z1",
+       "armed": true
+      },
+      {
+       "id": "z2",
+       "armed": true
+      },
+      {
+       "id": "z3",
+       "armed": true
+      },
+      {
+       "id": "z4",
+       "armed": true
+      },
+      {
+       "id": "z5",
+       "armed": true
+      },
+      {
+       "id": "z6",
+       "armed": true
+      },
+      {
+       "id": "z7",
+       "armed": true
+      },
+      {
+       "id": "z8",
+       "armed": true
+      },
+      {
+       "id": "z9",
+       "armed": true
+      },
+      {
+       "id": "z10",
+       "armed": true
+      },
+      {
+       "id": "z11",
+       "armed": true
+      },
+      {
+       "id": "z12",
+       "armed": true
+      },
+      {
+       "id": "z13",
+       "armed": true
+      },
+      {
+       "id": "z14",
+       "armed": true
+      },
+      {
+       "id": "z15",
+       "armed": true
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "a profile with no zones",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": []
+    }
+   }
+  },
+  {
+   "name": "a forced arm with a profile",
+   "valid": true,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "hall-motion",
+       "armed": true
+      },
+      {
+       "id": "front-door",
+       "delay": "entry"
+      },
+      {
+       "id": "garage",
+       "armed": false
+      }
+     ]
+    },
+    "force": true
+   }
+  },
+  {
+   "name": "a profile with seventeen zones",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "z0",
+       "armed": true
+      },
+      {
+       "id": "z1",
+       "armed": true
+      },
+      {
+       "id": "z2",
+       "armed": true
+      },
+      {
+       "id": "z3",
+       "armed": true
+      },
+      {
+       "id": "z4",
+       "armed": true
+      },
+      {
+       "id": "z5",
+       "armed": true
+      },
+      {
+       "id": "z6",
+       "armed": true
+      },
+      {
+       "id": "z7",
+       "armed": true
+      },
+      {
+       "id": "z8",
+       "armed": true
+      },
+      {
+       "id": "z9",
+       "armed": true
+      },
+      {
+       "id": "z10",
+       "armed": true
+      },
+      {
+       "id": "z11",
+       "armed": true
+      },
+      {
+       "id": "z12",
+       "armed": true
+      },
+      {
+       "id": "z13",
+       "armed": true
+      },
+      {
+       "id": "z14",
+       "armed": true
+      },
+      {
+       "id": "z15",
+       "armed": true
+      },
+      {
+       "id": "z16",
+       "armed": true
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "a profile without a name",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "hall-motion",
+       "armed": true
+      },
+      {
+       "id": "front-door",
+       "delay": "entry"
+      },
+      {
+       "id": "garage",
+       "armed": false
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "a profile without a base",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "hall-motion",
+       "armed": true
+      },
+      {
+       "id": "front-door",
+       "delay": "entry"
+      },
+      {
+       "id": "garage",
+       "armed": false
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "a profile with an empty name",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "hall-motion",
+       "armed": true
+      },
+      {
+       "id": "front-door",
+       "delay": "entry"
+      },
+      {
+       "id": "garage",
+       "armed": false
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "a profile name of thirty-three characters",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "hall-motion",
+       "armed": true
+      },
+      {
+       "id": "front-door",
+       "delay": "entry"
+      },
+      {
+       "id": "garage",
+       "armed": false
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "a base outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "night",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "hall-motion",
+       "armed": true
+      },
+      {
+       "id": "front-door",
+       "delay": "entry"
+      },
+      {
+       "id": "garage",
+       "armed": false
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "an entry delay of 301 seconds",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 301,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "hall-motion",
+       "armed": true
+      },
+      {
+       "id": "front-door",
+       "delay": "entry"
+      },
+      {
+       "id": "garage",
+       "armed": false
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "a negative exit delay",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "hall-motion",
+       "armed": true
+      },
+      {
+       "id": "front-door",
+       "delay": "entry"
+      },
+      {
+       "id": "garage",
+       "armed": false
+      }
+     ],
+     "exit_delay_s": -1
+    }
+   }
+  },
+  {
+   "name": "a siren as a string",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": "off",
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "hall-motion",
+       "armed": true
+      },
+      {
+       "id": "front-door",
+       "delay": "entry"
+      },
+      {
+       "id": "garage",
+       "armed": false
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "a notify level outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "silent",
+     "zones": [
+      {
+       "id": "hall-motion",
+       "armed": true
+      },
+      {
+       "id": "front-door",
+       "delay": "entry"
+      },
+      {
+       "id": "garage",
+       "armed": false
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "a zone delay outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "garage",
+       "delay": "later"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "a zone override with no zone",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "armed": true
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "an unknown field in a profile",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "hall-motion",
+       "armed": true
+      },
+      {
+       "id": "front-door",
+       "delay": "entry"
+      },
+      {
+       "id": "garage",
+       "armed": false
+      }
+     ],
+     "pin": "1234"
+    }
+   }
+  },
+  {
+   "name": "an unknown field in a zone override",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "garage",
+       "armed": true,
+       "name": "x"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "a profile whose base is not the mode",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "away",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "hall-motion",
+       "armed": true
+      },
+      {
+       "id": "front-door",
+       "delay": "entry"
+      },
+      {
+       "id": "garage",
+       "armed": false
+      }
+     ]
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a profile on a disarm",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "disarm",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "hall-motion",
+       "armed": true
+      },
+      {
+       "id": "front-door",
+       "delay": "entry"
+      },
+      {
+       "id": "garage",
+       "armed": false
+      }
+     ]
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a zone named twice in a profile",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "garage",
+       "armed": false
+      },
+      {
+       "id": "garage",
+       "armed": true
+      }
+     ]
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a zone left out that has a delay",
+   "valid": false,
+   "payload": {
+    "kind": "alarm_command",
+    "node_id": "alarm-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee0123456789",
+    "action": "arm",
+    "mode": "stay",
+    "profile": {
+     "id": "night",
+     "name": "Night",
+     "base": "stay",
+     "entry_delay_s": 45,
+     "siren": true,
+     "notify": "urgent",
+     "zones": [
+      {
+       "id": "garage",
+       "armed": false,
+       "delay": "entry"
+      }
+     ]
+    }
+   },
+   "schema_valid": true
   }
  ]
 }
