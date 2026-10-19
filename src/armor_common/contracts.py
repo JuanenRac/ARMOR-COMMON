@@ -303,7 +303,7 @@ def parse_health_topic(topic: str) -> str:
 
 def validate_node_health(topic: str, payload: Mapping[str, object]) -> None:
     """Validate the health report of a node: the topic, the schema, that the node matches, and the rules that join fields: the least heap is never more than the free heap,
-    a signal strength only on a Wi-Fi link that is up, and no link means a link that is down."""
+    a signal strength only on a Wi-Fi link that is up, no link means a link that is down, and the internal memory is told whole with its least and its biggest block never above what is free."""
     node_id = parse_health_topic(topic)
     if not isinstance(payload, Mapping):
         raise ContractError("payload must be an object")
@@ -312,6 +312,11 @@ def validate_node_health(topic: str, payload: Mapping[str, object]) -> None:
     validate_payload("node_health", payload)
     if payload["heap_min"] > payload["heap_free"]:   # type: ignore[operator]
         raise ContractError("the least heap is never more than the heap free now")
+    internal = [name for name in ("heap_internal_free", "heap_internal_min", "heap_internal_largest") if name in payload]
+    if internal and len(internal) != 3:
+        raise ContractError("the internal memory is told whole: heap_internal_free, heap_internal_min and heap_internal_largest together")
+    if internal and (payload["heap_internal_min"] > payload["heap_internal_free"] or payload["heap_internal_largest"] > payload["heap_internal_free"]):   # type: ignore[operator]
+        raise ContractError("the least internal memory and its biggest block are never more than the internal memory free now")
     if payload["link"] == "none" and payload["link_up"] is not False:
         raise ContractError("no link means a link that is down")
     if "rssi_dbm" in payload and not (payload["link"] == "wifi" and payload["link_up"] is True):
