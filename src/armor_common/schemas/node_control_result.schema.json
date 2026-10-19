@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/node-control-result-0.1.0.json",
+  "title": "A.R.M.O.R. answer of a node to an order from the server",
+  "description": "What a node answers, published to armor/control/{node_id}/result (never retained). Stage `armed`: the arm was accepted and the answer carries the one-time `token`. Stage `restarting` (the `node_restarting` acknowledgement): sent just BEFORE the node restarts, with why, how long it has been up, its firmware and when it will go. Stage `applied`: pause, resume, standby, identify or maintenance took effect and the answer says the state the node is in now. Stage `diagnostics`: the read-only snapshot. Stage `rejected`: the order was refused and `refusal` says why (nothing was done).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "node_id",
+    "timestamp_ms",
+    "command_id",
+    "action",
+    "operation",
+    "stage",
+    "accepted",
+    "refusal"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "node_control_result"
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "command_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]{8,32}$"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "arm",
+        "execute"
+      ]
+    },
+    "operation": {
+      "type": "string",
+      "enum": [
+        "restart",
+        "pause",
+        "resume",
+        "standby",
+        "identify",
+        "diagnostics",
+        "maintenance_on",
+        "maintenance_off"
+      ]
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "armed",
+        "restarting",
+        "applied",
+        "diagnostics",
+        "rejected"
+      ]
+    },
+    "accepted": {
+      "type": "boolean"
+    },
+    "refusal": {
+      "type": "string",
+      "enum": [
+        "none",
+        "not_armed",
+        "invalid_token",
+        "token_expired",
+        "rate_limited",
+        "already_restarting",
+        "already_in_state",
+        "busy_update",
+        "busy_upload",
+        "busy_slot_copy",
+        "busy_battery",
+        "unavailable"
+      ]
+    },
+    "token": {
+      "type": "string",
+      "pattern": "^[a-z0-9]{16,32}$",
+      "description": "Only in the answer to an accepted arm."
+    },
+    "token_ttl_s": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 120,
+      "description": "Only with the token: how long it is good for."
+    },
+    "reason": {
+      "type": "string",
+      "enum": [
+        "requested_by_server"
+      ],
+      "description": "Only in stage restarting."
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "now",
+        "rolling"
+      ],
+      "description": "Only in stage restarting."
+    },
+    "restart_in_s": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3600,
+      "description": "Only in stage restarting: seconds until the node goes."
+    },
+    "uptime_s": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Only in stage restarting."
+    },
+    "firmware": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+)?$",
+      "description": "Only in stage restarting."
+    },
+    "requested_by": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._@ -]{1,64}$",
+      "description": "In stage restarting and stage applied: the person the order was for, as the order said."
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "running",
+        "paused",
+        "standby"
+      ],
+      "description": "Only in stage applied: the state of the node now."
+    },
+    "maintenance": {
+      "type": "boolean",
+      "description": "Only in stage applied: whether the maintenance flag is on."
+    },
+    "until_s": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 86400,
+      "description": "Only in stage applied: seconds left of the pause, identify or maintenance window the order started."
+    },
+    "since_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Only in stage applied: the wall-clock time (ms) when the pause or standby began; 0 if the clock of the node is not set."
+    },
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "firmware",
+        "uptime_s",
+        "reset_reason",
+        "heap_free",
+        "heap_min",
+        "mqtt_connected",
+        "state",
+        "maintenance"
+      ],
+      "description": "Only in stage diagnostics: a read-only snapshot, no secret in it.",
+      "properties": {
+        "firmware": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+)?$"
+        },
+        "uptime_s": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reset_reason": {
+          "type": "string",
+          "enum": [
+            "power_on",
+            "external",
+            "software",
+            "panic",
+            "int_wdt",
+            "task_wdt",
+            "other_wdt",
+            "deep_sleep",
+            "brownout",
+            "sdio",
+            "usb",
+            "jtag",
+            "efuse",
+            "power_glitch",
+            "cpu_lockup",
+            "unknown"
+          ],
+          "description": "Why the node started this time: power_on, external (the reset pin), software (a restart it asked for, an update included), panic, int_wdt, task_wdt, other_wdt, deep_sleep, brownout, sdio, usb, jtag, efuse, power_glitch, cpu_lockup or unknown."
+        },
+        "heap_free": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "heap_min": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "psram_free": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stack_min_free": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rssi": {
+          "type": "integer",
+          "minimum": -120,
+          "maximum": 0
+        },
+        "mqtt_connected": {
+          "type": "boolean"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "running",
+            "paused",
+            "standby"
+          ]
+        },
+        "maintenance": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

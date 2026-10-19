@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/node-maintenance-0.1.0.json",
+  "title": "A.R.M.O.R. planned-maintenance signal of a node",
+  "description": "Published by a node to armor/control/{node_id}/maintenance, RETAINED (the only retained message of the control family), just before it goes quiet on purpose: a restart, a pause, a standby, a firmware update, a firmware upload or an operator window. `active` true says the node expects to be quiet (for about `expected_s` seconds when given); `active` false clears it and is published retained too, so that the broker never keeps a stale `active`. The server treats an active signal as the reason for an expected silence and holds back the node-offline alert, but only up to its own bound: a stuck or hostile node cannot silence the alerts for ever.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "node_id", "timestamp_ms", "active", "reason", "firmware"],
+  "properties": {
+    "kind": {"type": "string", "const": "node_maintenance"},
+    "node_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"},
+    "timestamp_ms": {"type": "integer", "minimum": 0},
+    "active": {"type": "boolean", "description": "true: the node is about to be quiet; false: it is back (or the window ended)."},
+    "reason": {"type": "string", "enum": ["restart", "pause", "standby", "update", "upload", "operator"]},
+    "expected_s": {"type": "integer", "minimum": 1, "maximum": 3600, "description": "How long the node expects to be quiet. Only with active true."},
+    "firmware": {"type": "string", "pattern": "^[0-9]+[.][0-9]+[.][0-9]+([.][0-9]+)?$"},
+    "requested_by": {"type": "string", "pattern": "^[A-Za-z0-9._@ -]{1,64}$"}
+  }
+}

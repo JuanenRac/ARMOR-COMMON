@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: A.R.M.O.R. Server API
-  version: 0.7.2
+  version: 0.7.3
   description: >-
     The HTTP surface of ARMOR-SERVER. Message bodies reference the JSON Schemas
     published in src/armor_common/schemas, which are the single source of truth.
@@ -155,6 +155,64 @@ paths:
       responses:
         '204': { description: Forgotten }
         '404': { description: Unknown node, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+  /api/v1/nodes/control:
+    post:
+      summary: >-
+        Give ONE order to EVERY node (radar, solar, electrical, alarm and hmi nodes that report lately; never the server or the CM5): restart, pause, resume, standby, identify, diagnostics, maintenance_on or
+        maintenance_off. For an administrator who proved themselves again a moment ago (the password or the second factor, whatever the origin). `confirm` is the word RESTART, PAUSE or STANDBY, typed, for
+        those three operations. `mode` `rolling` is only for a restart (the nodes go one after another, thirty seconds apart, the alarm panel last; recommended); `now` acts on all together. Standby is
+        the node's work switched off while it stays connected, not a power-off. The server asks every node to arm (the `node_control_command` message of the shared contract), then executes with each
+        node's one-time token, which is bound to the operation. 202 means sent: the operation shows, per node, what it answered. There is no factory reset, no erase and no deep sleep.
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/NodeControlAllRequest' } } } }
+      responses:
+        '202': { description: 'Sent; the operation, with a line per node', content: { application/json: { schema: { $ref: '#/components/schemas/NodeControlOperation' } } } }
+        '400': { description: 'invalid_request: the operation, the mode, the word typed or the duration is not right', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'Not an administrator, or the proof of identity is old (code elevation_required)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'busy: an order is still under way; no_nodes: no node has reported lately', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: Too many orders, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: 'mqtt_unavailable: the broker is not connected', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/nodes/maintenance:
+    get:
+      summary: The planned-maintenance windows held now, from nodes that announced them and from operators (any signed-in user); each one is bounded by the server
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The windows, content: { application/json: { schema: { $ref: '#/components/schemas/NodeMaintenanceList' } } } }
+  /api/v1/nodes/control/operations:
+    get:
+      summary: The orders given to nodes in the last weeks, newest first, with the line of each node (an administrator); never a token
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: The operations, content: { application/json: { schema: { $ref: '#/components/schemas/NodeControlList' } } } }
+  /api/v1/nodes/control/operations/{id}:
+    get:
+      summary: One order as it stands now, with what each node did (an administrator); never a token
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9]{8,32}$' } }]
+      responses:
+        '200': { description: The operation, content: { application/json: { schema: { $ref: '#/components/schemas/NodeControlOperation' } } } }
+        '404': { description: 'Unknown operation', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/nodes/{id}/control:
+    post:
+      summary: >-
+        Give ONE order to ONE node without opening its configurator: restart, pause, resume, standby, identify, diagnostics, maintenance_on or maintenance_off (an administrator who proved themselves
+        again a moment ago). For restart, pause and standby, on every node, `confirm` is the NAME of the node, typed again; the other operations need none. The server asks the node to arm (the
+        `node_control_command` message of the shared contract) and executes with the one-time token of the node, bound to the operation, as soon as it answers. A restart is a clean restart and the
+        node says `restarting` before it goes; a pause stops the node's work for `duration_s` (60 to 3600, 3600 when absent) and resumes by itself; standby switches the work off until a resume (the node
+        stays connected and keeps answering, and stays in standby across restarts); identify blinks the node for 5 to 300 s; maintenance_on holds back the node-offline alert for 60 to 28800 s. While
+        the node installs a firmware, receives an upload, copies a slot or runs a battery operation it refuses restart, pause and standby. The server and the CM5 are not nodes and cannot be
+        controlled this way. There is no factory reset, no erase and no deep sleep.
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,63}$' } }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/NodeControlRequest' } } } }
+      responses:
+        '202': { description: 'Sent; the operation, with the line of the node', content: { application/json: { schema: { $ref: '#/components/schemas/NodeControlOperation' } } } }
+        '400': { description: 'invalid_request: the name typed is not the node, or the operation or the duration is not right', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'Not an administrator, or the proof of identity is old (code elevation_required)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'unknown_node: no node of that name has reported', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'busy: an order for this node is still under way; node_unavailable: the node has not reported lately; already_in_state: it is in that state already', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: Too many orders, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: 'mqtt_unavailable: the broker is not connected', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/control/{mode}:
     post:
       summary: Arm or disarm
@@ -2534,6 +2592,81 @@ components:
       properties:
         enabled: { type: boolean }
         operations: { type: array, items: { $ref: '#/components/schemas/BatteryOperation' } }
+    NodeControlRequest:
+      type: object
+      additionalProperties: false
+      required: [operation]
+      properties:
+        operation: { type: string, enum: [restart, pause, resume, standby, identify, diagnostics, maintenance_on, maintenance_off] }
+        confirm: { type: string, description: 'The name of the node, typed again by the person; required for restart, pause and standby' }
+        duration_s: { type: integer, minimum: 1, maximum: 86400, description: 'Only for pause (60..3600, default 3600), identify (5..300, default 30) and maintenance_on (60..28800, default 3600)' }
+    NodeControlAllRequest:
+      type: object
+      additionalProperties: false
+      required: [operation, mode]
+      properties:
+        operation: { type: string, enum: [restart, pause, resume, standby, identify, diagnostics, maintenance_on, maintenance_off] }
+        mode: { type: string, enum: [now, rolling], description: 'rolling is only for a restart: one after another, thirty seconds apart, the alarm panel last' }
+        confirm: { type: string, enum: [RESTART, PAUSE, STANDBY], description: 'The word of the operation, typed by the person; required for restart, pause and standby' }
+        duration_s: { type: integer, minimum: 1, maximum: 86400, description: 'As for one node' }
+    NodeControlLine:
+      type: object
+      required: [node_id, family, stage]
+      properties:
+        node_id: { type: string }
+        family: { type: string, enum: [radar, solar, electrical, alarm, hmi] }
+        stage: { type: string, enum: [pending, armed, sent, acknowledged, applied, offline, back, refused, no_answer, not_back], description: 'pending: waiting for the node to arm; armed: it gave its token; sent: the order was sent; acknowledged: it said it is restarting; applied: it did what was asked (see state); offline: it stopped reporting; back: it reports again; refused, no_answer and not_back: it did not' }
+        state: { type: string, enum: [running, paused, standby], description: 'After an applied order: the state of the node' }
+        maintenance: { type: boolean }
+        refusal: { type: string, description: 'The reason the node gave when it refused (busy_update, busy_upload, busy_slot_copy, busy_battery, rate_limited, already_in_state ...)' }
+        slot: { type: integer, description: 'Its place in a rolling restart' }
+        restart_in_s: { type: integer, description: 'What the node said: seconds until it goes' }
+        until_s: { type: integer, description: 'Seconds left of the pause, identify or maintenance window' }
+        firmware_before: { type: string }
+        firmware_after: { type: string }
+        acknowledged_at: { type: string }
+        applied_at: { type: string }
+        offline_at: { type: string }
+        back_at: { type: string }
+        back_after_s: { type: integer, description: 'Seconds from the order to the first report after the restart' }
+        diagnostics: { type: object, description: 'After a diagnostics order: the snapshot the node gave (firmware, uptime_s, reset_reason, heap_free, heap_min, mqtt_connected, state, maintenance and, if it has them, psram_free, stack_min_free, rssi)', additionalProperties: true }
+    NodeControlOperation:
+      type: object
+      required: [id, scope, operation, mode, actor, created_at, updated_at, state, nodes]
+      properties:
+        id: { type: string }
+        scope: { type: string, enum: [node, all] }
+        operation: { type: string, enum: [restart, pause, resume, standby, identify, diagnostics, maintenance_on, maintenance_off] }
+        mode: { type: string, enum: [now, rolling] }
+        duration_s: { type: integer }
+        actor: { type: string }
+        origin: { type: string, description: 'Where the order came from (local, vpn or remote), as the server saw it' }
+        created_at: { type: string }
+        updated_at: { type: string }
+        state: { type: string, enum: [arming, running, done], description: 'done: every node has answered or has failed to' }
+        nodes: { type: array, items: { $ref: '#/components/schemas/NodeControlLine' } }
+    NodeMaintenanceWindow:
+      type: object
+      additionalProperties: false
+      required: [node_id, source, reason, active]
+      description: 'A planned-maintenance window the server holds for a node (the retained `node_maintenance` message of the shared contract, or the operator window of maintenance_on). While it is active the node-offline alert and the tamper inference are held back, but a window the node announced is bounded by the server (10 minutes unless set) and ends as `maintenance_expired` in the history if the node does not return.'
+      properties:
+        node_id: { type: string }
+        source: { type: string, enum: [node, operator, both] }
+        reason: { type: string, enum: [restart, pause, standby, update, upload, operator] }
+        active: { type: boolean }
+        expires_in_s: { type: integer, minimum: 0, description: 'Seconds left before the window ends or is cut by the server bound' }
+        requested_by: { type: string }
+    NodeMaintenanceList:
+      type: object
+      required: [windows]
+      properties:
+        windows: { type: array, items: { $ref: '#/components/schemas/NodeMaintenanceWindow' } }
+    NodeControlList:
+      type: object
+      required: [operations]
+      properties:
+        operations: { type: array, items: { $ref: '#/components/schemas/NodeControlOperation' } }
     AlarmNodes:
       type: object
       required: [nodes, totals]

@@ -53,7 +53,15 @@ _RELAY_COMMANDS = ("on", "off", "true", "false", "1", "0", "toggle")
 # The health report of a node of any family has one topic per node: armor/health/{node_id} (node -> server). It is not the presence message of a radar (armor/node/{node_id}/health).
 NODE_HEALTH_TOPIC_PREFIX = "armor/health/"
 _EXTRA_SCHEMAS = ("alarm_zone_feed", "device_state", "server_alert", "network_orders", "node_health", "arm_profile", "connection_event", "system_event", "connection_client",
-                  "solar_battery_command", "solar_battery_result")
+                  "solar_battery_command", "solar_battery_result", "node_control_command", "node_control_result", "node_maintenance")
+# Controlling a node (restart, pause, resume, standby, identify, diagnostics, maintenance): armor/control/{node_id}/command (server -> node), armor/control/all/command (server -> every node, an arm only)
+# and armor/control/{node_id}/result (node -> server).
+CONTROL_TOPIC_PREFIX = "armor/control/"
+CONTROL_BROADCAST = "all"
+CONTROL_LEAVES = ("command", "result", "maintenance")
+CONTROL_OPERATIONS = ("restart", "pause", "resume", "standby", "identify", "diagnostics", "maintenance_on", "maintenance_off")
+# The seconds an operation may last, as the node enforces them: a pause 60 to 3600 (3600 when absent), identify 5 to 300 (30), maintenance 60 to 28800 (3600).
+CONTROL_DURATIONS = {"pause": (60, 3600), "identify": (5, 300), "maintenance_on": (60, 28800)}
 # Writing to a Pylontech battery has its own pair of topics under the node: armor/solar/{node_id}/maintenance/command (server -> node) and .../result (node -> server).
 BATTERY_LEAVES = ("command", "result")
 _PRIVATE_RANGES = tuple(ipaddress.ip_network(text) for text in ("10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"))
@@ -358,6 +366,117 @@ def validate_solar_battery_result(topic: str, payload: Mapping[str, object]) -> 
         raise ContractError("steps_done may not exceed steps_total")
 
 
+def parse_control_topic(topic: str, leaf: str) -> str:
+    """Split ``armor/control/{node_id}/{leaf}`` into the node id; on a command it may be ``all`` (every node). A result is always one node's."""
+    if not isinstance(topic, str):
+        raise ContractError("topic must be a string")
+    if leaf not in CONTROL_LEAVES:
+        raise ContractError("unsupported topic leaf")
+    parts = topic.split("/")
+    if len(parts) != 4 or parts[:2] != ["armor", "control"] or parts[3] != leaf:
+        raise ContractError(f"topic must be armor/control/{{node_id}}/{leaf}")
+    _check_node_id(parts[2])
+    if leaf != "command" and parts[2] == CONTROL_BROADCAST:
+        raise ContractError("an answer or a maintenance signal comes from one node")
+    return parts[2]
+
+
+def validate_node_control_command(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate an order to a node: the topic, the schema, that the node matches the topic, and what each action and operation carries (a token only on an execute, which is never for `all`;
+    a delay and a slot only on a restart; the rolling mode only for a restart; a duration only where the operation takes one, inside its range)."""
+    node_id = parse_control_topic(topic, "command")
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    if payload.get("node_id") != node_id:
+        raise ContractError("payload node_id must match the topic")
+    validate_payload("node_control_command", payload)
+    execute = payload.get("action") == "execute"
+    operation = payload.get("operation")
+    if execute != ("token" in payload):
+        raise ContractError("a token goes on an execute and on nothing else")
+    if execute and node_id == CONTROL_BROADCAST:
+        raise ContractError("an execute is for one node: its token is its own")
+    if payload.get("mode") == "rolling" and operation != "restart":
+        raise ContractError("the rolling mode is only for a restart")
+    if ("delay_s" in payload or "slot" in payload) and not (execute and operation == "restart"):
+        raise ContractError("a delay and a slot go on the execute of a restart")
+    if "slot" in payload and payload.get("mode") != "rolling":
+        raise ContractError("a slot goes with the rolling mode")
+    if "duration_s" in payload:
+        span = CONTROL_DURATIONS.get(str(operation))
+        if not execute or span is None:
+            raise ContractError("a duration goes on the execute of pause, identify or maintenance_on")
+        if not span[0] <= int(payload["duration_s"]) <= span[1]:  # type: ignore[call-overload]
+            raise ContractError(f"the duration of {operation} is {span[0]} to {span[1]} seconds")
+
+
+def validate_node_control_result(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate a node's answer: the topic, the schema, that the node matches, refusal none exactly when accepted, the stage that fits the action, the operation and the verdict, and that every
+    field is given in its own stage only (a token when armed; why and when when restarting; the new state when applied; the snapshot when it is diagnostics)."""
+    node_id = parse_control_topic(topic, "result")
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    if payload.get("node_id") != node_id:
+        raise ContractError("payload node_id must match the topic")
+    validate_payload("node_control_result", payload)
+    stage, accepted, action, operation = payload.get("stage"), payload.get("accepted"), payload.get("action"), payload.get("operation")
+    if accepted != (payload.get("refusal") == "none"):
+        raise ContractError("the refusal is none exactly when the order was accepted")
+    if (stage == "rejected") == bool(accepted):
+        raise ContractError("a rejected answer is one that was not accepted")
+    if payload.get("refusal") == "already_restarting" and operation != "restart":
+        raise ContractError("only a restart can find the node already restarting")
+    if accepted:
+        if action == "arm":
+            expected = "armed"
+        elif operation == "restart":
+            expected = "restarting"
+        elif operation == "diagnostics":
+            expected = "diagnostics"
+        else:
+            expected = "applied"
+        if stage != expected:
+            raise ContractError(f"an accepted {action} of {operation} is answered {expected}")
+    groups = {
+        "armed": {"token", "token_ttl_s"},
+        "restarting": {"reason", "mode", "restart_in_s", "uptime_s", "firmware", "requested_by"},
+        "applied": {"state", "maintenance", "requested_by", "until_s", "since_ms"},
+        "diagnostics": {"diagnostics"},
+    }
+    required = {
+        "armed": {"token", "token_ttl_s"},
+        "restarting": {"reason", "mode", "restart_in_s", "uptime_s", "firmware", "requested_by"},
+        "applied": {"state", "maintenance", "requested_by"},
+        "diagnostics": {"diagnostics"},
+    }
+    given = set(payload)
+    for name, fields in groups.items():
+        present = fields & given
+        if stage == name and not required[name] <= present:
+            raise ContractError(f"a {name} answer carries {', '.join(sorted(required[name]))}")
+        if stage != name and (present - groups_shared(name, stage, groups)):
+            raise ContractError(f"{', '.join(sorted(present))} belong to a {name} answer only")
+
+
+def groups_shared(name: str, stage: object, groups: Mapping[str, set]) -> set:
+    """The fields two stages both carry: only ``requested_by`` (when restarting and when applied)."""
+    if {name, stage} == {"restarting", "applied"}:
+        return {"requested_by"}
+    return set()
+
+
+def validate_node_maintenance(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate a node's planned-maintenance signal: the topic, the schema, that the node matches the topic, and that a window that ends carries no expected time."""
+    node_id = parse_control_topic(topic, "maintenance")
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    if payload.get("node_id") != node_id:
+        raise ContractError("payload node_id must match the topic")
+    validate_payload("node_maintenance", payload)
+    if not payload.get("active") and "expected_s" in payload:
+        raise ContractError("a window that ends has no expected time")
+
+
 def parse_alarm_topic(topic: str, leaf: str = "state") -> str:
     """Split ``armor/alarm/{node_id}/{leaf}`` into ``node_id``; the leaf is ``state``, ``command`` or ``result``."""
     if not isinstance(topic, str):
@@ -481,6 +600,13 @@ def validate_node_health(topic: str, payload: Mapping[str, object]) -> None:
         raise ContractError("no link means a link that is down")
     if "rssi_dbm" in payload and not (payload["link"] == "wifi" and payload["link_up"] is True):
         raise ContractError("a signal strength goes only with a Wi-Fi link that is up")
+    state = payload.get("control_state")
+    if ("control_since_ms" in payload or "control_by" in payload) and state not in ("paused", "standby"):
+        raise ContractError("since and by go with a paused or standby node")
+    if "control_until_s" in payload and state != "paused":
+        raise ContractError("the time left goes with a paused node: standby has no end")
+    if "maintenance_until_s" in payload and payload.get("maintenance") is not True:
+        raise ContractError("the maintenance time left goes with the maintenance flag on")
 
 
 def parse_network_topic(topic: str) -> str:

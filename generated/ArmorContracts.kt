@@ -376,6 +376,71 @@ data class SolarBatteryResult(
     val received: Long? = null
 )
 
+data class NodeControlCommand(
+    val kind: String = "node_control_command",
+    val node_id: String,
+    val timestamp_ms: Long,
+    val command_id: String,
+    val action: String,
+    val operation: String,
+    val mode: String,
+    val delay_s: Long? = null,
+    val slot: Long? = null,
+    val duration_s: Long? = null,
+    val token: String? = null,
+    val requested_by: String
+)
+
+data class NodeControlResultDiagnostics(
+    val firmware: String,
+    val uptime_s: Long,
+    val reset_reason: String,
+    val heap_free: Long,
+    val heap_min: Long,
+    val psram_free: Long? = null,
+    val stack_min_free: Long? = null,
+    val rssi: Long? = null,
+    val mqtt_connected: Boolean,
+    val state: String,
+    val maintenance: Boolean
+)
+
+data class NodeControlResult(
+    val kind: String = "node_control_result",
+    val node_id: String,
+    val timestamp_ms: Long,
+    val command_id: String,
+    val action: String,
+    val operation: String,
+    val stage: String,
+    val accepted: Boolean,
+    val refusal: String,
+    val token: String? = null,
+    val token_ttl_s: Long? = null,
+    val reason: String? = null,
+    val mode: String? = null,
+    val restart_in_s: Long? = null,
+    val uptime_s: Long? = null,
+    val firmware: String? = null,
+    val requested_by: String? = null,
+    val state: String? = null,
+    val maintenance: Boolean? = null,
+    val until_s: Long? = null,
+    val since_ms: Long? = null,
+    val diagnostics: NodeControlResultDiagnostics? = null
+)
+
+data class NodeMaintenance(
+    val kind: String = "node_maintenance",
+    val node_id: String,
+    val timestamp_ms: Long,
+    val active: Boolean,
+    val reason: String,
+    val expected_s: Long? = null,
+    val firmware: String,
+    val requested_by: String? = null
+)
+
 data class AlarmZone(
     val id: String,
     val name: String? = null,
@@ -465,7 +530,13 @@ data class NodeHealth(
     val rssi_dbm: Long? = null,
     val broker_reconnects: Long,
     val low_stack_tasks: Long? = null,
-    val last_error: String? = null
+    val last_error: String? = null,
+    val control_state: String? = null,
+    val control_since_ms: Long? = null,
+    val control_by: String? = null,
+    val control_until_s: Long? = null,
+    val maintenance: Boolean? = null,
+    val maintenance_until_s: Long? = null
 )
 
 data class ConnectionEvent(

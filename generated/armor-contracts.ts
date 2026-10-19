@@ -375,6 +375,71 @@ export type SolarBatteryResult = {
   received?: number;
 };
 
+export type NodeControlCommand = {
+  kind: "node_control_command";
+  node_id: string;
+  timestamp_ms: number;
+  command_id: string;
+  action: "arm" | "execute";
+  operation: "restart" | "pause" | "resume" | "standby" | "identify" | "diagnostics" | "maintenance_on" | "maintenance_off";
+  mode: "now" | "rolling";
+  delay_s?: number;
+  slot?: number;
+  duration_s?: number;
+  token?: string;
+  requested_by: string;
+};
+
+export type NodeControlResultDiagnostics = {
+  firmware: string;
+  uptime_s: number;
+  reset_reason: "power_on" | "external" | "software" | "panic" | "int_wdt" | "task_wdt" | "other_wdt" | "deep_sleep" | "brownout" | "sdio" | "usb" | "jtag" | "efuse" | "power_glitch" | "cpu_lockup" | "unknown";
+  heap_free: number;
+  heap_min: number;
+  psram_free?: number;
+  stack_min_free?: number;
+  rssi?: number;
+  mqtt_connected: boolean;
+  state: "running" | "paused" | "standby";
+  maintenance: boolean;
+};
+
+export type NodeControlResult = {
+  kind: "node_control_result";
+  node_id: string;
+  timestamp_ms: number;
+  command_id: string;
+  action: "arm" | "execute";
+  operation: "restart" | "pause" | "resume" | "standby" | "identify" | "diagnostics" | "maintenance_on" | "maintenance_off";
+  stage: "armed" | "restarting" | "applied" | "diagnostics" | "rejected";
+  accepted: boolean;
+  refusal: "none" | "not_armed" | "invalid_token" | "token_expired" | "rate_limited" | "already_restarting" | "already_in_state" | "busy_update" | "busy_upload" | "busy_slot_copy" | "busy_battery" | "unavailable";
+  token?: string;
+  token_ttl_s?: number;
+  reason?: "requested_by_server";
+  mode?: "now" | "rolling";
+  restart_in_s?: number;
+  uptime_s?: number;
+  firmware?: string;
+  requested_by?: string;
+  state?: "running" | "paused" | "standby";
+  maintenance?: boolean;
+  until_s?: number;
+  since_ms?: number;
+  diagnostics?: NodeControlResultDiagnostics;
+};
+
+export type NodeMaintenance = {
+  kind: "node_maintenance";
+  node_id: string;
+  timestamp_ms: number;
+  active: boolean;
+  reason: "restart" | "pause" | "standby" | "update" | "upload" | "operator";
+  expected_s?: number;
+  firmware: string;
+  requested_by?: string;
+};
+
 export type AlarmZone = {
   id: string;
   name?: string;
@@ -465,6 +530,12 @@ export type NodeHealth = {
   broker_reconnects: number;
   low_stack_tasks?: number;
   last_error?: string;
+  control_state?: "running" | "paused" | "standby";
+  control_since_ms?: number;
+  control_by?: string;
+  control_until_s?: number;
+  maintenance?: boolean;
+  maintenance_until_s?: number;
 };
 
 export type ConnectionEvent = {
@@ -488,7 +559,7 @@ export type SystemEvent = {
   at: string;
   type: "system";
   category: "node" | "broker" | "settings" | "service" | "update" | "alarm" | "backup" | "batteries";
-  action: "appeared" | "returned" | "disappeared" | "firmware_changed" | "connected" | "disconnected" | "created" | "changed" | "removed" | "started" | "stopped" | "restarted" | "checked" | "installed" | "rolled_back" | "armed" | "disarmed" | "silenced" | "acknowledged" | "arm_requested" | "disarm_requested" | "silence_requested" | "backup_made" | "backup_restored" | "battery_requested" | "battery_operation";
+  action: "appeared" | "returned" | "disappeared" | "firmware_changed" | "connected" | "disconnected" | "created" | "changed" | "removed" | "started" | "stopped" | "restarted" | "checked" | "installed" | "rolled_back" | "armed" | "disarmed" | "silenced" | "acknowledged" | "arm_requested" | "disarm_requested" | "silence_requested" | "backup_made" | "backup_restored" | "battery_requested" | "battery_operation" | "control_requested" | "control_acknowledged" | "control_refused" | "control_applied" | "control_back" | "control_lost" | "maintenance_started" | "maintenance_ended" | "maintenance_expired";
   subject?: string;
   by?: string;
   version?: string;
