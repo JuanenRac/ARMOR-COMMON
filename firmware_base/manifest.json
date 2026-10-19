@@ -567,6 +567,15 @@
         "ARMOR-ELECTRICAL": "tests/test_shared_node.cpp",
         "ARMOR-ALARM": "tests/test_shared_node.cpp"
       }
+    },
+    "core/stored_load.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/stored_load.hpp",
+        "ARMOR-ELECTRICAL": "core/stored_load.hpp",
+        "ARMOR-RADAR": "main/core/stored_load.hpp",
+        "ARMOR-HMI": "core/stored_load.hpp",
+        "ARMOR-ALARM": "core/stored_load.hpp"
+      }
     }
   }
 }

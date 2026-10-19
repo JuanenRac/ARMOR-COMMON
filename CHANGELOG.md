@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here.
 
+## [0.6.8] - Node firmware base: tolerant settings, login limit, Bluetooth race, missing board image
+
+- Shared node firmware: settings kept in flash are read as far as they can be after an update (unknown members ignored, a value that cannot be accepted falls back alone instead of resetting the node), with tests.
+- Shared node firmware: the login of the node panels also limits the wrong passwords of all sources together to thirty per minute, with tests.
+- Shared node firmware: a Bluetooth answer is sent only to the phone that asked, and the requests waiting for the worker are discarded when a phone connects or disconnects.
+- Shared node firmware: a newer release without an image for the node's board is reported as no_asset_for_board instead of passing for up to date.
+
 ## [0.6.7] - Wider login table and stricter text in the shared node base
 
 - The shared login throttle keeps thirty-two sources (it kept eight), so a handful of busy addresses, or the people counted next to them, no longer crowd out the rest; a blocked source is still never pushed out.
