@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here.
 
+## [0.6.9] - Update from GitHub through long redirects, real update errors, the green frames of the Summary and richer battery readings
+
+- **Update from GitHub through long redirects:** the node's header buffer is 20 KB (in the external RAM, 6 KB where a board has none) and the log tells the free internal memory before and after the client is opened.
+- **The real reason of a failed update:** `fetch_error` names a checksum or signature that could not be read (connection, size or HTTP status) and keeps "no checksum" for a release that carries none; tested.
+- **The Summary of every node panel draws its values in green frames:** one shared style rule (`.kv.framed`).
+- **A battery module tells more:** `solar_battery` accepts, per module, the model, the versions of its board and software, the number of cells, the current it allows each way, the speed of its console, the life counters, the health of each cell and the newest entry of its event log; conformance vectors for every field, and the generated types.
+- **The contracts can say more:** the schema checker accepts a schema as `additionalProperties`, `propertyNames` and `maxProperties`.
+- **The node base:** a last will on the connection to the broker, a lock around the task report, and the failed initialisations of the network, the settings and the Ethernet degrade with a log line instead of aborting.
+- **The API description:** the cells of the day, the alarm settings of the energy and the event log of a battery are described.
+
 ## [0.6.8] - Node firmware base: tolerant settings, login limit, Bluetooth race, missing board image
 
 - Shared node firmware: settings kept in flash are read as far as they can be after an update (unknown members ignored, a value that cannot be accepted falls back alone instead of resetting the node), with tests.

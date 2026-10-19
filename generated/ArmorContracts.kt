@@ -114,6 +114,23 @@ data class SolarInverter(
     val ratings: SolarInverterRatings? = null
 )
 
+data class SolarModuleLastEvent(
+    val index: Long,
+    val time: String,
+    val voltage_v: Double? = null,
+    val current_a: Double? = null,
+    val temperature_c: Double? = null,
+    val percent: Long? = null,
+    val base_state: String? = null,
+    val voltage_state: String? = null,
+    val current_state: String? = null,
+    val temperature_state: String? = null,
+    val coulomb_state: String? = null,
+    val power_events: String? = null,
+    val battery_events: String? = null,
+    val system_fault: String? = null
+)
+
 data class SolarModule(
     val n: Long,
     val present: Boolean,
@@ -123,11 +140,23 @@ data class SolarModule(
     val soc_percent: Long? = null,
     val state: String? = null,
     val cells_v: List<Double>? = null,
+    val counters: Map<String, Long>? = null,
     val temperatures_c: List<Double>? = null,
     val capacity_ah: Double? = null,
     val full_capacity_ah: Double? = null,
     val cycles: Long? = null,
-    val health_percent: Long? = null
+    val health_percent: Long? = null,
+    val model: String? = null,
+    val cell_count: Long? = null,
+    val max_charge_a: Double? = null,
+    val max_discharge_a: Double? = null,
+    val console_baud: Long? = null,
+    val soh_counts: List<Long>? = null,
+    val soh_abnormal: List<Long>? = null,
+    val last_event: SolarModuleLastEvent? = null,
+    val board_version: String? = null,
+    val main_soft_version: String? = null,
+    val soft_version: String? = null
 )
 
 data class SolarBattery(

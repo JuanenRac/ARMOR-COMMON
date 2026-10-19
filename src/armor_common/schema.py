@@ -11,7 +11,7 @@ constraint.
 
 Supported keywords: type, enum, const, pattern, minimum, maximum, minLength,
 maxLength, minItems, maxItems, items, properties, required,
-additionalProperties (boolean), plus the annotations $schema, $id, title,
+additionalProperties (a boolean, or one schema every other value must satisfy), propertyNames (only its pattern), maxProperties, plus the annotations $schema, $id, title,
 description.
 """
 
@@ -26,7 +26,7 @@ ANNOTATIONS = {"$schema", "$id", "title", "description"}
 TYPES = {"object", "array", "string", "boolean", "null", "integer", "number"}
 KEYWORDS = ANNOTATIONS | {
     "type", "enum", "const", "pattern", "minimum", "maximum", "minLength", "maxLength",
-    "minItems", "maxItems", "items", "properties", "required", "additionalProperties",
+    "minItems", "maxItems", "items", "properties", "required", "additionalProperties", "propertyNames", "maxProperties",
 }
 
 
@@ -130,8 +130,19 @@ def check_schema(schema: Mapping[str, Any], path: str = "") -> None:
         if not isinstance(schema["items"], Mapping):
             raise UnsupportedSchema(f"{where}: items must be a single schema (a list of schemas, prefixItems, is not implemented)")
         check_schema(schema["items"], f"{path}/items")
-    if "additionalProperties" in schema and not isinstance(schema["additionalProperties"], bool):
-        raise UnsupportedSchema(f"{where}: additionalProperties must be a boolean")
+    if "additionalProperties" in schema:
+        extra = schema["additionalProperties"]
+        if isinstance(extra, Mapping):
+            check_schema(extra, f"{path}/additionalProperties")
+        elif not isinstance(extra, bool):
+            raise UnsupportedSchema(f"{where}: additionalProperties must be a boolean or a schema")
+    if "propertyNames" in schema:
+        names = schema["propertyNames"]
+        if not isinstance(names, Mapping) or set(names) - {"pattern"} or not isinstance(names.get("pattern"), str):
+            raise UnsupportedSchema(f"{where}: propertyNames is implemented only as {{\"pattern\": ...}}")
+        _ecma_pattern(names["pattern"])
+    if "maxProperties" in schema and (isinstance(schema["maxProperties"], bool) or not isinstance(schema["maxProperties"], int) or schema["maxProperties"] < 0):
+        raise UnsupportedSchema(f"{where}: maxProperties must be a non-negative integer")
 
 
 def validate(instance: Any, schema: Mapping[str, Any], path: str = "") -> None:
@@ -174,10 +185,20 @@ def validate(instance: Any, schema: Mapping[str, Any], path: str = "") -> None:
         for name in schema.get("required", []):
             if name not in instance:
                 raise SchemaError(f"{path}/{name}", "is required")
+        if "maxProperties" in schema and len(instance) > schema["maxProperties"]:
+            raise SchemaError(path, f"must have at most {schema['maxProperties']} properties")
+        if "propertyNames" in schema:
+            for name in instance:
+                if not isinstance(name, str) or _ecma_pattern(schema["propertyNames"]["pattern"]).search(name) is None:
+                    raise SchemaError(f"{path}/{name}", f"the name must match {schema['propertyNames']['pattern']}")
         if schema.get("additionalProperties") is False:
             for name in instance:
                 if name not in properties:
                     raise SchemaError(f"{path}/{name}", "is not allowed")
+        elif isinstance(schema.get("additionalProperties"), Mapping):
+            for name, value in instance.items():
+                if name not in properties:
+                    validate(value, schema["additionalProperties"], f"{path}/{name}")
         for name, child in properties.items():
             if name in instance:
                 validate(instance[name], child, f"{path}/{name}")

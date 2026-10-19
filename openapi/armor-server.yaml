@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: A.R.M.O.R. Server API
-  version: 0.6.8
+  version: 0.6.9
   description: >-
     The HTTP surface of ARMOR-SERVER. Message bodies reference the JSON Schemas
     published in src/armor_common/schemas, which are the single source of truth.
@@ -2203,6 +2203,52 @@ components:
               received_at: { type: string, format: date-time }
               stale: { type: boolean }
               example: { type: boolean }
+              day_cells:
+                type: object
+                description: Battery only - the extremes of the cells today, per module (the lowest and highest cell with its number and the moment, the widest gap of the module) and the widest gap of the whole bank
+                required: [date, modules, bank_delta_v]
+                properties:
+                  date: { type: string }
+                  bank_delta_v: { type: number }
+                  modules:
+                    type: array
+                    items:
+                      type: object
+                      required: [n, min, max, delta_v]
+                      properties:
+                        n: { type: integer }
+                        delta_v: { type: number }
+                        min: { type: object, required: [v, cell, at], properties: { v: { type: number }, cell: { type: integer }, at: { type: integer, description: Milliseconds since 1970 } } }
+                        max: { type: object, required: [v, cell, at], properties: { v: { type: number }, cell: { type: integer }, at: { type: integer, description: Milliseconds since 1970 } } }
+              events:
+                type: array
+                maxItems: 30
+                description: Battery only - the newest entries of the modules' own event logs that the node has read, newest first, in the battery's words (the protection names are never decoded)
+                items:
+                  type: object
+                  required: [n, seen_at, event]
+                  properties:
+                    n: { type: integer, minimum: 1, maximum: 16 }
+                    seen_at: { type: integer, description: Milliseconds since 1970 when the server first saw the entry }
+                    event:
+                      type: object
+                      required: [index, time]
+                      additionalProperties: false
+                      properties:
+                        index: { type: integer, minimum: 0 }
+                        time: { type: string, maxLength: 40, description: The battery's own clock as it prints it }
+                        voltage_v: { type: number }
+                        current_a: { type: number }
+                        temperature_c: { type: number }
+                        percent: { type: integer, minimum: 0, maximum: 100 }
+                        base_state: { type: string }
+                        voltage_state: { type: string }
+                        current_state: { type: string }
+                        temperature_state: { type: string }
+                        coulomb_state: { type: string }
+                        power_events: { type: string, description: 'As the console prints it, the number and the mnemonic (0x2 PHV)' }
+                        battery_events: { type: string }
+                        system_fault: { type: string }
               registered: { $ref: '#/components/schemas/SolarDeviceRegistration' }
         waiting: { type: array, items: { $ref: '#/components/schemas/SolarDeviceRegistration' }, description: Declared devices with no reading yet }
         totals: { type: object, additionalProperties: true }
@@ -2232,8 +2278,21 @@ components:
       type: object
       required: [settings, defaults]
       properties:
-        settings: { type: object, additionalProperties: true }
-        defaults: { type: object, additionalProperties: true }
+        settings: { $ref: '#/components/schemas/EnergyAlarmSettings' }
+        defaults: { $ref: '#/components/schemas/EnergyAlarmSettings' }
+    EnergyAlarmSettings:
+      type: object
+      additionalProperties: false
+      required: [soc_low, soc_ok, cell_spread_mv, cell_spread_minutes, battery_temp_high_c, battery_temp_low_c, heatsink_high_c, health_low_percent]
+      properties:
+        soc_low: { type: number, minimum: 1, maximum: 90, description: A battery under this charge (percent) raises low }
+        soc_ok: { type: number, minimum: 2, maximum: 100, description: The charge at which the low alarm ends; higher than soc_low }
+        cell_spread_mv: { type: number, minimum: 10, maximum: 1000, description: The gap between the highest and the lowest cell (millivolts) above which the cells are unbalanced }
+        cell_spread_minutes: { type: number, minimum: 0, maximum: 240, description: Minutes the gap must last before it raises the alarm (0 - at once) }
+        battery_temp_high_c: { type: number, minimum: 30, maximum: 90 }
+        battery_temp_low_c: { type: number, minimum: -20, maximum: 15 }
+        heatsink_high_c: { type: number, minimum: 50, maximum: 120 }
+        health_low_percent: { type: number, minimum: 10, maximum: 95 }
     SolarHistory:
       type: object
       required: [node_id, device, kind, minutes, samples]
