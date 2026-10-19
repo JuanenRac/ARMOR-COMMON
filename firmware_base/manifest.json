@@ -535,6 +535,15 @@
         "ARMOR-ALARM": "core/node_health.hpp"
       }
     },
+    "core/memory_budget.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/memory_budget.hpp",
+        "ARMOR-ELECTRICAL": "core/memory_budget.hpp",
+        "ARMOR-RADAR": "main/core/memory_budget.hpp",
+        "ARMOR-HMI": "core/memory_budget.hpp",
+        "ARMOR-ALARM": "core/memory_budget.hpp"
+      }
+    },
     "main/node_health.cpp": {
       "targets": {
         "ARMOR-SOLAR": "main/node_health.cpp",
@@ -551,6 +560,24 @@
         "ARMOR-RADAR": "main/node_health.hpp",
         "ARMOR-HMI": "main/node_health.hpp",
         "ARMOR-ALARM": "main/node_health.hpp"
+      }
+    },
+    "main/psram_mem.cpp": {
+      "targets": {
+        "ARMOR-SOLAR": "main/psram_mem.cpp",
+        "ARMOR-ELECTRICAL": "main/psram_mem.cpp",
+        "ARMOR-RADAR": "main/psram_mem.cpp",
+        "ARMOR-HMI": "main/psram_mem.cpp",
+        "ARMOR-ALARM": "main/psram_mem.cpp"
+      }
+    },
+    "main/psram_mem.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "main/psram_mem.hpp",
+        "ARMOR-ELECTRICAL": "main/psram_mem.hpp",
+        "ARMOR-RADAR": "main/psram_mem.hpp",
+        "ARMOR-HMI": "main/psram_mem.hpp",
+        "ARMOR-ALARM": "main/psram_mem.hpp"
       }
     },
     "tests/test_shared.cpp": {

@@ -329,6 +329,10 @@ export type NodeHealth = {
   reset_reason: "power_on" | "external" | "software" | "panic" | "int_wdt" | "task_wdt" | "other_wdt" | "deep_sleep" | "brownout" | "sdio" | "usb" | "jtag" | "efuse" | "power_glitch" | "cpu_lockup" | "unknown";
   heap_free: number;
   heap_min: number;
+  heap_internal_free?: number;
+  heap_internal_min?: number;
+  heap_internal_largest?: number;
+  psram_free?: number;
   link: "wifi" | "ethernet" | "none";
   link_up: boolean;
   rssi_dbm?: number;
