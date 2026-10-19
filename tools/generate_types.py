@@ -99,6 +99,9 @@ def ts_type(field: Field) -> str:
         items = schema.get("items", {}).get("type")
         return f"{field.nested or {'string': 'string', 'integer': 'number', 'number': 'number', 'boolean': 'boolean'}.get(items, 'unknown')}[]"
     if kind == "object":
+        values = schema.get("additionalProperties")
+        if not field.nested and isinstance(values, dict) and values.get("type") in ("integer", "number", "string", "boolean"):
+            return "Record<string, " + {"string": "string", "integer": "number", "number": "number", "boolean": "boolean"}[values["type"]] + ">"   # a map of one kind of value
         return field.nested or "Record<string, unknown>"
     return {"string": "string", "integer": "number", "number": "number", "boolean": "boolean"}[kind]
 
@@ -110,6 +113,9 @@ def kt_type(field: Field) -> str:
         items = schema.get("items", {}).get("type")
         return f"List<{field.nested or {'string': 'String', 'integer': 'Long', 'number': 'Double', 'boolean': 'Boolean'}.get(items, 'Any')}>"
     if kind == "object":
+        values = schema.get("additionalProperties")
+        if not field.nested and isinstance(values, dict) and values.get("type") in ("integer", "number", "string", "boolean"):
+            return "Map<String, " + {"string": "String", "integer": "Long", "number": "Double", "boolean": "Boolean"}[values["type"]] + ">"   # a map of one kind of value
         return field.nested or "Map<String, Any>"
     return {"string": "String", "integer": "Long", "number": "Double", "boolean": "Boolean"}[kind]
 

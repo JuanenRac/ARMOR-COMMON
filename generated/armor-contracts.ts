@@ -113,6 +113,23 @@ export type SolarInverter = {
   ratings?: SolarInverterRatings;
 };
 
+export type SolarModuleLastEvent = {
+  index: number;
+  time: string;
+  voltage_v?: number;
+  current_a?: number;
+  temperature_c?: number;
+  percent?: number;
+  base_state?: string;
+  voltage_state?: string;
+  current_state?: string;
+  temperature_state?: string;
+  coulomb_state?: string;
+  power_events?: string;
+  battery_events?: string;
+  system_fault?: string;
+};
+
 export type SolarModule = {
   n: number;
   present: boolean;
@@ -122,11 +139,23 @@ export type SolarModule = {
   soc_percent?: number;
   state?: string;
   cells_v?: number[];
+  counters?: Record<string, number>;
   temperatures_c?: number[];
   capacity_ah?: number;
   full_capacity_ah?: number;
   cycles?: number;
   health_percent?: number;
+  model?: string;
+  cell_count?: number;
+  max_charge_a?: number;
+  max_discharge_a?: number;
+  console_baud?: number;
+  soh_counts?: number[];
+  soh_abnormal?: number[];
+  last_event?: SolarModuleLastEvent;
+  board_version?: string;
+  main_soft_version?: string;
+  soft_version?: string;
 };
 
 export type SolarBattery = {
