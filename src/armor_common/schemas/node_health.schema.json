@@ -91,6 +91,26 @@
       "minimum": 0,
       "description": "The least heap that has been free since the node started, in bytes (never more than heap_free)."
     },
+    "heap_internal_free": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Bytes of the internal memory free now. heap_free counts the external RAM (PSRAM) too, so on a board that has it that figure never looks short; this one is the memory the radio, the drivers and the task stacks need. Absent from a node that does not read it."
+    },
+    "heap_internal_min": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "The least internal memory that has been free since the node started, in bytes (never more than heap_internal_free). Sent with heap_internal_free."
+    },
+    "heap_internal_largest": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "The biggest single block of internal memory that could be allocated now, in bytes (never more than heap_internal_free): a heap in pieces fails a big request while the total looks fine. Sent with heap_internal_free."
+    },
+    "psram_free": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Bytes of the external RAM free now; absent from a board that has none (or whose external RAM did not start)."
+    },
     "link": {
       "type": "string",
       "enum": [
