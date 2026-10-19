@@ -250,6 +250,132 @@ data class ElectricalResult(
     val token: String? = null
 )
 
+data class SolarBatteryStage(
+    val id: String,
+    val index: Long,
+    val total: Long,
+    val size: Long,
+    val crc32: Long,
+    val data: String
+)
+
+data class SolarBatteryCommandParamsValues(
+    val pov: Long? = null,
+    val povr: Long? = null,
+    val phv: Long? = null,
+    val phvr: Long? = null,
+    val plv: Long? = null,
+    val plvr: Long? = null,
+    val puv: Long? = null,
+    val puvr: Long? = null,
+    val pslp: Long? = null,
+    val bov: Long? = null,
+    val bovr: Long? = null,
+    val bhv: Long? = null,
+    val bhvr: Long? = null,
+    val blv: Long? = null,
+    val blvr: Long? = null,
+    val buv: Long? = null,
+    val buvr: Long? = null,
+    val bslp: Long? = null,
+    val cot: Long? = null,
+    val cotr: Long? = null,
+    val cht: Long? = null,
+    val chtr: Long? = null,
+    val clt: Long? = null,
+    val cltr: Long? = null,
+    val cut: Long? = null,
+    val cutr: Long? = null
+)
+
+data class SolarBatteryCommandParamsItems(
+    val bov: String? = null,
+    val bhv: String? = null,
+    val blv: String? = null,
+    val buv: String? = null,
+    val bslp: String? = null,
+    val pov: String? = null,
+    val phv: String? = null,
+    val plv: String? = null,
+    val puv: String? = null,
+    val pslp: String? = null,
+    val coc: String? = null,
+    val coc2: String? = null,
+    val doc: String? = null,
+    val doc2: String? = null
+)
+
+data class SolarBatteryCommandParams(
+    val which: String? = null,
+    val group: String? = null,
+    val values: SolarBatteryCommandParamsValues? = null,
+    val items: SolarBatteryCommandParamsItems? = null,
+    val accept_risk: Boolean? = null,
+    val output: String? = null,
+    val state: String? = null,
+    val serial: String? = null,
+    val restore_barcode: Boolean? = null,
+    val image_size: Long? = null,
+    val image_crc32: Long? = null,
+    val image_version: String? = null,
+    val clear_eeprom: Boolean? = null,
+    val line: String? = null
+)
+
+data class SolarBatteryCommand(
+    val kind: String = "solar_battery_command",
+    val node_id: String,
+    val timestamp_ms: Long,
+    val command_id: String,
+    val port: Long,
+    val action: String,
+    val op: String? = null,
+    val params: SolarBatteryCommandParams? = null,
+    val serial: String? = null,
+    val token: String? = null,
+    val stage: SolarBatteryStage? = null
+)
+
+data class SolarBatteryIdentity(
+    val model: String,
+    val serial: String,
+    val soft_version: String,
+    val board: String,
+    val capacity_ah: Long? = null
+)
+
+data class SolarBatteryResult(
+    val kind: String = "solar_battery_result",
+    val node_id: String,
+    val timestamp_ms: Long,
+    val command_id: String,
+    val port: Long,
+    val action: String,
+    val op: String? = null,
+    val stage: String,
+    val accepted: Boolean,
+    val refusal: String,
+    val token: String? = null,
+    val canonical: String? = null,
+    val summary: String? = null,
+    val risk: String? = null,
+    val atomic: Boolean? = null,
+    val battery: SolarBatteryIdentity? = null,
+    val snapshot_before: String? = null,
+    val outcome: String? = null,
+    val code: String? = null,
+    val steps_done: Long? = null,
+    val steps_total: Long? = null,
+    val writes_done: Long? = null,
+    val packets_sent: Long? = null,
+    val packets_total: Long? = null,
+    val truncated: Boolean? = null,
+    val before: String? = null,
+    val after: String? = null,
+    val transcript: String? = null,
+    val received: Long? = null
+)
+
 data class AlarmZone(
     val id: String,
     val name: String? = null,

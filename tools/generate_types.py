@@ -38,6 +38,8 @@ MESSAGES = {
     "electrical": ("Electrical", {"channels": "ElectricalChannel", "switches": "ElectricalSwitch"}),
     "electrical_command": ("ElectricalCommand", {}),
     "electrical_result": ("ElectricalResult", {}),
+    "solar_battery_command": ("SolarBatteryCommand", {"stage": "SolarBatteryStage"}),
+    "solar_battery_result": ("SolarBatteryResult", {"battery": "SolarBatteryIdentity"}),
     "alarm": ("Alarm", {"zones": "AlarmZone", "events": "AlarmEvent"}),
     "alarm_command": ("AlarmCommand", {"profile": "ArmProfile", "zones": "ArmProfileZone"}),
     "alarm_result": ("AlarmResult", {}),

@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/solar-battery-result-0.1.0.json",
+  "title": "A.R.M.O.R. answer of a node to an order to write to a battery",
+  "description": "What an ARMOR-SOLAR node says about an order, published to armor/solar/{node_id}/maintenance/result (never retained). `stage` says which point of the order this is: armed (an arm was accepted: the token and the exact operation), started (an execute was accepted), progress, cancel_requested, final (the operation ended: see `outcome`), rejected (nothing was done: see `refusal`) or staged (a piece of an image was kept). The service password of the battery never appears in any field, and a text that was kept (before, after, transcript, snapshot_before) has it replaced. An accepted order is not an operation that worked: only `final` with outcome ok, and the read-back it carries, say that.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "node_id",
+    "timestamp_ms",
+    "command_id",
+    "port",
+    "action",
+    "stage",
+    "accepted",
+    "refusal"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "solar_battery_result"
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "command_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]{8,32}$"
+    },
+    "port": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "arm",
+        "execute",
+        "cancel",
+        "stage"
+      ]
+    },
+    "op": {
+      "type": "string",
+      "maxLength": 32
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "armed",
+        "started",
+        "progress",
+        "cancel_requested",
+        "final",
+        "rejected",
+        "staged"
+      ]
+    },
+    "accepted": {
+      "type": "boolean"
+    },
+    "refusal": {
+      "type": "string",
+      "enum": [
+        "none",
+        "disabled",
+        "invalid_params",
+        "unknown_op",
+        "not_pylontech",
+        "no_battery",
+        "unknown_model",
+        "unknown_firmware",
+        "serial_mismatch",
+        "serial_unreadable",
+        "not_idle",
+        "critical_alarm",
+        "busy",
+        "cooldown",
+        "locked",
+        "not_armed",
+        "bad_token",
+        "expired",
+        "chip_unknown",
+        "image_missing",
+        "image_mismatch",
+        "unsupported_model",
+        "no_official_value",
+        "risk_not_accepted",
+        "expert_blocked",
+        "no_password",
+        "battery_changed",
+        "clock_not_set",
+        "not_cancellable",
+        "no_memory",
+        "no_answer",
+        "login_failed",
+        "preflight_failed",
+        "stage_invalid",
+        "stage_order",
+        "stage_data",
+        "stage_size",
+        "stage_crc"
+      ]
+    },
+    "token": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$",
+      "description": "Only in the answer to an accepted arm."
+    },
+    "canonical": {
+      "type": "string",
+      "maxLength": 600,
+      "description": "The exact operation the node will do, in words: what an execute must name again."
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "risk": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "irreversible"
+      ]
+    },
+    "atomic": {
+      "type": "boolean",
+      "description": "True when the operation is never cancelled once it has begun to write."
+    },
+    "battery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model",
+        "serial",
+        "soft_version",
+        "board"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "maxLength": 24
+        },
+        "serial": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "soft_version": {
+          "type": "string",
+          "maxLength": 24
+        },
+        "board": {
+          "type": "string",
+          "maxLength": 24
+        },
+        "capacity_ah": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        }
+      }
+    },
+    "snapshot_before": {
+      "type": "string",
+      "maxLength": 4000
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "running",
+        "ok",
+        "failed",
+        "partial",
+        "retry",
+        "rejected"
+      ]
+    },
+    "code": {
+      "type": "string",
+      "maxLength": 96
+    },
+    "steps_done": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 200
+    },
+    "steps_total": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 200
+    },
+    "writes_done": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 200
+    },
+    "packets_sent": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2048
+    },
+    "packets_total": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2048
+    },
+    "truncated": {
+      "type": "boolean"
+    },
+    "before": {
+      "type": "string",
+      "maxLength": 4000
+    },
+    "after": {
+      "type": "string",
+      "maxLength": 4000
+    },
+    "transcript": {
+      "type": "string",
+      "maxLength": 8000
+    },
+    "received": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 524288
+    }
+  }
+}

@@ -2,7 +2,8 @@ import json
 import unittest
 from pathlib import Path
 
-from armor_common import ContractError, decode, encode, validate_arm_profile, validate_node_health, validate_alarm_command, validate_alarm_message, validate_alarm_result, validate_alarm_zone_feed, validate_device_message, validate_network_orders, validate_server_alert, validate_electrical_command, validate_electrical_message, validate_electrical_result, validate_network_message, validate_solar_message, validate_topic_and_payload
+from armor_common import ContractError, decode, encode, validate_arm_profile, validate_node_health, validate_alarm_command, validate_alarm_message, validate_alarm_result, validate_alarm_zone_feed, validate_device_message, validate_network_orders, validate_server_alert, validate_electrical_command, validate_electrical_message, validate_electrical_result, validate_network_message, validate_solar_battery_command, validate_solar_battery_result, validate_solar_message, validate_topic_and_payload
+from armor_common.contracts import battery_catalog, battery_expert_line, parse_battery_topic, validate_battery_params
 from armor_common.contracts import load_schema, parse_alarm_topic, parse_device_topic, parse_electrical_topic, parse_network_topic, parse_solar_topic, parse_topic, validate_payload
 from armor_common.schema import SchemaError, UnsupportedSchema, check_schema, validate
 
@@ -12,6 +13,8 @@ MESSAGE_RULES = {
     "electrical": lambda payload: validate_electrical_message(f"armor/electrical/{payload['node_id']}/state", payload),
     "electrical_command": lambda payload: validate_electrical_command(f"armor/electrical/{payload['node_id']}/command", payload),
     "electrical_result": lambda payload: validate_electrical_result(f"armor/electrical/{payload['node_id']}/result", payload),
+    "solar_battery_command": lambda payload: validate_solar_battery_command(f"armor/solar/{payload['node_id']}/maintenance/command", payload),
+    "solar_battery_result": lambda payload: validate_solar_battery_result(f"armor/solar/{payload['node_id']}/maintenance/result", payload),
     "alarm": lambda payload: validate_alarm_message(f"armor/alarm/{payload['node_id']}/state", payload),
     "alarm_command": lambda payload: validate_alarm_command(f"armor/alarm/{payload['node_id']}/command", payload),
     "alarm_result": lambda payload: validate_alarm_result(f"armor/alarm/{payload['node_id']}/result", payload),
@@ -469,3 +472,72 @@ class SchemaCheckTests(unittest.TestCase):
             decode('{"topic":"armor/node/a/health","payload":{"node_id":"a","timestamp_ms":1,"online":true,"online":false}}')
         topic, payload = decode(encode("armor/node/a/health", {"node_id": "a", "timestamp_ms": 1, "online": True}))
         self.assertEqual((topic, payload["online"]), ("armor/node/a/health", True))
+
+
+class BatteryWriteTests(unittest.TestCase):
+    """Writing to a Pylontech battery: the table of the operations, the topics and the rules that join fields."""
+
+    def test_the_table_is_consistent(self):
+        catalog = battery_catalog()
+        ids = [item["id"] for item in catalog["ops"]]
+        self.assertEqual(len(ids), len(set(ids)))
+        schema_ops = load_schema("solar_battery_command")["properties"]["op"]["enum"]
+        self.assertEqual(sorted(ids), sorted(schema_ops))
+        schema_refusals = load_schema("solar_battery_result")["properties"]["refusal"]["enum"]
+        self.assertEqual(sorted(catalog["refusals"]), sorted(schema_refusals))
+        for item in catalog["ops"]:
+            self.assertIn(item["risk"], ("low", "medium", "high", "irreversible"))
+            if item["atomic"]:
+                self.assertTrue(item["needs_idle"], item["id"])
+            if item["risk"] == "irreversible":
+                self.assertTrue(item["atomic"], item["id"])
+        for group in catalog["limit_groups"]:
+            keys = {key for key, _wire in group["keys"]}
+            self.assertEqual(len(keys), len(group["keys"]))
+            for low, high in group["orders"]:
+                self.assertIn(low, keys)
+                self.assertIn(high, keys)
+            self.assertLess(group["lowest"], group["highest"])
+        self.assertEqual({m["name"]: m["official_ah"] for m in catalog["models"] if m["official_ah"]}, {"US2000C": 50, "US3000C": 74, "UP5000": 100})
+        self.assertNotIn("preflight", ids)
+
+    def test_the_topics(self):
+        self.assertEqual(parse_battery_topic("armor/solar/solar-1/maintenance/command", "command"), "solar-1")
+        self.assertEqual(parse_battery_topic("armor/solar/solar-1/maintenance/result", "result"), "solar-1")
+        for bad in ("armor/solar/solar-1/maintenance/state", "armor/solar/solar-1/inverter/command", "armor/solar/Solar 1/maintenance/command", "armor/solar/solar-1/maintenance", "armor/electrical/solar-1/maintenance/command"):
+            with self.subTest(bad=bad), self.assertRaises(ContractError):
+                parse_battery_topic(bad, "command")
+        with self.assertRaises(ContractError):
+            parse_battery_topic("armor/solar/solar-1/maintenance/command", "state")
+
+    def test_a_command_must_match_its_topic(self):
+        command = json.loads((CONFORMANCE / "solar_battery_command.json").read_text(encoding="utf-8"))["vectors"][0]["payload"]
+        validate_solar_battery_command("armor/solar/solar-1/maintenance/command", command)
+        with self.assertRaises(ContractError):
+            validate_solar_battery_command("armor/solar/other/maintenance/command", command)
+        with self.assertRaises(ContractError):
+            validate_solar_battery_command("armor/solar/solar-1/maintenance/result", command)
+        with self.assertRaises(ContractError):
+            validate_solar_battery_command("armor/solar/solar-1/maintenance/command", [command])
+
+    def test_params_are_checked_against_the_table(self):
+        validate_battery_params("set_clock", {})
+        validate_battery_params("output_set", {"output": "heat", "state": "on"})
+        for op, params in (("set_clock", {"x": 1}), ("output_set", {}), ("nothing", {}), ("set_clock", [])):
+            with self.subTest(op=op, params=params), self.assertRaises(ContractError):
+                validate_battery_params(op, params)
+
+    def test_the_expert_line(self):
+        self.assertEqual(battery_expert_line("  bat   3 "), "bat 3")
+        for bad in ("", "tbar x", "UPDATA", "eepe 0", "pwr;shut", "pwr\nshut", "help eepw", "a" * 49, 5, "café"):
+            with self.subTest(bad=bad):
+                self.assertEqual(battery_expert_line(bad), "")
+
+    def test_the_service_password_has_no_field_anywhere(self):
+        def names(node):
+            if isinstance(node, dict):
+                for key, child in node.get("properties", {}).items():
+                    yield key
+                    yield from names(child)
+        for kind in ("solar_battery_command", "solar_battery_result"):
+            self.assertEqual([name for name in names(load_schema(kind)) if "pass" in name.lower() or "secret" in name.lower() or "pin" == name.lower()], [], kind)
