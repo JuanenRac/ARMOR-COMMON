@@ -108,6 +108,64 @@ def bat_final(**changes):
     return base
 
 
+TOKEN = "0123456789abcdef0123456789abcdef"
+
+
+def control_arm(**changes):
+    base = {"kind": "node_control_command", "node_id": "radar-1", "timestamp_ms": 9000, "command_id": "d0d0d0d012345678", "action": "arm", "operation": "restart", "mode": "now", "requested_by": "ana"}
+    base.update(changes)
+    return base
+
+
+def control_execute(**changes):
+    return control_arm(**{"action": "execute", "token": TOKEN, **changes})
+
+
+def control_armed(**changes):
+    base = {"kind": "node_control_result", "node_id": "radar-1", "timestamp_ms": 9100, "command_id": "d0d0d0d012345678", "action": "arm", "operation": "restart", "stage": "armed", "accepted": True,
+            "refusal": "none", "token": TOKEN, "token_ttl_s": 30}
+    base.update(changes)
+    return base
+
+
+def control_going(**changes):
+    base = {"kind": "node_control_result", "node_id": "radar-1", "timestamp_ms": 9200, "command_id": "d0d0d0d012345679", "action": "execute", "operation": "restart", "stage": "restarting",
+            "accepted": True, "refusal": "none", "reason": "requested_by_server", "mode": "now", "restart_in_s": 3, "uptime_s": 86400, "firmware": "0.7.7", "requested_by": "ana"}
+    base.update(changes)
+    return base
+
+
+def control_applied(**changes):
+    base = {"kind": "node_control_result", "node_id": "radar-1", "timestamp_ms": 9300, "command_id": "d0d0d0d01234567a", "action": "execute", "operation": "pause", "stage": "applied",
+            "accepted": True, "refusal": "none", "state": "paused", "maintenance": False, "until_s": 3600, "since_ms": 1760000000000, "requested_by": "ana"}
+    base.update(changes)
+    return base
+
+
+DIAGNOSTICS = {"firmware": "0.7.7", "uptime_s": 86400, "reset_reason": "software", "heap_free": 142000, "heap_min": 98000, "psram_free": 7000000, "stack_min_free": 1800, "rssi": -61,
+               "mqtt_connected": True, "state": "running", "maintenance": False}
+
+
+def control_diagnostics(**changes):
+    base = {"kind": "node_control_result", "node_id": "radar-1", "timestamp_ms": 9400, "command_id": "d0d0d0d01234567b", "action": "execute", "operation": "diagnostics", "stage": "diagnostics",
+            "accepted": True, "refusal": "none", "diagnostics": dict(DIAGNOSTICS)}
+    base.update(changes)
+    return base
+
+
+def control_refused(**changes):
+    base = {"kind": "node_control_result", "node_id": "radar-1", "timestamp_ms": 9100, "command_id": "d0d0d0d012345678", "action": "arm", "operation": "restart", "stage": "rejected",
+            "accepted": False, "refusal": "busy_update"}
+    base.update(changes)
+    return base
+
+
+def maintenance(**changes):
+    base = {"kind": "node_maintenance", "node_id": "radar-1", "timestamp_ms": 9500, "active": True, "reason": "restart", "expected_s": 90, "firmware": "0.7.7", "requested_by": "ana"}
+    base.update(changes)
+    return base
+
+
 def alarm(**changes):
     base = {"kind": "alarm", "node_id": "alarm-1", "timestamp_ms": 1000, "phase": "armed", "mode": "away", "siren": False, "locked_out": False, "commands_enabled": True,
             "zones": [{"id": "front-door", "name": "Front door", "kind": "entry", "state": "normal", "bypassed": False},
@@ -1033,6 +1091,22 @@ cases = {
         ("an empty error", False, node_health(last_error="")),
         ("an error of 97 characters", False, node_health(last_error="e" * 97)),
         ("sixty-five tasks short of stack", False, node_health(low_stack_tasks=65)),
+        ("a node whose work is paused", True, node_health(control_state="paused", control_since_ms=1760000000000, control_by="ana", control_until_s=1800)),
+        ("a node in standby", True, node_health(control_state="standby", control_since_ms=1760000000000, control_by="ana")),
+        ("a node in standby while the clock is not set", True, node_health(control_state="standby", control_since_ms=0, control_by="ana")),
+        ("a node that works", True, node_health(control_state="running")),
+        ("a node in maintenance", True, node_health(control_state="running", maintenance=True, maintenance_until_s=3000)),
+        ("a node with the maintenance flag off", True, node_health(maintenance=False)),
+        ("a control state that does not exist", False, node_health(control_state="asleep")),
+        ("deep sleep as a control state", False, node_health(control_state="deep_sleep")),
+        ("since on a node that works", False, node_health(control_state="running", control_since_ms=5), True),
+        ("by on a node with no state", False, node_health(control_by="ana"), True),
+        ("time left on a node in standby", False, node_health(control_state="standby", control_until_s=60), True),
+        ("time left on a node that works", False, node_health(control_state="running", control_until_s=60), True),
+        ("maintenance time left with the flag off", False, node_health(maintenance=False, maintenance_until_s=60), True),
+        ("maintenance time left without the flag", False, node_health(maintenance_until_s=60), True),
+        ("a person with a line feed", False, node_health(control_state="standby", control_by="ana\n")),
+        ("a negative time left", False, node_health(control_state="paused", control_until_s=-1)),
         ("no firmware", False, {k: v for k, v in node_health().items() if k != "firmware"}),
         ("no reset reason", False, {k: v for k, v in node_health().items() if k != "reset_reason"}),
         ("no reconnect count", False, {k: v for k, v in node_health().items() if k != "broker_reconnects"}),
@@ -1109,6 +1183,12 @@ cases = {
         ("the alarm armed with a profile", True, system_event(category="alarm", action="arm_requested", subject="alarm-1", profile="night", by="ana")),
         ("a battery operation ordered", True, system_event(category="batteries", action="battery_requested", subject="solar-1:2", by="ana", outcome="allowed")),
         ("a battery operation that ended badly", True, system_event(category="batteries", action="battery_operation", subject="solar-1:2", by="ana", outcome="failed")),
+        ("a control order asked for", True, system_event(category="node", action="control_requested", subject="radar-1", by="ana", outcome="allowed")),
+        ("a node that acknowledged an order", True, system_event(category="node", action="control_acknowledged", subject="radar-1", by="ana", outcome="allowed")),
+        ("a node that applied an order", True, system_event(category="node", action="control_applied", subject="radar-1", by="ana", outcome="allowed")),
+        ("a node that refused an order", True, system_event(category="node", action="control_refused", subject="radar-1", by="ana", outcome="denied")),
+        ("a restarted node that came back", True, system_event(category="node", action="control_back", subject="radar-1", by="ana", outcome="allowed")),
+        ("a restarted node that did not come back", True, system_event(category="node", action="control_lost", subject="radar-1", by="ana", outcome="failed")),
         ("the siren silenced", True, system_event(category="alarm", action="silence_requested", subject="alarm-1")),
         ("a backup made", True, system_event(category="backup", action="backup_made")),
         ("a refused change", True, system_event(category="settings", action="changed", outcome="denied")),
@@ -1134,6 +1214,184 @@ cases = {
         ("an id that is not a hash", False, connection_client(id="123")),
         ("a cookie in the client", False, connection_client(cookie="abc")),
         ("no last seen", False, {k: v for k, v in connection_client().items() if k != "last_seen"}),
+    ],
+    "node_control_command": [
+        ("an arm of restart", True, control_arm(operation="restart")),
+        ("an arm of pause", True, control_arm(operation="pause")),
+        ("an arm of resume", True, control_arm(operation="resume")),
+        ("an arm of standby", True, control_arm(operation="standby")),
+        ("an arm of identify", True, control_arm(operation="identify")),
+        ("an arm of diagnostics", True, control_arm(operation="diagnostics")),
+        ("an arm of maintenance_on", True, control_arm(operation="maintenance_on")),
+        ("an arm of maintenance_off", True, control_arm(operation="maintenance_off")),
+        ("an arm for every node, a rolling restart", True, control_arm(node_id="all", mode="rolling")),
+        ("an arm for every node, to pause", True, control_arm(node_id="all", operation="pause")),
+        ("an arm for every node, to go to standby", True, control_arm(node_id="all", operation="standby")),
+        ("an arm for every node, to resume", True, control_arm(node_id="all", operation="resume")),
+        ("an execute of a restart", True, control_execute()),
+        ("an execute of a restart, rolling, in the third place", True, control_execute(mode="rolling", slot=2)),
+        ("an execute of a restart with an extra delay", True, control_execute(delay_s=600)),
+        ("an execute of a restart in the last place", True, control_execute(mode="rolling", slot=63)),
+        ("an execute of a restart without delay", True, control_execute(delay_s=0)),
+        ("an execute of a pause with the default length", True, control_execute(operation="pause")),
+        ("an execute of a pause for a minute", True, control_execute(operation="pause", duration_s=60)),
+        ("an execute of a pause for an hour", True, control_execute(operation="pause", duration_s=3600)),
+        ("an execute of resume", True, control_execute(operation="resume")),
+        ("an execute of standby", True, control_execute(operation="standby")),
+        ("an execute of identify with the default length", True, control_execute(operation="identify")),
+        ("an execute of identify for five seconds", True, control_execute(operation="identify", duration_s=5)),
+        ("an execute of identify for five minutes", True, control_execute(operation="identify", duration_s=300)),
+        ("an execute of diagnostics", True, control_execute(operation="diagnostics")),
+        ("an execute of maintenance on with the default length", True, control_execute(operation="maintenance_on")),
+        ("an execute of maintenance on for eight hours", True, control_execute(operation="maintenance_on", duration_s=28800)),
+        ("an execute of maintenance off", True, control_execute(operation="maintenance_off")),
+        ("a person called with an address and a dot", True, control_arm(requested_by="ana.lopez@home")),
+        ("an execute for every node: a token is one node's", False, control_execute(node_id="all"), True),
+        ("an arm that carries a token", False, control_arm(token=TOKEN), True),
+        ("an execute without its token", False, without(control_execute(), "token"), True),
+        ("an arm with a delay", False, control_arm(delay_s=5), True),
+        ("an arm with a slot", False, control_arm(mode="rolling", slot=1), True),
+        ("a slot in the mode now", False, control_execute(slot=1), True),
+        ("a delay on a pause", False, control_execute(operation="pause", delay_s=5), True),
+        ("a slot on a pause", False, control_execute(operation="pause", mode="rolling", slot=1), True),
+        ("rolling on a pause", False, control_arm(operation="pause", mode="rolling"), True),
+        ("rolling on standby", False, control_arm(operation="standby", mode="rolling"), True),
+        ("rolling on resume for every node", False, control_arm(node_id="all", operation="resume", mode="rolling"), True),
+        ("a duration on an arm", False, control_arm(operation="pause", duration_s=600), True),
+        ("a duration on a restart", False, control_execute(duration_s=60), True),
+        ("a duration on resume", False, control_execute(operation="resume", duration_s=60), True),
+        ("a duration on standby: it has no end", False, control_execute(operation="standby", duration_s=60), True),
+        ("a duration on diagnostics", False, control_execute(operation="diagnostics", duration_s=60), True),
+        ("a duration on maintenance off", False, control_execute(operation="maintenance_off", duration_s=60), True),
+        ("a pause of 59 seconds", False, control_execute(operation="pause", duration_s=59), True),
+        ("a pause of an hour and a second", False, control_execute(operation="pause", duration_s=3601), True),
+        ("identify for four seconds", False, control_execute(operation="identify", duration_s=4), True),
+        ("identify for 301 seconds", False, control_execute(operation="identify", duration_s=301), True),
+        ("maintenance for 59 seconds", False, control_execute(operation="maintenance_on", duration_s=59), True),
+        ("maintenance for eight hours and a second", False, control_execute(operation="maintenance_on", duration_s=28801), True),
+        ("a duration of a day and a second", False, control_execute(operation="maintenance_on", duration_s=86401)),
+        ("a duration of zero", False, control_execute(operation="pause", duration_s=0)),
+        ("a slot of 64", False, control_execute(mode="rolling", slot=64)),
+        ("a delay of 601 seconds", False, control_execute(delay_s=601)),
+        ("a negative delay", False, control_execute(delay_s=-1)),
+        ("a token that is too short", False, control_execute(token="abc")),
+        ("a token with capitals", False, control_execute(token="0123456789ABCDEF0123456789ABCDEF")),
+        ("an operation that erases the settings", False, control_arm(operation="factory_reset")),
+        ("an operation that wipes the Wi-Fi", False, control_arm(operation="wipe_wifi")),
+        ("an operation that erases the flash", False, control_arm(operation="erase")),
+        ("an operation that puts the node into deep sleep", False, control_arm(operation="deep_sleep")),
+        ("an operation that sleeps the radio", False, control_arm(operation="radio_sleep")),
+        ("a wake timer", False, control_arm(operation="pause", wake_after_s=600)),
+        ("a wake timer in an execute", False, control_execute(operation="standby", wake_timer_s=600)),
+        ("an operation in capitals", False, control_arm(operation="RESTART")),
+        ("no operation", False, without(control_arm(), "operation")),
+        ("an action that erases the settings", False, control_arm(action="factory_reset")),
+        ("a mode that does not exist", False, control_arm(mode="later")),
+        ("no mode", False, without(control_arm(), "mode")),
+        ("nobody to blame", False, without(control_arm(), "requested_by")),
+        ("a requester with a line feed", False, control_arm(requested_by="ana\n")),
+        ("a requester of 65 characters", False, control_arm(requested_by="a" * 65)),
+        ("an empty requester", False, control_arm(requested_by="")),
+        ("uppercase node id", False, control_arm(node_id="Radar-1")),
+        ("a command id that is too short", False, control_arm(command_id="abc")),
+        ("another kind", False, control_arm(kind="electrical_command")),
+        ("the kind of the first draft", False, control_arm(kind="node_restart_command")),
+        ("unknown field", False, control_arm(force=True)),
+        ("not an object", False, [1, 2]),
+    ],
+    "node_control_result": [
+        ("a restart arm accepted, with its token", True, control_armed()),
+        ("a pause arm accepted", True, control_armed(operation="pause")),
+        ("a standby arm accepted", True, control_armed(operation="standby")),
+        ("a diagnostics arm accepted", True, control_armed(operation="diagnostics")),
+        ("the node is restarting now", True, control_going()),
+        ("the node is restarting in a rolling slot", True, control_going(mode="rolling", restart_in_s=90)),
+        ("a pause applied", True, control_applied()),
+        ("a pause for ten minutes", True, control_applied(until_s=600)),
+        ("a pause applied while the clock is not set", True, control_applied(since_ms=0)),
+        ("a resume applied", True, {k: v for k, v in control_applied(operation="resume", state="running").items() if k not in ("until_s", "since_ms")}),
+        ("a standby applied", True, {k: v for k, v in control_applied(operation="standby", state="standby").items() if k != "until_s"}),
+        ("identify applied while paused", True, control_applied(operation="identify", until_s=30)),
+        ("maintenance on applied", True, {k: v for k, v in control_applied(operation="maintenance_on", state="running", maintenance=True, until_s=3600).items() if k != "since_ms"}),
+        ("maintenance off applied", True, {k: v for k, v in control_applied(operation="maintenance_off", state="running").items() if k not in ("until_s", "since_ms")}),
+        ("the diagnostics snapshot", True, control_diagnostics()),
+        ("a diagnostics snapshot of the minimum", True, control_diagnostics(diagnostics={k: v for k, v in DIAGNOSTICS.items() if k not in ("psram_free", "stack_min_free", "rssi")})),
+        ("refused: busy installing an update", True, control_refused()),
+        ("refused: restarted a moment ago", True, control_refused(refusal="rate_limited")),
+        ("refused: a battery operation is under way", True, control_refused(refusal="busy_battery")),
+        ("a pause refused: a firmware upload is under way", True, control_refused(operation="pause", refusal="busy_upload")),
+        ("a standby refused: the firmware is being copied to the other slot", True, control_refused(operation="standby", refusal="busy_slot_copy")),
+        ("a pause refused: the node is paused already", True, control_refused(operation="pause", action="execute", refusal="already_in_state")),
+        ("a resume refused: the node is running", True, control_refused(operation="resume", action="execute", refusal="already_in_state")),
+        ("an execute refused: the token is not the one given", True, control_refused(action="execute", refusal="invalid_token")),
+        ("an execute refused: the token is old", True, control_refused(action="execute", refusal="token_expired")),
+        ("an execute refused: no arm came first", True, control_refused(action="execute", refusal="not_armed")),
+        ("an execute refused: it is already going", True, control_refused(action="execute", refusal="already_restarting")),
+        ("an execute refused: the node cannot do it", True, control_refused(action="execute", operation="identify", refusal="unavailable")),
+        ("an armed answer without a token", False, without(control_armed(), "token"), True),
+        ("a token in a refusal", False, control_refused(token=TOKEN, token_ttl_s=30), True),
+        ("a token with no life", False, without(control_armed(), "token_ttl_s"), True),
+        ("accepted with a refusal", False, control_armed(refusal="busy_update"), True),
+        ("refused with refusal none", False, control_refused(refusal="none"), True),
+        ("refused but accepted", False, control_refused(accepted=True, refusal="none"), True),
+        ("a restarting answer that was not accepted", False, control_going(accepted=False, refusal="busy_update"), True),
+        ("an accepted restart execute answered armed", False, control_armed(action="execute"), True),
+        ("an accepted pause execute answered restarting", False, control_going(operation="pause"), True),
+        ("an accepted restart execute answered applied", False, control_applied(operation="restart"), True),
+        ("an accepted diagnostics execute answered applied", False, control_applied(operation="diagnostics"), True),
+        ("an accepted pause arm answered applied", False, control_applied(action="arm"), True),
+        ("an accepted pause execute answered armed", False, control_armed(action="execute", operation="pause"), True),
+        ("a restarting answer without the uptime", False, without(control_going(), "uptime_s"), True),
+        ("a restarting answer without the firmware", False, without(control_going(), "firmware"), True),
+        ("an armed answer that says when the node goes", False, control_armed(restart_in_s=3), True),
+        ("an applied answer without the state", False, without(control_applied(), "state"), True),
+        ("an applied answer without the maintenance flag", False, without(control_applied(), "maintenance"), True),
+        ("an applied answer that says when the node restarts", False, control_applied(restart_in_s=3), True),
+        ("a restarting answer that names a state", False, control_going(state="running"), True),
+        ("a diagnostics answer without the snapshot", False, without(control_diagnostics(), "diagnostics"), True),
+        ("a snapshot in an applied answer", False, control_applied(diagnostics=dict(DIAGNOSTICS)), True),
+        ("a snapshot in a refusal", False, control_refused(diagnostics=dict(DIAGNOSTICS)), True),
+        ("already restarting found by a pause", False, control_refused(operation="pause", refusal="already_restarting"), True),
+        ("a snapshot without the uptime", False, control_diagnostics(diagnostics=without(DIAGNOSTICS, "uptime_s"))),
+        ("a snapshot with a state that does not exist", False, control_diagnostics(diagnostics={**DIAGNOSTICS, "state": "asleep"})),
+        ("a snapshot with a secret", False, control_diagnostics(diagnostics={**DIAGNOSTICS, "wifi_password": "x"})),
+        ("a snapshot with a signal stronger than zero", False, control_diagnostics(diagnostics={**DIAGNOSTICS, "rssi": 3})),
+        ("a state that does not exist", False, control_applied(state="asleep")),
+        ("deep sleep as a state", False, control_applied(state="deep_sleep")),
+        ("an operation that is not on the list", False, control_refused(operation="factory_reset")),
+        ("no operation", False, without(control_refused(), "operation")),
+        ("a refusal that is not on the list", False, control_refused(refusal="because")),
+        ("a reason that is not on the list", False, control_going(reason="factory_reset")),
+        ("a token life of 121 seconds", False, control_armed(token_ttl_s=121)),
+        ("a wait of an hour and a second", False, control_going(restart_in_s=3601)),
+        ("a firmware with a v", False, control_going(firmware="v0.7.7")),
+        ("a stage that does not exist", False, control_refused(stage="maybe")),
+        ("another kind", False, control_armed(kind="electrical_result")),
+        ("unknown field", False, control_armed(shell="reboot")),
+    ],
+    "node_maintenance": [
+        ("a restart is about to happen", True, maintenance()),
+        ("a pause", True, maintenance(reason="pause", expected_s=3600)),
+        ("a standby with no expected time", True, without(maintenance(reason="standby"), "expected_s")),
+        ("a firmware update", True, maintenance(reason="update", expected_s=600)),
+        ("a firmware upload from the panel", True, maintenance(reason="upload", expected_s=300)),
+        ("a window the operator asked for", True, maintenance(reason="operator", expected_s=3600)),
+        ("a node announcing it alone", True, without(maintenance(), "requested_by")),
+        ("the window is over", True, without(maintenance(active=False), "expected_s")),
+        ("the window is over, the node says why", True, without(maintenance(active=False, reason="update"), "expected_s")),
+        ("a window that ends with an expected time", False, maintenance(active=False), True),
+        ("no firmware", False, without(maintenance(), "firmware")),
+        ("no active flag", False, without(maintenance(), "active")),
+        ("active as text", False, maintenance(active="yes")),
+        ("a reason that is not on the list", False, maintenance(reason="factory_reset")),
+        ("deep sleep as a reason", False, maintenance(reason="deep_sleep")),
+        ("an expected time of zero", False, maintenance(expected_s=0)),
+        ("an expected time over an hour", False, maintenance(expected_s=3601)),
+        ("a firmware with a v", False, maintenance(firmware="v0.7.7")),
+        ("uppercase node id", False, maintenance(node_id="Radar-1")),
+        ("another kind", False, maintenance(kind="node_control_result")),
+        ("unknown field", False, maintenance(token="x")),
+        ("not an object", False, [1, 2]),
     ],
     "command": [
         ("calibrate", True, {"node_id": "north-1", "timestamp_ms": 9, "command": "calibrate"}),

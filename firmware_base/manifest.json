@@ -666,6 +666,42 @@
         "ARMOR-HMI": "tools/check_sdkconfig.py",
         "ARMOR-ALARM": "tools/check_sdkconfig.py"
       }
+    },
+    "core/control_gate.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/control_gate.hpp",
+        "ARMOR-ELECTRICAL": "core/control_gate.hpp",
+        "ARMOR-RADAR": "main/core/control_gate.hpp",
+        "ARMOR-HMI": "core/control_gate.hpp",
+        "ARMOR-ALARM": "core/control_gate.hpp"
+      }
+    },
+    "main/node_control.cpp": {
+      "targets": {
+        "ARMOR-SOLAR": "main/node_control.cpp",
+        "ARMOR-ELECTRICAL": "main/node_control.cpp",
+        "ARMOR-RADAR": "main/node_control.cpp",
+        "ARMOR-HMI": "main/node_control.cpp",
+        "ARMOR-ALARM": "main/node_control.cpp"
+      }
+    },
+    "main/node_control.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "main/node_control.hpp",
+        "ARMOR-ELECTRICAL": "main/node_control.hpp",
+        "ARMOR-RADAR": "main/node_control.hpp",
+        "ARMOR-HMI": "main/node_control.hpp",
+        "ARMOR-ALARM": "main/node_control.hpp"
+      }
+    },
+    "tests/test_control.cpp": {
+      "targets": {
+        "ARMOR-SOLAR": "tests/test_control.cpp",
+        "ARMOR-ELECTRICAL": "tests/test_control.cpp",
+        "ARMOR-RADAR": "tests/test_control.cpp",
+        "ARMOR-HMI": "tests/test_control.cpp",
+        "ARMOR-ALARM": "tests/test_control.cpp"
+      }
     }
   }
 }

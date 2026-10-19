@@ -141,6 +141,96 @@
    }
   },
   {
+   "name": "a control order asked for",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "control_requested",
+    "subject": "radar-1",
+    "version": "0.3.7",
+    "by": "ana",
+    "outcome": "allowed"
+   }
+  },
+  {
+   "name": "a node that acknowledged an order",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "control_acknowledged",
+    "subject": "radar-1",
+    "version": "0.3.7",
+    "by": "ana",
+    "outcome": "allowed"
+   }
+  },
+  {
+   "name": "a node that applied an order",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "control_applied",
+    "subject": "radar-1",
+    "version": "0.3.7",
+    "by": "ana",
+    "outcome": "allowed"
+   }
+  },
+  {
+   "name": "a node that refused an order",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "control_refused",
+    "subject": "radar-1",
+    "version": "0.3.7",
+    "by": "ana",
+    "outcome": "denied"
+   }
+  },
+  {
+   "name": "a restarted node that came back",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "control_back",
+    "subject": "radar-1",
+    "version": "0.3.7",
+    "by": "ana",
+    "outcome": "allowed"
+   }
+  },
+  {
+   "name": "a restarted node that did not come back",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "control_lost",
+    "subject": "radar-1",
+    "version": "0.3.7",
+    "by": "ana",
+    "outcome": "failed"
+   }
+  },
+  {
    "name": "the siren silenced",
    "valid": true,
    "payload": {

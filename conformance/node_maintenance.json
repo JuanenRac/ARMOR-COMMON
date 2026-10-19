@@ -1,0 +1,303 @@
+{
+ "kind": "node_maintenance",
+ "vectors": [
+  {
+   "name": "a restart is about to happen",
+   "valid": true,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": true,
+    "reason": "restart",
+    "expected_s": 90,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a pause",
+   "valid": true,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": true,
+    "reason": "pause",
+    "expected_s": 3600,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a standby with no expected time",
+   "valid": true,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": true,
+    "reason": "standby",
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a firmware update",
+   "valid": true,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": true,
+    "reason": "update",
+    "expected_s": 600,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a firmware upload from the panel",
+   "valid": true,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": true,
+    "reason": "upload",
+    "expected_s": 300,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a window the operator asked for",
+   "valid": true,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": true,
+    "reason": "operator",
+    "expected_s": 3600,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a node announcing it alone",
+   "valid": true,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": true,
+    "reason": "restart",
+    "expected_s": 90,
+    "firmware": "0.7.7"
+   }
+  },
+  {
+   "name": "the window is over",
+   "valid": true,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": false,
+    "reason": "restart",
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "the window is over, the node says why",
+   "valid": true,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": false,
+    "reason": "update",
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a window that ends with an expected time",
+   "valid": false,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": false,
+    "reason": "restart",
+    "expected_s": 90,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "no firmware",
+   "valid": false,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": true,
+    "reason": "restart",
+    "expected_s": 90,
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "no active flag",
+   "valid": false,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "reason": "restart",
+    "expected_s": 90,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "active as text",
+   "valid": false,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": "yes",
+    "reason": "restart",
+    "expected_s": 90,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a reason that is not on the list",
+   "valid": false,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": true,
+    "reason": "factory_reset",
+    "expected_s": 90,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "deep sleep as a reason",
+   "valid": false,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": true,
+    "reason": "deep_sleep",
+    "expected_s": 90,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an expected time of zero",
+   "valid": false,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": true,
+    "reason": "restart",
+    "expected_s": 0,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an expected time over an hour",
+   "valid": false,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": true,
+    "reason": "restart",
+    "expected_s": 3601,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a firmware with a v",
+   "valid": false,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": true,
+    "reason": "restart",
+    "expected_s": 90,
+    "firmware": "v0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "uppercase node id",
+   "valid": false,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "Radar-1",
+    "timestamp_ms": 9500,
+    "active": true,
+    "reason": "restart",
+    "expected_s": 90,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "another kind",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": true,
+    "reason": "restart",
+    "expected_s": 90,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "unknown field",
+   "valid": false,
+   "payload": {
+    "kind": "node_maintenance",
+    "node_id": "radar-1",
+    "timestamp_ms": 9500,
+    "active": true,
+    "reason": "restart",
+    "expected_s": 90,
+    "firmware": "0.7.7",
+    "requested_by": "ana",
+    "token": "x"
+   }
+  },
+  {
+   "name": "not an object",
+   "valid": false,
+   "payload": [
+    1,
+    2
+   ]
+  }
+ ]
+}

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://armor.local/schemas/system-event-0.1.0.json",
   "title": "A.R.M.O.R. system event of the history",
-  "description": "One line of the server's history about the system itself: a node that appears or disappears (with its firmware), the broker connection, a setting that was changed (who and what, never the value), a service that changed state, an update, the alarm armed, disarmed or silenced (with the profile), a backup. The words are a fixed list; there is no free text, so a secret cannot get in.",
+  "description": "One line of the server's history about the system itself: a node that appears or disappears (with its firmware), the broker connection, a setting that was changed (who and what, never the value), a service that changed state, an update, the alarm armed, disarmed or silenced (with the profile), a backup, a control order to a node from a console - restart, pause, standby, identify, diagnostics, maintenance (who asked, whether the node acknowledged, applied or refused it, whether a restarted node came back). The words are a fixed list; there is no free text, so a secret cannot get in.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -67,7 +67,16 @@
         "backup_made",
         "backup_restored",
         "battery_requested",
-        "battery_operation"
+        "battery_operation",
+        "control_requested",
+        "control_acknowledged",
+        "control_refused",
+        "control_applied",
+        "control_back",
+        "control_lost",
+        "maintenance_started",
+        "maintenance_ended",
+        "maintenance_expired"
       ]
     },
     "subject": {

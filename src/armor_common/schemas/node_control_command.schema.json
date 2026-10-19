@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/node-control-command-0.1.0.json",
+  "title": "A.R.M.O.R. order from the server to a node: restart, pause, resume, standby, identify, diagnostics, maintenance",
+  "description": "An order from the server to one node, published to armor/control/{node_id}/command, or to armor/control/all/command for every node (an `arm` only). Never retained. Two steps, as for a switch: `arm` (the node answers with a one-time `token` bound to the `operation`), then `execute` carrying that token within thirty seconds, to the node's own topic. Operations: restart (a clean restart; settings are kept), pause (the node stops its work for a while and resumes by itself; 60 to 3600 s, 3600 when `duration_s` is absent), resume, standby (the node's work is off, indefinitely and across restarts, but it stays connected and keeps answering; it is not a power-off), identify (blink the node's LED or banner for 5 to 300 s, 30 when absent), diagnostics (a read-only snapshot) and maintenance_on / maintenance_off (tells the server to hold back the node-offline alert; 60 to 28800 s, 3600 when absent). `requested_by` is the person the server acted for, kept in the node's log. `mode` `now` acts at once; `rolling` (restart only) waits `slot` times thirty seconds so that nodes never restart together. There is no order that erases a node's settings or credentials, none that puts it into deep sleep and none that sets a wake timer.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "node_id",
+    "timestamp_ms",
+    "command_id",
+    "action",
+    "operation",
+    "mode",
+    "requested_by"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "node_control_command"
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$",
+      "description": "The node, or `all` on the broadcast topic (a node cannot be called `all`)."
+    },
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "command_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]{8,32}$",
+      "description": "Chosen by the server; the node repeats it in its answer."
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "arm",
+        "execute"
+      ]
+    },
+    "operation": {
+      "type": "string",
+      "enum": [
+        "restart",
+        "pause",
+        "resume",
+        "standby",
+        "identify",
+        "diagnostics",
+        "maintenance_on",
+        "maintenance_off"
+      ],
+      "description": "What to do. The operation an execute carries is the one its token was armed for."
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "now",
+        "rolling"
+      ],
+      "description": "now: act at once. rolling: only for restart, wait the slot first."
+    },
+    "delay_s": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 600,
+      "description": "Only on a restart execute: seconds to wait before restarting, added to the wait of a rolling slot."
+    },
+    "slot": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 63,
+      "description": "Only on a restart execute in mode rolling: the place of the node in the order of the restarts; the node waits slot times thirty seconds."
+    },
+    "duration_s": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 86400,
+      "description": "Only on an execute of pause (60..3600), identify (5..300) or maintenance_on (60..28800); the range of the operation is enforced besides this one."
+    },
+    "token": {
+      "type": "string",
+      "pattern": "^[a-z0-9]{16,32}$",
+      "description": "Only on execute: the token the node gave in the answer to the arm."
+    },
+    "requested_by": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._@ -]{1,64}$",
+      "description": "Who the server acted for, for the log."
+    }
+  }
+}

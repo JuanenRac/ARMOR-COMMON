@@ -1,0 +1,1314 @@
+{
+ "kind": "node_control_result",
+ "vectors": [
+  {
+   "name": "a restart arm accepted, with its token",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "token_ttl_s": 30
+   }
+  },
+  {
+   "name": "a pause arm accepted",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "pause",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "token_ttl_s": 30
+   }
+  },
+  {
+   "name": "a standby arm accepted",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "standby",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "token_ttl_s": 30
+   }
+  },
+  {
+   "name": "a diagnostics arm accepted",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "diagnostics",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "token_ttl_s": 30
+   }
+  },
+  {
+   "name": "the node is restarting now",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9200,
+    "command_id": "d0d0d0d012345679",
+    "action": "execute",
+    "operation": "restart",
+    "stage": "restarting",
+    "accepted": true,
+    "refusal": "none",
+    "reason": "requested_by_server",
+    "mode": "now",
+    "restart_in_s": 3,
+    "uptime_s": 86400,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "the node is restarting in a rolling slot",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9200,
+    "command_id": "d0d0d0d012345679",
+    "action": "execute",
+    "operation": "restart",
+    "stage": "restarting",
+    "accepted": true,
+    "refusal": "none",
+    "reason": "requested_by_server",
+    "mode": "rolling",
+    "restart_in_s": 90,
+    "uptime_s": 86400,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a pause applied",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9300,
+    "command_id": "d0d0d0d01234567a",
+    "action": "execute",
+    "operation": "pause",
+    "stage": "applied",
+    "accepted": true,
+    "refusal": "none",
+    "state": "paused",
+    "maintenance": false,
+    "until_s": 3600,
+    "since_ms": 1760000000000,
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a pause for ten minutes",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9300,
+    "command_id": "d0d0d0d01234567a",
+    "action": "execute",
+    "operation": "pause",
+    "stage": "applied",
+    "accepted": true,
+    "refusal": "none",
+    "state": "paused",
+    "maintenance": false,
+    "until_s": 600,
+    "since_ms": 1760000000000,
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a pause applied while the clock is not set",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9300,
+    "command_id": "d0d0d0d01234567a",
+    "action": "execute",
+    "operation": "pause",
+    "stage": "applied",
+    "accepted": true,
+    "refusal": "none",
+    "state": "paused",
+    "maintenance": false,
+    "until_s": 3600,
+    "since_ms": 0,
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a resume applied",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9300,
+    "command_id": "d0d0d0d01234567a",
+    "action": "execute",
+    "operation": "resume",
+    "stage": "applied",
+    "accepted": true,
+    "refusal": "none",
+    "state": "running",
+    "maintenance": false,
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a standby applied",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9300,
+    "command_id": "d0d0d0d01234567a",
+    "action": "execute",
+    "operation": "standby",
+    "stage": "applied",
+    "accepted": true,
+    "refusal": "none",
+    "state": "standby",
+    "maintenance": false,
+    "since_ms": 1760000000000,
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "identify applied while paused",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9300,
+    "command_id": "d0d0d0d01234567a",
+    "action": "execute",
+    "operation": "identify",
+    "stage": "applied",
+    "accepted": true,
+    "refusal": "none",
+    "state": "paused",
+    "maintenance": false,
+    "until_s": 30,
+    "since_ms": 1760000000000,
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "maintenance on applied",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9300,
+    "command_id": "d0d0d0d01234567a",
+    "action": "execute",
+    "operation": "maintenance_on",
+    "stage": "applied",
+    "accepted": true,
+    "refusal": "none",
+    "state": "running",
+    "maintenance": true,
+    "until_s": 3600,
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "maintenance off applied",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9300,
+    "command_id": "d0d0d0d01234567a",
+    "action": "execute",
+    "operation": "maintenance_off",
+    "stage": "applied",
+    "accepted": true,
+    "refusal": "none",
+    "state": "running",
+    "maintenance": false,
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "the diagnostics snapshot",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false
+    }
+   }
+  },
+  {
+   "name": "a diagnostics snapshot of the minimum",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false
+    }
+   }
+  },
+  {
+   "name": "refused: busy installing an update",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "busy_update"
+   }
+  },
+  {
+   "name": "refused: restarted a moment ago",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "rate_limited"
+   }
+  },
+  {
+   "name": "refused: a battery operation is under way",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "busy_battery"
+   }
+  },
+  {
+   "name": "a pause refused: a firmware upload is under way",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "pause",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "busy_upload"
+   }
+  },
+  {
+   "name": "a standby refused: the firmware is being copied to the other slot",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "standby",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "busy_slot_copy"
+   }
+  },
+  {
+   "name": "a pause refused: the node is paused already",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "pause",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "already_in_state"
+   }
+  },
+  {
+   "name": "a resume refused: the node is running",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "resume",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "already_in_state"
+   }
+  },
+  {
+   "name": "an execute refused: the token is not the one given",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "invalid_token"
+   }
+  },
+  {
+   "name": "an execute refused: the token is old",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "token_expired"
+   }
+  },
+  {
+   "name": "an execute refused: no arm came first",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "not_armed"
+   }
+  },
+  {
+   "name": "an execute refused: it is already going",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "already_restarting"
+   }
+  },
+  {
+   "name": "an execute refused: the node cannot do it",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "identify",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "unavailable"
+   }
+  },
+  {
+   "name": "an armed answer without a token",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token_ttl_s": 30
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a token in a refusal",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "busy_update",
+    "token": "0123456789abcdef0123456789abcdef",
+    "token_ttl_s": 30
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a token with no life",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "accepted with a refusal",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "busy_update",
+    "token": "0123456789abcdef0123456789abcdef",
+    "token_ttl_s": 30
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "refused with refusal none",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "none"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "refused but accepted",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "rejected",
+    "accepted": true,
+    "refusal": "none"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a restarting answer that was not accepted",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9200,
+    "command_id": "d0d0d0d012345679",
+    "action": "execute",
+    "operation": "restart",
+    "stage": "restarting",
+    "accepted": false,
+    "refusal": "busy_update",
+    "reason": "requested_by_server",
+    "mode": "now",
+    "restart_in_s": 3,
+    "uptime_s": 86400,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an accepted restart execute answered armed",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "token_ttl_s": 30
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an accepted pause execute answered restarting",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9200,
+    "command_id": "d0d0d0d012345679",
+    "action": "execute",
+    "operation": "pause",
+    "stage": "restarting",
+    "accepted": true,
+    "refusal": "none",
+    "reason": "requested_by_server",
+    "mode": "now",
+    "restart_in_s": 3,
+    "uptime_s": 86400,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an accepted restart execute answered applied",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9300,
+    "command_id": "d0d0d0d01234567a",
+    "action": "execute",
+    "operation": "restart",
+    "stage": "applied",
+    "accepted": true,
+    "refusal": "none",
+    "state": "paused",
+    "maintenance": false,
+    "until_s": 3600,
+    "since_ms": 1760000000000,
+    "requested_by": "ana"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an accepted diagnostics execute answered applied",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9300,
+    "command_id": "d0d0d0d01234567a",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "applied",
+    "accepted": true,
+    "refusal": "none",
+    "state": "paused",
+    "maintenance": false,
+    "until_s": 3600,
+    "since_ms": 1760000000000,
+    "requested_by": "ana"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an accepted pause arm answered applied",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9300,
+    "command_id": "d0d0d0d01234567a",
+    "action": "arm",
+    "operation": "pause",
+    "stage": "applied",
+    "accepted": true,
+    "refusal": "none",
+    "state": "paused",
+    "maintenance": false,
+    "until_s": 3600,
+    "since_ms": 1760000000000,
+    "requested_by": "ana"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an accepted pause execute answered armed",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "pause",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "token_ttl_s": 30
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a restarting answer without the uptime",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9200,
+    "command_id": "d0d0d0d012345679",
+    "action": "execute",
+    "operation": "restart",
+    "stage": "restarting",
+    "accepted": true,
+    "refusal": "none",
+    "reason": "requested_by_server",
+    "mode": "now",
+    "restart_in_s": 3,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a restarting answer without the firmware",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9200,
+    "command_id": "d0d0d0d012345679",
+    "action": "execute",
+    "operation": "restart",
+    "stage": "restarting",
+    "accepted": true,
+    "refusal": "none",
+    "reason": "requested_by_server",
+    "mode": "now",
+    "restart_in_s": 3,
+    "uptime_s": 86400,
+    "requested_by": "ana"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an armed answer that says when the node goes",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "token_ttl_s": 30,
+    "restart_in_s": 3
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an applied answer without the state",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9300,
+    "command_id": "d0d0d0d01234567a",
+    "action": "execute",
+    "operation": "pause",
+    "stage": "applied",
+    "accepted": true,
+    "refusal": "none",
+    "maintenance": false,
+    "until_s": 3600,
+    "since_ms": 1760000000000,
+    "requested_by": "ana"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an applied answer without the maintenance flag",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9300,
+    "command_id": "d0d0d0d01234567a",
+    "action": "execute",
+    "operation": "pause",
+    "stage": "applied",
+    "accepted": true,
+    "refusal": "none",
+    "state": "paused",
+    "until_s": 3600,
+    "since_ms": 1760000000000,
+    "requested_by": "ana"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an applied answer that says when the node restarts",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9300,
+    "command_id": "d0d0d0d01234567a",
+    "action": "execute",
+    "operation": "pause",
+    "stage": "applied",
+    "accepted": true,
+    "refusal": "none",
+    "state": "paused",
+    "maintenance": false,
+    "until_s": 3600,
+    "since_ms": 1760000000000,
+    "requested_by": "ana",
+    "restart_in_s": 3
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a restarting answer that names a state",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9200,
+    "command_id": "d0d0d0d012345679",
+    "action": "execute",
+    "operation": "restart",
+    "stage": "restarting",
+    "accepted": true,
+    "refusal": "none",
+    "reason": "requested_by_server",
+    "mode": "now",
+    "restart_in_s": 3,
+    "uptime_s": 86400,
+    "firmware": "0.7.7",
+    "requested_by": "ana",
+    "state": "running"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a diagnostics answer without the snapshot",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a snapshot in an applied answer",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9300,
+    "command_id": "d0d0d0d01234567a",
+    "action": "execute",
+    "operation": "pause",
+    "stage": "applied",
+    "accepted": true,
+    "refusal": "none",
+    "state": "paused",
+    "maintenance": false,
+    "until_s": 3600,
+    "since_ms": 1760000000000,
+    "requested_by": "ana",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a snapshot in a refusal",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "busy_update",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "already restarting found by a pause",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "pause",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "already_restarting"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a snapshot without the uptime",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false
+    }
+   }
+  },
+  {
+   "name": "a snapshot with a state that does not exist",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "asleep",
+     "maintenance": false
+    }
+   }
+  },
+  {
+   "name": "a snapshot with a secret",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false,
+     "wifi_password": "x"
+    }
+   }
+  },
+  {
+   "name": "a snapshot with a signal stronger than zero",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": 3,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false
+    }
+   }
+  },
+  {
+   "name": "a state that does not exist",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9300,
+    "command_id": "d0d0d0d01234567a",
+    "action": "execute",
+    "operation": "pause",
+    "stage": "applied",
+    "accepted": true,
+    "refusal": "none",
+    "state": "asleep",
+    "maintenance": false,
+    "until_s": 3600,
+    "since_ms": 1760000000000,
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "deep sleep as a state",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9300,
+    "command_id": "d0d0d0d01234567a",
+    "action": "execute",
+    "operation": "pause",
+    "stage": "applied",
+    "accepted": true,
+    "refusal": "none",
+    "state": "deep_sleep",
+    "maintenance": false,
+    "until_s": 3600,
+    "since_ms": 1760000000000,
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an operation that is not on the list",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "factory_reset",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "busy_update"
+   }
+  },
+  {
+   "name": "no operation",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "busy_update"
+   }
+  },
+  {
+   "name": "a refusal that is not on the list",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "because"
+   }
+  },
+  {
+   "name": "a reason that is not on the list",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9200,
+    "command_id": "d0d0d0d012345679",
+    "action": "execute",
+    "operation": "restart",
+    "stage": "restarting",
+    "accepted": true,
+    "refusal": "none",
+    "reason": "factory_reset",
+    "mode": "now",
+    "restart_in_s": 3,
+    "uptime_s": 86400,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a token life of 121 seconds",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "token_ttl_s": 121
+   }
+  },
+  {
+   "name": "a wait of an hour and a second",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9200,
+    "command_id": "d0d0d0d012345679",
+    "action": "execute",
+    "operation": "restart",
+    "stage": "restarting",
+    "accepted": true,
+    "refusal": "none",
+    "reason": "requested_by_server",
+    "mode": "now",
+    "restart_in_s": 3601,
+    "uptime_s": 86400,
+    "firmware": "0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a firmware with a v",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9200,
+    "command_id": "d0d0d0d012345679",
+    "action": "execute",
+    "operation": "restart",
+    "stage": "restarting",
+    "accepted": true,
+    "refusal": "none",
+    "reason": "requested_by_server",
+    "mode": "now",
+    "restart_in_s": 3,
+    "uptime_s": 86400,
+    "firmware": "v0.7.7",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a stage that does not exist",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "maybe",
+    "accepted": false,
+    "refusal": "busy_update"
+   }
+  },
+  {
+   "name": "another kind",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "token_ttl_s": 30
+   }
+  },
+  {
+   "name": "unknown field",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "token_ttl_s": 30,
+    "shell": "reboot"
+   }
+  }
+ ]
+}

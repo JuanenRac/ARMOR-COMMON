@@ -2,8 +2,9 @@ import json
 import unittest
 from pathlib import Path
 
-from armor_common import ContractError, decode, encode, validate_arm_profile, validate_node_health, validate_alarm_command, validate_alarm_message, validate_alarm_result, validate_alarm_zone_feed, validate_device_message, validate_network_orders, validate_server_alert, validate_electrical_command, validate_electrical_message, validate_electrical_result, validate_network_message, validate_solar_battery_command, validate_solar_battery_result, validate_solar_message, validate_topic_and_payload
+from armor_common import ContractError, decode, encode, validate_arm_profile, validate_node_health, validate_alarm_command, validate_alarm_message, validate_alarm_result, validate_alarm_zone_feed, validate_device_message, validate_network_orders, validate_server_alert, validate_electrical_command, validate_electrical_message, validate_electrical_result, validate_network_message, validate_node_control_command, validate_node_control_result, validate_node_maintenance, validate_solar_battery_command, validate_solar_battery_result, validate_solar_message, validate_topic_and_payload
 from armor_common.contracts import battery_catalog, battery_expert_line, parse_battery_topic, validate_battery_params
+from armor_common.contracts import parse_control_topic
 from armor_common.contracts import load_schema, parse_alarm_topic, parse_device_topic, parse_electrical_topic, parse_network_topic, parse_solar_topic, parse_topic, validate_payload
 from armor_common.schema import SchemaError, UnsupportedSchema, check_schema, validate
 
@@ -15,6 +16,9 @@ MESSAGE_RULES = {
     "electrical_result": lambda payload: validate_electrical_result(f"armor/electrical/{payload['node_id']}/result", payload),
     "solar_battery_command": lambda payload: validate_solar_battery_command(f"armor/solar/{payload['node_id']}/maintenance/command", payload),
     "solar_battery_result": lambda payload: validate_solar_battery_result(f"armor/solar/{payload['node_id']}/maintenance/result", payload),
+    "node_control_command": lambda payload: validate_node_control_command(f"armor/control/{payload['node_id']}/command", payload),
+    "node_control_result": lambda payload: validate_node_control_result(f"armor/control/{payload['node_id']}/result", payload),
+    "node_maintenance": lambda payload: validate_node_maintenance(f"armor/control/{payload['node_id']}/maintenance", payload),
     "alarm": lambda payload: validate_alarm_message(f"armor/alarm/{payload['node_id']}/state", payload),
     "alarm_command": lambda payload: validate_alarm_command(f"armor/alarm/{payload['node_id']}/command", payload),
     "alarm_result": lambda payload: validate_alarm_result(f"armor/alarm/{payload['node_id']}/result", payload),
@@ -541,3 +545,160 @@ class BatteryWriteTests(unittest.TestCase):
                     yield from names(child)
         for kind in ("solar_battery_command", "solar_battery_result"):
             self.assertEqual([name for name in names(load_schema(kind)) if "pass" in name.lower() or "secret" in name.lower() or "pin" == name.lower()], [], kind)
+
+
+class NodeMaintenanceTests(unittest.TestCase):
+    """The planned-maintenance signal: retained, one node's own topic, a window that ends carries no expected time."""
+
+    signal = next(item["payload"] for item in json.loads((CONFORMANCE / "node_maintenance.json").read_text(encoding="utf-8"))["vectors"] if item["valid"])
+    topic = "armor/control/radar-1/maintenance"
+
+    def test_the_signal_is_whole_and_on_its_own_topic(self):
+        validate_node_maintenance(self.topic, self.signal)
+        for topic in ("armor/control/radar-2/maintenance", "armor/control/all/maintenance", "armor/control/radar-1/result", "armor/control/radar-1/maintenance/x"):
+            with self.subTest(topic=topic), self.assertRaises(ContractError):
+                validate_node_maintenance(topic, self.signal)
+
+    def test_a_window_that_ends_has_no_expected_time(self):
+        validate_node_maintenance(self.topic, {k: v for k, v in self.signal.items() if k != "expected_s"} | {"active": False})
+        with self.assertRaises(ContractError):
+            validate_node_maintenance(self.topic, {**self.signal, "active": False})
+
+    def test_every_reason_is_a_word_of_the_list(self):
+        for reason in ("restart", "pause", "standby", "update", "upload", "operator"):
+            validate_node_maintenance(self.topic, {**self.signal, "reason": reason})
+        for reason in ("deep_sleep", "factory_reset", ""):
+            with self.subTest(reason=reason), self.assertRaises(ContractError):
+                validate_node_maintenance(self.topic, {**self.signal, "reason": reason})
+
+
+class NodeControlTests(unittest.TestCase):
+    """Controlling a node: two steps, a token that belongs to one node and one operation, a broadcast that only arms, ranges per operation, and an answer that says what it is."""
+
+    commands = json.loads((CONFORMANCE / "node_control_command.json").read_text(encoding="utf-8"))["vectors"]
+    results = json.loads((CONFORMANCE / "node_control_result.json").read_text(encoding="utf-8"))["vectors"]
+    arm = commands[0]["payload"]
+    armed = results[0]["payload"]
+    token = "0123456789abcdef0123456789abcdef"
+    operations = ("restart", "pause", "resume", "standby", "identify", "diagnostics", "maintenance_on", "maintenance_off")
+
+    def command(self, **changes):
+        return {**self.arm, **changes}
+
+    def execute(self, **changes):
+        return {**self.arm, "action": "execute", "token": self.token, **changes}
+
+    def test_the_topics_name_the_node_and_the_direction(self):
+        self.assertEqual(parse_control_topic("armor/control/radar-1/command", "command"), "radar-1")
+        self.assertEqual(parse_control_topic("armor/control/all/command", "command"), "all")
+        for topic, leaf in [("armor/control/radar-1/result", "command"), ("armor/control/radar-1/command", "result"), ("armor/control/all/result", "result"), ("armor/control/Radar/command", "command"),
+                            ("armor/control/radar-1", "command"), ("armor/control/radar-1/command/x", "command"), ("armor/node/radar-1/command", "command"), ("armor/restart/radar-1/command", "command")]:
+            with self.subTest(topic=topic), self.assertRaises(ContractError):
+                parse_control_topic(topic, leaf)
+        with self.assertRaises(ContractError):
+            parse_control_topic("armor/control/radar-1/command", "state")
+
+    def test_the_node_must_be_the_one_of_the_topic(self):
+        validate_node_control_command("armor/control/radar-1/command", self.arm)
+        validate_node_control_result("armor/control/radar-1/result", self.armed)
+        with self.assertRaises(ContractError):
+            validate_node_control_command("armor/control/radar-2/command", self.arm)
+        with self.assertRaises(ContractError):
+            validate_node_control_result("armor/control/radar-2/result", self.armed)
+        with self.assertRaises(ContractError):
+            validate_node_control_command("armor/control/radar-1/result", self.arm)
+
+    def test_a_broadcast_arms_and_never_executes(self):
+        for operation in self.operations:
+            with self.subTest(operation=operation):
+                validate_node_control_command("armor/control/all/command", self.command(node_id="all", operation=operation))
+                with self.assertRaises(ContractError):
+                    validate_node_control_command("armor/control/all/command", self.execute(node_id="all", operation=operation))
+
+    def test_every_operation_can_be_armed_and_executed(self):
+        for operation in self.operations:
+            with self.subTest(operation=operation):
+                validate_node_control_command("armor/control/radar-1/command", self.command(operation=operation))
+                validate_node_control_command("armor/control/radar-1/command", self.execute(operation=operation))
+
+    def test_there_is_no_operation_that_erases_or_sleeps(self):
+        for operation in ("factory_reset", "erase", "reset", "wipe", "format", "wipe_wifi", "deep_sleep", "radio_sleep", "sleep", "wake"):
+            with self.subTest(operation=operation), self.assertRaises(ContractError):
+                validate_node_control_command("armor/control/radar-1/command", self.command(operation=operation))
+        for action in ("factory_reset", "erase", "wipe"):
+            with self.subTest(action=action), self.assertRaises(ContractError):
+                validate_node_control_command("armor/control/radar-1/command", self.command(action=action))
+        for name in ("wake_after_s", "wake_timer_s", "sleep_s", "wake_s"):
+            with self.subTest(field=name), self.assertRaises(ContractError):
+                validate_node_control_command("armor/control/radar-1/command", self.execute(operation="standby", **{name: 600}))
+        schema = load_schema("node_control_command")
+        self.assertEqual(schema["properties"]["action"]["enum"], ["arm", "execute"])
+        self.assertEqual(list(schema["properties"]["operation"]["enum"]), list(self.operations))
+        self.assertIs(schema["additionalProperties"], False)
+        for kind in ("node_control_command", "node_control_result"):
+            names = list(load_schema(kind)["properties"]) + list(load_schema(kind)["properties"].get("operation", {}).get("enum", []))
+            self.assertEqual([name for name in names if any(word in name for word in ("sleep", "wake", "erase", "wipe", "factory", "format"))], [], kind)
+
+    def test_the_rolling_mode_is_for_a_restart_only(self):
+        validate_node_control_command("armor/control/radar-1/command", self.execute(mode="rolling", slot=3, delay_s=10))
+        for operation in self.operations[1:]:
+            with self.subTest(operation=operation), self.assertRaises(ContractError):
+                validate_node_control_command("armor/control/radar-1/command", self.command(operation=operation, mode="rolling"))
+        with self.assertRaises(ContractError):
+            validate_node_control_command("armor/control/radar-1/command", self.execute(slot=1))
+        for operation in self.operations[1:]:
+            with self.subTest(delay=operation), self.assertRaises(ContractError):
+                validate_node_control_command("armor/control/radar-1/command", self.execute(operation=operation, delay_s=5))
+
+    def test_durations_are_those_of_their_operation(self):
+        ranges = {"pause": (60, 3600), "identify": (5, 300), "maintenance_on": (60, 28800)}
+        for operation, (low, high) in ranges.items():
+            for value in (low, (low + high) // 2, high):
+                with self.subTest(operation=operation, value=value):
+                    validate_node_control_command("armor/control/radar-1/command", self.execute(operation=operation, duration_s=value))
+            for value in (low - 1, high + 1):
+                with self.subTest(operation=operation, wrong=value), self.assertRaises(ContractError):
+                    validate_node_control_command("armor/control/radar-1/command", self.execute(operation=operation, duration_s=value))
+            with self.subTest(arm=operation), self.assertRaises(ContractError):
+                validate_node_control_command("armor/control/radar-1/command", self.command(operation=operation, duration_s=low))
+        for operation in ("restart", "resume", "standby", "diagnostics", "maintenance_off"):
+            with self.subTest(none=operation), self.assertRaises(ContractError):
+                validate_node_control_command("armor/control/radar-1/command", self.execute(operation=operation, duration_s=60))
+
+    def test_a_token_goes_on_an_execute_only(self):
+        with self.assertRaises(ContractError):
+            validate_node_control_command("armor/control/radar-1/command", self.command(token=self.token))
+        with self.assertRaises(ContractError):
+            validate_node_control_command("armor/control/radar-1/command", {k: v for k, v in self.execute().items() if k != "token"})
+
+    def answer(self, name):
+        return next(item["payload"] for item in self.results if item["name"] == name)
+
+    def test_each_answer_is_whole(self):
+        for item in self.results:
+            if item["valid"]:
+                with self.subTest(item["name"]):
+                    validate_node_control_result("armor/control/radar-1/result", item["payload"])
+        going = self.answer("the node is restarting now")
+        for name in ("uptime_s", "firmware", "reason", "restart_in_s", "mode", "requested_by"):
+            with self.subTest(missing=name), self.assertRaises(ContractError):
+                validate_node_control_result("armor/control/radar-1/result", {k: v for k, v in going.items() if k != name})
+        applied = self.answer("a pause applied")
+        for name in ("state", "maintenance", "requested_by"):
+            with self.subTest(missing=name), self.assertRaises(ContractError):
+                validate_node_control_result("armor/control/radar-1/result", {k: v for k, v in applied.items() if k != name})
+
+    def test_a_snapshot_has_no_room_for_a_secret(self):
+        snapshot = load_schema("node_control_result")["properties"]["diagnostics"]
+        self.assertIs(snapshot["additionalProperties"], False)
+        self.assertEqual([name for name in snapshot["properties"] if any(word in name for word in ("pass", "secret", "token", "key", "psk"))], [])
+
+    def test_the_health_report_says_what_the_node_is_doing(self):
+        health = {"kind": "node_health", "node_id": "radar-1", "timestamp_ms": 9, "family": "radar", "firmware": "0.7.7", "uptime_s": 5, "reset_reason": "power_on", "heap_free": 9, "heap_min": 9,
+                  "link": "ethernet", "link_up": True, "broker_reconnects": 1}
+        validate_node_health("armor/health/radar-1", health)
+        validate_node_health("armor/health/radar-1", {**health, "control_state": "standby", "control_since_ms": 1, "control_by": "ana", "maintenance": True, "maintenance_until_s": 60})
+        validate_node_health("armor/health/radar-1", {**health, "control_state": "paused", "control_since_ms": 1, "control_by": "ana", "control_until_s": 60})
+        for extra in ({"control_state": "running", "control_by": "ana"}, {"control_state": "standby", "control_until_s": 60}, {"maintenance_until_s": 60}, {"control_state": "asleep"}):
+            with self.subTest(extra=extra), self.assertRaises(ContractError):
+                validate_node_health("armor/health/radar-1", {**health, **extra})

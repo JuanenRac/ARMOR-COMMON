@@ -1,0 +1,1242 @@
+{
+ "kind": "node_control_command",
+ "vectors": [
+  {
+   "name": "an arm of restart",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an arm of pause",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "pause",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an arm of resume",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "resume",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an arm of standby",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "standby",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an arm of identify",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "identify",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an arm of diagnostics",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "diagnostics",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an arm of maintenance_on",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "maintenance_on",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an arm of maintenance_off",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "maintenance_off",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an arm for every node, a rolling restart",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "all",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "rolling",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an arm for every node, to pause",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "all",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "pause",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an arm for every node, to go to standby",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "all",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "standby",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an arm for every node, to resume",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "all",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "resume",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an execute of a restart",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef"
+   }
+  },
+  {
+   "name": "an execute of a restart, rolling, in the third place",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "mode": "rolling",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "slot": 2
+   }
+  },
+  {
+   "name": "an execute of a restart with an extra delay",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "delay_s": 600
+   }
+  },
+  {
+   "name": "an execute of a restart in the last place",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "mode": "rolling",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "slot": 63
+   }
+  },
+  {
+   "name": "an execute of a restart without delay",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "delay_s": 0
+   }
+  },
+  {
+   "name": "an execute of a pause with the default length",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "pause",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef"
+   }
+  },
+  {
+   "name": "an execute of a pause for a minute",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "pause",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 60
+   }
+  },
+  {
+   "name": "an execute of a pause for an hour",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "pause",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 3600
+   }
+  },
+  {
+   "name": "an execute of resume",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "resume",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef"
+   }
+  },
+  {
+   "name": "an execute of standby",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "standby",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef"
+   }
+  },
+  {
+   "name": "an execute of identify with the default length",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "identify",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef"
+   }
+  },
+  {
+   "name": "an execute of identify for five seconds",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "identify",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 5
+   }
+  },
+  {
+   "name": "an execute of identify for five minutes",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "identify",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 300
+   }
+  },
+  {
+   "name": "an execute of diagnostics",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "diagnostics",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef"
+   }
+  },
+  {
+   "name": "an execute of maintenance on with the default length",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "maintenance_on",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef"
+   }
+  },
+  {
+   "name": "an execute of maintenance on for eight hours",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "maintenance_on",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 28800
+   }
+  },
+  {
+   "name": "an execute of maintenance off",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "maintenance_off",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef"
+   }
+  },
+  {
+   "name": "a person called with an address and a dot",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana.lopez@home"
+   }
+  },
+  {
+   "name": "an execute for every node: a token is one node's",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "all",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an arm that carries a token",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an execute without its token",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an arm with a delay",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana",
+    "delay_s": 5
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an arm with a slot",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "rolling",
+    "requested_by": "ana",
+    "slot": 1
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a slot in the mode now",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "slot": 1
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a delay on a pause",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "pause",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "delay_s": 5
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a slot on a pause",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "pause",
+    "mode": "rolling",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "slot": 1
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "rolling on a pause",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "pause",
+    "mode": "rolling",
+    "requested_by": "ana"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "rolling on standby",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "standby",
+    "mode": "rolling",
+    "requested_by": "ana"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "rolling on resume for every node",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "all",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "resume",
+    "mode": "rolling",
+    "requested_by": "ana"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a duration on an arm",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "pause",
+    "mode": "now",
+    "requested_by": "ana",
+    "duration_s": 600
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a duration on a restart",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 60
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a duration on resume",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "resume",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 60
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a duration on standby: it has no end",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "standby",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 60
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a duration on diagnostics",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "diagnostics",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 60
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a duration on maintenance off",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "maintenance_off",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 60
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a pause of 59 seconds",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "pause",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 59
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a pause of an hour and a second",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "pause",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 3601
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "identify for four seconds",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "identify",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 4
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "identify for 301 seconds",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "identify",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 301
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "maintenance for 59 seconds",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "maintenance_on",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 59
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "maintenance for eight hours and a second",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "maintenance_on",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 28801
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a duration of a day and a second",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "maintenance_on",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 86401
+   }
+  },
+  {
+   "name": "a duration of zero",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "pause",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "duration_s": 0
+   }
+  },
+  {
+   "name": "a slot of 64",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "mode": "rolling",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "slot": 64
+   }
+  },
+  {
+   "name": "a delay of 601 seconds",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "delay_s": 601
+   }
+  },
+  {
+   "name": "a negative delay",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "delay_s": -1
+   }
+  },
+  {
+   "name": "a token that is too short",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "abc"
+   }
+  },
+  {
+   "name": "a token with capitals",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789ABCDEF0123456789ABCDEF"
+   }
+  },
+  {
+   "name": "an operation that erases the settings",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "factory_reset",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an operation that wipes the Wi-Fi",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "wipe_wifi",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an operation that erases the flash",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "erase",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an operation that puts the node into deep sleep",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "deep_sleep",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an operation that sleeps the radio",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "radio_sleep",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a wake timer",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "pause",
+    "mode": "now",
+    "requested_by": "ana",
+    "wake_after_s": 600
+   }
+  },
+  {
+   "name": "a wake timer in an execute",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "standby",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "wake_timer_s": 600
+   }
+  },
+  {
+   "name": "an operation in capitals",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "RESTART",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "no operation",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "an action that erases the settings",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "factory_reset",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a mode that does not exist",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "later",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "no mode",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "nobody to blame",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "now"
+   }
+  },
+  {
+   "name": "a requester with a line feed",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana\n"
+   }
+  },
+  {
+   "name": "a requester of 65 characters",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+   }
+  },
+  {
+   "name": "an empty requester",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": ""
+   }
+  },
+  {
+   "name": "uppercase node id",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "Radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a command id that is too short",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "abc",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "another kind",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "the kind of the first draft",
+   "valid": false,
+   "payload": {
+    "kind": "node_restart_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "unknown field",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana",
+    "force": true
+   }
+  },
+  {
+   "name": "not an object",
+   "valid": false,
+   "payload": [
+    1,
+    2
+   ]
+  }
+ ]
+}

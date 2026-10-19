@@ -146,6 +146,41 @@
       "minLength": 1,
       "maxLength": 96,
       "description": "The last error the node logged, cut to fit; absent when it has logged none since it started."
+    },
+    "control_state": {
+      "type": "string",
+      "enum": [
+        "running",
+        "paused",
+        "standby"
+      ],
+      "description": "Optional: whether the node does its work (running), has paused it for a while or has it off until it is resumed (standby). Absent on a firmware that cannot be controlled."
+    },
+    "control_since_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Optional, when paused or standby: the wall-clock time (ms) it began; 0 if the clock is not set."
+    },
+    "control_by": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._@ -]{1,64}$",
+      "description": "Optional, when paused or standby: the person the order was for."
+    },
+    "control_until_s": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 86400,
+      "description": "Optional, when paused: seconds left until it resumes by itself."
+    },
+    "maintenance": {
+      "type": "boolean",
+      "description": "Optional: the maintenance flag is on (the server holds back the node-offline alert)."
+    },
+    "maintenance_until_s": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 86400,
+      "description": "Optional, when maintenance is on: seconds left."
     }
   }
 }
