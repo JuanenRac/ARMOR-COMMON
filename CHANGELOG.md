@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [0.7.1] - The GitHub update fits the redirect address
+
+- The HTTP client of the GitHub update gets a 4 KB request buffer (the default of 512 bytes made it say "Out of buffer" on the request that follows GitHub's long redirect, so the checksum could not be read), with a host test and a static guard that every client sets it.
+
 ## [0.7.0] - Orders and answers for writing to Pylontech batteries
 
 - **Orders and answers for writing to a Pylontech battery:** two new messages, `solar_battery_command` (server to node, `armor/solar/{node_id}/maintenance/command`) and `solar_battery_result` (node to server, `.../result`), with their JSON Schemas, validators (`validate_solar_battery_command`, `validate_solar_battery_result`) and 125 conformance vectors. Writing is two steps (`arm`, then `execute` with the one-time token the node gave), `cancel` stops an operation that may still be stopped and `stage` carries a firmware image to the node in pieces.
