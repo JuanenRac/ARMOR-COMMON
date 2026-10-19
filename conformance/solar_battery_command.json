@@ -1,0 +1,1514 @@
+{
+ "kind": "solar_battery_command",
+ "vectors": [
+  {
+   "name": "arm an output",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "execute with its token",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223",
+    "token": "0123456789abcdef0123456789abcdef"
+   }
+  },
+  {
+   "name": "cancel",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "cancel"
+   }
+  },
+  {
+   "name": "a piece of an image",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345679",
+    "port": 2,
+    "action": "stage",
+    "stage": {
+     "id": "ab12cd34ef56ab12",
+     "index": 0,
+     "total": 782,
+     "size": 200000,
+     "crc32": 305419896,
+     "data": "QUJDRA=="
+    }
+   }
+  },
+  {
+   "name": "a piece of 344 characters",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345679",
+    "port": 2,
+    "action": "stage",
+    "stage": {
+     "id": "ab12cd34ef56ab12",
+     "index": 0,
+     "total": 782,
+     "size": 200000,
+     "crc32": 305419896,
+     "data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    }
+   }
+  },
+  {
+   "name": "arm the clock",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "set_clock",
+    "params": {},
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "arm the clock without params",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "set_clock",
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "a battery with no serial yet",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "set_clock",
+    "params": {},
+    "serial": "NOSERIAL"
+   }
+  },
+  {
+   "name": "write the barcode",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "write_barcode",
+    "params": {
+     "serial": "H221014C32213244"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "set the module voltages",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "limits_set",
+    "params": {
+     "group": "module_voltage",
+     "values": {
+      "pov": 58000,
+      "povr": 55000,
+      "phv": 57600,
+      "phvr": 55500,
+      "plv": 47000,
+      "plvr": 48000,
+      "puv": 44000,
+      "puvr": 45000,
+      "pslp": 42000
+     }
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "set the temperatures",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "limits_set",
+    "params": {
+     "group": "temperature",
+     "values": {
+      "cot": 60000,
+      "cotr": 55000,
+      "cht": 50000,
+      "chtr": 45000,
+      "clt": 5000,
+      "cltr": 8000,
+      "cut": -5000,
+      "cutr": -2000
+     }
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "enable two protections",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "protections_set",
+    "params": {
+     "items": {
+      "bov": "en",
+      "coc": "en"
+     }
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "disable a protection, risk accepted",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "protections_set",
+    "params": {
+     "items": {
+      "bov": "dis"
+     },
+     "accept_risk": true
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "clear the event records",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "clear_data",
+    "params": {
+     "which": "event"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "send a firmware image",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "firmware_update",
+    "params": {
+     "image_size": 200000,
+     "image_crc32": 305419896,
+     "image_version": "2.4"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "send a firmware image and erase the memory",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "firmware_update",
+    "params": {
+     "image_size": 200000,
+     "image_crc32": 305419896,
+     "image_version": "2.4",
+     "clear_eeprom": true
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "an expert line that only reads",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "expert_command",
+    "params": {
+     "line": "pwr"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "an action outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "run",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "an operation outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "format",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "a free command as an operation",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "ctrl cfet on",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "port 0",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 0,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "port 11",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 11,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "port as a string",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": "2",
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "a command id of seven characters",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "a token with capitals",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223",
+    "token": "0123456789ABCDEF0123456789ABCDEF"
+   }
+  },
+  {
+   "name": "a token of 31 characters",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223",
+    "token": "0123456789abcdef0123456789abcde"
+   }
+  },
+  {
+   "name": "a serial with a space",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH0220 409223"
+   }
+  },
+  {
+   "name": "a serial of seven characters",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02"
+   }
+  },
+  {
+   "name": "a node id with a space",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "my node",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "negative timestamp",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": -1,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "the kind of a result",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "an unknown field",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223",
+    "password": "x"
+   }
+  },
+  {
+   "name": "the service password as a field",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223",
+    "service_password": "x"
+   }
+  },
+  {
+   "name": "params that are a list",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "params": [
+     1
+    ],
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "a piece with a data of 345 characters",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345679",
+    "port": 2,
+    "action": "stage",
+    "stage": {
+     "id": "ab12cd34ef56ab12",
+     "index": 0,
+     "total": 782,
+     "size": 200000,
+     "crc32": 305419896,
+     "data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    }
+   }
+  },
+  {
+   "name": "a piece with data that is not base64",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345679",
+    "port": 2,
+    "action": "stage",
+    "stage": {
+     "id": "ab12cd34ef56ab12",
+     "index": 0,
+     "total": 782,
+     "size": 200000,
+     "crc32": 305419896,
+     "data": "@@@@"
+    }
+   }
+  },
+  {
+   "name": "a piece below the smallest image",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345679",
+    "port": 2,
+    "action": "stage",
+    "stage": {
+     "id": "ab12cd34ef56ab12",
+     "index": 0,
+     "total": 782,
+     "size": 100,
+     "crc32": 305419896,
+     "data": "QUJDRA=="
+    }
+   }
+  },
+  {
+   "name": "a piece above the largest image",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345679",
+    "port": 2,
+    "action": "stage",
+    "stage": {
+     "id": "ab12cd34ef56ab12",
+     "index": 0,
+     "total": 782,
+     "size": 524289,
+     "crc32": 305419896,
+     "data": "QUJDRA=="
+    }
+   }
+  },
+  {
+   "name": "a piece with an index past the end",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345679",
+    "port": 2,
+    "action": "stage",
+    "stage": {
+     "id": "ab12cd34ef56ab12",
+     "index": 2048,
+     "total": 782,
+     "size": 200000,
+     "crc32": 305419896,
+     "data": "QUJDRA=="
+    }
+   }
+  },
+  {
+   "name": "a piece with an unknown field",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345679",
+    "port": 2,
+    "action": "stage",
+    "stage": {
+     "id": "ab12cd34ef56ab12",
+     "index": 0,
+     "total": 782,
+     "size": 200000,
+     "crc32": 305419896,
+     "data": "QUJDRA==",
+     "path": "x"
+    }
+   }
+  },
+  {
+   "name": "an arm with no operation",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an arm with no serial",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an arm that carries a token",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223",
+    "token": "0123456789abcdef0123456789abcdef"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an execute with no token",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an execute with no serial",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "token": "0123456789abcdef0123456789abcdef"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a cancel that carries an operation",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "cancel",
+    "op": "output_set"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a stage with no piece",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345679",
+    "port": 2,
+    "action": "stage"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a stage that also names an operation",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345679",
+    "port": 2,
+    "action": "stage",
+    "stage": {
+     "id": "ab12cd34ef56ab12",
+     "index": 0,
+     "total": 782,
+     "size": 200000,
+     "crc32": 305419896,
+     "data": "QUJDRA=="
+    },
+    "op": "set_clock"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a value the operation does not have",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "set_clock",
+    "params": {
+     "hour": 3
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "an output that does not exist",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "mostest",
+     "state": "on"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "a state that is not on or off",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "toggle"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "an output without its state",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet"
+    },
+    "serial": "PPTBH02200409223"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "clear data of something else",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "clear_data",
+    "params": {
+     "which": "all"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "a serial to write that is too short",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "write_barcode",
+    "params": {
+     "serial": "SHORT"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "the module voltages with one missing",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "limits_set",
+    "params": {
+     "group": "module_voltage",
+     "values": {
+      "pov": 58000,
+      "povr": 55000,
+      "phv": 57600,
+      "phvr": 55500,
+      "plv": 47000,
+      "plvr": 48000,
+      "puv": 44000,
+      "puvr": 45000
+     }
+    },
+    "serial": "PPTBH02200409223"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "the module voltages with one too many",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "limits_set",
+    "params": {
+     "group": "module_voltage",
+     "values": {
+      "pov": 58000,
+      "povr": 55000,
+      "phv": 57600,
+      "phvr": 55500,
+      "plv": 47000,
+      "plvr": 48000,
+      "puv": 44000,
+      "puvr": 45000,
+      "pslp": 42000,
+      "extra": 1
+     }
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "a module voltage above the range the maker's tool states",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "limits_set",
+    "params": {
+     "group": "module_voltage",
+     "values": {
+      "pov": 65001,
+      "povr": 55000,
+      "phv": 57600,
+      "phvr": 55500,
+      "plv": 47000,
+      "plvr": 48000,
+      "puv": 44000,
+      "puvr": 45000,
+      "pslp": 42000
+     }
+    },
+    "serial": "PPTBH02200409223"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a module voltage below that range",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "limits_set",
+    "params": {
+     "group": "module_voltage",
+     "values": {
+      "pov": 58000,
+      "povr": 55000,
+      "phv": 57600,
+      "phvr": 55500,
+      "plv": 47000,
+      "plvr": 48000,
+      "puv": 44000,
+      "puvr": 45000,
+      "pslp": 19999
+     }
+    },
+    "serial": "PPTBH02200409223"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an over-voltage below the high alarm",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "limits_set",
+    "params": {
+     "group": "module_voltage",
+     "values": {
+      "pov": 50000,
+      "povr": 55000,
+      "phv": 57600,
+      "phvr": 55500,
+      "plv": 47000,
+      "plvr": 48000,
+      "puv": 44000,
+      "puvr": 45000,
+      "pslp": 42000
+     }
+    },
+    "serial": "PPTBH02200409223"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an under-voltage above the low alarm",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "limits_set",
+    "params": {
+     "group": "module_voltage",
+     "values": {
+      "pov": 58000,
+      "povr": 55000,
+      "phv": 57600,
+      "phvr": 55500,
+      "plv": 47000,
+      "plvr": 48000,
+      "puv": 50000,
+      "puvr": 45000,
+      "pslp": 42000
+     }
+    },
+    "serial": "PPTBH02200409223"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a limit that is a fraction",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "limits_set",
+    "params": {
+     "group": "module_voltage",
+     "values": {
+      "pov": 58000.5,
+      "povr": 55000,
+      "phv": 57600,
+      "phvr": 55500,
+      "plv": 47000,
+      "plvr": 48000,
+      "puv": 44000,
+      "puvr": 45000,
+      "pslp": 42000
+     }
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "a limit group that does not exist",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "limits_set",
+    "params": {
+     "group": "current",
+     "values": {}
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "a temperature above the range",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "limits_set",
+    "params": {
+     "group": "temperature",
+     "values": {
+      "cot": 100001,
+      "cotr": 55000,
+      "cht": 50000,
+      "chtr": 45000,
+      "clt": 5000,
+      "cltr": 8000,
+      "cut": -5000,
+      "cutr": -2000
+     }
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "a temperature below the range",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "limits_set",
+    "params": {
+     "group": "temperature",
+     "values": {
+      "cot": 60000,
+      "cotr": 55000,
+      "cht": 50000,
+      "chtr": 45000,
+      "clt": 5000,
+      "cltr": 8000,
+      "cut": -40001,
+      "cutr": -2000
+     }
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "a protection that does not exist",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "protections_set",
+    "params": {
+     "items": {
+      "nope": "en"
+     }
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "a protection set to something else",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "protections_set",
+    "params": {
+     "items": {
+      "bov": "off"
+     }
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "a protection switched off without the risk accepted",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "protections_set",
+    "params": {
+     "items": {
+      "bov": "dis"
+     }
+    },
+    "serial": "PPTBH02200409223"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "no protection at all",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "protections_set",
+    "params": {
+     "items": {}
+    },
+    "serial": "PPTBH02200409223"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a firmware image below the smallest",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "firmware_update",
+    "params": {
+     "image_size": 1000,
+     "image_crc32": 1,
+     "image_version": "2.4"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "a firmware image without its CRC",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "firmware_update",
+    "params": {
+     "image_size": 200000,
+     "image_version": "2.4"
+    },
+    "serial": "PPTBH02200409223"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a firmware image with a CRC above 32 bits",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "firmware_update",
+    "params": {
+     "image_size": 200000,
+     "image_crc32": 4294967296,
+     "image_version": "2.4"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "an expert line with a blocked word",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "expert_command",
+    "params": {
+     "line": "tbar H221014C32213244"
+    },
+    "serial": "PPTBH02200409223"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an expert line that starts the update",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "expert_command",
+    "params": {
+     "line": "updata"
+    },
+    "serial": "PPTBH02200409223"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an expert line that erases the memory",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "expert_command",
+    "params": {
+     "line": "eepe 0"
+    },
+    "serial": "PPTBH02200409223"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an expert line of two commands",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "expert_command",
+    "params": {
+     "line": "pwr;shut"
+    },
+    "serial": "PPTBH02200409223"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an expert line of 49 characters",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "expert_command",
+    "params": {
+     "line": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "an expert line with the blocked word later",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "expert_command",
+    "params": {
+     "line": "help eepw"
+    },
+    "serial": "PPTBH02200409223"
+   },
+   "schema_valid": true
+  }
+ ]
+}

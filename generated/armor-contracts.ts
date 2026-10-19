@@ -249,6 +249,132 @@ export type ElectricalResult = {
   token?: string;
 };
 
+export type SolarBatteryStage = {
+  id: string;
+  index: number;
+  total: number;
+  size: number;
+  crc32: number;
+  data: string;
+};
+
+export type SolarBatteryCommandParamsValues = {
+  pov?: number;
+  povr?: number;
+  phv?: number;
+  phvr?: number;
+  plv?: number;
+  plvr?: number;
+  puv?: number;
+  puvr?: number;
+  pslp?: number;
+  bov?: number;
+  bovr?: number;
+  bhv?: number;
+  bhvr?: number;
+  blv?: number;
+  blvr?: number;
+  buv?: number;
+  buvr?: number;
+  bslp?: number;
+  cot?: number;
+  cotr?: number;
+  cht?: number;
+  chtr?: number;
+  clt?: number;
+  cltr?: number;
+  cut?: number;
+  cutr?: number;
+};
+
+export type SolarBatteryCommandParamsItems = {
+  bov?: "en" | "dis";
+  bhv?: "en" | "dis";
+  blv?: "en" | "dis";
+  buv?: "en" | "dis";
+  bslp?: "en" | "dis";
+  pov?: "en" | "dis";
+  phv?: "en" | "dis";
+  plv?: "en" | "dis";
+  puv?: "en" | "dis";
+  pslp?: "en" | "dis";
+  coc?: "en" | "dis";
+  coc2?: "en" | "dis";
+  doc?: "en" | "dis";
+  doc2?: "en" | "dis";
+};
+
+export type SolarBatteryCommandParams = {
+  which?: "event" | "history";
+  group?: "module_voltage" | "cell_voltage" | "temperature";
+  values?: SolarBatteryCommandParamsValues;
+  items?: SolarBatteryCommandParamsItems;
+  accept_risk?: boolean;
+  output?: "cfet" | "dfet" | "buzz" | "heat";
+  state?: "on" | "off";
+  serial?: string;
+  restore_barcode?: boolean;
+  image_size?: number;
+  image_crc32?: number;
+  image_version?: string;
+  clear_eeprom?: boolean;
+  line?: string;
+};
+
+export type SolarBatteryCommand = {
+  kind: "solar_battery_command";
+  node_id: string;
+  timestamp_ms: number;
+  command_id: string;
+  port: number;
+  action: "arm" | "execute" | "cancel" | "stage";
+  op?: "set_clock" | "clear_stats" | "clear_log" | "clear_data" | "restart" | "shutdown" | "soc_capacity" | "mosfail_test" | "soc_reset" | "pcb_setup" | "limits_set" | "limits_default" | "protections_set" | "protections_default" | "output_set" | "fault_clear" | "write_barcode" | "eeprom_erase" | "firmware_update" | "expert_command";
+  params?: SolarBatteryCommandParams;
+  serial?: string;
+  token?: string;
+  stage?: SolarBatteryStage;
+};
+
+export type SolarBatteryIdentity = {
+  model: string;
+  serial: string;
+  soft_version: string;
+  board: string;
+  capacity_ah?: number;
+};
+
+export type SolarBatteryResult = {
+  kind: "solar_battery_result";
+  node_id: string;
+  timestamp_ms: number;
+  command_id: string;
+  port: number;
+  action: "arm" | "execute" | "cancel" | "stage";
+  op?: string;
+  stage: "armed" | "started" | "progress" | "cancel_requested" | "final" | "rejected" | "staged";
+  accepted: boolean;
+  refusal: "none" | "disabled" | "invalid_params" | "unknown_op" | "not_pylontech" | "no_battery" | "unknown_model" | "unknown_firmware" | "serial_mismatch" | "serial_unreadable" | "not_idle" | "critical_alarm" | "busy" | "cooldown" | "locked" | "not_armed" | "bad_token" | "expired" | "chip_unknown" | "image_missing" | "image_mismatch" | "unsupported_model" | "no_official_value" | "risk_not_accepted" | "expert_blocked" | "no_password" | "battery_changed" | "clock_not_set" | "not_cancellable" | "no_memory" | "no_answer" | "login_failed" | "preflight_failed" | "stage_invalid" | "stage_order" | "stage_data" | "stage_size" | "stage_crc";
+  token?: string;
+  canonical?: string;
+  summary?: string;
+  risk?: "low" | "medium" | "high" | "irreversible";
+  atomic?: boolean;
+  battery?: SolarBatteryIdentity;
+  snapshot_before?: string;
+  outcome?: "running" | "ok" | "failed" | "partial" | "retry" | "rejected";
+  code?: string;
+  steps_done?: number;
+  steps_total?: number;
+  writes_done?: number;
+  packets_sent?: number;
+  packets_total?: number;
+  truncated?: boolean;
+  before?: string;
+  after?: string;
+  transcript?: string;
+  received?: number;
+};
+
 export type AlarmZone = {
   id: string;
   name?: string;
@@ -357,8 +483,8 @@ export type SystemEvent = {
   id: number;
   at: string;
   type: "system";
-  category: "node" | "broker" | "settings" | "service" | "update" | "alarm" | "backup";
-  action: "appeared" | "returned" | "disappeared" | "firmware_changed" | "connected" | "disconnected" | "created" | "changed" | "removed" | "started" | "stopped" | "restarted" | "checked" | "installed" | "rolled_back" | "armed" | "disarmed" | "silenced" | "acknowledged" | "arm_requested" | "disarm_requested" | "silence_requested" | "backup_made" | "backup_restored";
+  category: "node" | "broker" | "settings" | "service" | "update" | "alarm" | "backup" | "batteries";
+  action: "appeared" | "returned" | "disappeared" | "firmware_changed" | "connected" | "disconnected" | "created" | "changed" | "removed" | "started" | "stopped" | "restarted" | "checked" | "installed" | "rolled_back" | "armed" | "disarmed" | "silenced" | "acknowledged" | "arm_requested" | "disarm_requested" | "silence_requested" | "backup_made" | "backup_restored" | "battery_requested" | "battery_operation";
   subject?: string;
   by?: string;
   version?: string;

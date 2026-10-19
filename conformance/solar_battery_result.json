@@ -1,0 +1,1087 @@
+{
+ "kind": "solar_battery_result",
+ "vectors": [
+  {
+   "name": "an arm, accepted, with its token",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "canonical": "output_set cfet off",
+    "summary": "switch cfet off",
+    "risk": "medium",
+    "atomic": false,
+    "battery": {
+     "model": "US3000C",
+     "serial": "PPTBH02200409223",
+     "soft_version": "V3.0",
+     "board": ""
+    }
+   }
+  },
+  {
+   "name": "an execute, started",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "started",
+    "accepted": true,
+    "refusal": "none"
+   }
+  },
+  {
+   "name": "progress",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "progress",
+    "accepted": true,
+    "refusal": "none",
+    "outcome": "running",
+    "steps_done": 3,
+    "steps_total": 9
+   }
+  },
+  {
+   "name": "a firmware transfer in progress",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "progress",
+    "accepted": true,
+    "refusal": "none",
+    "outcome": "running",
+    "steps_done": 1,
+    "steps_total": 8,
+    "packets_sent": 40,
+    "packets_total": 196
+   }
+  },
+  {
+   "name": "a cancel, accepted",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "cancel",
+    "stage": "cancel_requested",
+    "accepted": true,
+    "refusal": "none"
+   }
+  },
+  {
+   "name": "a cancel, refused",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "cancel",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "not_cancellable"
+   }
+  },
+  {
+   "name": "an operation that worked",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9200,
+    "command_id": "b0b0b0b012345680",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "final",
+    "accepted": true,
+    "refusal": "none",
+    "outcome": "ok",
+    "steps_done": 9,
+    "steps_total": 9,
+    "writes_done": 1,
+    "before": "## info\nDevice name : US3000C\n",
+    "after": "## output\ncfet : OFF\n",
+    "transcript": "> ctrl cfet off\n"
+   }
+  },
+  {
+   "name": "an operation that failed on its read-back",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9200,
+    "command_id": "b0b0b0b012345680",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "final",
+    "accepted": true,
+    "refusal": "none",
+    "outcome": "failed",
+    "steps_done": 9,
+    "steps_total": 9,
+    "writes_done": 1,
+    "before": "## info\nDevice name : US3000C\n",
+    "after": "## output\ncfet : OFF\n",
+    "transcript": "> ctrl cfet off\n",
+    "code": "verify:clock_differs:25-03-09"
+   }
+  },
+  {
+   "name": "a sequence that stopped midway",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9200,
+    "command_id": "b0b0b0b012345680",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "final",
+    "accepted": true,
+    "refusal": "none",
+    "outcome": "partial",
+    "steps_done": 4,
+    "steps_total": 9,
+    "writes_done": 3,
+    "before": "## info\nDevice name : US3000C\n",
+    "after": "## output\ncfet : OFF\n",
+    "transcript": "> ctrl cfet off\n",
+    "code": "step_failed:barcode"
+   }
+  },
+  {
+   "name": "a battery that did not answer",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9200,
+    "command_id": "b0b0b0b012345680",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "final",
+    "accepted": true,
+    "refusal": "none",
+    "outcome": "retry",
+    "steps_done": 9,
+    "steps_total": 9,
+    "writes_done": 0,
+    "before": "## info\nDevice name : US3000C\n",
+    "after": "## output\ncfet : OFF\n",
+    "transcript": "> ctrl cfet off\n",
+    "code": "timeout"
+   }
+  },
+  {
+   "name": "a transfer that was cut",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9200,
+    "command_id": "b0b0b0b012345680",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "final",
+    "accepted": true,
+    "refusal": "none",
+    "outcome": "partial",
+    "steps_done": 9,
+    "steps_total": 9,
+    "writes_done": 1,
+    "before": "## info\nDevice name : US3000C\n",
+    "after": "## output\ncfet : OFF\n",
+    "transcript": "> ctrl cfet off\n",
+    "code": "firmware:receiver_cancelled",
+    "packets_sent": 12,
+    "packets_total": 196
+   }
+  },
+  {
+   "name": "a final answer that was shortened",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9200,
+    "command_id": "b0b0b0b012345680",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "final",
+    "accepted": true,
+    "refusal": "none",
+    "outcome": "ok",
+    "steps_done": 9,
+    "steps_total": 9,
+    "writes_done": 1,
+    "before": "## info\nDevice name : US3000C\n",
+    "after": "## output\ncfet : OFF\n",
+    "transcript": "> ctrl cfet off\n",
+    "truncated": true
+   }
+  },
+  {
+   "name": "a piece kept",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "stage",
+    "stage": "staged",
+    "accepted": true,
+    "refusal": "none",
+    "received": 256
+   }
+  },
+  {
+   "name": "an arm refused: serial does not match",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "serial_mismatch"
+   }
+  },
+  {
+   "name": "an arm refused: not idle",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "not_idle"
+   }
+  },
+  {
+   "name": "an arm refused: the chip cannot be told",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "chip_unknown"
+   }
+  },
+  {
+   "name": "an execute refused: wrong token",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "bad_token"
+   }
+  },
+  {
+   "name": "everything refused: the node's setting is off",
+   "valid": true,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "disabled"
+   }
+  },
+  {
+   "name": "a refusal outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "welded"
+   }
+  },
+  {
+   "name": "a stage outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "done",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "canonical": "output_set cfet off",
+    "summary": "switch cfet off",
+    "risk": "medium",
+    "atomic": false,
+    "battery": {
+     "model": "US3000C",
+     "serial": "PPTBH02200409223",
+     "soft_version": "V3.0",
+     "board": ""
+    }
+   }
+  },
+  {
+   "name": "an outcome outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9200,
+    "command_id": "b0b0b0b012345680",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "final",
+    "accepted": true,
+    "refusal": "none",
+    "outcome": "mostly",
+    "steps_done": 9,
+    "steps_total": 9,
+    "writes_done": 1,
+    "before": "## info\nDevice name : US3000C\n",
+    "after": "## output\ncfet : OFF\n",
+    "transcript": "> ctrl cfet off\n"
+   }
+  },
+  {
+   "name": "a risk outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "canonical": "output_set cfet off",
+    "summary": "switch cfet off",
+    "risk": "none",
+    "atomic": false,
+    "battery": {
+     "model": "US3000C",
+     "serial": "PPTBH02200409223",
+     "soft_version": "V3.0",
+     "board": ""
+    }
+   }
+  },
+  {
+   "name": "no stage",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "canonical": "output_set cfet off",
+    "summary": "switch cfet off",
+    "risk": "medium",
+    "atomic": false,
+    "battery": {
+     "model": "US3000C",
+     "serial": "PPTBH02200409223",
+     "soft_version": "V3.0",
+     "board": ""
+    }
+   }
+  },
+  {
+   "name": "no refusal",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "armed",
+    "accepted": true,
+    "token": "0123456789abcdef0123456789abcdef",
+    "canonical": "output_set cfet off",
+    "summary": "switch cfet off",
+    "risk": "medium",
+    "atomic": false,
+    "battery": {
+     "model": "US3000C",
+     "serial": "PPTBH02200409223",
+     "soft_version": "V3.0",
+     "board": ""
+    }
+   }
+  },
+  {
+   "name": "no accepted",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "armed",
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "canonical": "output_set cfet off",
+    "summary": "switch cfet off",
+    "risk": "medium",
+    "atomic": false,
+    "battery": {
+     "model": "US3000C",
+     "serial": "PPTBH02200409223",
+     "soft_version": "V3.0",
+     "board": ""
+    }
+   }
+  },
+  {
+   "name": "accepted as a string",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "armed",
+    "accepted": "true",
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "canonical": "output_set cfet off",
+    "summary": "switch cfet off",
+    "risk": "medium",
+    "atomic": false,
+    "battery": {
+     "model": "US3000C",
+     "serial": "PPTBH02200409223",
+     "soft_version": "V3.0",
+     "board": ""
+    }
+   }
+  },
+  {
+   "name": "a token with capitals",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789ABCDEF0123456789ABCDEF",
+    "canonical": "output_set cfet off",
+    "summary": "switch cfet off",
+    "risk": "medium",
+    "atomic": false,
+    "battery": {
+     "model": "US3000C",
+     "serial": "PPTBH02200409223",
+     "soft_version": "V3.0",
+     "board": ""
+    }
+   }
+  },
+  {
+   "name": "a node id with a space",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "my node",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "canonical": "output_set cfet off",
+    "summary": "switch cfet off",
+    "risk": "medium",
+    "atomic": false,
+    "battery": {
+     "model": "US3000C",
+     "serial": "PPTBH02200409223",
+     "soft_version": "V3.0",
+     "board": ""
+    }
+   }
+  },
+  {
+   "name": "the kind of a command",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "canonical": "output_set cfet off",
+    "summary": "switch cfet off",
+    "risk": "medium",
+    "atomic": false,
+    "battery": {
+     "model": "US3000C",
+     "serial": "PPTBH02200409223",
+     "soft_version": "V3.0",
+     "board": ""
+    }
+   }
+  },
+  {
+   "name": "an unknown field",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "canonical": "output_set cfet off",
+    "summary": "switch cfet off",
+    "risk": "medium",
+    "atomic": false,
+    "battery": {
+     "model": "US3000C",
+     "serial": "PPTBH02200409223",
+     "soft_version": "V3.0",
+     "board": ""
+    },
+    "password": "x"
+   }
+  },
+  {
+   "name": "the service password as a field",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9200,
+    "command_id": "b0b0b0b012345680",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "final",
+    "accepted": true,
+    "refusal": "none",
+    "outcome": "ok",
+    "steps_done": 9,
+    "steps_total": 9,
+    "writes_done": 1,
+    "before": "## info\nDevice name : US3000C\n",
+    "after": "## output\ncfet : OFF\n",
+    "transcript": "> ctrl cfet off\n",
+    "service_password": "x"
+   }
+  },
+  {
+   "name": "an unknown field in the battery",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "canonical": "output_set cfet off",
+    "summary": "switch cfet off",
+    "risk": "medium",
+    "atomic": false,
+    "battery": {
+     "model": "US3000C",
+     "serial": "PPTBH02200409223",
+     "soft_version": "V3.0",
+     "board": "",
+     "password": "x"
+    }
+   }
+  },
+  {
+   "name": "a battery without its serial",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "canonical": "output_set cfet off",
+    "summary": "switch cfet off",
+    "risk": "medium",
+    "atomic": false,
+    "battery": {
+     "model": "US3000C",
+     "soft_version": "V3.0",
+     "board": ""
+    }
+   }
+  },
+  {
+   "name": "a transcript above the limit",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9200,
+    "command_id": "b0b0b0b012345680",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "final",
+    "accepted": true,
+    "refusal": "none",
+    "outcome": "ok",
+    "steps_done": 9,
+    "steps_total": 9,
+    "writes_done": 1,
+    "before": "## info\nDevice name : US3000C\n",
+    "after": "## output\ncfet : OFF\n",
+    "transcript": "ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt"
+   }
+  },
+  {
+   "name": "more steps than the limit",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9200,
+    "command_id": "b0b0b0b012345680",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "final",
+    "accepted": true,
+    "refusal": "none",
+    "outcome": "ok",
+    "steps_done": 201,
+    "steps_total": 201,
+    "writes_done": 1,
+    "before": "## info\nDevice name : US3000C\n",
+    "after": "## output\ncfet : OFF\n",
+    "transcript": "> ctrl cfet off\n"
+   }
+  },
+  {
+   "name": "accepted with a refusal",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "busy",
+    "token": "0123456789abcdef0123456789abcdef",
+    "canonical": "output_set cfet off",
+    "summary": "switch cfet off",
+    "risk": "medium",
+    "atomic": false,
+    "battery": {
+     "model": "US3000C",
+     "serial": "PPTBH02200409223",
+     "soft_version": "V3.0",
+     "board": ""
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "refused with refusal none",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "none"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "rejected but accepted",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "rejected",
+    "accepted": true,
+    "refusal": "none"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a token in a final answer",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9200,
+    "command_id": "b0b0b0b012345680",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "final",
+    "accepted": true,
+    "refusal": "none",
+    "outcome": "ok",
+    "steps_done": 9,
+    "steps_total": 9,
+    "writes_done": 1,
+    "before": "## info\nDevice name : US3000C\n",
+    "after": "## output\ncfet : OFF\n",
+    "transcript": "> ctrl cfet off\n",
+    "token": "0123456789abcdef0123456789abcdef"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an armed answer without a token",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "canonical": "output_set cfet off",
+    "summary": "switch cfet off",
+    "risk": "medium",
+    "atomic": false,
+    "battery": {
+     "model": "US3000C",
+     "serial": "PPTBH02200409223",
+     "soft_version": "V3.0",
+     "board": ""
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an armed answer without the operation",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "summary": "switch cfet off",
+    "risk": "medium",
+    "atomic": false,
+    "battery": {
+     "model": "US3000C",
+     "serial": "PPTBH02200409223",
+     "soft_version": "V3.0",
+     "board": ""
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an armed answer without the battery",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "canonical": "output_set cfet off",
+    "summary": "switch cfet off",
+    "risk": "medium",
+    "atomic": false
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a final answer without how it ended",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9200,
+    "command_id": "b0b0b0b012345680",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "final",
+    "accepted": true,
+    "refusal": "none",
+    "steps_done": 9,
+    "steps_total": 9,
+    "writes_done": 1,
+    "before": "## info\nDevice name : US3000C\n",
+    "after": "## output\ncfet : OFF\n",
+    "transcript": "> ctrl cfet off\n"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a final answer that is still running",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9200,
+    "command_id": "b0b0b0b012345680",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "final",
+    "accepted": true,
+    "refusal": "none",
+    "outcome": "running",
+    "steps_done": 9,
+    "steps_total": 9,
+    "writes_done": 1,
+    "before": "## info\nDevice name : US3000C\n",
+    "after": "## output\ncfet : OFF\n",
+    "transcript": "> ctrl cfet off\n"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "progress that says ok",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "progress",
+    "accepted": true,
+    "refusal": "none",
+    "outcome": "ok"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an outcome in an armed answer",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "stage": "armed",
+    "accepted": true,
+    "refusal": "none",
+    "token": "0123456789abcdef0123456789abcdef",
+    "canonical": "output_set cfet off",
+    "summary": "switch cfet off",
+    "risk": "medium",
+    "atomic": false,
+    "battery": {
+     "model": "US3000C",
+     "serial": "PPTBH02200409223",
+     "soft_version": "V3.0",
+     "board": ""
+    },
+    "outcome": "ok"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a staged answer without the bytes",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9100,
+    "command_id": "b0b0b0b012345678",
+    "port": 2,
+    "action": "stage",
+    "stage": "staged",
+    "accepted": true,
+    "refusal": "none"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "more steps done than steps",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_result",
+    "node_id": "solar-1",
+    "timestamp_ms": 9200,
+    "command_id": "b0b0b0b012345680",
+    "port": 2,
+    "action": "execute",
+    "op": "output_set",
+    "stage": "final",
+    "accepted": true,
+    "refusal": "none",
+    "outcome": "ok",
+    "steps_done": 10,
+    "steps_total": 9,
+    "writes_done": 1,
+    "before": "## info\nDevice name : US3000C\n",
+    "after": "## output\ncfet : OFF\n",
+    "transcript": "> ctrl cfet off\n"
+   },
+   "schema_valid": true
+  }
+ ]
+}

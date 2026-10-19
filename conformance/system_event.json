@@ -111,6 +111,36 @@
    }
   },
   {
+   "name": "a battery operation ordered",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "batteries",
+    "action": "battery_requested",
+    "subject": "solar-1:2",
+    "version": "0.3.7",
+    "by": "ana",
+    "outcome": "allowed"
+   }
+  },
+  {
+   "name": "a battery operation that ended badly",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "batteries",
+    "action": "battery_operation",
+    "subject": "solar-1:2",
+    "version": "0.3.7",
+    "by": "ana",
+    "outcome": "failed"
+   }
+  },
+  {
    "name": "the siren silenced",
    "valid": true,
    "payload": {

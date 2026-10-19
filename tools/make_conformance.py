@@ -60,6 +60,54 @@ def result(**changes):
     return base
 
 
+def bat_command(**changes):
+    base = {"kind": "solar_battery_command", "node_id": "solar-1", "timestamp_ms": 9000, "command_id": "b0b0b0b012345678", "port": 2, "action": "arm", "op": "output_set",
+            "params": {"output": "cfet", "state": "off"}, "serial": "PPTBH02200409223"}
+    base.update(changes)
+    return base
+
+
+def bat_execute(**changes):
+    return bat_command(action="execute", token="0123456789abcdef0123456789abcdef", **changes)
+
+
+def bat_stage(**changes):
+    base = {"id": "ab12cd34ef56ab12", "index": 0, "total": 782, "size": 200000, "crc32": 305419896, "data": "QUJDRA=="}
+    base.update(changes)
+    return {"kind": "solar_battery_command", "node_id": "solar-1", "timestamp_ms": 9000, "command_id": "b0b0b0b012345679", "port": 2, "action": "stage", "stage": base}
+
+
+def bat_without(payload, *names):
+    return {k: v for k, v in payload.items() if k not in names}
+
+
+MODULE_VOLTAGE = {"pov": 58000, "povr": 55000, "phv": 57600, "phvr": 55500, "plv": 47000, "plvr": 48000, "puv": 44000, "puvr": 45000, "pslp": 42000}
+TEMPERATURE = {"cot": 60000, "cotr": 55000, "cht": 50000, "chtr": 45000, "clt": 5000, "cltr": 8000, "cut": -5000, "cutr": -2000}
+BATTERY = {"model": "US3000C", "serial": "PPTBH02200409223", "soft_version": "V3.0", "board": ""}
+ARMED_ONLY = ("token", "battery", "canonical", "summary", "risk", "atomic")
+
+
+def bat_result(**changes):
+    base = {"kind": "solar_battery_result", "node_id": "solar-1", "timestamp_ms": 9100, "command_id": "b0b0b0b012345678", "port": 2, "action": "arm", "op": "output_set", "stage": "armed",
+            "accepted": True, "refusal": "none", "token": "0123456789abcdef0123456789abcdef", "canonical": "output_set cfet off", "summary": "switch cfet off", "risk": "medium", "atomic": False,
+            "battery": dict(BATTERY)}
+    base.update(changes)
+    return base
+
+
+def bat_plain(**changes):
+    """An answer that is not an armed one: no token, no battery, no description of the operation."""
+    return bat_without(bat_result(**changes), *ARMED_ONLY)
+
+
+def bat_final(**changes):
+    base = {"kind": "solar_battery_result", "node_id": "solar-1", "timestamp_ms": 9200, "command_id": "b0b0b0b012345680", "port": 2, "action": "execute", "op": "output_set", "stage": "final",
+            "accepted": True, "refusal": "none", "outcome": "ok", "steps_done": 9, "steps_total": 9, "writes_done": 1, "before": "## info\nDevice name : US3000C\n", "after": "## output\ncfet : OFF\n",
+            "transcript": "> ctrl cfet off\n"}
+    base.update(changes)
+    return base
+
+
 def alarm(**changes):
     base = {"kind": "alarm", "node_id": "alarm-1", "timestamp_ms": 1000, "phase": "armed", "mode": "away", "siren": False, "locked_out": False, "commands_enabled": True,
             "zones": [{"id": "front-door", "name": "Front door", "kind": "entry", "state": "normal", "bypassed": False},
@@ -544,6 +592,135 @@ cases = {
         ("a node id with a space", False, result(node_id="my node")),
         ("an unknown field", False, result(detail="welded")),
     ],
+    "solar_battery_command": [
+        ("arm an output", True, bat_command()),
+        ("execute with its token", True, bat_execute()),
+        ("cancel", True, bat_without(bat_command(action="cancel"), "op", "params", "serial")),
+        ("a piece of an image", True, bat_stage()),
+        ("a piece of 344 characters", True, bat_stage(data="A" * 344)),
+        ("arm the clock", True, bat_command(op="set_clock", params={})),
+        ("arm the clock without params", True, bat_without(bat_command(op="set_clock"), "params")),
+        ("a battery with no serial yet", True, bat_command(op="set_clock", params={}, serial="NOSERIAL")),
+        ("write the barcode", True, bat_command(op="write_barcode", params={"serial": "H221014C32213244"})),
+        ("set the module voltages", True, bat_command(op="limits_set", params={"group": "module_voltage", "values": dict(MODULE_VOLTAGE)})),
+        ("set the temperatures", True, bat_command(op="limits_set", params={"group": "temperature", "values": dict(TEMPERATURE)})),
+        ("enable two protections", True, bat_command(op="protections_set", params={"items": {"bov": "en", "coc": "en"}})),
+        ("disable a protection, risk accepted", True, bat_command(op="protections_set", params={"items": {"bov": "dis"}, "accept_risk": True})),
+        ("clear the event records", True, bat_command(op="clear_data", params={"which": "event"})),
+        ("send a firmware image", True, bat_command(op="firmware_update", params={"image_size": 200000, "image_crc32": 305419896, "image_version": "2.4"})),
+        ("send a firmware image and erase the memory", True, bat_command(op="firmware_update", params={"image_size": 200000, "image_crc32": 305419896, "image_version": "2.4", "clear_eeprom": True})),
+        ("an expert line that only reads", True, bat_command(op="expert_command", params={"line": "pwr"})),
+        ("an action outside the list", False, bat_command(action="run")),
+        ("an operation outside the list", False, bat_command(op="format")),
+        ("a free command as an operation", False, bat_command(op="ctrl cfet on")),
+        ("port 0", False, bat_command(port=0)),
+        ("port 11", False, bat_command(port=11)),
+        ("port as a string", False, bat_command(port="2")),
+        ("a command id of seven characters", False, bat_command(command_id="b0b0b0b")),
+        ("a token with capitals", False, dict(bat_execute(), token="0123456789ABCDEF0123456789ABCDEF")),
+        ("a token of 31 characters", False, dict(bat_execute(), token="0123456789abcdef0123456789abcde")),
+        ("a serial with a space", False, bat_command(serial="PPTBH0220 409223")),
+        ("a serial of seven characters", False, bat_command(serial="PPTBH02")),
+        ("a node id with a space", False, bat_command(node_id="my node")),
+        ("negative timestamp", False, bat_command(timestamp_ms=-1)),
+        ("the kind of a result", False, bat_command(kind="solar_battery_result")),
+        ("an unknown field", False, bat_command(password="x")),
+        ("the service password as a field", False, bat_command(service_password="x")),
+        ("params that are a list", False, bat_command(params=[1])),
+        ("a piece with a data of 345 characters", False, bat_stage(data="A" * 345)),
+        ("a piece with data that is not base64", False, bat_stage(data="@@@@")),
+        ("a piece below the smallest image", False, bat_stage(size=100)),
+        ("a piece above the largest image", False, bat_stage(size=524289)),
+        ("a piece with an index past the end", False, bat_stage(index=2048)),
+        ("a piece with an unknown field", False, bat_stage(path="x")),
+        ("an arm with no operation", False, bat_without(bat_command(), "op"), True),
+        ("an arm with no serial", False, bat_without(bat_command(), "serial"), True),
+        ("an arm that carries a token", False, bat_command(token="0123456789abcdef0123456789abcdef"), True),
+        ("an execute with no token", False, bat_without(bat_execute(), "token"), True),
+        ("an execute with no serial", False, bat_without(bat_execute(), "serial"), True),
+        ("a cancel that carries an operation", False, bat_without(bat_command(action="cancel"), "params", "serial"), True),
+        ("a stage with no piece", False, bat_without(bat_stage(), "stage"), True),
+        ("a stage that also names an operation", False, dict(bat_stage(), op="set_clock"), True),
+        ("a value the operation does not have", False, bat_command(op="set_clock", params={"hour": 3})),
+        ("an output that does not exist", False, bat_command(params={"output": "mostest", "state": "on"})),
+        ("a state that is not on or off", False, bat_command(params={"output": "cfet", "state": "toggle"})),
+        ("an output without its state", False, bat_command(params={"output": "cfet"}), True),
+        ("clear data of something else", False, bat_command(op="clear_data", params={"which": "all"})),
+        ("a serial to write that is too short", False, bat_command(op="write_barcode", params={"serial": "SHORT"})),
+        ("the module voltages with one missing", False, bat_command(op="limits_set", params={"group": "module_voltage", "values": {k: v for k, v in MODULE_VOLTAGE.items() if k != "pslp"}}), True),
+        ("the module voltages with one too many", False, bat_command(op="limits_set", params={"group": "module_voltage", "values": dict(MODULE_VOLTAGE, extra=1)})),
+        ("a module voltage above the range the maker's tool states", False, bat_command(op="limits_set", params={"group": "module_voltage", "values": dict(MODULE_VOLTAGE, pov=65001)}), True),
+        ("a module voltage below that range", False, bat_command(op="limits_set", params={"group": "module_voltage", "values": dict(MODULE_VOLTAGE, pslp=19999)}), True),
+        ("an over-voltage below the high alarm", False, bat_command(op="limits_set", params={"group": "module_voltage", "values": dict(MODULE_VOLTAGE, pov=50000)}), True),
+        ("an under-voltage above the low alarm", False, bat_command(op="limits_set", params={"group": "module_voltage", "values": dict(MODULE_VOLTAGE, puv=50000)}), True),
+        ("a limit that is a fraction", False, bat_command(op="limits_set", params={"group": "module_voltage", "values": dict(MODULE_VOLTAGE, pov=58000.5)})),
+        ("a limit group that does not exist", False, bat_command(op="limits_set", params={"group": "current", "values": {}})),
+        ("a temperature above the range", False, bat_command(op="limits_set", params={"group": "temperature", "values": dict(TEMPERATURE, cot=100001)})),
+        ("a temperature below the range", False, bat_command(op="limits_set", params={"group": "temperature", "values": dict(TEMPERATURE, cut=-40001)})),
+        ("a protection that does not exist", False, bat_command(op="protections_set", params={"items": {"nope": "en"}})),
+        ("a protection set to something else", False, bat_command(op="protections_set", params={"items": {"bov": "off"}})),
+        ("a protection switched off without the risk accepted", False, bat_command(op="protections_set", params={"items": {"bov": "dis"}}), True),
+        ("no protection at all", False, bat_command(op="protections_set", params={"items": {}}), True),
+        ("a firmware image below the smallest", False, bat_command(op="firmware_update", params={"image_size": 1000, "image_crc32": 1, "image_version": "2.4"})),
+        ("a firmware image without its CRC", False, bat_command(op="firmware_update", params={"image_size": 200000, "image_version": "2.4"}), True),
+        ("a firmware image with a CRC above 32 bits", False, bat_command(op="firmware_update", params={"image_size": 200000, "image_crc32": 4294967296, "image_version": "2.4"})),
+        ("an expert line with a blocked word", False, bat_command(op="expert_command", params={"line": "tbar H221014C32213244"}), True),
+        ("an expert line that starts the update", False, bat_command(op="expert_command", params={"line": "updata"}), True),
+        ("an expert line that erases the memory", False, bat_command(op="expert_command", params={"line": "eepe 0"}), True),
+        ("an expert line of two commands", False, bat_command(op="expert_command", params={"line": "pwr;shut"}), True),
+        ("an expert line of 49 characters", False, bat_command(op="expert_command", params={"line": "a" * 49})),
+        ("an expert line with the blocked word later", False, bat_command(op="expert_command", params={"line": "help eepw"}), True),
+    ],
+    "solar_battery_result": [
+        ("an arm, accepted, with its token", True, bat_result()),
+        ("an execute, started", True, bat_plain(action="execute", stage="started")),
+        ("progress", True, bat_plain(action="execute", stage="progress", outcome="running", steps_done=3, steps_total=9)),
+        ("a firmware transfer in progress", True, bat_plain(action="execute", stage="progress", outcome="running", steps_done=1, steps_total=8, packets_sent=40, packets_total=196)),
+        ("a cancel, accepted", True, bat_without(bat_plain(action="cancel", stage="cancel_requested"), "op")),
+        ("a cancel, refused", True, bat_without(bat_plain(action="cancel", stage="rejected", accepted=False, refusal="not_cancellable"), "op")),
+        ("an operation that worked", True, bat_final()),
+        ("an operation that failed on its read-back", True, bat_final(outcome="failed", code="verify:clock_differs:25-03-09")),
+        ("a sequence that stopped midway", True, bat_final(outcome="partial", code="step_failed:barcode", steps_done=4, steps_total=9, writes_done=3)),
+        ("a battery that did not answer", True, bat_final(outcome="retry", code="timeout", writes_done=0)),
+        ("a transfer that was cut", True, bat_final(outcome="partial", code="firmware:receiver_cancelled", packets_sent=12, packets_total=196)),
+        ("a final answer that was shortened", True, bat_final(truncated=True)),
+        ("a piece kept", True, bat_without(bat_plain(action="stage", stage="staged", received=256), "op")),
+        ("an arm refused: serial does not match", True, bat_plain(accepted=False, stage="rejected", refusal="serial_mismatch")),
+        ("an arm refused: not idle", True, bat_plain(accepted=False, stage="rejected", refusal="not_idle")),
+        ("an arm refused: the chip cannot be told", True, bat_plain(accepted=False, stage="rejected", refusal="chip_unknown")),
+        ("an execute refused: wrong token", True, bat_plain(action="execute", accepted=False, stage="rejected", refusal="bad_token")),
+        ("everything refused: the node's setting is off", True, bat_plain(accepted=False, stage="rejected", refusal="disabled")),
+        ("a refusal outside the list", False, bat_plain(accepted=False, stage="rejected", refusal="welded")),
+        ("a stage outside the list", False, bat_result(stage="done")),
+        ("an outcome outside the list", False, bat_final(outcome="mostly")),
+        ("a risk outside the list", False, bat_result(risk="none")),
+        ("no stage", False, bat_without(bat_result(), "stage")),
+        ("no refusal", False, bat_without(bat_result(), "refusal")),
+        ("no accepted", False, bat_without(bat_result(), "accepted")),
+        ("accepted as a string", False, bat_result(accepted="true")),
+        ("a token with capitals", False, bat_result(token="0123456789ABCDEF0123456789ABCDEF")),
+        ("a node id with a space", False, bat_result(node_id="my node")),
+        ("the kind of a command", False, bat_result(kind="solar_battery_command")),
+        ("an unknown field", False, bat_result(password="x")),
+        ("the service password as a field", False, bat_final(service_password="x")),
+        ("an unknown field in the battery", False, bat_result(battery=dict(BATTERY, password="x"))),
+        ("a battery without its serial", False, bat_result(battery={k: v for k, v in BATTERY.items() if k != "serial"})),
+        ("a transcript above the limit", False, bat_final(transcript="t" * 8001)),
+        ("more steps than the limit", False, bat_final(steps_total=201, steps_done=201)),
+        ("accepted with a refusal", False, bat_result(refusal="busy"), True),
+        ("refused with refusal none", False, bat_plain(accepted=False, stage="rejected"), True),
+        ("rejected but accepted", False, bat_plain(stage="rejected"), True),
+        ("a token in a final answer", False, bat_final(token="0123456789abcdef0123456789abcdef"), True),
+        ("an armed answer without a token", False, bat_without(bat_result(), "token"), True),
+        ("an armed answer without the operation", False, bat_without(bat_result(), "canonical"), True),
+        ("an armed answer without the battery", False, bat_without(bat_result(), "battery"), True),
+        ("a final answer without how it ended", False, bat_without(bat_final(), "outcome"), True),
+        ("a final answer that is still running", False, bat_final(outcome="running"), True),
+        ("progress that says ok", False, bat_plain(action="execute", stage="progress", outcome="ok"), True),
+        ("an outcome in an armed answer", False, bat_result(outcome="ok"), True),
+        ("a staged answer without the bytes", False, bat_without(bat_plain(action="stage", stage="staged"), "op"), True),
+        ("more steps done than steps", False, bat_final(steps_done=10, steps_total=9), True),
+    ],
     "alarm": [
         ("an armed alarm", True, alarm()),
         ("a disarmed panel", True, alarm(phase="disarmed", mode="disarmed", events=[])),
@@ -921,6 +1098,8 @@ cases = {
         ("a service restarted", True, system_event(category="service", action="restarted", subject="armor-server", by="ana")),
         ("an update installed", True, system_event(category="update", action="installed", subject="armor-server", version="0.7.2")),
         ("the alarm armed with a profile", True, system_event(category="alarm", action="arm_requested", subject="alarm-1", profile="night", by="ana")),
+        ("a battery operation ordered", True, system_event(category="batteries", action="battery_requested", subject="solar-1:2", by="ana", outcome="allowed")),
+        ("a battery operation that ended badly", True, system_event(category="batteries", action="battery_operation", subject="solar-1:2", by="ana", outcome="failed")),
         ("the siren silenced", True, system_event(category="alarm", action="silence_requested", subject="alarm-1")),
         ("a backup made", True, system_event(category="backup", action="backup_made")),
         ("a refused change", True, system_event(category="settings", action="changed", outcome="denied")),

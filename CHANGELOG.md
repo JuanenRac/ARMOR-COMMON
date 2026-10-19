@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here.
 
+## [0.7.0] - Orders and answers for writing to Pylontech batteries
+
+- **Orders and answers for writing to a Pylontech battery:** two new messages, `solar_battery_command` (server to node, `armor/solar/{node_id}/maintenance/command`) and `solar_battery_result` (node to server, `.../result`), with their JSON Schemas, validators (`validate_solar_battery_command`, `validate_solar_battery_result`) and 125 conformance vectors. Writing is two steps (`arm`, then `execute` with the one-time token the node gave), `cancel` stops an operation that may still be stopped and `stage` carries a firmware image to the node in pieces.
+- **One table of the operations (`battery_ops.json`):** the twenty typed operations with their risk, whether they need the battery at rest, whether they can be cut halfway, the values each takes and the ranges and the order between values that the maker's tool states, the models with the capacity the maker gives, the protections, the words the expert console blocks, the limits and every refusal a node can give. The node, the server and the screens are all tested against it.
+- **The rules that join fields:** what each action carries, the values of the operation against the table, the refusal that matches `accepted`, a token only in an armed answer and the fields each stage needs; the service password of the battery has no field in either message, and a test looks for one.
+- **HTTP contract:** the routes `/api/v1/solar/battery-ops` (catalog, list, arm, execute, cancel, restore and the firmware image), documented and typed, and a `batteries` category (with `battery_requested` and `battery_operation`) in the system events of the history.
+- **Generated types:** the new messages in the TypeScript and Kotlin types.
+
 ## [0.6.9] - Update from GitHub through long redirects, real update errors, the green frames of the Summary and richer battery readings
 
 - **Update from GitHub through long redirects:** the node's header buffer is 20 KB (in the external RAM, 6 KB where a board has none) and the log tells the free internal memory before and after the client is opened.

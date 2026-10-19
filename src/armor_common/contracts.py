@@ -12,6 +12,7 @@ from __future__ import annotations
 import copy
 import ipaddress
 import json
+import re
 from collections.abc import Mapping
 from functools import lru_cache
 from importlib import resources
@@ -51,7 +52,10 @@ SERVER_ALERT_TOPIC = "armor/server/alert"
 _RELAY_COMMANDS = ("on", "off", "true", "false", "1", "0", "toggle")
 # The health report of a node of any family has one topic per node: armor/health/{node_id} (node -> server). It is not the presence message of a radar (armor/node/{node_id}/health).
 NODE_HEALTH_TOPIC_PREFIX = "armor/health/"
-_EXTRA_SCHEMAS = ("alarm_zone_feed", "device_state", "server_alert", "network_orders", "node_health", "arm_profile", "connection_event", "system_event", "connection_client")
+_EXTRA_SCHEMAS = ("alarm_zone_feed", "device_state", "server_alert", "network_orders", "node_health", "arm_profile", "connection_event", "system_event", "connection_client",
+                  "solar_battery_command", "solar_battery_result")
+# Writing to a Pylontech battery has its own pair of topics under the node: armor/solar/{node_id}/maintenance/command (server -> node) and .../result (node -> server).
+BATTERY_LEAVES = ("command", "result")
 _PRIVATE_RANGES = tuple(ipaddress.ip_network(text) for text in ("10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"))
 _DEVICE_CHARS = set("abcdefghijklmnopqrstuvwxyz0123456789-_")
 _NODE_ID_CHARS = set("abcdefghijklmnopqrstuvwxyz0123456789-_")
@@ -196,6 +200,162 @@ def validate_electrical_result(topic: str, payload: Mapping[str, object]) -> Non
         raise ContractError("the refusal is none exactly when the request was accepted")
     if ("token" in payload) != (accepted is True and payload.get("action") == "arm"):
         raise ContractError("a token is given only in the result of an accepted arm")
+
+
+@lru_cache(maxsize=None)
+def battery_catalog() -> dict[str, Any]:
+    """The table of the typed operations that write to a Pylontech battery (``battery_ops.json``): the one the node, the server and the clients follow."""
+    return json.loads(resources.files("armor_common").joinpath("battery_ops.json").read_text(encoding="utf-8"))
+
+
+def parse_battery_topic(topic: str, leaf: str) -> str:
+    """Split ``armor/solar/{node_id}/maintenance/{leaf}`` into ``node_id``; the leaf is ``command`` or ``result``."""
+    if not isinstance(topic, str):
+        raise ContractError("topic must be a string")
+    if leaf not in BATTERY_LEAVES:
+        raise ContractError("unsupported topic leaf")
+    parts = topic.split("/")
+    if len(parts) != 5 or parts[:2] != ["armor", "solar"] or parts[3] != "maintenance" or parts[4] != leaf:
+        raise ContractError(f"topic must be armor/solar/{{node_id}}/maintenance/{leaf}")
+    _check_node_id(parts[2])
+    return parts[2]
+
+
+def battery_expert_line(text: object) -> str:
+    """The expert console's line, cleaned, or "" when it may not be sent: one command, ASCII, at most 48 characters, no word of the block list."""
+    if not isinstance(text, str):
+        return ""
+    allowed = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.:/")
+    words: list[str] = []
+    current = ""
+    for char in text:
+        if ord(char) < 0x20 or ord(char) > 0x7E:
+            return ""
+        if char == " ":
+            if current:
+                words.append(current)
+                current = ""
+            continue
+        if char not in allowed:
+            return ""
+        current += char
+    if current:
+        words.append(current)
+    line = " ".join(words)
+    if not line or len(line) > 48:
+        return ""
+    blocked = set(battery_catalog()["expert_blocked"])
+    return "" if any(word.lower() in blocked for word in words) else line
+
+
+def validate_battery_params(op: str, params: object) -> None:
+    """The values of an operation against the table: only its own names, every required one, each inside its range, and a group of limits whole and in order."""
+    catalog = battery_catalog()
+    spec = next((item for item in catalog["ops"] if item["id"] == op), None)
+    if spec is None:
+        raise ContractError("unknown operation")
+    if not isinstance(params, Mapping):
+        raise ContractError("params must be an object")
+    wanted = spec["params"]
+    for name in params:
+        if name not in wanted:
+            raise ContractError(f"{op} has no value called {name}")
+    for name, rule in wanted.items():
+        if name not in params:
+            if rule.get("required"):
+                raise ContractError(f"{op} needs {name}")
+            continue
+        value = params[name]
+        kind = rule["type"]
+        if kind == "enum":
+            if value not in rule["values"]:
+                raise ContractError(f"{name} is not one of the allowed values")
+        elif kind == "boolean":
+            if not isinstance(value, bool):
+                raise ContractError(f"{name} must be true or false")
+        elif kind == "integer":
+            if isinstance(value, bool) or not isinstance(value, int) or value < rule["minimum"] or value > rule["maximum"]:
+                raise ContractError(f"{name} is out of range")
+        elif kind == "string":
+            if not isinstance(value, str) or not value or len(value) > rule["maxLength"]:
+                raise ContractError(f"{name} must be a short text")
+        elif kind == "serial":
+            if not isinstance(value, str) or not re.fullmatch(catalog["limits"]["serial_pattern"], value):
+                raise ContractError("a serial number is 10 to 24 letters, digits, - or _")
+        elif kind == "limits":
+            group = next((item for item in catalog["limit_groups"] if item["name"] == params.get("group")), None)
+            if group is None or not isinstance(value, Mapping):
+                raise ContractError("limits need a group and its values")
+            keys = [key for key, _wire in group["keys"]]
+            if sorted(value) != sorted(keys):
+                raise ContractError("a group of limits is sent whole, with its own names")
+            for key in keys:
+                number = value[key]
+                if isinstance(number, bool) or not isinstance(number, int) or number < group["lowest"] or number > group["highest"]:
+                    raise ContractError(f"{key} is outside the range the maker's tool states")
+            for low, high in group["orders"]:
+                if value[low] > value[high]:
+                    raise ContractError(f"{low} may not be above {high}")
+        elif kind == "protections":
+            if not isinstance(value, Mapping) or not value or len(value) > len(catalog["protections"]):
+                raise ContractError("protections need at least one item")
+            for key, state in value.items():
+                if key not in catalog["protections"] or state not in ("en", "dis"):
+                    raise ContractError("a protection is named from the list and set en or dis")
+            if "dis" in value.values() and params.get("accept_risk") is not True:
+                raise ContractError("switching a protection off needs the risk accepted")
+    if op == "expert_command" and not battery_expert_line(params.get("line")):
+        raise ContractError("that line may not be sent through the expert console")
+
+
+def validate_solar_battery_command(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate an order: the topic, the schema, that the node matches, what each action carries, and the values of the operation against the table."""
+    node_id = parse_battery_topic(topic, "command")
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    if payload.get("node_id") != node_id:
+        raise ContractError("payload node_id must match the topic")
+    validate_payload("solar_battery_command", payload)
+    action = payload.get("action")
+    present = {name for name in ("op", "params", "serial", "token", "stage") if name in payload}
+    needs = {"arm": {"op", "serial"}, "execute": {"op", "serial", "token"}, "cancel": set(), "stage": {"stage"}}[str(action)]
+    allowed = needs | ({"params"} if action in ("arm", "execute") else set())
+    if not needs <= present or not present <= allowed:
+        raise ContractError(f"a {action} carries {sorted(allowed) or 'nothing more'} and needs {sorted(needs) or 'nothing more'}")
+    if action in ("arm", "execute"):
+        validate_battery_params(str(payload["op"]), payload.get("params", {}))
+
+
+def validate_solar_battery_result(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate a node's answer: the topic, the schema, that the node matches, refusal none exactly when accepted, a token only in an armed answer, and what each stage carries."""
+    node_id = parse_battery_topic(topic, "result")
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    if payload.get("node_id") != node_id:
+        raise ContractError("payload node_id must match the topic")
+    validate_payload("solar_battery_result", payload)
+    stage = payload.get("stage")
+    accepted = payload.get("accepted")
+    if accepted != (payload.get("refusal") == "none"):
+        raise ContractError("the refusal is none exactly when the order was accepted")
+    if (stage == "rejected") == bool(accepted):
+        raise ContractError("a rejected answer is one that was not accepted")
+    if ("token" in payload) != (stage == "armed"):
+        raise ContractError("a token is given only in the answer to an accepted arm")
+    if stage == "armed" and not {"canonical", "summary", "risk", "battery"} <= set(payload):
+        raise ContractError("an armed answer names the operation, its risk and the battery")
+    outcome = payload.get("outcome")
+    if stage == "progress" and outcome != "running":
+        raise ContractError("a progress answer says running")
+    if stage == "final" and outcome not in ("ok", "failed", "partial", "retry", "rejected"):
+        raise ContractError("a final answer says how it ended")
+    if stage not in ("progress", "final") and "outcome" in payload:
+        raise ContractError("only progress and final answers carry an outcome")
+    if stage == "staged" and "received" not in payload:
+        raise ContractError("a staged answer says how much was received")
+    done, total = payload.get("steps_done"), payload.get("steps_total")
+    if isinstance(done, int) and isinstance(total, int) and done > total:
+        raise ContractError("steps_done may not exceed steps_total")
 
 
 def parse_alarm_topic(topic: str, leaf: str = "state") -> str:

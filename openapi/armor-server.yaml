@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: A.R.M.O.R. Server API
-  version: 0.6.9
+  version: 0.7.0
   description: >-
     The HTTP surface of ARMOR-SERVER. Message bodies reference the JSON Schemas
     published in src/armor_common/schemas, which are the single source of truth.
@@ -601,6 +601,91 @@ paths:
         '409': { description: 'node_unavailable, node_not_switching, switch_fault, busy or not_armed', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '429': { description: Too many switch commands, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '503': { description: 'mqtt_unavailable: the broker is not connected', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/solar/battery-ops/catalog:
+    get:
+      summary: >-
+        The typed operations that write to a Pylontech battery (their risk, values and ranges: the table of ARMOR-COMMON battery_ops.json) and whether this server allows writing at all
+        ({ enabled, catalog }); writing is off unless ARMOR_BATTERY_WRITE=1
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The table and the switch, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryOpsCatalog' } } } }
+  /api/v1/solar/battery-ops:
+    get:
+      summary: The battery operations of the last weeks, newest first, with what was read before and after, the difference and the transcript (an administrator; the service password never appears in any of it)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: The operations, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryOperationList' } } } }
+    post:
+      summary: >-
+        Step one of writing to a battery (an administrator who proved themselves again a moment ago): the server checks the values against the table, sends an `arm` to the node (the
+        `solar_battery_command` message of the shared contract) and answers 202 with the operation. The node reads the battery and checks every precondition; GET the operation to see it armed
+        (with what it will do and the battery's identity) or rejected. Nothing is written yet. The typed serial number must be the one the battery reports.
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryArmRequest' } } } }
+      responses:
+        '202': { description: 'Sent; the operation, still arming', content: { application/json: { schema: { $ref: '#/components/schemas/BatteryOperation' } } } }
+        '400': { description: 'invalid_request or invalid_params: the node, port, operation, serial or values are not right', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'Not an administrator, writing is not turned on (code battery_write_disabled), or the proof of identity is old (code elevation_required)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'unknown_node: no battery of that node is reporting', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'busy, image_missing or locked', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: 'Too many orders', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: 'mqtt_unavailable: the broker is not connected', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/solar/battery-ops/images:
+    post:
+      summary: >-
+        Keep a firmware image for a battery (the .bin the maker publishes, as application/octet-stream, 64 KiB to 512 KiB; an administrator who proved themselves again): the server reads the
+        board name and version in its header and answers with its size, CRC-32 and SHA-256. The image is kept for an hour in memory only, and nothing is sent to a battery until a
+        firmware_update is armed and executed with the typed serial number; the node checks that the image fits the battery's model and chip and refuses to send it otherwise.
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/octet-stream: { schema: { type: string, format: binary } } } }
+      responses:
+        '201': { description: The image as the server read it, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryImage' } } } }
+        '400': { description: 'image_size or image_header: not a firmware image of the family', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'Not an administrator, writing is not turned on or the proof of identity is old (code elevation_required)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '415': { description: Not sent as application/octet-stream, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/solar/battery-ops/{id}:
+    get:
+      summary: One battery operation as it stands now (an administrator); never a token
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9]{8,32}$' } }]
+      responses:
+        '200': { description: The operation, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryOperation' } } } }
+        '404': { description: 'Unknown operation', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/solar/battery-ops/{id}/execute:
+    post:
+      summary: >-
+        Step two (an administrator who proved themselves again a moment ago): the operation must be armed and not expired (two minutes), and the typed serial number is asked for again. The
+        server sends `execute` with the node's one-time token; the node writes, reads back and answers. 202 means sent; only the operation's outcome says whether it worked.
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9]{8,32}$' } }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryExecuteRequest' } } } }
+      responses:
+        '202': { description: Sent, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryOperation' } } } }
+        '400': { description: 'The serial number does not match the one typed to arm', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'Not an administrator, writing is not turned on or the proof of identity is old (code elevation_required)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'Unknown operation', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'not_armed, expired or busy', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: 'Too many orders', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: 'mqtt_unavailable', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/solar/battery-ops/{id}/cancel:
+    post:
+      summary: Ask for an operation to stop (an administrator). It is honoured between two steps and never in the middle of a sequence that must not be cut (EEPROM, serial number, firmware); an armed operation that was not executed is simply withdrawn
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9]{8,32}$' } }]
+      responses:
+        '202': { description: Sent or withdrawn, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryOperation' } } } }
+        '404': { description: 'Unknown operation', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'not_cancellable: it has gone too far to be stopped, or it is over', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/solar/battery-ops/{id}/restore:
+    post:
+      summary: Arm the operation that puts back what an earlier operation changed, from what was read before it (only for the operations whose previous state can be read back, such as switching an output); an administrator who proved themselves again
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9]{8,32}$' } }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryExecuteRequest' } } } }
+      responses:
+        '202': { description: 'The new operation, arming', content: { application/json: { schema: { $ref: '#/components/schemas/BatteryOperation' } } } }
+        '404': { description: 'Unknown operation', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'not_restorable: that operation has nothing to put back', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/alarm/state:
     post:
       summary: The state of an alarm node's panel (the `alarm` message of the shared contract, ingest token); the same message arrives over MQTT on armor/alarm/{node_id}/state. A field this server does not know is dropped and said in `ignored`.
@@ -1607,7 +1692,7 @@ paths:
         - { name: before, in: query, schema: { type: integer, minimum: 1 } }
         - { name: after, in: query, schema: { type: integer, minimum: 1 }, description: 'Events after this id, oldest first (for a client that polls: it misses nothing); the answer carries next_after' }
         - { name: type, in: query, schema: { type: string, enum: [alert, node, camera, mode, device, alarm, connection, system] } }
-        - { name: category, in: query, schema: { type: string, enum: [node, broker, settings, service, update, alarm, backup] }, description: 'Only the events of the system of this category (implies type=system)' }
+        - { name: category, in: query, schema: { type: string, enum: [node, broker, settings, service, update, alarm, backup, batteries] }, description: 'Only the events of the system of this category (implies type=system)' }
         - { name: kind, in: query, schema: { type: string, enum: [studio, android, node, voice, other] }, description: 'Only the connections of this kind of client (implies type=connection)' }
         - { name: client, in: query, schema: { type: string, pattern: '^[0-9a-f]{16}$' }, description: 'Only the connections of this client (implies type=connection)' }
         - { name: user, in: query, schema: { type: string, maxLength: 60 }, description: 'Only what this user did or what happened to this user (connections and system events)' }
@@ -2381,6 +2466,74 @@ components:
       type: object
       additionalProperties: true
       description: The status of the switching commands (what is armed, what was sent and what the node answered)
+    BatteryOpsCatalog:
+      type: object
+      required: [enabled, catalog]
+      properties:
+        enabled: { type: boolean, description: 'False unless the server runs with ARMOR_BATTERY_WRITE=1' }
+        catalog: { type: object, additionalProperties: true, description: 'The table of ARMOR-COMMON battery_ops.json: ops (id, risk, needs_idle, alarm_ok, atomic, group, params), models, limit_groups, protections, expert_blocked, limits, refusals' }
+    BatteryArmRequest:
+      type: object
+      required: [node, port, op, serial]
+      properties:
+        node: { type: string }
+        port: { type: integer, minimum: 1, maximum: 10 }
+        op: { type: string, description: 'One of the operations of the catalog' }
+        params: { type: object, additionalProperties: true, description: 'The values of the operation (see the catalog); for firmware_update, { image_id } from POST /images' }
+        serial: { type: string, description: 'The serial number of the battery, typed by the person (NOSERIAL for a battery that has none)' }
+    BatteryExecuteRequest:
+      type: object
+      required: [serial]
+      properties:
+        serial: { type: string, description: 'The serial number again; it must be the one typed to arm' }
+    BatteryImage:
+      type: object
+      required: [image_id, size, crc32, sha256, board, version]
+      properties:
+        image_id: { type: string }
+        size: { type: integer }
+        crc32: { type: integer }
+        sha256: { type: string }
+        board: { type: string, description: 'The name of the board the image is for, read at offset 0x418' }
+        version: { type: string, description: 'Major.minor read at offset 0x400' }
+    BatteryOperation:
+      type: object
+      required: [id, node, port, op, stage, actor, created_at, updated_at]
+      properties:
+        id: { type: string }
+        node: { type: string }
+        port: { type: integer }
+        op: { type: string }
+        params: { type: object, additionalProperties: true }
+        actor: { type: string }
+        created_at: { type: string }
+        updated_at: { type: string }
+        stage: { type: string, enum: [arming, armed, starting, running, done, rejected, expired, lost, withdrawn] }
+        summary: { type: string }
+        risk: { type: string, enum: [low, medium, high, irreversible] }
+        atomic: { type: boolean }
+        canonical: { type: string }
+        battery: { type: object, additionalProperties: true }
+        refusal: { type: string }
+        snapshot_before: { type: string }
+        outcome: { type: string, enum: [running, ok, failed, partial, retry, rejected] }
+        code: { type: string }
+        steps_done: { type: integer }
+        steps_total: { type: integer }
+        packets_sent: { type: integer }
+        packets_total: { type: integer }
+        before: { type: string }
+        after: { type: string }
+        diff: { type: array, items: { type: object, additionalProperties: true } }
+        transcript: { type: string }
+        armed_until: { type: string, description: 'When an armed operation stops being executable' }
+        restore: { type: object, additionalProperties: true, nullable: true }
+    BatteryOperationList:
+      type: object
+      required: [enabled, operations]
+      properties:
+        enabled: { type: boolean }
+        operations: { type: array, items: { $ref: '#/components/schemas/BatteryOperation' } }
     AlarmNodes:
       type: object
       required: [nodes, totals]

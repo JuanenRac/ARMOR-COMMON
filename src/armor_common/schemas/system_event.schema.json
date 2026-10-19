@@ -35,7 +35,8 @@
         "service",
         "update",
         "alarm",
-        "backup"
+        "backup",
+        "batteries"
       ]
     },
     "action": {
@@ -64,7 +65,9 @@
         "disarm_requested",
         "silence_requested",
         "backup_made",
-        "backup_restored"
+        "backup_restored",
+        "battery_requested",
+        "battery_operation"
       ]
     },
     "subject": {
