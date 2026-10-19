@@ -576,6 +576,24 @@
         "ARMOR-HMI": "core/stored_load.hpp",
         "ARMOR-ALARM": "core/stored_load.hpp"
       }
+    },
+    "tests/check_task_safety.py": {
+      "targets": {
+        "ARMOR-SOLAR": "tests/check_task_safety.py",
+        "ARMOR-ELECTRICAL": "tests/check_task_safety.py",
+        "ARMOR-RADAR": "tests/check_task_safety.py",
+        "ARMOR-HMI": "tests/check_task_safety.py",
+        "ARMOR-ALARM": "tests/check_task_safety.py"
+      }
+    },
+    "tests/check_save_paths.py": {
+      "targets": {
+        "ARMOR-SOLAR": "tests/check_save_paths.py",
+        "ARMOR-ELECTRICAL": "tests/check_save_paths.py",
+        "ARMOR-RADAR": "tests/check_save_paths.py",
+        "ARMOR-HMI": "tests/check_save_paths.py",
+        "ARMOR-ALARM": "tests/check_save_paths.py"
+      }
     }
   }
 }
