@@ -263,6 +263,77 @@
    }
   },
   {
+   "name": "a radar that tells its internal memory and its external RAM",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "north-1",
+    "timestamp_ms": 9000,
+    "family": "radar",
+    "firmware": "0.3.6",
+    "board": "s3-wifi",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 7900000,
+    "heap_min": 7800000,
+    "link": "wifi",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "rssi_dbm": -61,
+    "heap_internal_free": 72704,
+    "heap_internal_min": 60112,
+    "heap_internal_largest": 36864,
+    "psram_free": 7700000
+   }
+  },
+  {
+   "name": "a board with no external RAM that tells its internal memory",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "heap_internal_free": 90112,
+    "heap_internal_min": 71000,
+    "heap_internal_largest": 65536
+   }
+  },
+  {
+   "name": "the internal figures equal to what is free",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "heap_internal_free": 50000,
+    "heap_internal_min": 50000,
+    "heap_internal_largest": 50000
+   }
+  },
+  {
    "name": "a reset reason outside the list",
    "valid": false,
    "payload": {
@@ -744,6 +815,143 @@
     "low_stack_tasks": 0,
     "command": "restart"
    }
+  },
+  {
+   "name": "a negative internal memory",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "heap_internal_free": -1,
+    "heap_internal_min": 0,
+    "heap_internal_largest": 0
+   }
+  },
+  {
+   "name": "a negative external RAM",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "psram_free": -1
+   }
+  },
+  {
+   "name": "an internal memory as a string",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "heap_internal_free": "72 KB",
+    "heap_internal_min": 1,
+    "heap_internal_largest": 1
+   }
+  },
+  {
+   "name": "the least internal memory above what is free",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "heap_internal_free": 50000,
+    "heap_internal_min": 60000,
+    "heap_internal_largest": 40000
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a biggest block above what is free",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "heap_internal_free": 50000,
+    "heap_internal_min": 40000,
+    "heap_internal_largest": 60000
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "the internal memory told in part",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "heap_internal_free": 50000
+   },
+   "schema_valid": true
   },
   {
    "name": "the least heap above the heap free",

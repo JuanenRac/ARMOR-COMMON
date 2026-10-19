@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here.
 
+## [0.7.2] - The memory of the nodes: the shared rules of the guard, the Bluetooth window, the gate, and the internal-memory fields of the health report
+
+- **The shared firmware base protects the internal memory:** `core/node_guard.hpp` and `core/ble_window.hpp` (the guard that restarts once and never in a loop, the gate at the panel's door, the controlled restart on a failed allocation, the dead-man switch and the Bluetooth set-up window), `main/node_guard.cpp`, the Bluetooth memory settings and `tools/check_sdkconfig.py`; the web servers, the broker link and the Bluetooth module of the five nodes use them.
+- **The health report tells the internal memory on its own:** `heap_internal_free`, `heap_internal_min`, `heap_internal_largest` (together) and `psram_free` are optional fields of `node_health` (schema, validator, vectors and the generated types), and the shared memory module puts the TLS buffers, the large requests and the stacks of safe tasks in the external RAM.
+- **Last will and birth, retained:** the contract documents the life state of a node on `armor/health/{node_id}` (`online` false as the will and true at each connection, both retained).
+- **Fixed:** the host test of the request buffer of the GitHub update had text that did not compile; the Improv page says `provisioned` only after the Wi-Fi network was joined.
+
 ## [0.7.1] - The GitHub update fits the redirect address
 
 - The HTTP client of the GitHub update gets a 4 KB request buffer (the default of 512 bytes made it say "Out of buffer" on the request that follows GitHub's long redirect, so the checksum could not be read), with a host test and a static guard that every client sets it.

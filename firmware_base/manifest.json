@@ -535,6 +535,15 @@
         "ARMOR-ALARM": "core/node_health.hpp"
       }
     },
+    "core/memory_budget.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/memory_budget.hpp",
+        "ARMOR-ELECTRICAL": "core/memory_budget.hpp",
+        "ARMOR-RADAR": "main/core/memory_budget.hpp",
+        "ARMOR-HMI": "core/memory_budget.hpp",
+        "ARMOR-ALARM": "core/memory_budget.hpp"
+      }
+    },
     "main/node_health.cpp": {
       "targets": {
         "ARMOR-SOLAR": "main/node_health.cpp",
@@ -551,6 +560,24 @@
         "ARMOR-RADAR": "main/node_health.hpp",
         "ARMOR-HMI": "main/node_health.hpp",
         "ARMOR-ALARM": "main/node_health.hpp"
+      }
+    },
+    "main/psram_mem.cpp": {
+      "targets": {
+        "ARMOR-SOLAR": "main/psram_mem.cpp",
+        "ARMOR-ELECTRICAL": "main/psram_mem.cpp",
+        "ARMOR-RADAR": "main/psram_mem.cpp",
+        "ARMOR-HMI": "main/psram_mem.cpp",
+        "ARMOR-ALARM": "main/psram_mem.cpp"
+      }
+    },
+    "main/psram_mem.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "main/psram_mem.hpp",
+        "ARMOR-ELECTRICAL": "main/psram_mem.hpp",
+        "ARMOR-RADAR": "main/psram_mem.hpp",
+        "ARMOR-HMI": "main/psram_mem.hpp",
+        "ARMOR-ALARM": "main/psram_mem.hpp"
       }
     },
     "tests/test_shared.cpp": {
@@ -593,6 +620,51 @@
         "ARMOR-RADAR": "tests/check_save_paths.py",
         "ARMOR-HMI": "tests/check_save_paths.py",
         "ARMOR-ALARM": "tests/check_save_paths.py"
+      }
+    },
+    "core/node_guard.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/node_guard.hpp",
+        "ARMOR-ELECTRICAL": "core/node_guard.hpp",
+        "ARMOR-RADAR": "main/core/node_guard.hpp",
+        "ARMOR-HMI": "core/node_guard.hpp",
+        "ARMOR-ALARM": "core/node_guard.hpp"
+      }
+    },
+    "core/ble_window.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/ble_window.hpp",
+        "ARMOR-ELECTRICAL": "core/ble_window.hpp",
+        "ARMOR-RADAR": "main/core/ble_window.hpp",
+        "ARMOR-HMI": "core/ble_window.hpp",
+        "ARMOR-ALARM": "core/ble_window.hpp"
+      }
+    },
+    "main/node_guard.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "main/node_guard.hpp",
+        "ARMOR-ELECTRICAL": "main/node_guard.hpp",
+        "ARMOR-RADAR": "main/node_guard.hpp",
+        "ARMOR-HMI": "main/node_guard.hpp",
+        "ARMOR-ALARM": "main/node_guard.hpp"
+      }
+    },
+    "main/node_guard.cpp": {
+      "targets": {
+        "ARMOR-SOLAR": "main/node_guard.cpp",
+        "ARMOR-ELECTRICAL": "main/node_guard.cpp",
+        "ARMOR-RADAR": "main/node_guard.cpp",
+        "ARMOR-HMI": "main/node_guard.cpp",
+        "ARMOR-ALARM": "main/node_guard.cpp"
+      }
+    },
+    "tools/check_sdkconfig.py": {
+      "targets": {
+        "ARMOR-SOLAR": "tools/check_sdkconfig.py",
+        "ARMOR-ELECTRICAL": "tools/check_sdkconfig.py",
+        "ARMOR-RADAR": "tools/check_sdkconfig.py",
+        "ARMOR-HMI": "tools/check_sdkconfig.py",
+        "ARMOR-ALARM": "tools/check_sdkconfig.py"
       }
     }
   }
