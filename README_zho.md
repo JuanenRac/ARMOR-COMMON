@@ -22,7 +22,7 @@
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
   <img src="https://img.shields.io/badge/Vectors-685-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Version-0.6.7-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Version-0.6.8-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
@@ -36,7 +36,7 @@
 
 | | |
 |---|---|
-| 版本 | `0.6.7` |
+| 版本 | `0.6.8` |
 | 成熟度 | 成熟 |
 | 测试 | 89 (`python -m unittest discover -s tests`) and 685 conformance vectors |
 | 技术栈 | Python 3.11+ / JSON Schema / OpenAPI |
