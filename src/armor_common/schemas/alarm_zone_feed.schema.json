@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://armor.local/schemas/alarm-zone-feed-0.1.0.json",
   "title": "A.R.M.O.R. state of a Zigbee sensor, told to the panel of an alarm node",
-  "description": "What the server tells an ARMOR-ALARM panel about the Zigbee sensor linked to one of its zones, on armor/alarm/{node_id}/zigbee (never retained), while the server holds the Zigbee radio: the zone, whether its sensor is normal, triggered or tampered with, and whether its battery is low. It is information towards the panel and never a command: it cannot arm, disarm or sound anything by itself. The node of the topic is the panel's; the message does not repeat it.",
+  "description": "What the server tells an ARMOR-ALARM panel about the Zigbee sensor linked to one of its zones, on armor/alarm/{node_id}/zigbee (never retained), while the server holds the Zigbee radio: the zone, whether its sensor is normal, triggered or tampered with, and whether its battery is low. It is information towards the panel and never a command: it cannot arm, disarm or sound anything by itself. The node of the topic is the panel's; the message does not repeat it. When the server signs its zone messages (the setting server.zone_feed_signature), the message also carries seq, a number that only goes up (the server's time in milliseconds), and sig, the HMAC-SHA256 in hex over node_id|zone|state|battery_low (1 or 0)|seq with the key of the panel; the two come together or not at all, and a panel that holds its key refuses a message whose signature is wrong or whose seq is not above the last one it accepted.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -25,6 +25,15 @@
     },
     "battery_low": {
       "type": "boolean"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "sig": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
     }
   }
 }

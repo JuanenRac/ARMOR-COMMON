@@ -1,0 +1,66 @@
+{
+ "kind": "alarm_policy",
+ "vectors": [
+  {
+   "name": "the defaults of a panel",
+   "valid": true,
+   "payload": {
+    "config_hash": true,
+    "zone_feed": true,
+    "zone_feed_signature": false
+   }
+  },
+  {
+   "name": "everything on",
+   "valid": true,
+   "payload": {
+    "config_hash": true,
+    "zone_feed": true,
+    "zone_feed_signature": true
+   }
+  },
+  {
+   "name": "everything off",
+   "valid": true,
+   "payload": {
+    "config_hash": false,
+    "zone_feed": false,
+    "zone_feed_signature": false
+   }
+  },
+  {
+   "name": "a missing option",
+   "valid": false,
+   "payload": {
+    "config_hash": true,
+    "zone_feed_signature": false
+   }
+  },
+  {
+   "name": "an option that is not a flag",
+   "valid": false,
+   "payload": {
+    "config_hash": "yes",
+    "zone_feed": true,
+    "zone_feed_signature": false
+   }
+  },
+  {
+   "name": "an option that does not exist",
+   "valid": false,
+   "payload": {
+    "config_hash": true,
+    "zone_feed": true,
+    "zone_feed_signature": false,
+    "disarm_pin": "never"
+   }
+  },
+  {
+   "name": "not an object",
+   "valid": false,
+   "payload": [
+    true
+   ]
+  }
+ ]
+}

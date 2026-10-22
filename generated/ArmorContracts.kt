@@ -647,6 +647,20 @@ data class AlarmResult(
     val phase: String
 )
 
+data class AlarmZoneFeed(
+    val zone: String,
+    val state: String,
+    val battery_low: Boolean,
+    val seq: Long? = null,
+    val sig: String? = null
+)
+
+data class AlarmPolicy(
+    val config_hash: Boolean,
+    val zone_feed: Boolean,
+    val zone_feed_signature: Boolean
+)
+
 data class NodeHealthBoot(
     val cause: String,
     val reset_reason: String,

@@ -6,6 +6,9 @@ All notable changes to this project are documented here.
 
 - The repository has a security policy, a code of conduct, a contributing guide and a support file.
 - The banner follows the animated style of the ecosystem banners, with the name, the kind and the technologies of the project.
+- **The zone messages of the server can be signed:** `alarm_zone_feed` may carry `seq` and `sig` (together), `zone_feed_signature` computes the HMAC-SHA256 over `node_id|zone|state|battery_low|seq`, and the vectors cover a signed message and every malformed one; the generated TypeScript and Kotlin gain `AlarmZoneFeed`.
+- **The policy of the server reaches the panels:** a new message, `alarm_policy` (`armor/alarm/{node_id}/policy`: `config_hash`, `zone_feed`, `zone_feed_signature`), with its schema, validator (`validate_alarm_policy`), vectors and generated types. Panel side pending: the alarm firmware does not read it yet.
+- **The session announces its capabilities:** the HTTP contract describes `capabilities` in `GET /api/v1/studio/session` (what the person may do, the parts of the server that exist and the security options in force), `GET` and `PUT /api/v1/security/settings` and `GET /api/v1/alarm/zone-feed/key/{node}`; an older server has no such field.
 - **ESP-IDF 5.5.5 is the one version:** `tools/build_node.sh` uses the 5.5.5 container, and the firmware guide, the requirements of the READMEs and the manifest name it (it said 5.4 in places).
 - **Node diagnostics in the shared contract:** the dirty-boot report, the core dump, the settings safety check, the diagnostic package, the radar events and the read-only diagnostic token messages, with their schemas, conformance vectors and generated types.
 - **An electrical meter channel may carry `reading_age_ms` and `errors`,** how old its reading is and how many requests to it failed since boot, so a consumer tells a real 0 W from no data.

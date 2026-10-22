@@ -2,7 +2,7 @@ import json
 import unittest
 from pathlib import Path
 
-from armor_common import ContractError, validate_radar_event, validate_diagnostic_token_request, validate_diagnostic_token_created, validate_diagnostic_token_info, decode, encode, validate_arm_profile, validate_node_health, validate_alarm_command, validate_alarm_message, validate_alarm_result, validate_alarm_zone_feed, validate_device_message, validate_network_orders, validate_server_alert, validate_electrical_command, validate_electrical_message, validate_electrical_result, validate_network_message, validate_node_control_command, validate_node_control_result, validate_node_maintenance, validate_solar_battery_command, validate_solar_battery_result, validate_solar_message, validate_topic_and_payload
+from armor_common import ContractError, validate_radar_event, validate_diagnostic_token_request, validate_diagnostic_token_created, validate_diagnostic_token_info, decode, encode, validate_arm_profile, validate_node_health, validate_alarm_command, validate_alarm_message, validate_alarm_result, validate_alarm_zone_feed, validate_alarm_policy, zone_feed_signature, validate_device_message, validate_network_orders, validate_server_alert, validate_electrical_command, validate_electrical_message, validate_electrical_result, validate_network_message, validate_node_control_command, validate_node_control_result, validate_node_maintenance, validate_solar_battery_command, validate_solar_battery_result, validate_solar_message, validate_topic_and_payload
 from armor_common.contracts import battery_catalog, battery_expert_line, parse_battery_topic, validate_battery_params
 from armor_common.contracts import parse_control_topic
 from armor_common.contracts import load_schema, parse_alarm_topic, parse_device_topic, parse_electrical_topic, parse_network_topic, parse_solar_topic, parse_topic, validate_payload
@@ -24,6 +24,7 @@ MESSAGE_RULES = {
     "alarm_result": lambda payload: validate_alarm_result(f"armor/alarm/{payload['node_id']}/result", payload),
     "network": lambda payload: validate_network_message(f"armor/network/{payload['node_id']}/state", payload),
     "alarm_zone_feed": lambda payload: validate_alarm_zone_feed("armor/alarm/alarm-1/zigbee", payload),
+    "alarm_policy": lambda payload: validate_alarm_policy("armor/alarm/alarm-1/policy", payload),
     "device_state": lambda payload: validate_device_message("armor/device/electrical-1/lights/state", payload),
     "server_alert": lambda payload: validate_server_alert("armor/server/alert", payload),
     "network_orders": validate_network_orders,
@@ -396,6 +397,30 @@ class TopicsWithoutAJsonObjectTests(unittest.TestCase):
                 validate_device_message("armor/device/electrical-1/lights/availability", word)
         with self.assertRaises(ContractError):
             validate_device_message("armor/device/electrical-1/lights/state", "ON")
+
+    def test_the_zigbee_feed_can_be_signed_and_the_signature_is_the_one_the_server_makes(self):
+        key = "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"
+        message = {"zone": "z1", "state": "triggered", "battery_low": False, "seq": 1700000000000}
+        signature = zone_feed_signature(key, "alarm-1", {**message, "sig": "0" * 64})
+        # the same bytes ARMOR-SERVER signs (its own test holds this value too)
+        self.assertEqual(signature, "330aa293a19d730d0deede3598b3efbed43887483298f15832c9ba4bfbda0378")
+        validate_alarm_zone_feed("armor/alarm/alarm-1/zigbee", {**message, "sig": signature})
+        self.assertNotEqual(signature, zone_feed_signature(key, "alarm-2", {**message, "sig": "0" * 64}), "the node is part of what is signed")
+        self.assertNotEqual(signature, zone_feed_signature(key, "alarm-1", {**message, "state": "normal", "sig": "0" * 64}))
+        with self.assertRaises(ContractError):
+            zone_feed_signature(key, "alarm-1", {"zone": "z1", "state": "normal", "battery_low": False})
+        with self.assertRaises(ContractError):
+            zone_feed_signature("short", "alarm-1", {**message, "sig": "0" * 64})
+        with self.assertRaises(ContractError):
+            validate_alarm_zone_feed("armor/alarm/alarm-1/zigbee", {**message})
+
+    def test_the_policy_belongs_to_the_policy_topic_of_a_panel(self):
+        validate_alarm_policy("armor/alarm/alarm-1/policy", {"config_hash": True, "zone_feed": True, "zone_feed_signature": False})
+        for bad_topic in ("armor/alarm/alarm-1/zigbee", "armor/alarm/Alarm/policy", "armor/alarm/alarm-1/policy/x"):
+            with self.subTest(topic=bad_topic), self.assertRaises(ContractError):
+                validate_alarm_policy(bad_topic, {"config_hash": True, "zone_feed": True, "zone_feed_signature": False})
+        with self.assertRaises(ContractError):
+            validate_alarm_message("armor/alarm/alarm-1/policy", {})
 
     def test_the_zigbee_feed_belongs_to_the_topic_of_a_panel(self):
         validate_alarm_zone_feed("armor/alarm/alarm-1/zigbee", {"zone": "front-door", "state": "normal", "battery_low": False})
