@@ -38,7 +38,7 @@
 |---|---|
 | バージョン | `0.7.4` |
 | 成熟度 | 確立 |
-| テスト | 89 (`python -m unittest discover -s tests`) and 685 conformance vectors |
+| テスト | 89 (`python -m unittest discover -s tests`) と 685 件の適合ベクトル |
 | 技術 | Python 3.11+ / JSON Schema / OpenAPI |
 | 実機での確認 | 基板上で動いたのはレーダーノードだけです。そのメッセージは CM5 サーバー、Studio、Android アプリが毎日話しているもので、他のノードのメッセージは代替に対して検査されます |
 

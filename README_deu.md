@@ -38,7 +38,7 @@
 |---|---|
 | Version | `0.7.4` |
 | Reifegrad | Etabliert |
-| Tests | 89 (`python -m unittest discover -s tests`) and 685 conformance vectors |
+| Tests | 89 (`python -m unittest discover -s tests`) und 685 Konformitätsvektoren |
 | Technik | Python 3.11+ / JSON Schema / OpenAPI |
 | Auf echter Hardware | Nur der Radarknoten hat auf einer Platine gelaufen: Seine Nachrichten sind die, die der CM5-Server, Studio und die Android-App täglich sprechen; die Nachrichten der anderen Knoten werden gegen Ersatz geprüft |
 

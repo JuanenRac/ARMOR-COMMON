@@ -38,7 +38,7 @@
 |---|---|
 | Versione | `0.7.4` |
 | Maturità | Consolidato |
-| Test | 89 (`python -m unittest discover -s tests`) and 685 conformance vectors |
+| Test | 89 (`python -m unittest discover -s tests`) e 685 vettori di conformità |
 | Tecnologia | Python 3.11+ / JSON Schema / OpenAPI |
 | Su hardware reale | Solo il nodo radar ha girato su una scheda: i suoi messaggi sono quelli che parlano ogni giorno il server CM5, Studio e l'app Android; i messaggi degli altri nodi sono controllati contro sostituti |
 

@@ -38,7 +38,7 @@
 |---|---|
 | Version | `0.7.4` |
 | Maturité | Établi |
-| Tests | 89 (`python -m unittest discover -s tests`) and 685 conformance vectors |
+| Tests | 89 (`python -m unittest discover -s tests`) et 685 vecteurs de conformité |
 | Technologie | Python 3.11+ / JSON Schema / OpenAPI |
 | Sur matériel réel | Seul le nœud radar a tourné sur une carte : ses messages sont ceux que parlent chaque jour le serveur CM5, Studio et l'application Android ; les messages des autres nœuds sont vérifiés contre des substituts |
 
