@@ -38,7 +38,7 @@
 |---|---|
 | Versión | `0.7.4` |
 | Madurez | Establecido |
-| Tests | 89 (`python -m unittest discover -s tests`) and 685 conformance vectors |
+| Tests | 89 (`python -m unittest discover -s tests`) y 685 vectores de conformidad |
 | Tecnología | Python 3.11+ / JSON Schema / OpenAPI |
 | En hardware real | Solo el nodo radar ha funcionado en una placa: sus mensajes son los que hablan cada día el servidor de la CM5, Studio y la app Android; los mensajes de los demás nodos se comprueban contra sustitutos |
 

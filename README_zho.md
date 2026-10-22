@@ -38,7 +38,7 @@
 |---|---|
 | 版本 | `0.7.4` |
 | 成熟度 | 成熟 |
-| 测试 | 89 (`python -m unittest discover -s tests`) and 685 conformance vectors |
+| 测试 | 89 (`python -m unittest discover -s tests`) 以及 685 个一致性向量 |
 | 技术栈 | Python 3.11+ / JSON Schema / OpenAPI |
 | 真实硬件 | 只有雷达节点在电路板上运行过：它的消息就是 CM5 服务器、Studio 和 Android 应用每天使用的消息；其他节点的消息对照替身检查 |
 

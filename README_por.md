@@ -38,7 +38,7 @@
 |---|---|
 | Versão | `0.7.4` |
 | Maturidade | Estabelecido |
-| Testes | 89 (`python -m unittest discover -s tests`) and 685 conformance vectors |
+| Testes | 89 (`python -m unittest discover -s tests`) e 685 vetores de conformidade |
 | Tecnologia | Python 3.11+ / JSON Schema / OpenAPI |
 | Em hardware real | Só o nó radar funcionou numa placa: as suas mensagens são as que o servidor do CM5, o Studio e a aplicação Android falam todos os dias; as mensagens dos outros nós são verificadas contra substitutos |
 
