@@ -38,7 +38,11 @@ class Project:
         (self.root / "armor.project.json").write_text(json.dumps({"name": name, "version": version}), encoding="utf-8")
         self.kind, self.version = name.removeprefix("ARMOR-").lower(), version
 
-    def build(self, board="s3-eth", mode="publica", project=None, version=None):
+    def build(self, board="s3-eth", mode="publica", project=None, version=None, configuration="# no secret\n"):
+        if configuration is not None:   # the configuration the build kept (.compile/<mode>-<board>/sdkconfig), which the release reads
+            folder = self.root / ".compile" / f"{mode}-{board}"
+            folder.mkdir(parents=True, exist_ok=True)
+            (folder / "sdkconfig").write_text(configuration, encoding="utf-8")
         (self.dist / f"armor-{self.kind}-{self.version}-{board}-{mode}-app.bin").write_bytes(image(project or f"armor_{self.kind}", version or self.version))
         (self.dist / f"armor-{self.kind}-{self.version}-{board}-{mode}-complete.bin").write_bytes(b"complete" * 50)
 
@@ -87,12 +91,27 @@ class ReleaseTests(unittest.TestCase):
         with self.assertRaisesRegex(tool.ReleaseError, "secret of a fleet"):
             tool.build_release(project.root, project.dist, project.root / "out", stub_signer)
 
+    def test_a_build_whose_configuration_is_missing_cannot_be_checked_and_is_refused_unless_the_owner_says_so(self):
+        project = Project(self)
+        project.build("s3-eth", configuration=None)
+        with self.assertRaisesRegex(tool.ReleaseError, "cannot be checked"):
+            tool.build_release(project.root, project.dist, project.root / "out", stub_signer)
+        self.assertGreaterEqual(len(tool.build_release(project.root, project.dist, project.root / "out", stub_signer, unchecked=True)), 4)
+
+    def test_a_setup_code_in_the_configuration_is_refused_and_empty_values_are_not(self):
+        project = Project(self)
+        project.build("s3-eth", configuration='CONFIG_ARMOR_SETUP_CODE="abcd1234"\n')
+        with self.assertRaisesRegex(tool.ReleaseError, "CONFIG_ARMOR_SETUP_CODE"):
+            tool.build_release(project.root, project.dist, project.root / "out", stub_signer)
+        project.build("s3-eth", configuration='CONFIG_ARMOR_SETUP_CODE=""\nCONFIG_ARMOR_FLEET_SECRET=""\n')
+        self.assertTrue(tool.build_release(project.root, project.dist, project.root / "out", stub_signer))
+        project.build("s3-eth", configuration='CONFIG_ARMOR_FLEET_SECRET="0123456789abcdef"\n')
+        with self.assertRaisesRegex(tool.ReleaseError, "CONFIG_ARMOR_FLEET_SECRET"):
+            tool.build_release(project.root, project.dist, project.root / "out", stub_signer, unchecked=True)   # unchecked only covers a missing record, never a secret that is there
+
     def test_a_build_that_kept_the_secret_in_its_configuration_is_refused(self):
         project = Project(self)
-        project.build("s3-eth")
-        folder = project.root / ".compile" / "publica-s3-eth"
-        folder.mkdir(parents=True)
-        (folder / "sdkconfig").write_text('CONFIG_ARMOR_FLEET_SECRET="abc"\n', encoding="utf-8")
+        project.build("s3-eth", configuration='CONFIG_ARMOR_FLEET_SECRET="abc"\n')
         with self.assertRaisesRegex(tool.ReleaseError, "CONFIG_ARMOR_FLEET_SECRET"):
             tool.build_release(project.root, project.dist, project.root / "out", stub_signer)
 
@@ -124,6 +143,7 @@ class ReleaseTests(unittest.TestCase):
 
     def test_a_file_that_is_not_an_image_is_refused(self):
         project = Project(self)
+        project.build("s3-eth")
         (project.dist / "armor-radar-0.6.7-s3-eth-publica-app.bin").write_bytes(b"not firmware" * 40)
         with self.assertRaisesRegex(tool.ReleaseError, "not an ESP32 application image"):
             tool.build_release(project.root, project.dist, project.root / "out", stub_signer)

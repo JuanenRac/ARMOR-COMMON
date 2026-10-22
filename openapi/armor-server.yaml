@@ -2345,7 +2345,7 @@ components:
     SecuritySettings:
       type: object
       additionalProperties: false
-      description: 'The security options an administrator sets in Studio. The default of each is the way the server always behaved. alarm.disarm_pin never = no PIN is asked to disarm or silence a siren (the duress PIN is untouched), if_set = asked of a user who has one, always = asked of everybody and a user without one cannot disarm (ARMOR_DISARM_PIN=required fixes it to always and wins over the setting). voice.silence_confirmation is sent to the voice service with every turn (header X-Armor-Policy). alarm.config_hash, server.zone_feed and server.zone_feed_signature reach the panels as the policy message (armor/alarm/{node_id}/policy). media.rtsp_proxy off puts the camera login in the command line of FFmpeg, visible to every user of the machine'
+      description: 'The security options an administrator sets in Studio. The default of each is the way the server always behaved. alarm.disarm_pin never = no PIN is asked to disarm or silence a siren (the duress PIN is untouched), if_set = asked of a user who has one, always = asked of everybody and a user without one cannot disarm (ARMOR_DISARM_PIN=required fixes it to always and wins over the setting). voice.silence_confirmation is sent to the voice service with every turn (header X-Armor-Policy). alarm.config_hash, server.zone_feed and server.zone_feed_signature reach the panels as the policy message (armor/alarm/{node_id}/policy). media.rtsp_proxy off puts the camera login in the command line of FFmpeg, visible to every user of the machine. network.login_secure_only on keeps the login stored for a device of the network from a node whose request did not come over TLS or from the machine of the server (off by default: any request of the node)'
       properties:
         alarm.disarm_pin: { type: string, enum: [never, if_set, always], default: if_set }
         voice.silence_confirmation: { type: string, enum: ['off', pin, double_turn], default: 'off' }
@@ -2353,6 +2353,7 @@ components:
         server.zone_feed: { type: boolean, default: true }
         server.zone_feed_signature: { type: boolean, default: true }
         media.rtsp_proxy: { type: boolean, default: true }
+        network.login_secure_only: { type: boolean, default: false }
     SecuritySettingsState:
       type: object
       required: [settings, stored, defaults, locked]

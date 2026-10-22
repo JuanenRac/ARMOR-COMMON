@@ -613,6 +613,24 @@
         "ARMOR-ALARM": "tests/check_task_safety.py"
       }
     },
+    "tests/check_routes.py": {
+      "targets": {
+        "ARMOR-SOLAR": "tests/check_routes.py",
+        "ARMOR-ELECTRICAL": "tests/check_routes.py",
+        "ARMOR-RADAR": "tests/check_routes.py",
+        "ARMOR-HMI": "tests/check_routes.py",
+        "ARMOR-ALARM": "tests/check_routes.py"
+      }
+    },
+    "tests/check_ble_session.py": {
+      "targets": {
+        "ARMOR-SOLAR": "tests/check_ble_session.py",
+        "ARMOR-ELECTRICAL": "tests/check_ble_session.py",
+        "ARMOR-RADAR": "tests/check_ble_session.py",
+        "ARMOR-HMI": "tests/check_ble_session.py",
+        "ARMOR-ALARM": "tests/check_ble_session.py"
+      }
+    },
     "tests/check_save_paths.py": {
       "targets": {
         "ARMOR-SOLAR": "tests/check_save_paths.py",

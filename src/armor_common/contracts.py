@@ -18,7 +18,7 @@ from functools import lru_cache
 from importlib import resources
 from typing import Any
 
-from .schema import SchemaError, check_schema, validate
+from .schema import SchemaError, check_schema, iter_errors, validate
 
 
 class ContractError(ValueError):
@@ -93,6 +93,12 @@ def validate_payload(kind: str, payload: Mapping[str, object]) -> None:
         validate(payload, _published_schema(kind))
     except SchemaError as error:
         raise ContractError(str(error)) from error
+
+
+def collect_payload_errors(kind: str, payload: object) -> list[str]:
+    """Every way a payload fails its schema, as ``path: message`` texts, in the order they are found; an empty list means it satisfies the schema (the topic rules and the rules between fields
+    of the ``validate_*`` functions are not part of it). The first text is the one ``validate_payload`` would raise. For tools that report all the faults of a message at once."""
+    return [str(error) for error in iter_errors(payload, _published_schema(kind))]
 
 
 def _check_node_id(node_id: str) -> None:
