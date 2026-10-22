@@ -113,18 +113,22 @@ def check_signature_text(text: str, what: str) -> str:
     return text
 
 
-def check_build_had_no_secret(project: Path, mode: str, board: str) -> None:
-    """The build folder keeps the configuration the image was built with: a fleet secret or a setup code in it means the image holds them."""
+def check_build_had_no_secret(project: Path, mode: str, board: str, unchecked: bool = False) -> None:
+    """The build folder keeps the configuration the image was built with: a fleet secret or a setup code in it means the image holds them.
+
+    A build whose configuration is not there cannot be checked, and an image that cannot be checked is not published (``unchecked`` is the owner saying so, knowingly)."""
     sdkconfig = project / ".compile" / f"{mode}-{board}" / "sdkconfig"
     if not sdkconfig.is_file():
-        return
+        if unchecked:
+            return
+        raise ReleaseError(f"the configuration of the {mode} build of {board} ({sdkconfig}) is not there, so it cannot be checked for a fleet secret or a setup code: build it again, or publish it unchecked on purpose (--unchecked)")
     for name in ("CONFIG_ARMOR_FLEET_SECRET", "CONFIG_ARMOR_SETUP_CODE"):
         match = re.search(rf'^{name}="([^"]*)"', sdkconfig.read_text(encoding="utf-8", errors="replace"), flags=re.M)
         if match and match.group(1):
             raise ReleaseError(f"the build of {board} was made with {name}: an image like that would give the secret to whoever downloads it")
 
 
-def build_release(project: Path, dist: Path, out: Path, signer: Callable[[list[str]], str], trusted_key: str | None = None) -> list[Path]:
+def build_release(project: Path, dist: Path, out: Path, signer: Callable[[list[str]], str], trusted_key: str | None = None, unchecked: bool = False) -> list[Path]:
     """Write the release files of every board that has a public build of the project's current version. Returns the files written."""
     manifest = json.loads((project / "armor.project.json").read_text(encoding="utf-8"))
     name, version = str(manifest["name"]), str(manifest["version"])
@@ -147,7 +151,7 @@ def build_release(project: Path, dist: Path, out: Path, signer: Callable[[list[s
     out.mkdir(parents=True, exist_ok=True)
     for board in boards:
         image = dist / f"armor-{kind}-{version}-{board}-publica-app.bin"
-        check_build_had_no_secret(project, "publica", board)
+        check_build_had_no_secret(project, "publica", board, unchecked)
         described_project, described_version = describe_image(image)
         if described_project != expected_project:
             raise ReleaseError(f"{image.name} says it is {described_project}, not {expected_project}")
@@ -175,6 +179,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--dist", type=Path, help="the folder with the built images (default: <project>/dist)")
     parser.add_argument("--out", type=Path, help="where the release files are written (default: <dist>/release-<version>)")
     parser.add_argument("--signer", help='the command that signs (default: node tools/firmware_sign.mjs); it is given "--public", "--digest <hash>" or "--manifest <project> <board> <version> <hash>"')
+    parser.add_argument("--unchecked", action="store_true", help="publish even though the configuration of the build is missing and could not be checked for a fleet secret (not recommended)")
     args = parser.parse_args(argv)
     project = REPOSITORIES / args.project
     if not (project / "armor.project.json").is_file():
@@ -184,7 +189,7 @@ def main(argv: list[str] | None = None) -> int:
     dist = args.dist or project / "dist"
     out = args.out or dist / f"release-{version}"
     try:
-        files = build_release(project, dist, out, make_signer(args.signer))
+        files = build_release(project, dist, out, make_signer(args.signer), unchecked=args.unchecked)
     except ReleaseError as error:
         print(f"RELEASE_FIRMWARE=FAIL {error}", file=sys.stderr)
         return 1

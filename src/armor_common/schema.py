@@ -18,7 +18,7 @@ description.
 from __future__ import annotations
 
 import re
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
 from functools import lru_cache
 from typing import Any
 
@@ -145,60 +145,67 @@ def check_schema(schema: Mapping[str, Any], path: str = "") -> None:
         raise UnsupportedSchema(f"{where}: maxProperties must be a non-negative integer")
 
 
-def validate(instance: Any, schema: Mapping[str, Any], path: str = "") -> None:
-    """Raise SchemaError if `instance` does not satisfy `schema`."""
+def iter_errors(instance: Any, schema: Mapping[str, Any], path: str = "") -> Iterator[SchemaError]:
+    """Every way in which `instance` does not satisfy `schema`, in the order they are found (the first is the one validate() raises). A value of the wrong type is reported once and not looked into."""
     expected = schema.get("type")
     if expected is not None:
         names = expected if isinstance(expected, list) else [expected]
         if not any(_type_matches(instance, name) for name in names):
-            raise SchemaError(path, f"must be of type {' or '.join(names)}")
+            yield SchemaError(path, f"must be of type {' or '.join(names)}")
+            return
     if "const" in schema and instance != schema["const"]:
-        raise SchemaError(path, f"must equal {schema['const']!r}")
+        yield SchemaError(path, f"must equal {schema['const']!r}")
     if "enum" in schema and instance not in schema["enum"]:
-        raise SchemaError(path, f"must be one of {schema['enum']}")
+        yield SchemaError(path, f"must be one of {schema['enum']}")
 
     if isinstance(instance, str):
         if "minLength" in schema and len(instance) < schema["minLength"]:
-            raise SchemaError(path, f"must have at least {schema['minLength']} characters")
+            yield SchemaError(path, f"must have at least {schema['minLength']} characters")
         if "maxLength" in schema and len(instance) > schema["maxLength"]:
-            raise SchemaError(path, f"must have at most {schema['maxLength']} characters")
+            yield SchemaError(path, f"must have at most {schema['maxLength']} characters")
         if "pattern" in schema and _ecma_pattern(schema["pattern"]).search(instance) is None:
-            raise SchemaError(path, f"must match {schema['pattern']}")
+            yield SchemaError(path, f"must match {schema['pattern']}")
 
     if isinstance(instance, (int, float)) and not isinstance(instance, bool):
         if "minimum" in schema and instance < schema["minimum"]:
-            raise SchemaError(path, f"must be at least {schema['minimum']}")
+            yield SchemaError(path, f"must be at least {schema['minimum']}")
         if "maximum" in schema and instance > schema["maximum"]:
-            raise SchemaError(path, f"must be at most {schema['maximum']}")
+            yield SchemaError(path, f"must be at most {schema['maximum']}")
 
     if isinstance(instance, list):
         if "minItems" in schema and len(instance) < schema["minItems"]:
-            raise SchemaError(path, f"must have at least {schema['minItems']} items")
+            yield SchemaError(path, f"must have at least {schema['minItems']} items")
         if "maxItems" in schema and len(instance) > schema["maxItems"]:
-            raise SchemaError(path, f"must have at most {schema['maxItems']} items")
+            yield SchemaError(path, f"must have at most {schema['maxItems']} items")
         if isinstance(schema.get("items"), Mapping):
             for index, item in enumerate(instance):
-                validate(item, schema["items"], f"{path}/{index}")
+                yield from iter_errors(item, schema["items"], f"{path}/{index}")
 
     if isinstance(instance, Mapping):
         properties = schema.get("properties", {})
         for name in schema.get("required", []):
             if name not in instance:
-                raise SchemaError(f"{path}/{name}", "is required")
+                yield SchemaError(f"{path}/{name}", "is required")
         if "maxProperties" in schema and len(instance) > schema["maxProperties"]:
-            raise SchemaError(path, f"must have at most {schema['maxProperties']} properties")
+            yield SchemaError(path, f"must have at most {schema['maxProperties']} properties")
         if "propertyNames" in schema:
             for name in instance:
                 if not isinstance(name, str) or _ecma_pattern(schema["propertyNames"]["pattern"]).search(name) is None:
-                    raise SchemaError(f"{path}/{name}", f"the name must match {schema['propertyNames']['pattern']}")
+                    yield SchemaError(f"{path}/{name}", f"the name must match {schema['propertyNames']['pattern']}")
         if schema.get("additionalProperties") is False:
             for name in instance:
                 if name not in properties:
-                    raise SchemaError(f"{path}/{name}", "is not allowed")
+                    yield SchemaError(f"{path}/{name}", "is not allowed")
         elif isinstance(schema.get("additionalProperties"), Mapping):
             for name, value in instance.items():
                 if name not in properties:
-                    validate(value, schema["additionalProperties"], f"{path}/{name}")
+                    yield from iter_errors(value, schema["additionalProperties"], f"{path}/{name}")
         for name, child in properties.items():
             if name in instance:
-                validate(instance[name], child, f"{path}/{name}")
+                yield from iter_errors(instance[name], child, f"{path}/{name}")
+
+
+def validate(instance: Any, schema: Mapping[str, Any], path: str = "") -> None:
+    """Raise SchemaError if `instance` does not satisfy `schema` (the first violation found)."""
+    for error in iter_errors(instance, schema, path):
+        raise error
