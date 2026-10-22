@@ -22,7 +22,7 @@
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
   <img src="https://img.shields.io/badge/Vectors-685-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Version-0.7.3-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Version-0.7.4-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
@@ -36,7 +36,7 @@
 
 | | |
 |---|---|
-| 版本 | `0.7.3` |
+| 版本 | `0.7.4` |
 | 成熟度 | 成熟 |
 | 测试 | 89 (`python -m unittest discover -s tests`) and 685 conformance vectors |
 | 技术栈 | Python 3.11+ / JSON Schema / OpenAPI |
@@ -56,6 +56,7 @@
 * **共享节点基础中可选的与代理的 TLS 连接:** `firmware_base` 包含 `mqtt.tls` 开关和 `mqtt.ca_pem` 文本(一个 PEM 证书,最大 2 KB,经过校验)、只信任该机构并检查代理名称的连接,以及五个节点共用的主机测试;默认关闭。
 * **节点健康与布防配置：** `node_health` 消息（雷达、太阳能、电气、报警或壁挂面板节点发送相同的报告）和 `arm_profile`（布防命令中带有的命名布防方式：哪些分区守护、延时、警笛以及服务器通知的力度）都有自己的模式、一致性向量、生成的 TypeScript 与 Kotlin 类型、OpenAPI 路由，以及生成报告的共享固件代码。
 * **历史中的连接事件与系统事件：** 模式 `connection_event`、`system_event` 和 `connection_client`（服务器历史对连接的客户端和系统本身的描述，词汇固定，没有可以放入机密的字段）、其一致性向量、生成的 TypeScript 与 Kotlin 类型，以及列出客户端的 OpenAPI 路由。
+* **合同中的诊断与读数质量：** 不干净启动报告、核心转储、设置安全检查、诊断包、雷达事件和只读诊断令牌消息都有各自的模式、一致性向量和生成的类型；电表通道可以携带其读数的时间和错误计数，逆变器消息可以点名节点限制在上限的数值。
 
 ## 🧩 在 A.R.M.O.R. 中的角色
 
