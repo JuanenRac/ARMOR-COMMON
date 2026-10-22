@@ -195,6 +195,8 @@ export type ElectricalChannel = {
   current_a?: number;
   power_w?: number;
   energy_kwh?: number;
+  reading_age_ms?: number;
+  errors?: number;
   power_estimated?: boolean;
   frequency_hz?: number;
   power_factor?: number;

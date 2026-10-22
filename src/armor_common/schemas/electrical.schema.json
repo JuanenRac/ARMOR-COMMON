@@ -77,6 +77,16 @@
             "maximum": 10000000,
             "description": "The energy that has flowed through the channel since the meter was last reset."
           },
+          "reading_age_ms": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "How old the reading of this channel was, in milliseconds on the node clock, when the message was made. Lets a consumer tell a real 0 W from a reading that has not been refreshed. Absent when the node does not say."
+          },
+          "errors": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "How many requests to this meter failed (a bad reply or no reply) since the node started. Absent when the node does not say."
+          },
           "power_estimated": {
             "type": "boolean",
             "description": "True when power_w and energy_kwh are an estimate and not a measurement: the node made them from a current and a nominal voltage, so they are apparent power (VA) taken as watts. Consumers show them as estimated and do not add them to measured totals without saying so. Absent means measured."
