@@ -99,6 +99,7 @@ data class SolarInverter(
     val load_on: Boolean,
     val warnings: List<String>,
     val warnings_known: Boolean? = null,
+    val clamped: List<String>? = null,
     val pv2_v: Double? = null,
     val pv2_a: Double? = null,
     val pv2_w: Double? = null,

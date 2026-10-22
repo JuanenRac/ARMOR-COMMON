@@ -6,6 +6,9 @@ All notable changes to this project are documented here.
 
 - The repository has a security policy, a code of conduct, a contributing guide and a support file.
 - The banner follows the animated style of the ecosystem banners, with the name, the kind and the technologies of the project.
+- **Node diagnostics in the shared contract:** the dirty-boot report, the core dump, the settings safety check, the diagnostic package, the radar events and the read-only diagnostic token messages, with their schemas, conformance vectors and generated types.
+- **An electrical meter channel may carry `reading_age_ms` and `errors`,** how old its reading is and how many requests to it failed since boot, so a consumer tells a real 0 W from no data.
+- **The inverter message may carry `clamped`,** the names of the numbers the node held at a limit because the inverter sent them beyond what is possible.
 
 ## [0.7.3] - The contract and the shared base to control the nodes from the server
 

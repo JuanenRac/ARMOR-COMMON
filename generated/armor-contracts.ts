@@ -98,6 +98,7 @@ export type SolarInverter = {
   load_on: boolean;
   warnings: string[];
   warnings_known?: boolean;
+  clamped?: string[];
   pv2_v?: number;
   pv2_a?: number;
   pv2_w?: number;
