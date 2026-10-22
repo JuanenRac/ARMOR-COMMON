@@ -196,6 +196,8 @@ data class ElectricalChannel(
     val current_a: Double? = null,
     val power_w: Double? = null,
     val energy_kwh: Double? = null,
+    val reading_age_ms: Long? = null,
+    val errors: Long? = null,
     val power_estimated: Boolean? = null,
     val frequency_hz: Double? = null,
     val power_factor: Double? = null,

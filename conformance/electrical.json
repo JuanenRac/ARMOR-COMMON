@@ -436,6 +436,55 @@
    }
   },
   {
+   "name": "a channel that says how old its reading is and how many requests failed",
+   "valid": true,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "reading_age_ms": 1200,
+      "errors": 3
+     }
+    ]
+   }
+  },
+  {
+   "name": "a negative reading age",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "reading_age_ms": -1
+     }
+    ]
+   }
+  },
+  {
+   "name": "an error count that is not a whole number",
+   "valid": false,
+   "payload": {
+    "kind": "electrical",
+    "node_id": "electrical-1",
+    "timestamp_ms": 5000,
+    "channels": [
+     {
+      "id": "ch1",
+      "domain": "ac",
+      "errors": 1.5
+     }
+    ]
+   }
+  },
+  {
    "name": "power factor above 1",
    "valid": false,
    "payload": {
