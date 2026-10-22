@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased]
+
+- The banner follows the animated style of the ecosystem banners, with the name, the kind and the technologies of the project.
+
 ## [0.7.3] - The contract and the shared base to control the nodes from the server
 
 - **Controlling a node from the server:** two new messages, `node_control_command` (server to node, `armor/control/{node_id}/command`, or `armor/control/all/command` for an arm) and `node_control_result` (node to server, `armor/control/{node_id}/result`), with their schemas, validators (`validate_node_control_command`, `validate_node_control_result`, `parse_control_topic`) and conformance vectors for every operation and every refusal: restart (now or rolling), pause, resume, standby, identify, diagnostics, maintenance on and off. The token is bound to the operation; there is no factory reset, no erase and no deep sleep.
