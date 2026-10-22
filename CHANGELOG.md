@@ -2,6 +2,17 @@
 
 All notable changes to this project are documented here.
 
+## [0.7.5] - Security options as settings, new guards and a validator that reports every fault
+
+- **The limit on wrong passwords per minute is a setting of the node** in the shared firmware: `system.login_limit_per_minute` (30 as always, 0 for none, at most 120), read by the five panels.
+- **A relay can be interlocked with another** (`interlock` in the relay settings, empty by default): a request to close one while the other is closed is refused from the panel, the broker and the central alike, the node never opens the partner by itself, and the alarm's siren is not held back.
+- **The universal image holds no fleet secret unless asked for:** `tools/build_node.sh generic` adds `secrets/generic.conf` only with `ARMOR_WITH_FLEET_SECRET=1`, names that image `*-local` and says it is never to be published, and a public build is refused when the configuration it ended with holds a secret or a set-up code; the option's help says the same.
+- **The release tool refuses a build whose configuration it cannot read,** because an image that cannot be checked for a fleet secret or a set-up code is not published (`--unchecked` is the owner saying so on purpose); a build that holds either is refused as before.
+- **New checks shared by the five nodes:** the Bluetooth session under its lock (`check_ble_session.py`) and the routes, the panels and the stand-in nodes (`check_routes.py`); the guard on the paths of a save also keeps the tolerant read of the settings, the serial set-up and the update check.
+- **The validator can say every fault of a message at once** (`collect_payload_errors`, built on `iter_errors`); the first one is the one `validate_payload` has always raised, and a published schema is still a copy nobody can change for the others.
+- **The contract:** `SecuritySettings` has `network.login_secure_only` (off by default) in the OpenAPI file, and the contracts guide says that ARMOR-ALARM now applies the policy of the server and checks the signed zone feed.
+- **Board names in the shared text:** the touch panel is one board (`lcd7box`), and the shared Kconfig and network comments say so.
+
 ## [0.7.4] - Node diagnostics, reading quality and held values in the contract
 
 - The repository has a security policy, a code of conduct, a contributing guide and a support file.

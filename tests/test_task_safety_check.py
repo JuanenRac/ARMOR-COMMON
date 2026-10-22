@@ -147,6 +147,10 @@ GOOD_CLOCK = "void start(const config::Settings& settings) {\n  set_zone(setting
 GOOD_FILES = {
     "main/api_shared.cpp": GOOD_API, "main/clock_sync.cpp": GOOD_CLOCK, "main/web_server.cpp": "send_ok(r, restart_required);\nint restart_required;\n",
     "panel/text.js": '  savedRestart: ["a", "b", "c", "d", "e", "f", "g", "h"],\n', "panel/app.js": "restart_required savedRestart reboot()",
+    "main/node_store.cpp": "bool ok = config::load_stored(text, first, loaded, dropped);\n",
+    "main/improv_serial.cpp": 'const std::string document = "{\\"uplink\\":\\"wifi\\"}"; bool joined = network::status().sta_connected;\n',
+    "main/github_update.cpp": 'constexpr std::size_t kMaxFirmware = 0x300000;\nif (newer && url.empty()) { result.error = "no_asset_for_board"; }\n',
+    "partitions.csv": "ota_0,      app,  ota_0,    0x20000,  0x300000,\nota_1,      app,  ota_1,    0x320000, 0x300000,\n",
 }
 
 
@@ -174,6 +178,19 @@ class SavePathsTest(unittest.TestCase):
         files = dict(GOOD_FILES, **{"main/api_shared.cpp": GOOD_API.replace("const std::unique_ptr<config::Settings> before(new (std::nothrow) config::Settings(store::settings()));",
                                                                            "const config::Settings before_copy = store::settings();\n  const std::unique_ptr<config::Settings> before(new (std::nothrow) config::Settings(before_copy));")})
         self.assertTrue(any("on the stack" in p for p in self.check(files)))
+
+    def test_what_an_update_and_a_serial_set_up_leave_behind_is_kept(self) -> None:
+        cases = {
+            "main/node_store.cpp": ("bool ok = config::load(text, first, loaded);\n", "load_stored"),
+            "main/improv_serial.cpp": ('const std::string document = "{\\"sta\\":{}}"; bool joined = network::status().sta_connected;\n', "uplink wifi"),
+            "main/github_update.cpp": ("constexpr std::size_t kMaxFirmware = 0x300000;\n", "no_asset_for_board"),
+        }
+        for name, (text, word) in cases.items():
+            self.assertTrue(any(word in problem for problem in self.check(dict(GOOD_FILES, **{name: text}))), name)
+        too_big = dict(GOOD_FILES, **{"main/github_update.cpp": GOOD_FILES["main/github_update.cpp"].replace("0x300000", "0x400000")})
+        self.assertTrue(any("kMaxFirmware" in problem for problem in self.check(too_big)))
+        never_joined = dict(GOOD_FILES, **{"main/improv_serial.cpp": GOOD_FILES["main/improv_serial.cpp"].replace("sta_connected", "has_ip")})
+        self.assertTrue(any("provisioned" in problem for problem in self.check(never_joined)))
 
     def test_a_panel_without_the_restart_note_is_caught(self) -> None:
         for broken in (dict(GOOD_FILES, **{"panel/text.js": '  savedRestart: ["a", "b"],\n'}), dict(GOOD_FILES, **{"panel/app.js": "nothing"})):
