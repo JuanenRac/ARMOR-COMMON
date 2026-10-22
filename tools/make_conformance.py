@@ -301,6 +301,12 @@ def zone_feed(**changes):
     return base
 
 
+def alarm_policy(**changes):
+    base = {"config_hash": True, "zone_feed": True, "zone_feed_signature": False}
+    base.update(changes)
+    return base
+
+
 def server_alert(**changes):
     base = {"service": "armor-server", "event": "alarm.raised", "at": "1970-01-01T00:00:00.000Z", "mode": "armed", "alarm_id": "a1", "severity": "critical", "code": "smoke", "device_id": "smoke-1"}
     base.update(changes)
@@ -1068,6 +1074,23 @@ cases = {
         ("the node repeated inside", False, zone_feed(node_id="alarm-1")),
         ("a missing battery flag", False, without(zone_feed(), "battery_low")),
         ("not an object", False, [1]),
+        ("a signed message", True, zone_feed(seq=1700000000000, sig="a" * 64)),
+        ("a sequence of zero", True, zone_feed(seq=0, sig="0" * 64)),
+        ("a signature without its sequence", False, zone_feed(sig="a" * 64), True),
+        ("a sequence without its signature", False, zone_feed(seq=5), True),
+        ("a signature in capitals", False, zone_feed(seq=1, sig="A" * 64)),
+        ("a signature of 63 characters", False, zone_feed(seq=1, sig="a" * 63)),
+        ("a negative sequence", False, zone_feed(seq=-1, sig="a" * 64)),
+        ("a sequence that is a text", False, zone_feed(seq="1", sig="a" * 64)),
+    ],
+    "alarm_policy": [
+        ("the defaults of a panel", True, alarm_policy()),
+        ("everything on", True, alarm_policy(zone_feed_signature=True)),
+        ("everything off", True, alarm_policy(config_hash=False, zone_feed=False)),
+        ("a missing option", False, without(alarm_policy(), "zone_feed")),
+        ("an option that is not a flag", False, alarm_policy(config_hash="yes")),
+        ("an option that does not exist", False, alarm_policy(disarm_pin="never")),
+        ("not an object", False, [True]),
     ],
     "device_state": [
         ("a relay that is on", True, {"on": True}),

@@ -106,6 +106,94 @@
    "payload": [
     1
    ]
+  },
+  {
+   "name": "a signed message",
+   "valid": true,
+   "payload": {
+    "zone": "front-door",
+    "state": "triggered",
+    "battery_low": false,
+    "seq": 1700000000000,
+    "sig": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+   }
+  },
+  {
+   "name": "a sequence of zero",
+   "valid": true,
+   "payload": {
+    "zone": "front-door",
+    "state": "triggered",
+    "battery_low": false,
+    "seq": 0,
+    "sig": "0000000000000000000000000000000000000000000000000000000000000000"
+   }
+  },
+  {
+   "name": "a signature without its sequence",
+   "valid": false,
+   "payload": {
+    "zone": "front-door",
+    "state": "triggered",
+    "battery_low": false,
+    "sig": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a sequence without its signature",
+   "valid": false,
+   "payload": {
+    "zone": "front-door",
+    "state": "triggered",
+    "battery_low": false,
+    "seq": 5
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a signature in capitals",
+   "valid": false,
+   "payload": {
+    "zone": "front-door",
+    "state": "triggered",
+    "battery_low": false,
+    "seq": 1,
+    "sig": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+   }
+  },
+  {
+   "name": "a signature of 63 characters",
+   "valid": false,
+   "payload": {
+    "zone": "front-door",
+    "state": "triggered",
+    "battery_low": false,
+    "seq": 1,
+    "sig": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+   }
+  },
+  {
+   "name": "a negative sequence",
+   "valid": false,
+   "payload": {
+    "zone": "front-door",
+    "state": "triggered",
+    "battery_low": false,
+    "seq": -1,
+    "sig": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+   }
+  },
+  {
+   "name": "a sequence that is a text",
+   "valid": false,
+   "payload": {
+    "zone": "front-door",
+    "state": "triggered",
+    "battery_low": false,
+    "seq": "1",
+    "sig": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+   }
   }
  ]
 }

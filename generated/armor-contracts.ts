@@ -646,6 +646,20 @@ export type AlarmResult = {
   phase: "disarmed" | "exit_delay" | "armed" | "entry_delay" | "alarm";
 };
 
+export type AlarmZoneFeed = {
+  zone: string;
+  state: "normal" | "triggered" | "tamper";
+  battery_low: boolean;
+  seq?: number;
+  sig?: string;
+};
+
+export type AlarmPolicy = {
+  config_hash: boolean;
+  zone_feed: boolean;
+  zone_feed_signature: boolean;
+};
+
 export type NodeHealthBoot = {
   cause: "panic" | "task_watchdog" | "interrupt_watchdog" | "other_watchdog" | "brownout" | "power_glitch" | "cpu_lockup" | "out_of_memory" | "guard_missing_task" | "guard_low_memory" | "guard_dead_man" | "guard";
   reset_reason: "power_on" | "external" | "software" | "panic" | "int_wdt" | "task_wdt" | "other_wdt" | "deep_sleep" | "brownout" | "sdio" | "usb" | "jtag" | "efuse" | "power_glitch" | "cpu_lockup" | "unknown";

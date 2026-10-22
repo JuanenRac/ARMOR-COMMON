@@ -41,7 +41,7 @@ _TOKEN_ACTIONS = ("close_a", "close_b")
 # The alarm message (an ARMOR-ALARM node) has one topic per node: armor/alarm/{node_id}/state; the panel is commanded on armor/alarm/{node_id}/command (server -> node)
 # and answered on armor/alarm/{node_id}/result (node -> server).
 ALARM_TOPIC_PREFIX = "armor/alarm/"
-ALARM_LEAVES = ("state", "command", "result", "zigbee")   # "zigbee": what the server tells the panel about the Zigbee sensor of a zone (alarm_zone_feed)
+ALARM_LEAVES = ("state", "command", "result", "zigbee", "policy")   # "zigbee": what the server tells the panel about the Zigbee sensor of a zone (alarm_zone_feed); "policy": the security options it keeps (alarm_policy)
 ALARM_KINDS = ("alarm", "alarm_command", "alarm_result")
 # The network message (an ARMOR-NETWORK node watching the local network) has one topic per node: armor/network/{node_id}/state.
 NETWORK_TOPIC_PREFIX = "armor/network/"
@@ -52,7 +52,7 @@ SERVER_ALERT_TOPIC = "armor/server/alert"
 _RELAY_COMMANDS = ("on", "off", "true", "false", "1", "0", "toggle")
 # The health report of a node of any family has one topic per node: armor/health/{node_id} (node -> server). It is not the presence message of a radar (armor/node/{node_id}/health).
 NODE_HEALTH_TOPIC_PREFIX = "armor/health/"
-_EXTRA_SCHEMAS = ("alarm_zone_feed", "device_state", "server_alert", "network_orders", "node_health", "arm_profile", "connection_event", "system_event", "connection_client",
+_EXTRA_SCHEMAS = ("alarm_zone_feed", "alarm_policy", "device_state", "server_alert", "network_orders", "node_health", "arm_profile", "connection_event", "system_event", "connection_client",
                   "solar_battery_command", "solar_battery_result", "node_control_command", "node_control_result", "node_maintenance", "radar_event",
                   "diagnostic_token_request", "diagnostic_token_created", "diagnostic_token_info")
 # The events of the perimeter engine of a radar node: armor/radar/{node_id}/events (node -> server, QoS 1, never retained).
@@ -797,6 +797,33 @@ def validate_alarm_zone_feed(topic: str, payload: Mapping[str, object]) -> None:
     if not isinstance(payload, Mapping):
         raise ContractError("payload must be an object")
     validate_payload("alarm_zone_feed", payload)
+    if ("seq" in payload) != ("sig" in payload):
+        raise ContractError("seq and sig come together")
+
+
+def zone_feed_signature(key_hex: str, node_id: str, payload: Mapping[str, object]) -> str:
+    """The ``sig`` of a signed zone message: HMAC-SHA256 in hex, with the key of the panel (64 hex characters), over ``node_id|zone|state|battery_low (1 or 0)|seq``.
+
+    A panel (and a test) uses this to check a message of the server; ``seq`` must also be above the last one the panel accepted.
+    """
+    import hashlib
+    import hmac
+    if not isinstance(key_hex, str) or len(key_hex) != 64 or any(c not in "0123456789abcdef" for c in key_hex):
+        raise ContractError("the key is 64 hex characters")
+    _check_node_id(node_id)
+    validate_alarm_zone_feed(f"armor/alarm/{node_id}/zigbee", payload)
+    if "seq" not in payload:
+        raise ContractError("the message is not signed")
+    text = f"{node_id}|{payload['zone']}|{payload['state']}|{1 if payload['battery_low'] else 0}|{payload['seq']}"
+    return hmac.new(bytes.fromhex(key_hex), text.encode("utf-8"), hashlib.sha256).hexdigest()
+
+
+def validate_alarm_policy(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate the policy the server tells a panel: the topic ``armor/alarm/{node_id}/policy`` and the schema."""
+    parse_alarm_topic(topic, "policy")
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    validate_payload("alarm_policy", payload)
 
 
 def parse_device_topic(topic: str) -> tuple[str, str, str]:

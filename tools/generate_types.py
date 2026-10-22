@@ -50,6 +50,8 @@ MESSAGES = {
     "alarm": ("Alarm", {"zones": "AlarmZone", "events": "AlarmEvent"}),
     "alarm_command": ("AlarmCommand", {"profile": "ArmProfile", "zones": "ArmProfileZone"}),
     "alarm_result": ("AlarmResult", {}),
+    "alarm_zone_feed": ("AlarmZoneFeed", {}),
+    "alarm_policy": ("AlarmPolicy", {}),
     "node_health": ("NodeHealth", {}),
     "connection_event": ("ConnectionEvent", {}),
     "system_event": ("SystemEvent", {}),

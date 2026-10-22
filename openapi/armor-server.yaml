@@ -331,7 +331,7 @@ paths:
       security: []
       summary: Is the Studio session cookie valid
       responses:
-        '200': { description: '{ "authenticated": boolean, "user": { id, username, role } when signed in }', content: { application/json: { schema: { $ref: '#/components/schemas/StudioSessionState' } } } }
+        '200': { description: '{ "authenticated": boolean, "user": { id, username, role }, "capabilities" } when signed in; an older server has no "capabilities" and the clients then allow what the role allows', content: { application/json: { schema: { $ref: '#/components/schemas/StudioSessionState' } } } }
     post:
       security: []
       summary: Sign in (rate limited); sets an HttpOnly, SameSite=Strict cookie
@@ -893,6 +893,30 @@ paths:
       responses:
         '200': { description: The settings as kept, content: { application/json: { schema: { $ref: '#/components/schemas/CaptureSettingsSaved' } } } }
         '400': { description: 'A value is out of range, not the right type or unknown', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/security/settings:
+    get:
+      summary: The security options in force (an administrator only), the ones stored, the defaults and the ones the environment of the server fixes
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: The options, content: { application/json: { schema: { $ref: '#/components/schemas/SecuritySettingsState' } } } }
+        '403': { description: Not an administrator, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+    put:
+      summary: Change one or more options (an administrator only; from outside the house after proving identity again). A name that does not exist, a value that is not on its list or an option the environment fixes is a 400 and nothing changes. The audit trail says which changes lower the security
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/SecuritySettings' } } } }
+      responses:
+        '200': { description: The options after the change, content: { application/json: { schema: { $ref: '#/components/schemas/SecuritySettingsState' } } } }
+        '400': { description: 'Unknown option, invalid value or fixed by the environment (code invalid_setting, setting names it)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'Not an administrator, or the proof of identity is needed again', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/alarm/zone-feed/key/{node}:
+    get:
+      summary: The key a panel verifies the signature of its zone messages with (HMAC-SHA256, 64 hex characters; an administrator only, from outside the house after proving identity again). It is entered in the panel and never travels on the broker
+      security: [{ admin: [] }]
+      parameters: [{ name: node, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: The key of the panel, content: { application/json: { schema: { $ref: '#/components/schemas/ZoneFeedKey' } } } }
+        '400': { description: Not a node id, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'Not an administrator, or the proof of identity is needed again', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/alarm/zone-links:
     get:
       summary: 'The Zigbee devices linked to zones of alarm panels ({ links: [{ device_id, node_id, zone_id }] })'
@@ -2296,6 +2320,54 @@ components:
       properties:
         authenticated: { type: boolean }
         user: { $ref: '#/components/schemas/AccountUser' }
+        capabilities: { $ref: '#/components/schemas/StudioCapabilities' }
+    StudioCapabilities:
+      type: object
+      description: What the signed-in person may do and what this server offers, so Studio and the phone show or hide from one place. The routes still check the role. A client that finds no such field (an older server) allows what the role allows, as before, and hides what needs a feature it was not told about
+      required: [version, actions, features, security]
+      properties:
+        version: { type: integer, enum: [1] }
+        actions:
+          type: object
+          required: [arm, disarm, acknowledge, operate, camera_control, administer, manage_users, security_settings]
+          properties:
+            arm: { type: boolean }
+            disarm: { type: boolean }
+            acknowledge: { type: boolean }
+            operate: { type: boolean, description: 'Change devices, cameras, rules and the installation' }
+            camera_control: { type: boolean, description: 'Move, record and take photos with the cameras' }
+            administer: { type: boolean }
+            manage_users: { type: boolean }
+            security_settings: { type: boolean }
+        features: { type: array, items: { type: string, enum: [security_settings, zone_feed_key, rtsp_tunnel] }, description: The parts of this server that exist in this version }
+        security:
+          allOf: [{ $ref: '#/components/schemas/SecuritySettings' }, { type: object, properties: { locked: { type: array, items: { type: string }, description: The options the environment of the server fixes } } }]
+    SecuritySettings:
+      type: object
+      additionalProperties: false
+      description: 'The security options an administrator sets in Studio. The default of each is the way the server always behaved. alarm.disarm_pin never = no PIN is asked to disarm or silence a siren (the duress PIN is untouched), if_set = asked of a user who has one, always = asked of everybody and a user without one cannot disarm (ARMOR_DISARM_PIN=required fixes it to always and wins over the setting). voice.silence_confirmation is sent to the voice service with every turn (header X-Armor-Policy). alarm.config_hash, server.zone_feed and server.zone_feed_signature reach the panels as the policy message (armor/alarm/{node_id}/policy). media.rtsp_proxy off puts the camera login in the command line of FFmpeg, visible to every user of the machine'
+      properties:
+        alarm.disarm_pin: { type: string, enum: [never, if_set, always], default: if_set }
+        voice.silence_confirmation: { type: string, enum: ['off', pin, double_turn], default: 'off' }
+        alarm.config_hash: { type: boolean, default: true }
+        server.zone_feed: { type: boolean, default: true }
+        server.zone_feed_signature: { type: boolean, default: true }
+        media.rtsp_proxy: { type: boolean, default: true }
+    SecuritySettingsState:
+      type: object
+      required: [settings, stored, defaults, locked]
+      properties:
+        settings: { $ref: '#/components/schemas/SecuritySettings' }
+        stored: { $ref: '#/components/schemas/SecuritySettings' }
+        defaults: { $ref: '#/components/schemas/SecuritySettings' }
+        locked: { type: array, items: { type: string } }
+    ZoneFeedKey:
+      type: object
+      required: [node_id, key, algorithm]
+      properties:
+        node_id: { type: string }
+        key: { type: string, pattern: '^[0-9a-f]{64}$' }
+        algorithm: { type: string, enum: [HMAC-SHA256] }
     StudioSessionOpened:
       type: object
       description: A session was opened (201), or the second factor is still needed (200 with totp_required)
