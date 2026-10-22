@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/diagnostic-token-request-0.1.0.json",
+  "title": "A.R.M.O.R. request of an administrator for a read-only diagnostic token",
+  "description": "The body of POST /api/v1/diagnostics/tokens. The token is for a person (or a tool) that has to look at why a node misbehaves without being given an account: it can read, and nothing else, the health, the latest diagnostic package and the log of the nodes the administrator chose, until it expires or is revoked. It cannot order anything, change anything, read another node or anything of the house.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "nodes"
+  ],
+  "properties": {
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+      },
+      "description": "The nodes the token may read, one to sixteen."
+    },
+    "ttl_s": {
+      "type": "integer",
+      "minimum": 300,
+      "maximum": 86400,
+      "description": "How long the token lives, in seconds: 300 to 86400 (24 hours), 7200 (2 hours) when absent."
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 48,
+      "description": "A short note for the list (who it is for)."
+    }
+  }
+}

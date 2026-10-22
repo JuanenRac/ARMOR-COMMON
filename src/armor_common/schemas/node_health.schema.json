@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://armor.local/schemas/node-health-0.1.0.json",
   "title": "A.R.M.O.R. health report of one node",
-  "description": "How one node of any family (radar, solar, electrical, alarm, hmi) is doing, in the same words for all of them: how long it has been up and why it last restarted, how much memory it has, the link it reaches the network by, how often it lost the broker and the last thing it complained of. Published to armor/health/{node_id} every minute or so (never retained). It is not the presence message of a radar (health.schema.json, armor/node/{node_id}/health): that one says only whether the node is there. A report is information: it carries no command and nothing is decided by it on the node.",
+  "description": "How one node of any family (radar, solar, electrical, alarm, hmi) is doing, in the same words for all of them: how long it has been up and why it last restarted, how much memory it has, the link it reaches the network by, how often it lost the broker and the last thing it complained of. Published to armor/health/{node_id} every minute or so (never retained). It is not the presence message of a radar (health.schema.json, armor/node/{node_id}/health): that one says only whether the node is there. After a dirty start it also says why the last run ended (boot), always how the memory gate and the core dump stand, and a radar node adds its sensors and the facts of its perimeter engine. After a dirty start it also says why the last run ended (boot), always how the memory gate and the core dump stand, and a radar node adds its sensors and the facts of its perimeter engine. A report is information: it carries no command and nothing is decided by it on the node.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -181,6 +181,295 @@
       "minimum": 0,
       "maximum": 86400,
       "description": "Optional, when maintenance is on: seconds left."
+    },
+    "boot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cause",
+        "reset_reason",
+        "coredump",
+        "deliberate",
+        "guard"
+      ],
+      "description": "Only after a dirty start (a crash, a watchdog, a sag of the supply, an out-of-memory, a restart of the guard) and only for the first ten minutes of the run: why the last run ended. A clean start says nothing. The server keeps it once, in the node's log of restarts and in the History.",
+      "properties": {
+        "cause": {
+          "type": "string",
+          "enum": [
+            "panic",
+            "task_watchdog",
+            "interrupt_watchdog",
+            "other_watchdog",
+            "brownout",
+            "power_glitch",
+            "cpu_lockup",
+            "out_of_memory",
+            "guard_missing_task",
+            "guard_low_memory",
+            "guard_dead_man",
+            "guard"
+          ],
+          "description": "Why the last run ended: a crash (panic), a watchdog, a sag of the supply (brownout, power_glitch), the CPU locking up, an allocation that failed (out_of_memory) or a restart of the node's own guard (guard_missing_task, guard_low_memory, guard_dead_man, guard)."
+        },
+        "reset_reason": {
+          "type": "string",
+          "enum": [
+            "power_on",
+            "external",
+            "software",
+            "panic",
+            "int_wdt",
+            "task_wdt",
+            "other_wdt",
+            "deep_sleep",
+            "brownout",
+            "sdio",
+            "usb",
+            "jtag",
+            "efuse",
+            "power_glitch",
+            "cpu_lockup",
+            "unknown"
+          ],
+          "description": "The reset reason of the chip at this start."
+        },
+        "uptime_before_s": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "How long the node had run when it ended, as of the last look the guard took (a few seconds before the end at most). Absent when the node could not keep it."
+        },
+        "heap_internal_free": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The internal memory free at that last look; sent with heap_internal_largest."
+        },
+        "heap_internal_largest": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The biggest block of internal memory at that last look (never more than heap_internal_free)."
+        },
+        "coredump": {
+          "type": "boolean",
+          "description": "A core dump of the crash is waiting in the node's flash (an administrator of the node's panel can read it)."
+        },
+        "deliberate": {
+          "type": "boolean",
+          "description": "Someone asked for the last restart on purpose (the server's order, the panel)."
+        },
+        "guard": {
+          "type": "boolean",
+          "description": "The node's own guard asked for the last restart."
+        }
+      }
+    },
+    "memory_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "closed",
+        "transitions",
+        "close_free",
+        "close_block",
+        "open_free",
+        "open_block"
+      ],
+      "description": "The memory gate at the door of the panel: closed or open, how often it changed, and the levels it works by.",
+      "properties": {
+        "closed": {
+          "type": "boolean",
+          "description": "The gate at the door of the node's panel is closed: new connections are refused while the internal memory is short."
+        },
+        "transitions": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "How many times the gate has opened or closed since the node started."
+        },
+        "close_free": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Bytes of free internal memory under which the gate closes."
+        },
+        "close_block": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Bytes of the biggest internal block under which the gate closes."
+        },
+        "open_free": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Bytes of free internal memory over which the gate opens again."
+        },
+        "open_block": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Bytes of the biggest internal block over which the gate opens again."
+        }
+      }
+    },
+    "coredump": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "present"
+      ],
+      "description": "Whether the node holds a core dump of its last crash. Only an administrator of the node's own panel can read, download or erase it.",
+      "properties": {
+        "present": {
+          "type": "boolean",
+          "description": "A core dump is waiting in the node's flash."
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Its size in bytes; only when present."
+        }
+      }
+    },
+    "config_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "What the checks of the settings found at the start, said only for the first ten minutes of the run. Absent when there is nothing to say.",
+      "properties": {
+        "snapshot": {
+          "type": "string",
+          "enum": [
+            "restored",
+            "failed"
+          ],
+          "description": "The settings were read from the copy made before the last firmware update (restored) or the copy did not help (failed)."
+        },
+        "reverted": {
+          "type": "string",
+          "enum": [
+            "reapplied",
+            "failed"
+          ],
+          "description": "The settings read again fifteen seconds after the start were not what the node had read or written: it wrote them again (reapplied) or could not (failed)."
+        }
+      }
+    },
+    "sensors": {
+      "type": "array",
+      "maxItems": 3,
+      "description": "Radar nodes only: one entry for each sensor on a serial port (1 to 3): who it is, whether it reports, the firmware it told, and whether its own Bluetooth is open. The only text taken from a sensor is its firmware and its Bluetooth address, both letters, digits and a few signs.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sensor_id",
+          "model",
+          "state",
+          "firmware_known",
+          "bluetooth"
+        ],
+        "properties": {
+          "sensor_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          },
+          "model": {
+            "type": "string",
+            "enum": [
+              "ld2450",
+              "ld2461",
+              "ld2410",
+              "ld2412",
+              "ld2410s",
+              "mr24hpc1"
+            ]
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "reporting",
+              "no_data",
+              "garbled",
+              "silent",
+              "bridge"
+            ],
+            "description": "reporting, no_data (not one byte since the start), garbled (bytes but no valid frame), silent (it stopped) or bridge (the serial bridge has the sensor)."
+          },
+          "firmware_known": {
+            "type": "boolean",
+            "description": "The sensor told its firmware version."
+          },
+          "firmware": {
+            "type": "string",
+            "pattern": "^[0-9A-Za-z._:-]{1,24}$",
+            "description": "Its firmware version as it told it; only when firmware_known."
+          },
+          "bluetooth": {
+            "type": "string",
+            "enum": [
+              "unknown",
+              "open",
+              "closed",
+              "none"
+            ],
+            "description": "The state of the sensor's own Bluetooth: open (it can be reached by a phone), closed, none (the model has none) or unknown."
+          },
+          "mac": {
+            "type": "string",
+            "pattern": "^[0-9A-Za-z:._-]{1,17}$",
+            "description": "Its Bluetooth address; only while bluetooth is open."
+          },
+          "bluetooth_alert": {
+            "type": "boolean",
+            "description": "The Bluetooth is open (or could not be closed) while the node's rule is to keep it closed. Only sent when true."
+          },
+          "quirk": {
+            "type": "string",
+            "enum": [
+              "ld2412_bad_firmware",
+              "ld2412_unknown_firmware"
+            ],
+            "description": "A known problem of this sensor's firmware (the LD2412 V1.24 and V1.26 keep their Bluetooth on); only when there is one."
+          }
+        }
+      }
+    },
+    "radar": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "perimeter_enabled",
+        "masked",
+        "wifi_jam",
+        "bridge_open",
+        "events_buffered",
+        "sensor_bluetooth_off"
+      ],
+      "description": "Radar nodes only: a few facts of the perimeter engine.",
+      "properties": {
+        "perimeter_enabled": {
+          "type": "boolean",
+          "description": "The node's own perimeter engine is on."
+        },
+        "masked": {
+          "type": "boolean",
+          "description": "The sensors saw nothing for the configured time while the perimeter was armed (covered)."
+        },
+        "wifi_jam": {
+          "type": "boolean",
+          "description": "The node suspects the Wi-Fi is being jammed."
+        },
+        "bridge_open": {
+          "type": "boolean",
+          "description": "The transparent serial bridge to a sensor is open."
+        },
+        "events_buffered": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Events kept in the node's flash because the broker could not be reached."
+        },
+        "sensor_bluetooth_off": {
+          "type": "boolean",
+          "description": "The node's rule is to keep the sensors' own Bluetooth closed."
+        }
+      }
     }
   }
 }

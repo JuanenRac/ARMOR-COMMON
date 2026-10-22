@@ -1237,6 +1237,103 @@
     1,
     2
    ]
+  },
+  {
+   "name": "the execute of diagnostics asking for the package",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "diagnostics",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "detail": "package"
+   }
+  },
+  {
+   "name": "the execute of diagnostics asking for the log",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "diagnostics",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "detail": "log"
+   }
+  },
+  {
+   "name": "a detail on an arm",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "diagnostics",
+    "mode": "now",
+    "requested_by": "ana",
+    "detail": "package"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a detail on the execute of a restart",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "detail": "package"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a detail that is not on the list",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "diagnostics",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "detail": "everything"
+   }
+  },
+  {
+   "name": "a detail as a number",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d012345678",
+    "action": "execute",
+    "operation": "diagnostics",
+    "mode": "now",
+    "requested_by": "ana",
+    "token": "0123456789abcdef0123456789abcdef",
+    "detail": 1
+   }
   }
  ]
 }

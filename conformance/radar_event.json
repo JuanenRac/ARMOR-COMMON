@@ -1,0 +1,513 @@
+{
+ "kind": "radar_event",
+ "vectors": [
+  {
+   "name": "a zone taken",
+   "valid": true,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "zone_occupied",
+    "name": "garden",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "walking",
+    "value": 0
+   }
+  },
+  {
+   "name": "a zone left after a time",
+   "valid": true,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "zone_clear",
+    "name": "garden",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "walking",
+    "value": 42
+   }
+  },
+  {
+   "name": "a target that stays",
+   "valid": true,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "loiter",
+    "name": "garden",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "still",
+    "value": 30
+   }
+  },
+  {
+   "name": "a line crossed in",
+   "valid": true,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "tripwire",
+    "name": "gate",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "walking",
+    "value": 0,
+    "direction": "in",
+    "count": 3
+   }
+  },
+  {
+   "name": "a line crossed out",
+   "valid": true,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "tripwire",
+    "name": "gate",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "walking",
+    "value": 0,
+    "direction": "out",
+    "count": 1
+   }
+  },
+  {
+   "name": "a path that was not followed",
+   "valid": true,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "path_violation",
+    "name": "house",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "walking",
+    "value": 0,
+    "from": "street"
+   }
+  },
+  {
+   "name": "a path with no zone it came from",
+   "valid": true,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "path_violation",
+    "name": "house",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "walking",
+    "value": 0
+   }
+  },
+  {
+   "name": "sensors covered",
+   "valid": true,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 0,
+    "boot": 5,
+    "seq": 1,
+    "event": "masking",
+    "value": 10
+   }
+  },
+  {
+   "name": "the cover is off",
+   "valid": true,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 0,
+    "boot": 5,
+    "seq": 2,
+    "event": "masking_end"
+   }
+  },
+  {
+   "name": "a sensor with its Bluetooth open",
+   "valid": true,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 5,
+    "seq": 3,
+    "event": "sensor_bluetooth_open",
+    "name": "ld2450",
+    "sensor_id": 1
+   }
+  },
+  {
+   "name": "a sensor with its Bluetooth closed again",
+   "valid": true,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 5,
+    "seq": 4,
+    "event": "sensor_bluetooth_closed",
+    "name": "ld2450",
+    "sensor_id": 1
+   }
+  },
+  {
+   "name": "the Wi-Fi jammed",
+   "valid": true,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 5,
+    "seq": 5,
+    "event": "wifi_jam"
+   }
+  },
+  {
+   "name": "the Wi-Fi back",
+   "valid": true,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 5,
+    "seq": 6,
+    "event": "wifi_jam_end"
+   }
+  },
+  {
+   "name": "the serial bridge opened by an administrator",
+   "valid": true,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 5,
+    "seq": 7,
+    "event": "bridge_opened",
+    "name": "ld2410",
+    "sensor_id": 2,
+    "by": "ana"
+   }
+  },
+  {
+   "name": "the serial bridge closed",
+   "valid": true,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 5,
+    "seq": 8,
+    "event": "bridge_closed",
+    "name": "ld2410",
+    "sensor_id": 2
+   }
+  },
+  {
+   "name": "an event that is not on the list",
+   "valid": false,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "alarm_all",
+    "name": "garden",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "walking",
+    "value": 0
+   }
+  },
+  {
+   "name": "a free text member",
+   "valid": false,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "zone_occupied",
+    "name": "garden",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "walking",
+    "value": 0,
+    "text": "hello"
+   }
+  },
+  {
+   "name": "a name that is too long",
+   "valid": false,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "zone_occupied",
+    "name": "xxxxxxxxxxxxxxxxxxxxxxxxx",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "walking",
+    "value": 0
+   }
+  },
+  {
+   "name": "a sequence of zero",
+   "valid": false,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 0,
+    "event": "zone_occupied",
+    "name": "garden",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "walking",
+    "value": 0
+   }
+  },
+  {
+   "name": "a fourth sensor",
+   "valid": false,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "zone_occupied",
+    "name": "garden",
+    "sensor_id": 4,
+    "track_id": 2,
+    "movement": "walking",
+    "value": 0
+   }
+  },
+  {
+   "name": "a track of zero",
+   "valid": false,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "zone_occupied",
+    "name": "garden",
+    "sensor_id": 1,
+    "track_id": 0,
+    "movement": "walking",
+    "value": 0
+   }
+  },
+  {
+   "name": "a movement outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "zone_occupied",
+    "name": "garden",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "flying",
+    "value": 0
+   }
+  },
+  {
+   "name": "a direction that is not in or out",
+   "valid": false,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "tripwire",
+    "name": "garden",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "walking",
+    "value": 0,
+    "direction": "up"
+   }
+  },
+  {
+   "name": "a direction on a zone",
+   "valid": false,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "zone_occupied",
+    "name": "garden",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "walking",
+    "value": 0,
+    "direction": "in"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a zone it came from on a tripwire",
+   "valid": false,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "tripwire",
+    "name": "garden",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "walking",
+    "value": 0,
+    "from": "street"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an administrator on a zone",
+   "valid": false,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "zone_occupied",
+    "name": "garden",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "walking",
+    "value": 0,
+    "by": "ana"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "an administrator with spaces",
+   "valid": false,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 0,
+    "boot": 5,
+    "seq": 9,
+    "event": "bridge_opened",
+    "sensor_id": 1,
+    "by": "ana maria"
+   }
+  },
+  {
+   "name": "a Bluetooth event without the sensor",
+   "valid": false,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 0,
+    "boot": 5,
+    "seq": 10,
+    "event": "sensor_bluetooth_open"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a jam that is about a target",
+   "valid": false,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "radar-1",
+    "timestamp_ms": 0,
+    "boot": 5,
+    "seq": 11,
+    "event": "wifi_jam",
+    "track_id": 1
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "uppercase node id",
+   "valid": false,
+   "payload": {
+    "kind": "radar_event",
+    "node_id": "Radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "zone_occupied",
+    "name": "garden",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "walking",
+    "value": 0
+   }
+  },
+  {
+   "name": "another kind",
+   "valid": false,
+   "payload": {
+    "kind": "telemetry",
+    "node_id": "radar-1",
+    "timestamp_ms": 1760000000000,
+    "boot": 123456789,
+    "seq": 7,
+    "event": "zone_occupied",
+    "name": "garden",
+    "sensor_id": 1,
+    "track_id": 2,
+    "movement": "walking",
+    "value": 0
+   }
+  },
+  {
+   "name": "not an object",
+   "valid": false,
+   "payload": [
+    1,
+    2
+   ]
+  }
+ ]
+}

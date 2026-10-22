@@ -172,6 +172,110 @@ paths:
         '409': { description: 'busy: an order is still under way; no_nodes: no node has reported lately', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '429': { description: Too many orders, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '503': { description: 'mqtt_unavailable: the broker is not connected', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/diagnostics/tokens:
+    post:
+      summary: >-
+        Issue a READ-ONLY diagnostic token (an administrator who proved themselves again a moment ago). The token lets a person who has no account look at why the nodes the administrator chose misbehave:
+        it reads, with GET and nothing else, the health, the latest diagnostic package and the latest log of those nodes until it expires (`ttl_s` 300 to 86400, 7200 when absent) or is revoked. It
+        cannot order anything, change anything, read another node or anything of the house, and it never reaches a node: it reads what the server already holds. The secret (`token`) is in this answer
+        and nowhere else; the server keeps only its SHA-256. At most twenty tokens are active at a time. Issue, use and revocation are in the audit trail and the History.
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '../src/armor_common/schemas/diagnostic_token_request.schema.json' } } } }
+      responses:
+        '201': { description: 'The token, shown once', content: { application/json: { schema: { $ref: '../src/armor_common/schemas/diagnostic_token_created.schema.json' } } } }
+        '400': { description: 'invalid_request', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'Not an administrator, or the proof of identity is old (code elevation_required)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'unknown_node: no node of that name has reported', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'too_many_tokens: twenty are active already; revoke one first', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: Too many tokens asked for, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+    get:
+      summary: The diagnostic tokens, newest first, with who issued them, for which nodes, until when, how often they were used and whether they are active, expired or revoked (an administrator); never a secret and never a hash
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: The tokens, content: { application/json: { schema: { $ref: '#/components/schemas/DiagnosticTokenList' } } } }
+  /api/v1/diagnostics/tokens/{id}:
+    delete:
+      summary: Revoke a diagnostic token now (an administrator); a token that is revoked or expired is refused at once
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-f0-9]{12}$' } }]
+      responses:
+        '204': { description: Revoked }
+        '404': { description: 'not_found: there is no active token of that id', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/diagnostics/nodes:
+    get:
+      summary: >-
+        The nodes a read-only diagnostic token covers, with their status and when a package and a log were last delivered. Called WITH the token (`Authorization: Bearer armor-diag-...`), not with
+        a session. Every refusal of an unknown, expired or revoked token is the same 401; a token that makes more than thirty requests a minute, or an address that is refused twenty times a minute, gets 429.
+      security: [{ diagnosticBearer: [] }]
+      responses:
+        '200': { description: The nodes of the token, content: { application/json: { schema: { $ref: '#/components/schemas/DiagnosticNodes' } } } }
+        '401': { description: 'invalid_token: not a token, or expired, or revoked', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: Too many requests or too many refused attempts, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/diagnostics/nodes/{id}:
+    get:
+      summary: The health of one node of the token, with the history of its memory and signal and the log of its restarts; the last error is washed again and the name of the person who last ordered the node is left out
+      security: [{ diagnosticBearer: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,63}$' } }]
+      responses:
+        '200': { description: The node, content: { application/json: { schema: { $ref: '#/components/schemas/NodeHealthEntry' } } } }
+        '401': { description: 'invalid_token', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'out_of_scope: the token does not cover this node', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'not_found: the node has not reported', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: Too many requests, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/diagnostics/nodes/{id}/package:
+    get:
+      summary: The latest diagnostic package the node delivered (memory, tasks, why it last started, versions, the allowed part of its settings, the core dump summary, the newest log), washed again of anything that looks like a credential
+      security: [{ diagnosticBearer: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,63}$' } }]
+      responses:
+        '200': { description: The package, content: { application/json: { schema: { $ref: '#/components/schemas/DiagnosticPackageAnswer' } } } }
+        '401': { description: 'invalid_token', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'out_of_scope', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'no_package: the node has delivered none', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: Too many requests, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/diagnostics/nodes/{id}/log:
+    get:
+      summary: The latest log the node delivered, washed again
+      security: [{ diagnosticBearer: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,63}$' } }]
+      responses:
+        '200': { description: The log, content: { application/json: { schema: { $ref: '#/components/schemas/DiagnosticLogAnswer' } } } }
+        '401': { description: 'invalid_token', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'out_of_scope', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'no_log: the node has delivered none', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: Too many requests, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/nodes/{id}/diagnostics:
+    get:
+      summary: What the node delivered when an administrator asked for its diagnostics with `detail` package or log - the latest package and the latest log, with the moment and the person who asked (an administrator)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,63}$' } }]
+      responses:
+        '200': { description: What the node delivered, content: { application/json: { schema: { $ref: '#/components/schemas/NodeDiagnostics' } } } }
+        '404': { description: Unknown node, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/nodes/{id}/diagnostics/package:
+    get:
+      summary: The latest package of the node; with `?download=1` as a file to keep (an administrator, audited)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,63}$' } }, { name: download, in: query, required: false, schema: { type: string, enum: ['1'] } }]
+      responses:
+        '200': { description: The package, content: { application/json: { schema: { $ref: '#/components/schemas/DiagnosticPackageAnswer' } } } }
+        '404': { description: 'no_package: the node has delivered none', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/nodes/{id}/diagnostics/log:
+    get:
+      summary: The latest log of the node as plain text; with `?download=1` as a file to keep (an administrator, audited)
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,63}$' } }, { name: download, in: query, required: false, schema: { type: string, enum: ['1'] } }]
+      responses:
+        '200': { description: The log as plain text, content: { text/plain: { schema: { $ref: '#/components/schemas/PlainText' } } } }
+        '404': { description: 'no_log: the node has delivered none', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/radar/events:
+    get:
+      summary: The newest events of the perimeter engine of the radar nodes (a zone taken or left, a target that stays, a line crossed, a covered sensor, a sensor whose own Bluetooth is open ...), newest first; `node` narrows to one node, `limit` is 1 to 500 (100 when absent)
+      security: [{ operator: [] }]
+      parameters: [{ name: node, in: query, required: false, schema: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,63}$' } }, { name: limit, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 500 } }]
+      responses:
+        '200': { description: The events, content: { application/json: { schema: { $ref: '#/components/schemas/RadarEventList' } } } }
+        '400': { description: 'invalid_request', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/nodes/maintenance:
     get:
       summary: The planned-maintenance windows held now, from nodes that announced them and from operators (any signed-in user); each one is bounded by the server
@@ -1842,6 +1946,7 @@ components:
     operatorBearer: { type: http, scheme: bearer, description: ARMOR_OPERATOR_TOKEN }
     aiBearer: { type: http, scheme: bearer, description: 'ARMOR_AI_TOKEN - the observation service, which opens only the /api/v1/ai routes' }
     operator: { type: apiKey, in: cookie, name: armor_studio_session, description: 'Studio session, operator session or operator bearer token' }
+    diagnosticBearer: { type: http, scheme: bearer, description: 'A read-only diagnostic token (armor-diag-...) issued by an administrator with POST /api/v1/diagnostics/tokens; it opens only the four GET routes under /api/v1/diagnostics/nodes, for the nodes it names' }
     studio: { type: apiKey, in: cookie, name: armor_studio_session, description: A signed-in Studio user }
     streamTicket: { type: apiKey, in: query, name: ticket, description: 'The short-lived ticket that POST /api/v1/cameras/{id}/stream-ticket hands out for the live picture' }
     admin: { type: apiKey, in: cookie, name: armor_studio_session, description: A signed-in Studio user with the admin role (bearer tokens do not qualify) }
@@ -2600,6 +2705,69 @@ components:
         operation: { type: string, enum: [restart, pause, resume, standby, identify, diagnostics, maintenance_on, maintenance_off] }
         confirm: { type: string, description: 'The name of the node, typed again by the person; required for restart, pause and standby' }
         duration_s: { type: integer, minimum: 1, maximum: 86400, description: 'Only for pause (60..3600, default 3600), identify (5..300, default 30) and maintenance_on (60..28800, default 3600)' }
+        detail: { type: string, enum: [package, log], description: 'Only for diagnostics, one node at a time: ask for the diagnostic package (memory, tasks, why the node last started, versions, the allowed part of its settings, the core dump summary, the newest log - never a secret) or for the log alone; the node delivers one at most every fifteen seconds and the server keeps the latest of each (GET /api/v1/nodes/{id}/diagnostics)' }
+    DiagnosticTokenList:
+      type: object
+      required: [tokens]
+      properties:
+        tokens: { type: array, items: { $ref: '../src/armor_common/schemas/diagnostic_token_info.schema.json' } }
+    DiagnosticNodes:
+      type: object
+      required: [scope, nodes]
+      properties:
+        scope: { type: string, enum: [read_only] }
+        nodes:
+          type: array
+          items:
+            type: object
+            required: [node_id, status]
+            properties:
+              node_id: { type: string }
+              family: { type: string, enum: [radar, solar, electrical, alarm, hmi] }
+              firmware: { type: string }
+              status: { type: string, enum: [ok, warning, stale, unknown] }
+              package_at: { type: string, description: 'When the node last delivered a package' }
+              log_at: { type: string, description: 'When the node last delivered a log' }
+    DiagnosticPackageAnswer:
+      type: object
+      required: [node_id, at, package]
+      properties:
+        node_id: { type: string }
+        at: { type: string, description: 'When the node delivered it' }
+        package: { $ref: '../src/armor_common/schemas/node_control_result.schema.json#/properties/diagnostics/properties/package' }
+    DiagnosticLogAnswer:
+      type: object
+      required: [node_id, at, log, truncated]
+      properties:
+        node_id: { type: string }
+        at: { type: string }
+        log: { type: string }
+        truncated: { type: boolean }
+    NodeDiagnostics:
+      type: object
+      required: [node_id]
+      properties:
+        node_id: { type: string }
+        package: { $ref: '#/components/schemas/StoredDiagnostic' }
+        log: { $ref: '#/components/schemas/StoredDiagnostic' }
+    StoredDiagnostic:
+      type: object
+      required: [at, requested_by, data]
+      properties:
+        at: { type: string }
+        requested_by: { type: string, description: 'The administrator who asked for it' }
+        data: { $ref: '../src/armor_common/schemas/node_control_result.schema.json#/properties/diagnostics/properties/package' }
+    RadarEventList:
+      type: object
+      required: [events, nodes]
+      properties:
+        events:
+          type: array
+          items:
+            allOf:
+              - { $ref: '../src/armor_common/schemas/radar_event.schema.json' }
+              - { type: object, required: [received_at], properties: { received_at: { type: string } } }
+        nodes: { type: array, items: { type: string } }
     NodeControlAllRequest:
       type: object
       additionalProperties: false
@@ -3461,6 +3629,9 @@ components:
     PostAdminRemoteDdnsSetupRequest: { type: object, required: [provider], properties: { provider: { type: string, enum: [duckdns, cloudflare, url] }, domain: { type: string }, token: { type: string }, zone: { type: string }, record_name: { type: string }, url: { type: string } } }
     DeleteMediaRequest: { type: object, required: [kind], properties: { kind: { type: string, enum: [snapshot, recording, all] } } }
     PutMediaCameraIdKindFileProtectedRequest: { type: object, required: [protected], properties: { protected: { type: boolean } } }
+    PlainText:
+      type: string
+      description: Text for a person to read, as the log of a node is
     StatusText:
       type: string
       description: The bare status text (Unauthorized, Not Found) that a route answers with when it sends the status alone

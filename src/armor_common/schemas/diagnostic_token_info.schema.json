@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/diagnostic-token-info-0.1.0.json",
+  "title": "A.R.M.O.R. line of the list of read-only diagnostic tokens",
+  "description": "One token as the list of GET /api/v1/diagnostics/tokens shows it: never the secret and never its hash.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "scope",
+    "nodes",
+    "created_at",
+    "expires_at",
+    "created_by",
+    "status",
+    "uses"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{12}$"
+    },
+    "scope": {
+      "type": "string",
+      "const": "read_only"
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+      }
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 48
+    },
+    "created_at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:.]{8,12}Z$"
+    },
+    "expires_at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:.]{8,12}Z$"
+    },
+    "created_by": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._@ -]{1,64}$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "expired",
+        "revoked"
+      ]
+    },
+    "revoked_at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:.]{8,12}Z$"
+    },
+    "revoked_by": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._@ -]{1,64}$"
+    },
+    "uses": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How many requests the token has been accepted for."
+    },
+    "last_used_at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:.]{8,12}Z$"
+    }
+  }
+}

@@ -76,7 +76,15 @@
         "control_lost",
         "maintenance_started",
         "maintenance_ended",
-        "maintenance_expired"
+        "maintenance_expired",
+        "dirty_boot",
+        "sensor_bluetooth_open",
+        "sensor_bluetooth_closed",
+        "radar_event",
+        "diagnostic_token_issued",
+        "diagnostic_token_revoked",
+        "diagnostic_token_used",
+        "diagnostic_token_denied"
       ]
     },
     "subject": {

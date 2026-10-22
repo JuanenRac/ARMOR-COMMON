@@ -702,6 +702,60 @@
         "ARMOR-HMI": "tests/test_control.cpp",
         "ARMOR-ALARM": "tests/test_control.cpp"
       }
+    },
+    "core/boot_report.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/boot_report.hpp",
+        "ARMOR-ELECTRICAL": "core/boot_report.hpp",
+        "ARMOR-RADAR": "main/core/boot_report.hpp",
+        "ARMOR-HMI": "core/boot_report.hpp",
+        "ARMOR-ALARM": "core/boot_report.hpp"
+      }
+    },
+    "core/config_snapshot.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/config_snapshot.hpp",
+        "ARMOR-ELECTRICAL": "core/config_snapshot.hpp",
+        "ARMOR-RADAR": "main/core/config_snapshot.hpp",
+        "ARMOR-HMI": "core/config_snapshot.hpp",
+        "ARMOR-ALARM": "core/config_snapshot.hpp"
+      }
+    },
+    "core/diag_package.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "core/diag_package.hpp",
+        "ARMOR-ELECTRICAL": "core/diag_package.hpp",
+        "ARMOR-RADAR": "main/core/diag_package.hpp",
+        "ARMOR-HMI": "core/diag_package.hpp",
+        "ARMOR-ALARM": "core/diag_package.hpp"
+      }
+    },
+    "main/node_diag.cpp": {
+      "targets": {
+        "ARMOR-SOLAR": "main/node_diag.cpp",
+        "ARMOR-ELECTRICAL": "main/node_diag.cpp",
+        "ARMOR-RADAR": "main/node_diag.cpp",
+        "ARMOR-HMI": "main/node_diag.cpp",
+        "ARMOR-ALARM": "main/node_diag.cpp"
+      }
+    },
+    "main/node_diag.hpp": {
+      "targets": {
+        "ARMOR-SOLAR": "main/node_diag.hpp",
+        "ARMOR-ELECTRICAL": "main/node_diag.hpp",
+        "ARMOR-RADAR": "main/node_diag.hpp",
+        "ARMOR-HMI": "main/node_diag.hpp",
+        "ARMOR-ALARM": "main/node_diag.hpp"
+      }
+    },
+    "tests/test_diag.cpp": {
+      "targets": {
+        "ARMOR-SOLAR": "tests/test_diag.cpp",
+        "ARMOR-ELECTRICAL": "tests/test_diag.cpp",
+        "ARMOR-RADAR": "tests/test_diag.cpp",
+        "ARMOR-HMI": "tests/test_diag.cpp",
+        "ARMOR-ALARM": "tests/test_diag.cpp"
+      }
     }
   }
 }
