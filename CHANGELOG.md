@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [0.7.5] - Security options as settings, new guards and a validator that reports every fault
 
+- **Fixed: a node with stored settings no longer restarts in a loop at power-up.** The start-up code read the stored settings and the copy made before the last update on the stack of the main task (about 3 KB each, plus the reader's own copy); with settings stored the 16 KB stack overflowed and the node restarted again and again before it could start the network. They now live on the heap.
 - **The limit on wrong passwords per minute is a setting of the node** in the shared firmware: `system.login_limit_per_minute` (30 as always, 0 for none, at most 120), read by the five panels.
 - **A relay can be interlocked with another** (`interlock` in the relay settings, empty by default): a request to close one while the other is closed is refused from the panel, the broker and the central alike, the node never opens the partner by itself, and the alarm's siren is not held back.
 - **The universal image holds no fleet secret unless asked for:** `tools/build_node.sh generic` adds `secrets/generic.conf` only with `ARMOR_WITH_FLEET_SECRET=1`, names that image `*-local` and says it is never to be published, and a public build is refused when the configuration it ended with holds a secret or a set-up code; the option's help says the same.
