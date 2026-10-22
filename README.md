@@ -22,7 +22,7 @@
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
   <img src="https://img.shields.io/badge/Vectors-685-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Version-0.7.3-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Version-0.7.4-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
@@ -36,7 +36,7 @@
 
 | | |
 |---|---|
-| Version | `0.7.3` |
+| Version | `0.7.4` |
 | Maturity | Established |
 | Tests | 89 (`python -m unittest discover -s tests`) and 685 conformance vectors |
 | Stack | Python 3.11+ / JSON Schema / OpenAPI |
@@ -56,6 +56,7 @@
 * **Optional TLS link to the broker in the shared node base:** `firmware_base` carries the `mqtt.tls` switch and the `mqtt.ca_pem` text (one PEM certificate, at most 2 KB, validated), the connection that trusts that authority only and checks the broker's name, and the host tests shared by the five nodes; off by default.
 * **Node health and arming profiles:** the `node_health` message (the same report from a radar, a solar, an electrical, an alarm or a wall-panel node) and the `arm_profile` (a named way of arming: which zones guard, the delays, the siren and how loudly the server tells people, carried inside the arm command) have their schemas, conformance vectors, generated TypeScript and Kotlin types, OpenAPI routes and the shared firmware code that builds the report.
 * **Connection and system events of the history:** the schemas `connection_event`, `system_event` and `connection_client` (what the server's history says about the clients that connect and about the system itself, with a fixed vocabulary and no field where a secret could go), their conformance vectors, the generated TypeScript and Kotlin types and the OpenAPI route that lists the clients.
+* **Diagnostics and reading quality in the contract:** the dirty-boot report, the core dump, the settings safety check, the diagnostic package, the radar events and the read-only diagnostic token messages have their schemas, conformance vectors and generated types; a meter channel may carry the age of its reading and its error count, and an inverter message may name the values the node held at a limit.
 
 ## 🧩 Role in A.R.M.O.R.
 
