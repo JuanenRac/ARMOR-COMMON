@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/radar-event-0.1.0.json",
+  "title": "A.R.M.O.R. event of the perimeter engine of a radar node",
+  "description": "One short message a radar node publishes to armor/radar/{node_id}/events (QoS 1, never retained) when its own perimeter engine or one of its sensors finds something: a zone taken or left, a target that stays too long (loiter), a line crossed (tripwire) in one direction, a target that came from where it should not (path_violation), sensors that see nothing while armed (masking), the Wi-Fi jammed, a sensor whose own Bluetooth is open or closed again, the serial bridge to a sensor opened or closed. The words are a fixed list and there is no free text, so nothing secret can be in it. `boot` (random at each start of the node) and `seq` (counting inside that start) identify an event: a server that gets the same pair twice (one sent live and again from the node's memory of an outage) keeps one. A node keeps up to a thousand events in its flash while the broker cannot be reached and sends them in order when it is back.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "node_id",
+    "timestamp_ms",
+    "boot",
+    "seq",
+    "event"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "radar_event"
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "The wall-clock time in milliseconds, 0 when the node's clock was not set."
+    },
+    "boot": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295,
+      "description": "A number chosen at random at each start of the node."
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4294967295,
+      "description": "Counts the events of one start."
+    },
+    "event": {
+      "type": "string",
+      "enum": [
+        "zone_occupied",
+        "zone_clear",
+        "loiter",
+        "tripwire",
+        "path_violation",
+        "masking",
+        "masking_end",
+        "sensor_bluetooth_open",
+        "sensor_bluetooth_closed",
+        "wifi_jam",
+        "wifi_jam_end",
+        "bridge_opened",
+        "bridge_closed"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 24,
+      "description": "The zone or the line (or the sensor's model, for a Bluetooth event)."
+    },
+    "sensor_id": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3
+    },
+    "track_id": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 255
+    },
+    "movement": {
+      "type": "string",
+      "enum": [
+        "still",
+        "walking",
+        "running"
+      ],
+      "description": "How the target moves, when the event is about one."
+    },
+    "value": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Seconds (loiter), minutes or a count, according to the event."
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How many targets, when the event counts them."
+    },
+    "direction": {
+      "type": "string",
+      "enum": [
+        "in",
+        "out"
+      ],
+      "description": "Tripwire: the direction of the crossing."
+    },
+    "from": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 24,
+      "description": "Path violation: the zone the target came from, when it came from one."
+    },
+    "by": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{1,32}$",
+      "description": "Serial bridge: the administrator who opened it."
+    }
+  }
+}

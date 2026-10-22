@@ -202,6 +202,63 @@ def wifi_health(**changes):
     return node_health(**dict({"link": "wifi", "rssi_dbm": -61}, **changes))
 
 
+BOOT = {"cause": "panic", "reset_reason": "panic", "uptime_before_s": 4200, "heap_internal_free": 52000, "heap_internal_largest": 30000, "coredump": True, "deliberate": False, "guard": False}
+GATE = {"closed": False, "transitions": 2, "close_free": 28672, "close_block": 12288, "open_free": 40960, "open_block": 16384}
+SENSOR = {"sensor_id": 1, "model": "ld2450", "state": "reporting", "firmware_known": True, "firmware": "1.02.22062416", "bluetooth": "closed"}
+RADAR_FACTS = {"perimeter_enabled": True, "masked": False, "wifi_jam": False, "bridge_open": False, "events_buffered": 0, "sensor_bluetooth_off": True}
+
+
+def radar_health(**changes):
+    return node_health(**dict({"family": "radar", "node_id": "radar-1", "board": "s3-eth", "sensors": [dict(SENSOR)], "radar": dict(RADAR_FACTS)}, **changes))
+
+
+TASKS = [{"name": "radar", "stack_free": 900, "priority": 5, "state": "R"}, {"name": "node-health", "stack_free": 3000, "priority": 3, "state": "B"}]
+PACKAGE = {"detail": "package", "heap": {"internal_free": 90000, "internal_min": 70000, "internal_largest": 60000, "total_free": 5000000, "total_min": 4000000, "psram_free": 4900000},
+           "tasks": TASKS, "resets": {"reason": "panic", "uptime_s": 4242, "guard_restarts_in_hour": 1}, "boot": dict(BOOT), "memory_gate": dict(GATE),
+           "versions": {"firmware": "0.7.9", "idf": "v5.5.1", "board": "s3-eth", "sensors": [{"name": "ld2450-1", "version": "V1.02.22062416"}]},
+           "config": {"wifi.mode": "station", "wifi.dhcp": "true", "wifi.channel": "6", "mqtt.heartbeat_s": "30", "mqtt.uri_host": "mqtts://broker.local:8883", "language": "es"},
+           "coredump": {"present": True, "size": 41000, "summary": {"task": "radar", "reason": "Guru Meditation Error: LoadProhibited", "pc": "0x4200abcd", "backtrace": ["0x4200abcd", "0x40081234"], "app_sha256": "0123456789abcdef"}},
+           "log": "I (100) mqtt: connecting\nW (200) wifi: password=***\n", "truncated": False}
+LOG_PACKAGE = {"detail": "log", "log": "I (100) mqtt: connecting\n", "truncated": False}
+
+
+def with_package(package, **changes):
+    result = control_diagnostics()
+    result["diagnostics"]["package"] = package
+    result.update(changes)
+    return result
+
+
+def radar_event(**changes):
+    base = {"kind": "radar_event", "node_id": "radar-1", "timestamp_ms": 1760000000000, "boot": 123456789, "seq": 7, "event": "zone_occupied", "name": "garden", "sensor_id": 1, "track_id": 2,
+            "movement": "walking", "value": 0}
+    base.update(changes)
+    return base
+
+
+NODES = ["radar-1", "solar-1"]
+
+
+def token_request(**changes):
+    base = {"nodes": list(NODES), "ttl_s": 7200, "label": "support"}
+    base.update(changes)
+    return base
+
+
+def token_created(**changes):
+    base = {"id": "a1b2c3d4e5f6", "token": "armor-diag-" + "A" * 43, "scope": "read_only", "nodes": list(NODES), "label": "support", "created_at": "2026-01-01T10:00:00.000Z",
+            "expires_at": "2026-01-01T12:00:00.000Z", "created_by": "ana"}
+    base.update(changes)
+    return base
+
+
+def token_info(**changes):
+    base = {"id": "a1b2c3d4e5f6", "scope": "read_only", "nodes": list(NODES), "label": "support", "created_at": "2026-01-01T10:00:00.000Z", "expires_at": "2026-01-01T12:00:00.000Z",
+            "created_by": "ana", "status": "active", "uses": 0}
+    base.update(changes)
+    return base
+
+
 def profile(**changes):
     base = {"id": "night", "name": "Night", "base": "stay", "entry_delay_s": 45, "siren": True, "notify": "urgent",
             "zones": [{"id": "hall-motion", "armed": True}, {"id": "front-door", "delay": "entry"}, {"id": "garage", "armed": False}]}
@@ -1124,6 +1181,41 @@ cases = {
         ("a signal on a cable", False, node_health(rssi_dbm=-50), True),
         ("a signal on a Wi-Fi link that is down", False, node_health(link="wifi", link_up=False, rssi_dbm=-50), True),
         ("no link but the link is up", False, node_health(link="none", link_up=True), True),
+        ("a node after a crash with the report of it", True, node_health(reset_reason="panic", uptime_s=12, boot=dict(BOOT), coredump={"present": True, "size": 41000})),
+        ("a restart of the node's own guard", True, node_health(reset_reason="software", uptime_s=20, boot={"cause": "guard_low_memory", "reset_reason": "software", "coredump": False, "deliberate": False, "guard": True})),
+        ("a brown-out that kept no figures", True, node_health(reset_reason="brownout", boot={"cause": "brownout", "reset_reason": "brownout", "coredump": False, "deliberate": False, "guard": False})),
+        ("the memory gate", True, node_health(memory_gate=dict(GATE))),
+        ("a gate that is closed", True, node_health(memory_gate=dict(GATE, closed=True, transitions=5))),
+        ("no core dump", True, node_health(coredump={"present": False})),
+        ("the checks of the settings", True, node_health(config_check={"snapshot": "restored", "reverted": "reapplied"})),
+        ("one check of the settings", True, node_health(config_check={"reverted": "failed"})),
+        ("a radar node with its sensor", True, radar_health()),
+        ("a radar node with three sensors", True, radar_health(sensors=[dict(SENSOR),
+            {"sensor_id": 2, "model": "ld2410", "state": "reporting", "firmware_known": True, "firmware": "2.44.25062313", "bluetooth": "none"},
+            {"sensor_id": 3, "model": "ld2412", "state": "silent", "firmware_known": False, "bluetooth": "unknown", "quirk": "ld2412_unknown_firmware"}])),
+        ("a sensor whose Bluetooth is open", True, radar_health(sensors=[dict(SENSOR, bluetooth="open", mac="8F:27:2E:B8:0F:65", bluetooth_alert=True)], radar=dict(RADAR_FACTS, sensor_bluetooth_off=True))),
+        ("a sensor in the serial bridge", True, radar_health(sensors=[dict(SENSOR, state="bridge")], radar=dict(RADAR_FACTS, bridge_open=True))),
+        ("a covered radar", True, radar_health(radar=dict(RADAR_FACTS, masked=True, events_buffered=12))),
+        ("a radar node with no sensor on a port", True, radar_health(sensors=[])),
+        ("a boot cause outside the list", False, node_health(boot=dict(BOOT, cause="cosmic_ray"))),
+        ("a boot report without the core dump flag", False, node_health(boot={k: v for k, v in BOOT.items() if k != "coredump"})),
+        ("a boot report with an unknown member", False, node_health(boot=dict(BOOT, stack="x"))),
+        ("the biggest block over the free memory in the boot report", False, node_health(boot=dict(BOOT, heap_internal_largest=60000, heap_internal_free=52000)), True),
+        ("only one of the boot figures", False, node_health(boot={k: v for k, v in BOOT.items() if k != "heap_internal_largest"}), True),
+        ("a gate without its levels", False, node_health(memory_gate={"closed": False, "transitions": 0})),
+        ("a core dump of size zero", False, node_health(coredump={"present": True, "size": 0})),
+        ("a size for a core dump that is not there", False, node_health(coredump={"present": False, "size": 100}), True),
+        ("a check outcome outside the list", False, node_health(config_check={"snapshot": "ok"})),
+        ("sensors on an alarm node", False, node_health(sensors=[dict(SENSOR)], radar=dict(RADAR_FACTS)), True),
+        ("sensors without the facts of the engine", False, {k: v for k, v in radar_health().items() if k != "radar"}, True),
+        ("a sensor told twice", False, radar_health(sensors=[dict(SENSOR), dict(SENSOR)]), True),
+        ("a firmware without firmware_known", False, radar_health(sensors=[dict(SENSOR, firmware_known=False)]), True),
+        ("a Bluetooth address while the Bluetooth is closed", False, radar_health(sensors=[dict(SENSOR, mac="8F:27:2E:B8:0F:65")]), True),
+        ("a sensor model outside the list", False, radar_health(sensors=[dict(SENSOR, model="ld9999")])),
+        ("a fourth sensor", False, radar_health(sensors=[dict(SENSOR, sensor_id=4)])),
+        ("a sensor with an unknown member", False, radar_health(sensors=[dict(SENSOR, secret="x")])),
+        ("a firmware text with a space and a slash", False, radar_health(sensors=[dict(SENSOR, firmware="1.0 /x")])),
+        ("more than a thousand buffered events", False, radar_health(radar=dict(RADAR_FACTS, events_buffered=1001))),
     ],
     "arm_profile": [
         ("a night profile", True, profile()),
@@ -1189,6 +1281,15 @@ cases = {
         ("a node that refused an order", True, system_event(category="node", action="control_refused", subject="radar-1", by="ana", outcome="denied")),
         ("a restarted node that came back", True, system_event(category="node", action="control_back", subject="radar-1", by="ana", outcome="allowed")),
         ("a restarted node that did not come back", True, system_event(category="node", action="control_lost", subject="radar-1", by="ana", outcome="failed")),
+        ("a node that started after a crash", True, system_event(category="node", action="dirty_boot", subject="radar-1", profile="panic", version="0.7.9")),
+        ("a node that restarted by its own guard", True, system_event(category="node", action="dirty_boot", subject="radar-1", profile="guard_low_memory", version="0.7.9")),
+        ("a sensor whose Bluetooth is open", True, system_event(category="node", action="sensor_bluetooth_open", subject="radar-1:1", profile="ld2450")),
+        ("a sensor whose Bluetooth was closed", True, system_event(category="node", action="sensor_bluetooth_closed", subject="radar-1:1", profile="ld2450")),
+        ("an event of the perimeter engine", True, system_event(category="node", action="radar_event", subject="radar-1", profile="masking")),
+        ("a diagnostic token issued", True, system_event(category="settings", action="diagnostic_token_issued", subject="a1b2c3d4e5f6", by="ana", outcome="allowed")),
+        ("a diagnostic token revoked", True, system_event(category="settings", action="diagnostic_token_revoked", subject="a1b2c3d4e5f6", by="ana", outcome="allowed")),
+        ("a diagnostic token used", True, system_event(category="settings", action="diagnostic_token_used", subject="a1b2c3d4e5f6", outcome="allowed")),
+        ("a diagnostic token refused", True, system_event(category="settings", action="diagnostic_token_denied", subject="a1b2c3d4e5f6", outcome="denied")),
         ("the siren silenced", True, system_event(category="alarm", action="silence_requested", subject="alarm-1")),
         ("a backup made", True, system_event(category="backup", action="backup_made")),
         ("a refused change", True, system_event(category="settings", action="changed", outcome="denied")),
@@ -1298,6 +1399,12 @@ cases = {
         ("the kind of the first draft", False, control_arm(kind="node_restart_command")),
         ("unknown field", False, control_arm(force=True)),
         ("not an object", False, [1, 2]),
+        ("the execute of diagnostics asking for the package", True, control_execute(operation="diagnostics", detail="package")),
+        ("the execute of diagnostics asking for the log", True, control_execute(operation="diagnostics", detail="log")),
+        ("a detail on an arm", False, control_arm(operation="diagnostics", detail="package"), True),
+        ("a detail on the execute of a restart", False, control_execute(operation="restart", detail="package"), True),
+        ("a detail that is not on the list", False, control_execute(operation="diagnostics", detail="everything")),
+        ("a detail as a number", False, control_execute(operation="diagnostics", detail=1)),
     ],
     "node_control_result": [
         ("a restart arm accepted, with its token", True, control_armed()),
@@ -1368,6 +1475,19 @@ cases = {
         ("a stage that does not exist", False, control_refused(stage="maybe")),
         ("another kind", False, control_armed(kind="electrical_result")),
         ("unknown field", False, control_armed(shell="reboot")),
+        ("the diagnostics with the package", True, with_package(PACKAGE)),
+        ("the diagnostics with the log alone", True, with_package(LOG_PACKAGE)),
+        ("a package with no core dump", True, with_package({k: v for k, v in dict(PACKAGE, coredump={"present": False}).items() if k != "boot"})),
+        ("a package that was cut", True, with_package(dict(PACKAGE, truncated=True))),
+        ("a log that carries a heap", False, with_package(dict(LOG_PACKAGE, heap=PACKAGE["heap"])), True),
+        ("a package without its tasks", False, with_package({k: v for k, v in PACKAGE.items() if k != "tasks"}), True),
+        ("a package whose least internal memory is over what is free", False, with_package(dict(PACKAGE, heap=dict(PACKAGE["heap"], internal_min=90001))), True),
+        ("a core dump summary for a dump that is not there", False, with_package(dict(PACKAGE, coredump={"present": False, "size": 10})), True),
+        ("a package with a member for a password", False, with_package(dict(PACKAGE, password="x"))),
+        ("a task state outside the list", False, with_package(dict(PACKAGE, tasks=[dict(TASKS[0], state="X")]))),
+        ("a backtrace entry that is not an address", False, with_package(dict(PACKAGE, coredump={"present": True, "summary": {"task": "radar", "backtrace": ["not-an-address"]}}))),
+        ("a log of text not allowed", False, with_package(dict(LOG_PACKAGE, log=5))),
+        ("a package that is not an object", False, with_package("everything")),
     ],
     "node_maintenance": [
         ("a restart is about to happen", True, maintenance()),
@@ -1392,6 +1512,79 @@ cases = {
         ("another kind", False, maintenance(kind="node_control_result")),
         ("unknown field", False, maintenance(token="x")),
         ("not an object", False, [1, 2]),
+    ],
+    "radar_event": [
+        ("a zone taken", True, radar_event()),
+        ("a zone left after a time", True, radar_event(event="zone_clear", value=42)),
+        ("a target that stays", True, radar_event(event="loiter", value=30, movement="still")),
+        ("a line crossed in", True, radar_event(event="tripwire", name="gate", direction="in", count=3, movement="walking")),
+        ("a line crossed out", True, radar_event(event="tripwire", name="gate", direction="out", count=1)),
+        ("a path that was not followed", True, radar_event(event="path_violation", name="house", **{"from": "street"})),
+        ("a path with no zone it came from", True, radar_event(event="path_violation", name="house")),
+        ("sensors covered", True, {"kind": "radar_event", "node_id": "radar-1", "timestamp_ms": 0, "boot": 5, "seq": 1, "event": "masking", "value": 10}),
+        ("the cover is off", True, {"kind": "radar_event", "node_id": "radar-1", "timestamp_ms": 0, "boot": 5, "seq": 2, "event": "masking_end"}),
+        ("a sensor with its Bluetooth open", True, {"kind": "radar_event", "node_id": "radar-1", "timestamp_ms": 1760000000000, "boot": 5, "seq": 3, "event": "sensor_bluetooth_open", "name": "ld2450", "sensor_id": 1}),
+        ("a sensor with its Bluetooth closed again", True, {"kind": "radar_event", "node_id": "radar-1", "timestamp_ms": 1760000000000, "boot": 5, "seq": 4, "event": "sensor_bluetooth_closed", "name": "ld2450", "sensor_id": 1}),
+        ("the Wi-Fi jammed", True, {"kind": "radar_event", "node_id": "radar-1", "timestamp_ms": 1760000000000, "boot": 5, "seq": 5, "event": "wifi_jam"}),
+        ("the Wi-Fi back", True, {"kind": "radar_event", "node_id": "radar-1", "timestamp_ms": 1760000000000, "boot": 5, "seq": 6, "event": "wifi_jam_end"}),
+        ("the serial bridge opened by an administrator", True, {"kind": "radar_event", "node_id": "radar-1", "timestamp_ms": 1760000000000, "boot": 5, "seq": 7, "event": "bridge_opened", "name": "ld2410", "sensor_id": 2, "by": "ana"}),
+        ("the serial bridge closed", True, {"kind": "radar_event", "node_id": "radar-1", "timestamp_ms": 1760000000000, "boot": 5, "seq": 8, "event": "bridge_closed", "name": "ld2410", "sensor_id": 2}),
+        ("an event that is not on the list", False, radar_event(event="alarm_all")),
+        ("a free text member", False, radar_event(text="hello")),
+        ("a name that is too long", False, radar_event(name="x" * 25)),
+        ("a sequence of zero", False, radar_event(seq=0)),
+        ("a fourth sensor", False, radar_event(sensor_id=4)),
+        ("a track of zero", False, radar_event(track_id=0)),
+        ("a movement outside the list", False, radar_event(movement="flying")),
+        ("a direction that is not in or out", False, radar_event(event="tripwire", direction="up")),
+        ("a direction on a zone", False, radar_event(direction="in"), True),
+        ("a zone it came from on a tripwire", False, radar_event(event="tripwire", **{"from": "street"}), True),
+        ("an administrator on a zone", False, radar_event(by="ana"), True),
+        ("an administrator with spaces", False, {"kind": "radar_event", "node_id": "radar-1", "timestamp_ms": 0, "boot": 5, "seq": 9, "event": "bridge_opened", "sensor_id": 1, "by": "ana maria"}),
+        ("a Bluetooth event without the sensor", False, {"kind": "radar_event", "node_id": "radar-1", "timestamp_ms": 0, "boot": 5, "seq": 10, "event": "sensor_bluetooth_open"}, True),
+        ("a jam that is about a target", False, {"kind": "radar_event", "node_id": "radar-1", "timestamp_ms": 0, "boot": 5, "seq": 11, "event": "wifi_jam", "track_id": 1}, True),
+        ("uppercase node id", False, radar_event(node_id="Radar-1")),
+        ("another kind", False, radar_event(kind="telemetry")),
+        ("not an object", False, [1, 2]),
+    ],
+    "diagnostic_token_request": [
+        ("two nodes for two hours", True, token_request()),
+        ("one node, the default time", True, {"nodes": ["radar-1"]}),
+        ("the longest time", True, token_request(ttl_s=86400)),
+        ("the shortest time", True, token_request(ttl_s=300)),
+        ("no nodes", False, token_request(nodes=[])),
+        ("more than sixteen nodes", False, token_request(nodes=["node-%d" % i for i in range(17)])),
+        ("a node named twice", False, token_request(nodes=["radar-1", "radar-1"]), True),
+        ("every node as a word", False, token_request(nodes=["*"])),
+        ("more than a day", False, token_request(ttl_s=86401)),
+        ("less than five minutes", False, token_request(ttl_s=299)),
+        ("a scope that asks for more", False, token_request(scope="admin")),
+        ("a label that is too long", False, token_request(label="x" * 49)),
+        ("uppercase node", False, token_request(nodes=["Radar-1"])),
+        ("not an object", False, [1, 2]),
+    ],
+    "diagnostic_token_created": [
+        ("a token that was just made", True, token_created()),
+        ("a token with no label", True, {k: v for k, v in token_created().items() if k != "label"}),
+        ("a token that expires before it was made", False, token_created(expires_at="2026-01-01T09:00:00.000Z"), True),
+        ("a scope that is not read only", False, token_created(scope="admin")),
+        ("a token that does not look like one", False, token_created(token="hunter2")),
+        ("a token with the hash instead", False, {k: v for k, v in token_created().items() if k != "token"} | {"hash": "a" * 64}),
+        ("no expiry", False, {k: v for k, v in token_created().items() if k != "expires_at"}),
+        ("an id that is too short", False, token_created(id="abc")),
+        ("a node named twice", False, token_created(nodes=["radar-1", "radar-1"]), True),
+    ],
+    "diagnostic_token_info": [
+        ("a token not used yet", True, token_info()),
+        ("a token that was used", True, token_info(uses=3, last_used_at="2026-01-01T10:30:00.000Z")),
+        ("a token that expired", True, token_info(status="expired", uses=1, last_used_at="2026-01-01T11:00:00.000Z")),
+        ("a token that was revoked", True, token_info(status="revoked", revoked_at="2026-01-01T10:45:00.000Z", revoked_by="ana", uses=2, last_used_at="2026-01-01T10:30:00.000Z")),
+        ("a revoked token without who revoked it", False, token_info(status="revoked", revoked_at="2026-01-01T10:45:00.000Z"), True),
+        ("a revocation on a token that is active", False, token_info(revoked_at="2026-01-01T10:45:00.000Z", revoked_by="ana"), True),
+        ("a last use for a token never used", False, token_info(last_used_at="2026-01-01T10:30:00.000Z"), True),
+        ("the secret in the list", False, token_info(token="armor-diag-" + "A" * 43)),
+        ("the hash in the list", False, token_info(hash="a" * 64)),
+        ("a status outside the list", False, token_info(status="paused")),
     ],
     "command": [
         ("calibrate", True, {"node_id": "north-1", "timestamp_ms": 9, "command": "calibrate"}),

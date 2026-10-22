@@ -388,7 +388,90 @@ data class NodeControlCommand(
     val slot: Long? = null,
     val duration_s: Long? = null,
     val token: String? = null,
-    val requested_by: String
+    val requested_by: String,
+    val detail: String? = null
+)
+
+data class NodeControlResultDiagnosticsPackageHeap(
+    val internal_free: Long,
+    val internal_min: Long,
+    val internal_largest: Long,
+    val total_free: Long,
+    val total_min: Long,
+    val psram_free: Long? = null
+)
+
+data class NodeControlResultDiagnosticsPackageTasks(
+    val name: String,
+    val stack_free: Long,
+    val priority: Long,
+    val state: String
+)
+
+data class NodeControlResultDiagnosticsPackageResets(
+    val reason: String,
+    val uptime_s: Long,
+    val guard_restarts_in_hour: Long
+)
+
+data class NodeControlResultDiagnosticsPackageBoot(
+    val cause: String,
+    val reset_reason: String,
+    val uptime_before_s: Long? = null,
+    val heap_internal_free: Long? = null,
+    val heap_internal_largest: Long? = null,
+    val coredump: Boolean,
+    val deliberate: Boolean,
+    val guard: Boolean
+)
+
+data class NodeControlResultDiagnosticsPackageMemoryGate(
+    val closed: Boolean,
+    val transitions: Long,
+    val close_free: Long,
+    val close_block: Long,
+    val open_free: Long,
+    val open_block: Long
+)
+
+data class NodeControlResultDiagnosticsPackageVersionsSensors(
+    val name: String,
+    val version: String
+)
+
+data class NodeControlResultDiagnosticsPackageVersions(
+    val firmware: String,
+    val idf: String,
+    val board: String? = null,
+    val sensors: List<NodeControlResultDiagnosticsPackageVersionsSensors>
+)
+
+data class NodeControlResultDiagnosticsPackageCoredumpSummary(
+    val task: String,
+    val reason: String? = null,
+    val pc: String? = null,
+    val backtrace: List<String>? = null,
+    val app_sha256: String? = null
+)
+
+data class NodeControlResultDiagnosticsPackageCoredump(
+    val present: Boolean,
+    val size: Long? = null,
+    val summary: NodeControlResultDiagnosticsPackageCoredumpSummary? = null
+)
+
+data class NodeControlResultDiagnosticsPackage(
+    val detail: String,
+    val heap: NodeControlResultDiagnosticsPackageHeap? = null,
+    val tasks: List<NodeControlResultDiagnosticsPackageTasks>? = null,
+    val resets: NodeControlResultDiagnosticsPackageResets? = null,
+    val boot: NodeControlResultDiagnosticsPackageBoot? = null,
+    val memory_gate: NodeControlResultDiagnosticsPackageMemoryGate? = null,
+    val versions: NodeControlResultDiagnosticsPackageVersions? = null,
+    val config: Map<String, String>? = null,
+    val coredump: NodeControlResultDiagnosticsPackageCoredump? = null,
+    val log: String,
+    val truncated: Boolean
 )
 
 data class NodeControlResultDiagnostics(
@@ -402,7 +485,8 @@ data class NodeControlResultDiagnostics(
     val rssi: Long? = null,
     val mqtt_connected: Boolean,
     val state: String,
-    val maintenance: Boolean
+    val maintenance: Boolean,
+    val `package`: NodeControlResultDiagnosticsPackage? = null
 )
 
 data class NodeControlResult(
@@ -439,6 +523,56 @@ data class NodeMaintenance(
     val expected_s: Long? = null,
     val firmware: String,
     val requested_by: String? = null
+)
+
+data class RadarEvent(
+    val kind: String = "radar_event",
+    val node_id: String,
+    val timestamp_ms: Long,
+    val boot: Long,
+    val seq: Long,
+    val event: String,
+    val name: String? = null,
+    val sensor_id: Long? = null,
+    val track_id: Long? = null,
+    val movement: String? = null,
+    val value: Long? = null,
+    val count: Long? = null,
+    val direction: String? = null,
+    val from: String? = null,
+    val by: String? = null
+)
+
+data class DiagnosticTokenRequest(
+    val nodes: List<String>,
+    val ttl_s: Long? = null,
+    val label: String? = null
+)
+
+data class DiagnosticTokenCreated(
+    val id: String,
+    val token: String,
+    val scope: String = "read_only",
+    val nodes: List<String>,
+    val label: String? = null,
+    val created_at: String,
+    val expires_at: String,
+    val created_by: String
+)
+
+data class DiagnosticTokenInfo(
+    val id: String,
+    val scope: String = "read_only",
+    val nodes: List<String>,
+    val label: String? = null,
+    val created_at: String,
+    val expires_at: String,
+    val created_by: String,
+    val status: String,
+    val revoked_at: String? = null,
+    val revoked_by: String? = null,
+    val uses: Long,
+    val last_used_at: String? = null
 )
 
 data class AlarmZone(
@@ -510,6 +644,57 @@ data class AlarmResult(
     val phase: String
 )
 
+data class NodeHealthBoot(
+    val cause: String,
+    val reset_reason: String,
+    val uptime_before_s: Long? = null,
+    val heap_internal_free: Long? = null,
+    val heap_internal_largest: Long? = null,
+    val coredump: Boolean,
+    val deliberate: Boolean,
+    val guard: Boolean
+)
+
+data class NodeHealthMemoryGate(
+    val closed: Boolean,
+    val transitions: Long,
+    val close_free: Long,
+    val close_block: Long,
+    val open_free: Long,
+    val open_block: Long
+)
+
+data class NodeHealthCoredump(
+    val present: Boolean,
+    val size: Long? = null
+)
+
+data class NodeHealthConfigCheck(
+    val snapshot: String? = null,
+    val reverted: String? = null
+)
+
+data class NodeHealthSensors(
+    val sensor_id: Long,
+    val model: String,
+    val state: String,
+    val firmware_known: Boolean,
+    val firmware: String? = null,
+    val bluetooth: String,
+    val mac: String? = null,
+    val bluetooth_alert: Boolean? = null,
+    val quirk: String? = null
+)
+
+data class NodeHealthRadar(
+    val perimeter_enabled: Boolean,
+    val masked: Boolean,
+    val wifi_jam: Boolean,
+    val bridge_open: Boolean,
+    val events_buffered: Long,
+    val sensor_bluetooth_off: Boolean
+)
+
 data class NodeHealth(
     val kind: String = "node_health",
     val node_id: String,
@@ -536,7 +721,13 @@ data class NodeHealth(
     val control_by: String? = null,
     val control_until_s: Long? = null,
     val maintenance: Boolean? = null,
-    val maintenance_until_s: Long? = null
+    val maintenance_until_s: Long? = null,
+    val boot: NodeHealthBoot? = null,
+    val memory_gate: NodeHealthMemoryGate? = null,
+    val coredump: NodeHealthCoredump? = null,
+    val config_check: NodeHealthConfigCheck? = null,
+    val sensors: List<NodeHealthSensors>? = null,
+    val radar: NodeHealthRadar? = null
 )
 
 data class ConnectionEvent(

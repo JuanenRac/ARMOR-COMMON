@@ -1,0 +1,158 @@
+{
+ "kind": "diagnostic_token_created",
+ "vectors": [
+  {
+   "name": "a token that was just made",
+   "valid": true,
+   "payload": {
+    "id": "a1b2c3d4e5f6",
+    "token": "armor-diag-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "scope": "read_only",
+    "nodes": [
+     "radar-1",
+     "solar-1"
+    ],
+    "label": "support",
+    "created_at": "2026-01-01T10:00:00.000Z",
+    "expires_at": "2026-01-01T12:00:00.000Z",
+    "created_by": "ana"
+   }
+  },
+  {
+   "name": "a token with no label",
+   "valid": true,
+   "payload": {
+    "id": "a1b2c3d4e5f6",
+    "token": "armor-diag-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "scope": "read_only",
+    "nodes": [
+     "radar-1",
+     "solar-1"
+    ],
+    "created_at": "2026-01-01T10:00:00.000Z",
+    "expires_at": "2026-01-01T12:00:00.000Z",
+    "created_by": "ana"
+   }
+  },
+  {
+   "name": "a token that expires before it was made",
+   "valid": false,
+   "payload": {
+    "id": "a1b2c3d4e5f6",
+    "token": "armor-diag-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "scope": "read_only",
+    "nodes": [
+     "radar-1",
+     "solar-1"
+    ],
+    "label": "support",
+    "created_at": "2026-01-01T10:00:00.000Z",
+    "expires_at": "2026-01-01T09:00:00.000Z",
+    "created_by": "ana"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a scope that is not read only",
+   "valid": false,
+   "payload": {
+    "id": "a1b2c3d4e5f6",
+    "token": "armor-diag-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "scope": "admin",
+    "nodes": [
+     "radar-1",
+     "solar-1"
+    ],
+    "label": "support",
+    "created_at": "2026-01-01T10:00:00.000Z",
+    "expires_at": "2026-01-01T12:00:00.000Z",
+    "created_by": "ana"
+   }
+  },
+  {
+   "name": "a token that does not look like one",
+   "valid": false,
+   "payload": {
+    "id": "a1b2c3d4e5f6",
+    "token": "hunter2",
+    "scope": "read_only",
+    "nodes": [
+     "radar-1",
+     "solar-1"
+    ],
+    "label": "support",
+    "created_at": "2026-01-01T10:00:00.000Z",
+    "expires_at": "2026-01-01T12:00:00.000Z",
+    "created_by": "ana"
+   }
+  },
+  {
+   "name": "a token with the hash instead",
+   "valid": false,
+   "payload": {
+    "id": "a1b2c3d4e5f6",
+    "scope": "read_only",
+    "nodes": [
+     "radar-1",
+     "solar-1"
+    ],
+    "label": "support",
+    "created_at": "2026-01-01T10:00:00.000Z",
+    "expires_at": "2026-01-01T12:00:00.000Z",
+    "created_by": "ana",
+    "hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+   }
+  },
+  {
+   "name": "no expiry",
+   "valid": false,
+   "payload": {
+    "id": "a1b2c3d4e5f6",
+    "token": "armor-diag-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "scope": "read_only",
+    "nodes": [
+     "radar-1",
+     "solar-1"
+    ],
+    "label": "support",
+    "created_at": "2026-01-01T10:00:00.000Z",
+    "created_by": "ana"
+   }
+  },
+  {
+   "name": "an id that is too short",
+   "valid": false,
+   "payload": {
+    "id": "abc",
+    "token": "armor-diag-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "scope": "read_only",
+    "nodes": [
+     "radar-1",
+     "solar-1"
+    ],
+    "label": "support",
+    "created_at": "2026-01-01T10:00:00.000Z",
+    "expires_at": "2026-01-01T12:00:00.000Z",
+    "created_by": "ana"
+   }
+  },
+  {
+   "name": "a node named twice",
+   "valid": false,
+   "payload": {
+    "id": "a1b2c3d4e5f6",
+    "token": "armor-diag-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "scope": "read_only",
+    "nodes": [
+     "radar-1",
+     "radar-1"
+    ],
+    "label": "support",
+    "created_at": "2026-01-01T10:00:00.000Z",
+    "expires_at": "2026-01-01T12:00:00.000Z",
+    "created_by": "ana"
+   },
+   "schema_valid": true
+  }
+ ]
+}

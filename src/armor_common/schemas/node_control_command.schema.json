@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://armor.local/schemas/node-control-command-0.1.0.json",
   "title": "A.R.M.O.R. order from the server to a node: restart, pause, resume, standby, identify, diagnostics, maintenance",
-  "description": "An order from the server to one node, published to armor/control/{node_id}/command, or to armor/control/all/command for every node (an `arm` only). Never retained. Two steps, as for a switch: `arm` (the node answers with a one-time `token` bound to the `operation`), then `execute` carrying that token within thirty seconds, to the node's own topic. Operations: restart (a clean restart; settings are kept), pause (the node stops its work for a while and resumes by itself; 60 to 3600 s, 3600 when `duration_s` is absent), resume, standby (the node's work is off, indefinitely and across restarts, but it stays connected and keeps answering; it is not a power-off), identify (blink the node's LED or banner for 5 to 300 s, 30 when absent), diagnostics (a read-only snapshot) and maintenance_on / maintenance_off (tells the server to hold back the node-offline alert; 60 to 28800 s, 3600 when absent). `requested_by` is the person the server acted for, kept in the node's log. `mode` `now` acts at once; `rolling` (restart only) waits `slot` times thirty seconds so that nodes never restart together. There is no order that erases a node's settings or credentials, none that puts it into deep sleep and none that sets a wake timer.",
+  "description": "An order from the server to one node, published to armor/control/{node_id}/command, or to armor/control/all/command for every node (an `arm` only). Never retained. Two steps, as for a switch: `arm` (the node answers with a one-time `token` bound to the `operation`), then `execute` carrying that token within thirty seconds, to the node's own topic. Operations: restart (a clean restart; settings are kept), pause (the node stops its work for a while and resumes by itself; 60 to 3600 s, 3600 when `duration_s` is absent), resume, standby (the node's work is off, indefinitely and across restarts, but it stays connected and keeps answering; it is not a power-off), identify (blink the node's LED or banner for 5 to 300 s, 30 when absent), diagnostics (a read-only snapshot, or with `detail` the diagnostic package or the log) and maintenance_on / maintenance_off (tells the server to hold back the node-offline alert; 60 to 28800 s, 3600 when absent). `requested_by` is the person the server acted for, kept in the node's log. `mode` `now` acts at once; `rolling` (restart only) waits `slot` times thirty seconds so that nodes never restart together. There is no order that erases a node's settings or credentials, none that puts it into deep sleep and none that sets a wake timer.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -90,6 +90,14 @@
       "type": "string",
       "pattern": "^[A-Za-z0-9._@ -]{1,64}$",
       "description": "Who the server acted for, for the log."
+    },
+    "detail": {
+      "type": "string",
+      "enum": [
+        "package",
+        "log"
+      ],
+      "description": "Only on the execute of a diagnostics order: `package` asks for the diagnostic package (memory, tasks, why the node last started, versions, the allowed part of the settings, the core dump summary and the newest log, never a secret) and `log` for the newest log alone. Absent: the plain snapshot. A node sends a package or a log at most once every fifteen seconds."
     }
   }
 }

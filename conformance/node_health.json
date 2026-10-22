@@ -1395,6 +1395,1091 @@
     "low_stack_tasks": 0
    },
    "schema_valid": true
+  },
+  {
+   "name": "a node after a crash with the report of it",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 12,
+    "reset_reason": "panic",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "boot": {
+     "cause": "panic",
+     "reset_reason": "panic",
+     "uptime_before_s": 4200,
+     "heap_internal_free": 52000,
+     "heap_internal_largest": 30000,
+     "coredump": true,
+     "deliberate": false,
+     "guard": false
+    },
+    "coredump": {
+     "present": true,
+     "size": 41000
+    }
+   }
+  },
+  {
+   "name": "a restart of the node's own guard",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 20,
+    "reset_reason": "software",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "boot": {
+     "cause": "guard_low_memory",
+     "reset_reason": "software",
+     "coredump": false,
+     "deliberate": false,
+     "guard": true
+    }
+   }
+  },
+  {
+   "name": "a brown-out that kept no figures",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "brownout",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "boot": {
+     "cause": "brownout",
+     "reset_reason": "brownout",
+     "coredump": false,
+     "deliberate": false,
+     "guard": false
+    }
+   }
+  },
+  {
+   "name": "the memory gate",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "memory_gate": {
+     "closed": false,
+     "transitions": 2,
+     "close_free": 28672,
+     "close_block": 12288,
+     "open_free": 40960,
+     "open_block": 16384
+    }
+   }
+  },
+  {
+   "name": "a gate that is closed",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "memory_gate": {
+     "closed": true,
+     "transitions": 5,
+     "close_free": 28672,
+     "close_block": 12288,
+     "open_free": 40960,
+     "open_block": 16384
+    }
+   }
+  },
+  {
+   "name": "no core dump",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "coredump": {
+     "present": false
+    }
+   }
+  },
+  {
+   "name": "the checks of the settings",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "config_check": {
+     "snapshot": "restored",
+     "reverted": "reapplied"
+    }
+   }
+  },
+  {
+   "name": "one check of the settings",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "config_check": {
+     "reverted": "failed"
+    }
+   }
+  },
+  {
+   "name": "a radar node with its sensor",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "family": "radar",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "sensors": [
+     {
+      "sensor_id": 1,
+      "model": "ld2450",
+      "state": "reporting",
+      "firmware_known": true,
+      "firmware": "1.02.22062416",
+      "bluetooth": "closed"
+     }
+    ],
+    "radar": {
+     "perimeter_enabled": true,
+     "masked": false,
+     "wifi_jam": false,
+     "bridge_open": false,
+     "events_buffered": 0,
+     "sensor_bluetooth_off": true
+    }
+   }
+  },
+  {
+   "name": "a radar node with three sensors",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "family": "radar",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "sensors": [
+     {
+      "sensor_id": 1,
+      "model": "ld2450",
+      "state": "reporting",
+      "firmware_known": true,
+      "firmware": "1.02.22062416",
+      "bluetooth": "closed"
+     },
+     {
+      "sensor_id": 2,
+      "model": "ld2410",
+      "state": "reporting",
+      "firmware_known": true,
+      "firmware": "2.44.25062313",
+      "bluetooth": "none"
+     },
+     {
+      "sensor_id": 3,
+      "model": "ld2412",
+      "state": "silent",
+      "firmware_known": false,
+      "bluetooth": "unknown",
+      "quirk": "ld2412_unknown_firmware"
+     }
+    ],
+    "radar": {
+     "perimeter_enabled": true,
+     "masked": false,
+     "wifi_jam": false,
+     "bridge_open": false,
+     "events_buffered": 0,
+     "sensor_bluetooth_off": true
+    }
+   }
+  },
+  {
+   "name": "a sensor whose Bluetooth is open",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "family": "radar",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "sensors": [
+     {
+      "sensor_id": 1,
+      "model": "ld2450",
+      "state": "reporting",
+      "firmware_known": true,
+      "firmware": "1.02.22062416",
+      "bluetooth": "open",
+      "mac": "8F:27:2E:B8:0F:65",
+      "bluetooth_alert": true
+     }
+    ],
+    "radar": {
+     "perimeter_enabled": true,
+     "masked": false,
+     "wifi_jam": false,
+     "bridge_open": false,
+     "events_buffered": 0,
+     "sensor_bluetooth_off": true
+    }
+   }
+  },
+  {
+   "name": "a sensor in the serial bridge",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "family": "radar",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "sensors": [
+     {
+      "sensor_id": 1,
+      "model": "ld2450",
+      "state": "bridge",
+      "firmware_known": true,
+      "firmware": "1.02.22062416",
+      "bluetooth": "closed"
+     }
+    ],
+    "radar": {
+     "perimeter_enabled": true,
+     "masked": false,
+     "wifi_jam": false,
+     "bridge_open": true,
+     "events_buffered": 0,
+     "sensor_bluetooth_off": true
+    }
+   }
+  },
+  {
+   "name": "a covered radar",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "family": "radar",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "sensors": [
+     {
+      "sensor_id": 1,
+      "model": "ld2450",
+      "state": "reporting",
+      "firmware_known": true,
+      "firmware": "1.02.22062416",
+      "bluetooth": "closed"
+     }
+    ],
+    "radar": {
+     "perimeter_enabled": true,
+     "masked": true,
+     "wifi_jam": false,
+     "bridge_open": false,
+     "events_buffered": 12,
+     "sensor_bluetooth_off": true
+    }
+   }
+  },
+  {
+   "name": "a radar node with no sensor on a port",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "family": "radar",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "sensors": [],
+    "radar": {
+     "perimeter_enabled": true,
+     "masked": false,
+     "wifi_jam": false,
+     "bridge_open": false,
+     "events_buffered": 0,
+     "sensor_bluetooth_off": true
+    }
+   }
+  },
+  {
+   "name": "a boot cause outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "boot": {
+     "cause": "cosmic_ray",
+     "reset_reason": "panic",
+     "uptime_before_s": 4200,
+     "heap_internal_free": 52000,
+     "heap_internal_largest": 30000,
+     "coredump": true,
+     "deliberate": false,
+     "guard": false
+    }
+   }
+  },
+  {
+   "name": "a boot report without the core dump flag",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "boot": {
+     "cause": "panic",
+     "reset_reason": "panic",
+     "uptime_before_s": 4200,
+     "heap_internal_free": 52000,
+     "heap_internal_largest": 30000,
+     "deliberate": false,
+     "guard": false
+    }
+   }
+  },
+  {
+   "name": "a boot report with an unknown member",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "boot": {
+     "cause": "panic",
+     "reset_reason": "panic",
+     "uptime_before_s": 4200,
+     "heap_internal_free": 52000,
+     "heap_internal_largest": 30000,
+     "coredump": true,
+     "deliberate": false,
+     "guard": false,
+     "stack": "x"
+    }
+   }
+  },
+  {
+   "name": "the biggest block over the free memory in the boot report",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "boot": {
+     "cause": "panic",
+     "reset_reason": "panic",
+     "uptime_before_s": 4200,
+     "heap_internal_free": 52000,
+     "heap_internal_largest": 60000,
+     "coredump": true,
+     "deliberate": false,
+     "guard": false
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "only one of the boot figures",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "boot": {
+     "cause": "panic",
+     "reset_reason": "panic",
+     "uptime_before_s": 4200,
+     "heap_internal_free": 52000,
+     "coredump": true,
+     "deliberate": false,
+     "guard": false
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a gate without its levels",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "memory_gate": {
+     "closed": false,
+     "transitions": 0
+    }
+   }
+  },
+  {
+   "name": "a core dump of size zero",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "coredump": {
+     "present": true,
+     "size": 0
+    }
+   }
+  },
+  {
+   "name": "a size for a core dump that is not there",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "coredump": {
+     "present": false,
+     "size": 100
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a check outcome outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "config_check": {
+     "snapshot": "ok"
+    }
+   }
+  },
+  {
+   "name": "sensors on an alarm node",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "sensors": [
+     {
+      "sensor_id": 1,
+      "model": "ld2450",
+      "state": "reporting",
+      "firmware_known": true,
+      "firmware": "1.02.22062416",
+      "bluetooth": "closed"
+     }
+    ],
+    "radar": {
+     "perimeter_enabled": true,
+     "masked": false,
+     "wifi_jam": false,
+     "bridge_open": false,
+     "events_buffered": 0,
+     "sensor_bluetooth_off": true
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "sensors without the facts of the engine",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "family": "radar",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "sensors": [
+     {
+      "sensor_id": 1,
+      "model": "ld2450",
+      "state": "reporting",
+      "firmware_known": true,
+      "firmware": "1.02.22062416",
+      "bluetooth": "closed"
+     }
+    ]
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a sensor told twice",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "family": "radar",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "sensors": [
+     {
+      "sensor_id": 1,
+      "model": "ld2450",
+      "state": "reporting",
+      "firmware_known": true,
+      "firmware": "1.02.22062416",
+      "bluetooth": "closed"
+     },
+     {
+      "sensor_id": 1,
+      "model": "ld2450",
+      "state": "reporting",
+      "firmware_known": true,
+      "firmware": "1.02.22062416",
+      "bluetooth": "closed"
+     }
+    ],
+    "radar": {
+     "perimeter_enabled": true,
+     "masked": false,
+     "wifi_jam": false,
+     "bridge_open": false,
+     "events_buffered": 0,
+     "sensor_bluetooth_off": true
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a firmware without firmware_known",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "family": "radar",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "sensors": [
+     {
+      "sensor_id": 1,
+      "model": "ld2450",
+      "state": "reporting",
+      "firmware_known": false,
+      "firmware": "1.02.22062416",
+      "bluetooth": "closed"
+     }
+    ],
+    "radar": {
+     "perimeter_enabled": true,
+     "masked": false,
+     "wifi_jam": false,
+     "bridge_open": false,
+     "events_buffered": 0,
+     "sensor_bluetooth_off": true
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a Bluetooth address while the Bluetooth is closed",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "family": "radar",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "sensors": [
+     {
+      "sensor_id": 1,
+      "model": "ld2450",
+      "state": "reporting",
+      "firmware_known": true,
+      "firmware": "1.02.22062416",
+      "bluetooth": "closed",
+      "mac": "8F:27:2E:B8:0F:65"
+     }
+    ],
+    "radar": {
+     "perimeter_enabled": true,
+     "masked": false,
+     "wifi_jam": false,
+     "bridge_open": false,
+     "events_buffered": 0,
+     "sensor_bluetooth_off": true
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a sensor model outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "family": "radar",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "sensors": [
+     {
+      "sensor_id": 1,
+      "model": "ld9999",
+      "state": "reporting",
+      "firmware_known": true,
+      "firmware": "1.02.22062416",
+      "bluetooth": "closed"
+     }
+    ],
+    "radar": {
+     "perimeter_enabled": true,
+     "masked": false,
+     "wifi_jam": false,
+     "bridge_open": false,
+     "events_buffered": 0,
+     "sensor_bluetooth_off": true
+    }
+   }
+  },
+  {
+   "name": "a fourth sensor",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "family": "radar",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "sensors": [
+     {
+      "sensor_id": 4,
+      "model": "ld2450",
+      "state": "reporting",
+      "firmware_known": true,
+      "firmware": "1.02.22062416",
+      "bluetooth": "closed"
+     }
+    ],
+    "radar": {
+     "perimeter_enabled": true,
+     "masked": false,
+     "wifi_jam": false,
+     "bridge_open": false,
+     "events_buffered": 0,
+     "sensor_bluetooth_off": true
+    }
+   }
+  },
+  {
+   "name": "a sensor with an unknown member",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "family": "radar",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "sensors": [
+     {
+      "sensor_id": 1,
+      "model": "ld2450",
+      "state": "reporting",
+      "firmware_known": true,
+      "firmware": "1.02.22062416",
+      "bluetooth": "closed",
+      "secret": "x"
+     }
+    ],
+    "radar": {
+     "perimeter_enabled": true,
+     "masked": false,
+     "wifi_jam": false,
+     "bridge_open": false,
+     "events_buffered": 0,
+     "sensor_bluetooth_off": true
+    }
+   }
+  },
+  {
+   "name": "a firmware text with a space and a slash",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "family": "radar",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "sensors": [
+     {
+      "sensor_id": 1,
+      "model": "ld2450",
+      "state": "reporting",
+      "firmware_known": true,
+      "firmware": "1.0 /x",
+      "bluetooth": "closed"
+     }
+    ],
+    "radar": {
+     "perimeter_enabled": true,
+     "masked": false,
+     "wifi_jam": false,
+     "bridge_open": false,
+     "events_buffered": 0,
+     "sensor_bluetooth_off": true
+    }
+   }
+  },
+  {
+   "name": "more than a thousand buffered events",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "family": "radar",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "sensors": [
+     {
+      "sensor_id": 1,
+      "model": "ld2450",
+      "state": "reporting",
+      "firmware_known": true,
+      "firmware": "1.02.22062416",
+      "bluetooth": "closed"
+     }
+    ],
+    "radar": {
+     "perimeter_enabled": true,
+     "masked": false,
+     "wifi_jam": false,
+     "bridge_open": false,
+     "events_buffered": 1001,
+     "sensor_bluetooth_off": true
+    }
+   }
   }
  ]
 }

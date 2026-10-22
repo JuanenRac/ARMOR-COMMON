@@ -43,6 +43,10 @@ MESSAGES = {
     "node_control_command": ("NodeControlCommand", {}),
     "node_control_result": ("NodeControlResult", {}),
     "node_maintenance": ("NodeMaintenance", {}),
+    "radar_event": ("RadarEvent", {}),
+    "diagnostic_token_request": ("DiagnosticTokenRequest", {}),
+    "diagnostic_token_created": ("DiagnosticTokenCreated", {}),
+    "diagnostic_token_info": ("DiagnosticTokenInfo", {}),
     "alarm": ("Alarm", {"zones": "AlarmZone", "events": "AlarmEvent"}),
     "alarm_command": ("AlarmCommand", {"profile": "ArmProfile", "zones": "ArmProfileZone"}),
     "alarm_result": ("AlarmResult", {}),
@@ -137,8 +141,10 @@ def nested_types(schema: dict, nested: dict[str, str], emitted: set[str]):
         child = schema.get("properties", {}).get(prop)
         if child is None or type_name in emitted:
             continue
-        emitted.add(type_name)
         item = child.get("items", child)
+        if not (isinstance(item, dict) and item.get("type") == "object" and item.get("properties")):
+            continue   # the same name in another place may be a plain field (a flag called like an object elsewhere)
+        emitted.add(type_name)
         yield from nested_types(item, nested, emitted)
         yield type_name, item
 

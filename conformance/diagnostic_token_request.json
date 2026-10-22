@@ -1,0 +1,178 @@
+{
+ "kind": "diagnostic_token_request",
+ "vectors": [
+  {
+   "name": "two nodes for two hours",
+   "valid": true,
+   "payload": {
+    "nodes": [
+     "radar-1",
+     "solar-1"
+    ],
+    "ttl_s": 7200,
+    "label": "support"
+   }
+  },
+  {
+   "name": "one node, the default time",
+   "valid": true,
+   "payload": {
+    "nodes": [
+     "radar-1"
+    ]
+   }
+  },
+  {
+   "name": "the longest time",
+   "valid": true,
+   "payload": {
+    "nodes": [
+     "radar-1",
+     "solar-1"
+    ],
+    "ttl_s": 86400,
+    "label": "support"
+   }
+  },
+  {
+   "name": "the shortest time",
+   "valid": true,
+   "payload": {
+    "nodes": [
+     "radar-1",
+     "solar-1"
+    ],
+    "ttl_s": 300,
+    "label": "support"
+   }
+  },
+  {
+   "name": "no nodes",
+   "valid": false,
+   "payload": {
+    "nodes": [],
+    "ttl_s": 7200,
+    "label": "support"
+   }
+  },
+  {
+   "name": "more than sixteen nodes",
+   "valid": false,
+   "payload": {
+    "nodes": [
+     "node-0",
+     "node-1",
+     "node-2",
+     "node-3",
+     "node-4",
+     "node-5",
+     "node-6",
+     "node-7",
+     "node-8",
+     "node-9",
+     "node-10",
+     "node-11",
+     "node-12",
+     "node-13",
+     "node-14",
+     "node-15",
+     "node-16"
+    ],
+    "ttl_s": 7200,
+    "label": "support"
+   }
+  },
+  {
+   "name": "a node named twice",
+   "valid": false,
+   "payload": {
+    "nodes": [
+     "radar-1",
+     "radar-1"
+    ],
+    "ttl_s": 7200,
+    "label": "support"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "every node as a word",
+   "valid": false,
+   "payload": {
+    "nodes": [
+     "*"
+    ],
+    "ttl_s": 7200,
+    "label": "support"
+   }
+  },
+  {
+   "name": "more than a day",
+   "valid": false,
+   "payload": {
+    "nodes": [
+     "radar-1",
+     "solar-1"
+    ],
+    "ttl_s": 86401,
+    "label": "support"
+   }
+  },
+  {
+   "name": "less than five minutes",
+   "valid": false,
+   "payload": {
+    "nodes": [
+     "radar-1",
+     "solar-1"
+    ],
+    "ttl_s": 299,
+    "label": "support"
+   }
+  },
+  {
+   "name": "a scope that asks for more",
+   "valid": false,
+   "payload": {
+    "nodes": [
+     "radar-1",
+     "solar-1"
+    ],
+    "ttl_s": 7200,
+    "label": "support",
+    "scope": "admin"
+   }
+  },
+  {
+   "name": "a label that is too long",
+   "valid": false,
+   "payload": {
+    "nodes": [
+     "radar-1",
+     "solar-1"
+    ],
+    "ttl_s": 7200,
+    "label": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+   }
+  },
+  {
+   "name": "uppercase node",
+   "valid": false,
+   "payload": {
+    "nodes": [
+     "Radar-1"
+    ],
+    "ttl_s": 7200,
+    "label": "support"
+   }
+  },
+  {
+   "name": "not an object",
+   "valid": false,
+   "payload": [
+    1,
+    2
+   ]
+  }
+ ]
+}

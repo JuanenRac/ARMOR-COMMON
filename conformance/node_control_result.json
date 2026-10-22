@@ -1309,6 +1309,1090 @@
     "token_ttl_s": 30,
     "shell": "reboot"
    }
+  },
+  {
+   "name": "the diagnostics with the package",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false,
+     "package": {
+      "detail": "package",
+      "heap": {
+       "internal_free": 90000,
+       "internal_min": 70000,
+       "internal_largest": 60000,
+       "total_free": 5000000,
+       "total_min": 4000000,
+       "psram_free": 4900000
+      },
+      "tasks": [
+       {
+        "name": "radar",
+        "stack_free": 900,
+        "priority": 5,
+        "state": "R"
+       },
+       {
+        "name": "node-health",
+        "stack_free": 3000,
+        "priority": 3,
+        "state": "B"
+       }
+      ],
+      "resets": {
+       "reason": "panic",
+       "uptime_s": 4242,
+       "guard_restarts_in_hour": 1
+      },
+      "boot": {
+       "cause": "panic",
+       "reset_reason": "panic",
+       "uptime_before_s": 4200,
+       "heap_internal_free": 52000,
+       "heap_internal_largest": 30000,
+       "coredump": true,
+       "deliberate": false,
+       "guard": false
+      },
+      "memory_gate": {
+       "closed": false,
+       "transitions": 2,
+       "close_free": 28672,
+       "close_block": 12288,
+       "open_free": 40960,
+       "open_block": 16384
+      },
+      "versions": {
+       "firmware": "0.7.9",
+       "idf": "v5.5.1",
+       "board": "s3-eth",
+       "sensors": [
+        {
+         "name": "ld2450-1",
+         "version": "V1.02.22062416"
+        }
+       ]
+      },
+      "config": {
+       "wifi.mode": "station",
+       "wifi.dhcp": "true",
+       "wifi.channel": "6",
+       "mqtt.heartbeat_s": "30",
+       "mqtt.uri_host": "mqtts://broker.local:8883",
+       "language": "es"
+      },
+      "coredump": {
+       "present": true,
+       "size": 41000,
+       "summary": {
+        "task": "radar",
+        "reason": "Guru Meditation Error: LoadProhibited",
+        "pc": "0x4200abcd",
+        "backtrace": [
+         "0x4200abcd",
+         "0x40081234"
+        ],
+        "app_sha256": "0123456789abcdef"
+       }
+      },
+      "log": "I (100) mqtt: connecting\nW (200) wifi: password=***\n",
+      "truncated": false
+     }
+    }
+   }
+  },
+  {
+   "name": "the diagnostics with the log alone",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false,
+     "package": {
+      "detail": "log",
+      "log": "I (100) mqtt: connecting\n",
+      "truncated": false
+     }
+    }
+   }
+  },
+  {
+   "name": "a package with no core dump",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false,
+     "package": {
+      "detail": "package",
+      "heap": {
+       "internal_free": 90000,
+       "internal_min": 70000,
+       "internal_largest": 60000,
+       "total_free": 5000000,
+       "total_min": 4000000,
+       "psram_free": 4900000
+      },
+      "tasks": [
+       {
+        "name": "radar",
+        "stack_free": 900,
+        "priority": 5,
+        "state": "R"
+       },
+       {
+        "name": "node-health",
+        "stack_free": 3000,
+        "priority": 3,
+        "state": "B"
+       }
+      ],
+      "resets": {
+       "reason": "panic",
+       "uptime_s": 4242,
+       "guard_restarts_in_hour": 1
+      },
+      "memory_gate": {
+       "closed": false,
+       "transitions": 2,
+       "close_free": 28672,
+       "close_block": 12288,
+       "open_free": 40960,
+       "open_block": 16384
+      },
+      "versions": {
+       "firmware": "0.7.9",
+       "idf": "v5.5.1",
+       "board": "s3-eth",
+       "sensors": [
+        {
+         "name": "ld2450-1",
+         "version": "V1.02.22062416"
+        }
+       ]
+      },
+      "config": {
+       "wifi.mode": "station",
+       "wifi.dhcp": "true",
+       "wifi.channel": "6",
+       "mqtt.heartbeat_s": "30",
+       "mqtt.uri_host": "mqtts://broker.local:8883",
+       "language": "es"
+      },
+      "coredump": {
+       "present": false
+      },
+      "log": "I (100) mqtt: connecting\nW (200) wifi: password=***\n",
+      "truncated": false
+     }
+    }
+   }
+  },
+  {
+   "name": "a package that was cut",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false,
+     "package": {
+      "detail": "package",
+      "heap": {
+       "internal_free": 90000,
+       "internal_min": 70000,
+       "internal_largest": 60000,
+       "total_free": 5000000,
+       "total_min": 4000000,
+       "psram_free": 4900000
+      },
+      "tasks": [
+       {
+        "name": "radar",
+        "stack_free": 900,
+        "priority": 5,
+        "state": "R"
+       },
+       {
+        "name": "node-health",
+        "stack_free": 3000,
+        "priority": 3,
+        "state": "B"
+       }
+      ],
+      "resets": {
+       "reason": "panic",
+       "uptime_s": 4242,
+       "guard_restarts_in_hour": 1
+      },
+      "boot": {
+       "cause": "panic",
+       "reset_reason": "panic",
+       "uptime_before_s": 4200,
+       "heap_internal_free": 52000,
+       "heap_internal_largest": 30000,
+       "coredump": true,
+       "deliberate": false,
+       "guard": false
+      },
+      "memory_gate": {
+       "closed": false,
+       "transitions": 2,
+       "close_free": 28672,
+       "close_block": 12288,
+       "open_free": 40960,
+       "open_block": 16384
+      },
+      "versions": {
+       "firmware": "0.7.9",
+       "idf": "v5.5.1",
+       "board": "s3-eth",
+       "sensors": [
+        {
+         "name": "ld2450-1",
+         "version": "V1.02.22062416"
+        }
+       ]
+      },
+      "config": {
+       "wifi.mode": "station",
+       "wifi.dhcp": "true",
+       "wifi.channel": "6",
+       "mqtt.heartbeat_s": "30",
+       "mqtt.uri_host": "mqtts://broker.local:8883",
+       "language": "es"
+      },
+      "coredump": {
+       "present": true,
+       "size": 41000,
+       "summary": {
+        "task": "radar",
+        "reason": "Guru Meditation Error: LoadProhibited",
+        "pc": "0x4200abcd",
+        "backtrace": [
+         "0x4200abcd",
+         "0x40081234"
+        ],
+        "app_sha256": "0123456789abcdef"
+       }
+      },
+      "log": "I (100) mqtt: connecting\nW (200) wifi: password=***\n",
+      "truncated": true
+     }
+    }
+   }
+  },
+  {
+   "name": "a log that carries a heap",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false,
+     "package": {
+      "detail": "log",
+      "log": "I (100) mqtt: connecting\n",
+      "truncated": false,
+      "heap": {
+       "internal_free": 90000,
+       "internal_min": 70000,
+       "internal_largest": 60000,
+       "total_free": 5000000,
+       "total_min": 4000000,
+       "psram_free": 4900000
+      }
+     }
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a package without its tasks",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false,
+     "package": {
+      "detail": "package",
+      "heap": {
+       "internal_free": 90000,
+       "internal_min": 70000,
+       "internal_largest": 60000,
+       "total_free": 5000000,
+       "total_min": 4000000,
+       "psram_free": 4900000
+      },
+      "resets": {
+       "reason": "panic",
+       "uptime_s": 4242,
+       "guard_restarts_in_hour": 1
+      },
+      "boot": {
+       "cause": "panic",
+       "reset_reason": "panic",
+       "uptime_before_s": 4200,
+       "heap_internal_free": 52000,
+       "heap_internal_largest": 30000,
+       "coredump": true,
+       "deliberate": false,
+       "guard": false
+      },
+      "memory_gate": {
+       "closed": false,
+       "transitions": 2,
+       "close_free": 28672,
+       "close_block": 12288,
+       "open_free": 40960,
+       "open_block": 16384
+      },
+      "versions": {
+       "firmware": "0.7.9",
+       "idf": "v5.5.1",
+       "board": "s3-eth",
+       "sensors": [
+        {
+         "name": "ld2450-1",
+         "version": "V1.02.22062416"
+        }
+       ]
+      },
+      "config": {
+       "wifi.mode": "station",
+       "wifi.dhcp": "true",
+       "wifi.channel": "6",
+       "mqtt.heartbeat_s": "30",
+       "mqtt.uri_host": "mqtts://broker.local:8883",
+       "language": "es"
+      },
+      "coredump": {
+       "present": true,
+       "size": 41000,
+       "summary": {
+        "task": "radar",
+        "reason": "Guru Meditation Error: LoadProhibited",
+        "pc": "0x4200abcd",
+        "backtrace": [
+         "0x4200abcd",
+         "0x40081234"
+        ],
+        "app_sha256": "0123456789abcdef"
+       }
+      },
+      "log": "I (100) mqtt: connecting\nW (200) wifi: password=***\n",
+      "truncated": false
+     }
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a package whose least internal memory is over what is free",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false,
+     "package": {
+      "detail": "package",
+      "heap": {
+       "internal_free": 90000,
+       "internal_min": 90001,
+       "internal_largest": 60000,
+       "total_free": 5000000,
+       "total_min": 4000000,
+       "psram_free": 4900000
+      },
+      "tasks": [
+       {
+        "name": "radar",
+        "stack_free": 900,
+        "priority": 5,
+        "state": "R"
+       },
+       {
+        "name": "node-health",
+        "stack_free": 3000,
+        "priority": 3,
+        "state": "B"
+       }
+      ],
+      "resets": {
+       "reason": "panic",
+       "uptime_s": 4242,
+       "guard_restarts_in_hour": 1
+      },
+      "boot": {
+       "cause": "panic",
+       "reset_reason": "panic",
+       "uptime_before_s": 4200,
+       "heap_internal_free": 52000,
+       "heap_internal_largest": 30000,
+       "coredump": true,
+       "deliberate": false,
+       "guard": false
+      },
+      "memory_gate": {
+       "closed": false,
+       "transitions": 2,
+       "close_free": 28672,
+       "close_block": 12288,
+       "open_free": 40960,
+       "open_block": 16384
+      },
+      "versions": {
+       "firmware": "0.7.9",
+       "idf": "v5.5.1",
+       "board": "s3-eth",
+       "sensors": [
+        {
+         "name": "ld2450-1",
+         "version": "V1.02.22062416"
+        }
+       ]
+      },
+      "config": {
+       "wifi.mode": "station",
+       "wifi.dhcp": "true",
+       "wifi.channel": "6",
+       "mqtt.heartbeat_s": "30",
+       "mqtt.uri_host": "mqtts://broker.local:8883",
+       "language": "es"
+      },
+      "coredump": {
+       "present": true,
+       "size": 41000,
+       "summary": {
+        "task": "radar",
+        "reason": "Guru Meditation Error: LoadProhibited",
+        "pc": "0x4200abcd",
+        "backtrace": [
+         "0x4200abcd",
+         "0x40081234"
+        ],
+        "app_sha256": "0123456789abcdef"
+       }
+      },
+      "log": "I (100) mqtt: connecting\nW (200) wifi: password=***\n",
+      "truncated": false
+     }
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a core dump summary for a dump that is not there",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false,
+     "package": {
+      "detail": "package",
+      "heap": {
+       "internal_free": 90000,
+       "internal_min": 70000,
+       "internal_largest": 60000,
+       "total_free": 5000000,
+       "total_min": 4000000,
+       "psram_free": 4900000
+      },
+      "tasks": [
+       {
+        "name": "radar",
+        "stack_free": 900,
+        "priority": 5,
+        "state": "R"
+       },
+       {
+        "name": "node-health",
+        "stack_free": 3000,
+        "priority": 3,
+        "state": "B"
+       }
+      ],
+      "resets": {
+       "reason": "panic",
+       "uptime_s": 4242,
+       "guard_restarts_in_hour": 1
+      },
+      "boot": {
+       "cause": "panic",
+       "reset_reason": "panic",
+       "uptime_before_s": 4200,
+       "heap_internal_free": 52000,
+       "heap_internal_largest": 30000,
+       "coredump": true,
+       "deliberate": false,
+       "guard": false
+      },
+      "memory_gate": {
+       "closed": false,
+       "transitions": 2,
+       "close_free": 28672,
+       "close_block": 12288,
+       "open_free": 40960,
+       "open_block": 16384
+      },
+      "versions": {
+       "firmware": "0.7.9",
+       "idf": "v5.5.1",
+       "board": "s3-eth",
+       "sensors": [
+        {
+         "name": "ld2450-1",
+         "version": "V1.02.22062416"
+        }
+       ]
+      },
+      "config": {
+       "wifi.mode": "station",
+       "wifi.dhcp": "true",
+       "wifi.channel": "6",
+       "mqtt.heartbeat_s": "30",
+       "mqtt.uri_host": "mqtts://broker.local:8883",
+       "language": "es"
+      },
+      "coredump": {
+       "present": false,
+       "size": 10
+      },
+      "log": "I (100) mqtt: connecting\nW (200) wifi: password=***\n",
+      "truncated": false
+     }
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a package with a member for a password",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false,
+     "package": {
+      "detail": "package",
+      "heap": {
+       "internal_free": 90000,
+       "internal_min": 70000,
+       "internal_largest": 60000,
+       "total_free": 5000000,
+       "total_min": 4000000,
+       "psram_free": 4900000
+      },
+      "tasks": [
+       {
+        "name": "radar",
+        "stack_free": 900,
+        "priority": 5,
+        "state": "R"
+       },
+       {
+        "name": "node-health",
+        "stack_free": 3000,
+        "priority": 3,
+        "state": "B"
+       }
+      ],
+      "resets": {
+       "reason": "panic",
+       "uptime_s": 4242,
+       "guard_restarts_in_hour": 1
+      },
+      "boot": {
+       "cause": "panic",
+       "reset_reason": "panic",
+       "uptime_before_s": 4200,
+       "heap_internal_free": 52000,
+       "heap_internal_largest": 30000,
+       "coredump": true,
+       "deliberate": false,
+       "guard": false
+      },
+      "memory_gate": {
+       "closed": false,
+       "transitions": 2,
+       "close_free": 28672,
+       "close_block": 12288,
+       "open_free": 40960,
+       "open_block": 16384
+      },
+      "versions": {
+       "firmware": "0.7.9",
+       "idf": "v5.5.1",
+       "board": "s3-eth",
+       "sensors": [
+        {
+         "name": "ld2450-1",
+         "version": "V1.02.22062416"
+        }
+       ]
+      },
+      "config": {
+       "wifi.mode": "station",
+       "wifi.dhcp": "true",
+       "wifi.channel": "6",
+       "mqtt.heartbeat_s": "30",
+       "mqtt.uri_host": "mqtts://broker.local:8883",
+       "language": "es"
+      },
+      "coredump": {
+       "present": true,
+       "size": 41000,
+       "summary": {
+        "task": "radar",
+        "reason": "Guru Meditation Error: LoadProhibited",
+        "pc": "0x4200abcd",
+        "backtrace": [
+         "0x4200abcd",
+         "0x40081234"
+        ],
+        "app_sha256": "0123456789abcdef"
+       }
+      },
+      "log": "I (100) mqtt: connecting\nW (200) wifi: password=***\n",
+      "truncated": false,
+      "password": "x"
+     }
+    }
+   }
+  },
+  {
+   "name": "a task state outside the list",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false,
+     "package": {
+      "detail": "package",
+      "heap": {
+       "internal_free": 90000,
+       "internal_min": 70000,
+       "internal_largest": 60000,
+       "total_free": 5000000,
+       "total_min": 4000000,
+       "psram_free": 4900000
+      },
+      "tasks": [
+       {
+        "name": "radar",
+        "stack_free": 900,
+        "priority": 5,
+        "state": "X"
+       }
+      ],
+      "resets": {
+       "reason": "panic",
+       "uptime_s": 4242,
+       "guard_restarts_in_hour": 1
+      },
+      "boot": {
+       "cause": "panic",
+       "reset_reason": "panic",
+       "uptime_before_s": 4200,
+       "heap_internal_free": 52000,
+       "heap_internal_largest": 30000,
+       "coredump": true,
+       "deliberate": false,
+       "guard": false
+      },
+      "memory_gate": {
+       "closed": false,
+       "transitions": 2,
+       "close_free": 28672,
+       "close_block": 12288,
+       "open_free": 40960,
+       "open_block": 16384
+      },
+      "versions": {
+       "firmware": "0.7.9",
+       "idf": "v5.5.1",
+       "board": "s3-eth",
+       "sensors": [
+        {
+         "name": "ld2450-1",
+         "version": "V1.02.22062416"
+        }
+       ]
+      },
+      "config": {
+       "wifi.mode": "station",
+       "wifi.dhcp": "true",
+       "wifi.channel": "6",
+       "mqtt.heartbeat_s": "30",
+       "mqtt.uri_host": "mqtts://broker.local:8883",
+       "language": "es"
+      },
+      "coredump": {
+       "present": true,
+       "size": 41000,
+       "summary": {
+        "task": "radar",
+        "reason": "Guru Meditation Error: LoadProhibited",
+        "pc": "0x4200abcd",
+        "backtrace": [
+         "0x4200abcd",
+         "0x40081234"
+        ],
+        "app_sha256": "0123456789abcdef"
+       }
+      },
+      "log": "I (100) mqtt: connecting\nW (200) wifi: password=***\n",
+      "truncated": false
+     }
+    }
+   }
+  },
+  {
+   "name": "a backtrace entry that is not an address",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false,
+     "package": {
+      "detail": "package",
+      "heap": {
+       "internal_free": 90000,
+       "internal_min": 70000,
+       "internal_largest": 60000,
+       "total_free": 5000000,
+       "total_min": 4000000,
+       "psram_free": 4900000
+      },
+      "tasks": [
+       {
+        "name": "radar",
+        "stack_free": 900,
+        "priority": 5,
+        "state": "R"
+       },
+       {
+        "name": "node-health",
+        "stack_free": 3000,
+        "priority": 3,
+        "state": "B"
+       }
+      ],
+      "resets": {
+       "reason": "panic",
+       "uptime_s": 4242,
+       "guard_restarts_in_hour": 1
+      },
+      "boot": {
+       "cause": "panic",
+       "reset_reason": "panic",
+       "uptime_before_s": 4200,
+       "heap_internal_free": 52000,
+       "heap_internal_largest": 30000,
+       "coredump": true,
+       "deliberate": false,
+       "guard": false
+      },
+      "memory_gate": {
+       "closed": false,
+       "transitions": 2,
+       "close_free": 28672,
+       "close_block": 12288,
+       "open_free": 40960,
+       "open_block": 16384
+      },
+      "versions": {
+       "firmware": "0.7.9",
+       "idf": "v5.5.1",
+       "board": "s3-eth",
+       "sensors": [
+        {
+         "name": "ld2450-1",
+         "version": "V1.02.22062416"
+        }
+       ]
+      },
+      "config": {
+       "wifi.mode": "station",
+       "wifi.dhcp": "true",
+       "wifi.channel": "6",
+       "mqtt.heartbeat_s": "30",
+       "mqtt.uri_host": "mqtts://broker.local:8883",
+       "language": "es"
+      },
+      "coredump": {
+       "present": true,
+       "summary": {
+        "task": "radar",
+        "backtrace": [
+         "not-an-address"
+        ]
+       }
+      },
+      "log": "I (100) mqtt: connecting\nW (200) wifi: password=***\n",
+      "truncated": false
+     }
+    }
+   }
+  },
+  {
+   "name": "a log of text not allowed",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false,
+     "package": {
+      "detail": "log",
+      "log": 5,
+      "truncated": false
+     }
+    }
+   }
+  },
+  {
+   "name": "a package that is not an object",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9400,
+    "command_id": "d0d0d0d01234567b",
+    "action": "execute",
+    "operation": "diagnostics",
+    "stage": "diagnostics",
+    "accepted": true,
+    "refusal": "none",
+    "diagnostics": {
+     "firmware": "0.7.7",
+     "uptime_s": 86400,
+     "reset_reason": "software",
+     "heap_free": 142000,
+     "heap_min": 98000,
+     "psram_free": 7000000,
+     "stack_min_free": 1800,
+     "rssi": -61,
+     "mqtt_connected": true,
+     "state": "running",
+     "maintenance": false,
+     "package": "everything"
+    }
+   }
   }
  ]
 }

@@ -388,6 +388,89 @@ export type NodeControlCommand = {
   duration_s?: number;
   token?: string;
   requested_by: string;
+  detail?: "package" | "log";
+};
+
+export type NodeControlResultDiagnosticsPackageHeap = {
+  internal_free: number;
+  internal_min: number;
+  internal_largest: number;
+  total_free: number;
+  total_min: number;
+  psram_free?: number;
+};
+
+export type NodeControlResultDiagnosticsPackageTasks = {
+  name: string;
+  stack_free: number;
+  priority: number;
+  state: "R" | "r" | "B" | "S" | "D" | "?";
+};
+
+export type NodeControlResultDiagnosticsPackageResets = {
+  reason: "power_on" | "external" | "software" | "panic" | "int_wdt" | "task_wdt" | "other_wdt" | "deep_sleep" | "brownout" | "sdio" | "usb" | "jtag" | "efuse" | "power_glitch" | "cpu_lockup" | "unknown";
+  uptime_s: number;
+  guard_restarts_in_hour: number;
+};
+
+export type NodeControlResultDiagnosticsPackageBoot = {
+  cause: "panic" | "task_watchdog" | "interrupt_watchdog" | "other_watchdog" | "brownout" | "power_glitch" | "cpu_lockup" | "out_of_memory" | "guard_missing_task" | "guard_low_memory" | "guard_dead_man" | "guard";
+  reset_reason: "power_on" | "external" | "software" | "panic" | "int_wdt" | "task_wdt" | "other_wdt" | "deep_sleep" | "brownout" | "sdio" | "usb" | "jtag" | "efuse" | "power_glitch" | "cpu_lockup" | "unknown";
+  uptime_before_s?: number;
+  heap_internal_free?: number;
+  heap_internal_largest?: number;
+  coredump: boolean;
+  deliberate: boolean;
+  guard: boolean;
+};
+
+export type NodeControlResultDiagnosticsPackageMemoryGate = {
+  closed: boolean;
+  transitions: number;
+  close_free: number;
+  close_block: number;
+  open_free: number;
+  open_block: number;
+};
+
+export type NodeControlResultDiagnosticsPackageVersionsSensors = {
+  name: string;
+  version: string;
+};
+
+export type NodeControlResultDiagnosticsPackageVersions = {
+  firmware: string;
+  idf: string;
+  board?: string;
+  sensors: NodeControlResultDiagnosticsPackageVersionsSensors[];
+};
+
+export type NodeControlResultDiagnosticsPackageCoredumpSummary = {
+  task: string;
+  reason?: string;
+  pc?: string;
+  backtrace?: string[];
+  app_sha256?: string;
+};
+
+export type NodeControlResultDiagnosticsPackageCoredump = {
+  present: boolean;
+  size?: number;
+  summary?: NodeControlResultDiagnosticsPackageCoredumpSummary;
+};
+
+export type NodeControlResultDiagnosticsPackage = {
+  detail: "package" | "log";
+  heap?: NodeControlResultDiagnosticsPackageHeap;
+  tasks?: NodeControlResultDiagnosticsPackageTasks[];
+  resets?: NodeControlResultDiagnosticsPackageResets;
+  boot?: NodeControlResultDiagnosticsPackageBoot;
+  memory_gate?: NodeControlResultDiagnosticsPackageMemoryGate;
+  versions?: NodeControlResultDiagnosticsPackageVersions;
+  config?: Record<string, string>;
+  coredump?: NodeControlResultDiagnosticsPackageCoredump;
+  log: string;
+  truncated: boolean;
 };
 
 export type NodeControlResultDiagnostics = {
@@ -402,6 +485,7 @@ export type NodeControlResultDiagnostics = {
   mqtt_connected: boolean;
   state: "running" | "paused" | "standby";
   maintenance: boolean;
+  package?: NodeControlResultDiagnosticsPackage;
 };
 
 export type NodeControlResult = {
@@ -438,6 +522,56 @@ export type NodeMaintenance = {
   expected_s?: number;
   firmware: string;
   requested_by?: string;
+};
+
+export type RadarEvent = {
+  kind: "radar_event";
+  node_id: string;
+  timestamp_ms: number;
+  boot: number;
+  seq: number;
+  event: "zone_occupied" | "zone_clear" | "loiter" | "tripwire" | "path_violation" | "masking" | "masking_end" | "sensor_bluetooth_open" | "sensor_bluetooth_closed" | "wifi_jam" | "wifi_jam_end" | "bridge_opened" | "bridge_closed";
+  name?: string;
+  sensor_id?: number;
+  track_id?: number;
+  movement?: "still" | "walking" | "running";
+  value?: number;
+  count?: number;
+  direction?: "in" | "out";
+  from?: string;
+  by?: string;
+};
+
+export type DiagnosticTokenRequest = {
+  nodes: string[];
+  ttl_s?: number;
+  label?: string;
+};
+
+export type DiagnosticTokenCreated = {
+  id: string;
+  token: string;
+  scope: "read_only";
+  nodes: string[];
+  label?: string;
+  created_at: string;
+  expires_at: string;
+  created_by: string;
+};
+
+export type DiagnosticTokenInfo = {
+  id: string;
+  scope: "read_only";
+  nodes: string[];
+  label?: string;
+  created_at: string;
+  expires_at: string;
+  created_by: string;
+  status: "active" | "expired" | "revoked";
+  revoked_at?: string;
+  revoked_by?: string;
+  uses: number;
+  last_used_at?: string;
 };
 
 export type AlarmZone = {
@@ -509,6 +643,57 @@ export type AlarmResult = {
   phase: "disarmed" | "exit_delay" | "armed" | "entry_delay" | "alarm";
 };
 
+export type NodeHealthBoot = {
+  cause: "panic" | "task_watchdog" | "interrupt_watchdog" | "other_watchdog" | "brownout" | "power_glitch" | "cpu_lockup" | "out_of_memory" | "guard_missing_task" | "guard_low_memory" | "guard_dead_man" | "guard";
+  reset_reason: "power_on" | "external" | "software" | "panic" | "int_wdt" | "task_wdt" | "other_wdt" | "deep_sleep" | "brownout" | "sdio" | "usb" | "jtag" | "efuse" | "power_glitch" | "cpu_lockup" | "unknown";
+  uptime_before_s?: number;
+  heap_internal_free?: number;
+  heap_internal_largest?: number;
+  coredump: boolean;
+  deliberate: boolean;
+  guard: boolean;
+};
+
+export type NodeHealthMemoryGate = {
+  closed: boolean;
+  transitions: number;
+  close_free: number;
+  close_block: number;
+  open_free: number;
+  open_block: number;
+};
+
+export type NodeHealthCoredump = {
+  present: boolean;
+  size?: number;
+};
+
+export type NodeHealthConfigCheck = {
+  snapshot?: "restored" | "failed";
+  reverted?: "reapplied" | "failed";
+};
+
+export type NodeHealthSensors = {
+  sensor_id: number;
+  model: "ld2450" | "ld2461" | "ld2410" | "ld2412" | "ld2410s" | "mr24hpc1";
+  state: "reporting" | "no_data" | "garbled" | "silent" | "bridge";
+  firmware_known: boolean;
+  firmware?: string;
+  bluetooth: "unknown" | "open" | "closed" | "none";
+  mac?: string;
+  bluetooth_alert?: boolean;
+  quirk?: "ld2412_bad_firmware" | "ld2412_unknown_firmware";
+};
+
+export type NodeHealthRadar = {
+  perimeter_enabled: boolean;
+  masked: boolean;
+  wifi_jam: boolean;
+  bridge_open: boolean;
+  events_buffered: number;
+  sensor_bluetooth_off: boolean;
+};
+
 export type NodeHealth = {
   kind: "node_health";
   node_id: string;
@@ -536,6 +721,12 @@ export type NodeHealth = {
   control_until_s?: number;
   maintenance?: boolean;
   maintenance_until_s?: number;
+  boot?: NodeHealthBoot;
+  memory_gate?: NodeHealthMemoryGate;
+  coredump?: NodeHealthCoredump;
+  config_check?: NodeHealthConfigCheck;
+  sensors?: NodeHealthSensors[];
+  radar?: NodeHealthRadar;
 };
 
 export type ConnectionEvent = {
@@ -559,7 +750,7 @@ export type SystemEvent = {
   at: string;
   type: "system";
   category: "node" | "broker" | "settings" | "service" | "update" | "alarm" | "backup" | "batteries";
-  action: "appeared" | "returned" | "disappeared" | "firmware_changed" | "connected" | "disconnected" | "created" | "changed" | "removed" | "started" | "stopped" | "restarted" | "checked" | "installed" | "rolled_back" | "armed" | "disarmed" | "silenced" | "acknowledged" | "arm_requested" | "disarm_requested" | "silence_requested" | "backup_made" | "backup_restored" | "battery_requested" | "battery_operation" | "control_requested" | "control_acknowledged" | "control_refused" | "control_applied" | "control_back" | "control_lost" | "maintenance_started" | "maintenance_ended" | "maintenance_expired";
+  action: "appeared" | "returned" | "disappeared" | "firmware_changed" | "connected" | "disconnected" | "created" | "changed" | "removed" | "started" | "stopped" | "restarted" | "checked" | "installed" | "rolled_back" | "armed" | "disarmed" | "silenced" | "acknowledged" | "arm_requested" | "disarm_requested" | "silence_requested" | "backup_made" | "backup_restored" | "battery_requested" | "battery_operation" | "control_requested" | "control_acknowledged" | "control_refused" | "control_applied" | "control_back" | "control_lost" | "maintenance_started" | "maintenance_ended" | "maintenance_expired" | "dirty_boot" | "sensor_bluetooth_open" | "sensor_bluetooth_closed" | "radar_event" | "diagnostic_token_issued" | "diagnostic_token_revoked" | "diagnostic_token_used" | "diagnostic_token_denied";
   subject?: string;
   by?: string;
   version?: string;

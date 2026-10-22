@@ -231,6 +231,134 @@
    }
   },
   {
+   "name": "a node that started after a crash",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "dirty_boot",
+    "subject": "radar-1",
+    "version": "0.7.9",
+    "profile": "panic"
+   }
+  },
+  {
+   "name": "a node that restarted by its own guard",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "dirty_boot",
+    "subject": "radar-1",
+    "version": "0.7.9",
+    "profile": "guard_low_memory"
+   }
+  },
+  {
+   "name": "a sensor whose Bluetooth is open",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "sensor_bluetooth_open",
+    "subject": "radar-1:1",
+    "version": "0.3.7",
+    "profile": "ld2450"
+   }
+  },
+  {
+   "name": "a sensor whose Bluetooth was closed",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "sensor_bluetooth_closed",
+    "subject": "radar-1:1",
+    "version": "0.3.7",
+    "profile": "ld2450"
+   }
+  },
+  {
+   "name": "an event of the perimeter engine",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "node",
+    "action": "radar_event",
+    "subject": "radar-1",
+    "version": "0.3.7",
+    "profile": "masking"
+   }
+  },
+  {
+   "name": "a diagnostic token issued",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "settings",
+    "action": "diagnostic_token_issued",
+    "subject": "a1b2c3d4e5f6",
+    "version": "0.3.7",
+    "by": "ana",
+    "outcome": "allowed"
+   }
+  },
+  {
+   "name": "a diagnostic token revoked",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "settings",
+    "action": "diagnostic_token_revoked",
+    "subject": "a1b2c3d4e5f6",
+    "version": "0.3.7",
+    "by": "ana",
+    "outcome": "allowed"
+   }
+  },
+  {
+   "name": "a diagnostic token used",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "settings",
+    "action": "diagnostic_token_used",
+    "subject": "a1b2c3d4e5f6",
+    "version": "0.3.7",
+    "outcome": "allowed"
+   }
+  },
+  {
+   "name": "a diagnostic token refused",
+   "valid": true,
+   "payload": {
+    "id": 8,
+    "at": "2026-01-01T10:00:00.000Z",
+    "type": "system",
+    "category": "settings",
+    "action": "diagnostic_token_denied",
+    "subject": "a1b2c3d4e5f6",
+    "version": "0.3.7",
+    "outcome": "denied"
+   }
+  },
+  {
    "name": "the siren silenced",
    "valid": true,
    "payload": {

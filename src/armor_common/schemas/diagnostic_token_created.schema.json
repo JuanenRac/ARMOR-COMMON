@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/diagnostic-token-created-0.1.0.json",
+  "title": "A.R.M.O.R. answer to the issue of a read-only diagnostic token",
+  "description": "The answer to POST /api/v1/diagnostics/tokens. `token` is the secret and is shown ONLY in this answer: the server keeps its SHA-256 and nothing else, so a lost token cannot be shown again, only revoked and replaced.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "token",
+    "scope",
+    "nodes",
+    "created_at",
+    "expires_at",
+    "created_by"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{12}$",
+      "description": "Names the token in the list, the audit trail and the History; it is not a secret and opens nothing."
+    },
+    "token": {
+      "type": "string",
+      "pattern": "^armor-diag-[A-Za-z0-9_-]{43}$",
+      "description": "The secret, sent as `Authorization: Bearer <token>`."
+    },
+    "scope": {
+      "type": "string",
+      "const": "read_only"
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+      }
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 48
+    },
+    "created_at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:.]{8,12}Z$"
+    },
+    "expires_at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:.]{8,12}Z$"
+    },
+    "created_by": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._@ -]{1,64}$"
+    }
+  }
+}

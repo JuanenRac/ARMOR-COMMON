@@ -53,7 +53,10 @@ _RELAY_COMMANDS = ("on", "off", "true", "false", "1", "0", "toggle")
 # The health report of a node of any family has one topic per node: armor/health/{node_id} (node -> server). It is not the presence message of a radar (armor/node/{node_id}/health).
 NODE_HEALTH_TOPIC_PREFIX = "armor/health/"
 _EXTRA_SCHEMAS = ("alarm_zone_feed", "device_state", "server_alert", "network_orders", "node_health", "arm_profile", "connection_event", "system_event", "connection_client",
-                  "solar_battery_command", "solar_battery_result", "node_control_command", "node_control_result", "node_maintenance")
+                  "solar_battery_command", "solar_battery_result", "node_control_command", "node_control_result", "node_maintenance", "radar_event",
+                  "diagnostic_token_request", "diagnostic_token_created", "diagnostic_token_info")
+# The events of the perimeter engine of a radar node: armor/radar/{node_id}/events (node -> server, QoS 1, never retained).
+RADAR_EVENT_LEAF = "events"
 # Controlling a node (restart, pause, resume, standby, identify, diagnostics, maintenance): armor/control/{node_id}/command (server -> node), armor/control/all/command (server -> every node, an arm only)
 # and armor/control/{node_id}/result (node -> server).
 CONTROL_TOPIC_PREFIX = "armor/control/"
@@ -402,6 +405,8 @@ def validate_node_control_command(topic: str, payload: Mapping[str, object]) -> 
         raise ContractError("a delay and a slot go on the execute of a restart")
     if "slot" in payload and payload.get("mode") != "rolling":
         raise ContractError("a slot goes with the rolling mode")
+    if "detail" in payload and not (execute and operation == "diagnostics"):
+        raise ContractError("a detail goes on the execute of diagnostics")
     if "duration_s" in payload:
         span = CONTROL_DURATIONS.get(str(operation))
         if not execute or span is None:
@@ -449,6 +454,9 @@ def validate_node_control_result(topic: str, payload: Mapping[str, object]) -> N
         "applied": {"state", "maintenance", "requested_by"},
         "diagnostics": {"diagnostics"},
     }
+    diagnostics = payload.get("diagnostics")
+    if isinstance(diagnostics, Mapping) and "package" in diagnostics:
+        _check_package(diagnostics["package"])  # type: ignore[arg-type]
     given = set(payload)
     for name, fields in groups.items():
         present = fields & given
@@ -456,6 +464,37 @@ def validate_node_control_result(topic: str, payload: Mapping[str, object]) -> N
             raise ContractError(f"a {name} answer carries {', '.join(sorted(required[name]))}")
         if stage != name and (present - groups_shared(name, stage, groups)):
             raise ContractError(f"{', '.join(sorted(present))} belong to a {name} answer only")
+
+
+def _check_package(package: Mapping[str, object]) -> None:
+    """The diagnostic package of a diagnostics answer: a `log` carries the log and nothing else; a `package` carries everything, and the figures never contradict each other."""
+    if package.get("detail") == "log":
+        extra = set(package) - {"detail", "log", "truncated"}
+        if extra:
+            raise ContractError(f"a log carries no {', '.join(sorted(extra))}")
+        return
+    for name in ("heap", "tasks", "resets", "versions", "config", "coredump"):
+        if name not in package:
+            raise ContractError(f"a package carries {name}")
+    heap = package["heap"]
+    if heap["internal_min"] > heap["internal_free"] or heap["internal_largest"] > heap["internal_free"] or heap["total_min"] > heap["total_free"]:  # type: ignore[index,operator]
+        raise ContractError("the least memory and the biggest block are never more than what is free now")
+    core = package["coredump"]
+    if ("size" in core or "summary" in core) and core.get("present") is not True:  # type: ignore[operator,union-attr]
+        raise ContractError("a core dump size and summary go with a core dump that is present")
+    _check_boot(package.get("boot"))
+
+
+def _check_boot(boot: object) -> None:
+    if boot is None:
+        return
+    has = [name for name in ("heap_internal_free", "heap_internal_largest") if name in boot]  # type: ignore[operator]
+    if len(has) == 1:
+        raise ContractError("heap_internal_free and heap_internal_largest come together")
+    if has and boot["heap_internal_largest"] > boot["heap_internal_free"]:  # type: ignore[index,operator]
+        raise ContractError("the biggest internal block is never more than the internal memory free")
+    if boot.get("cause") == "panic" and boot.get("guard") is True:  # type: ignore[union-attr]
+        raise ContractError("a panic is not a restart of the guard")
 
 
 def groups_shared(name: str, stage: object, groups: Mapping[str, set]) -> set:
@@ -607,6 +646,91 @@ def validate_node_health(topic: str, payload: Mapping[str, object]) -> None:
         raise ContractError("the time left goes with a paused node: standby has no end")
     if "maintenance_until_s" in payload and payload.get("maintenance") is not True:
         raise ContractError("the maintenance time left goes with the maintenance flag on")
+    _check_boot(payload.get("boot"))
+    core = payload.get("coredump")
+    if isinstance(core, Mapping) and "size" in core and core.get("present") is not True:
+        raise ContractError("a core dump size goes with a core dump that is present")
+    if ("sensors" in payload) != ("radar" in payload):
+        raise ContractError("the sensors and the facts of the perimeter engine come together")
+    if "sensors" in payload and payload["family"] != "radar":
+        raise ContractError("only a radar node has sensors")
+    seen: set[int] = set()
+    for sensor in payload.get("sensors", []):  # type: ignore[attr-defined]
+        if sensor["sensor_id"] in seen:
+            raise ContractError("a sensor is told once")
+        seen.add(sensor["sensor_id"])
+        if sensor["firmware_known"] != ("firmware" in sensor):
+            raise ContractError("a firmware version goes with firmware_known and nothing else")
+        if "mac" in sensor and sensor["bluetooth"] != "open":
+            raise ContractError("a Bluetooth address is told only while the sensor's Bluetooth is open")
+        if sensor.get("bluetooth_alert") is True and sensor["bluetooth"] not in ("open", "unknown"):
+            raise ContractError("a Bluetooth alert needs a Bluetooth that is open or cannot be told closed")
+
+
+def parse_radar_event_topic(topic: str) -> str:
+    """Split ``armor/radar/{node_id}/events`` into ``node_id``."""
+    if not isinstance(topic, str):
+        raise ContractError("topic must be a string")
+    parts = topic.split("/")
+    if len(parts) != 4 or parts[:2] != ["armor", "radar"] or parts[3] != RADAR_EVENT_LEAF:
+        raise ContractError("topic must be armor/radar/{node_id}/events")
+    _check_node_id(parts[2])
+    return parts[2]
+
+
+def validate_radar_event(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate an event of the perimeter engine: the topic, the schema, that the node matches, and that each member belongs to the events that can carry it (a direction only on a tripwire,
+    the zone it came from only on a path violation, the administrator only on the bridge, a sensor on the events that are about one)."""
+    node_id = parse_radar_event_topic(topic)
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    if payload.get("node_id") != node_id:
+        raise ContractError("payload node_id must match the topic")
+    validate_payload("radar_event", payload)
+    event = payload["event"]
+    if "direction" in payload and event != "tripwire":
+        raise ContractError("a direction goes with a tripwire")
+    if "from" in payload and event != "path_violation":
+        raise ContractError("the zone it came from goes with a path violation")
+    if "by" in payload and event not in ("bridge_opened", "bridge_closed"):
+        raise ContractError("an administrator goes with the serial bridge")
+    if event in ("sensor_bluetooth_open", "sensor_bluetooth_closed", "bridge_opened", "bridge_closed") and "sensor_id" not in payload:
+        raise ContractError("this event is about one sensor")
+    if event in ("wifi_jam", "wifi_jam_end", "masking_end") and ({"track_id", "movement", "direction"} & set(payload)):
+        raise ContractError("this event is not about a target")
+
+
+def validate_diagnostic_token_request(payload: Mapping[str, object]) -> None:
+    """Validate the request for a read-only diagnostic token: the schema and that no node is named twice."""
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    validate_payload("diagnostic_token_request", payload)
+    nodes = payload["nodes"]
+    if len(set(nodes)) != len(nodes):  # type: ignore[arg-type]
+        raise ContractError("a node is named once")
+
+
+def validate_diagnostic_token_created(payload: Mapping[str, object]) -> None:
+    """Validate the answer that shows a new token: the schema and that it expires after it was created and within a day."""
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    validate_payload("diagnostic_token_created", payload)
+    if len(set(payload["nodes"])) != len(payload["nodes"]):  # type: ignore[arg-type]
+        raise ContractError("a node is named once")
+    if not str(payload["created_at"]) < str(payload["expires_at"]):
+        raise ContractError("the token expires after it was created")
+
+
+def validate_diagnostic_token_info(payload: Mapping[str, object]) -> None:
+    """Validate a line of the list of tokens: the schema, and that a revoked token says when and by whom, and no other does."""
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    validate_payload("diagnostic_token_info", payload)
+    revoked = payload["status"] == "revoked"
+    if revoked != ("revoked_at" in payload and "revoked_by" in payload) or (not revoked and ("revoked_at" in payload or "revoked_by" in payload)):
+        raise ContractError("a revoked token says when and by whom; no other does")
+    if payload["uses"] == 0 and "last_used_at" in payload:  # type: ignore[operator]
+        raise ContractError("a token never used has no last use")
 
 
 def parse_network_topic(topic: str) -> str:
