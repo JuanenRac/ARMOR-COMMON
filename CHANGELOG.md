@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## [Unreleased]
+## [0.7.4] - Node diagnostics, reading quality and held values in the contract
 
 - The repository has a security policy, a code of conduct, a contributing guide and a support file.
 - The banner follows the animated style of the ecosystem banners, with the name, the kind and the technologies of the project.
