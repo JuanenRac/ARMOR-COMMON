@@ -849,6 +849,101 @@
    }
   },
   {
+   "name": "values that were held at a limit",
+   "valid": true,
+   "payload": {
+    "kind": "inverter",
+    "node_id": "solar-1",
+    "device": "axpert-1",
+    "timestamp_ms": 1000,
+    "mode": "line",
+    "grid_v": 232.0,
+    "grid_hz": 50.0,
+    "out_v": 230.0,
+    "out_hz": 50.0,
+    "out_va": 161,
+    "out_w": 119,
+    "load_percent": 3,
+    "battery_v": 57.5,
+    "battery_a": 12.0,
+    "battery_percent": 100,
+    "pv_v": 103.8,
+    "pv_a": 14.0,
+    "pv_w": 856,
+    "heatsink_c": 69,
+    "ac_charging": false,
+    "pv_charging": true,
+    "load_on": true,
+    "warnings": [],
+    "clamped": [
+     "load_percent",
+     "pv_v"
+    ]
+   }
+  },
+  {
+   "name": "clamped that is not a list",
+   "valid": false,
+   "payload": {
+    "kind": "inverter",
+    "node_id": "solar-1",
+    "device": "axpert-1",
+    "timestamp_ms": 1000,
+    "mode": "line",
+    "grid_v": 232.0,
+    "grid_hz": 50.0,
+    "out_v": 230.0,
+    "out_hz": 50.0,
+    "out_va": 161,
+    "out_w": 119,
+    "load_percent": 3,
+    "battery_v": 57.5,
+    "battery_a": 12.0,
+    "battery_percent": 100,
+    "pv_v": 103.8,
+    "pv_a": 14.0,
+    "pv_w": 856,
+    "heatsink_c": 69,
+    "ac_charging": false,
+    "pv_charging": true,
+    "load_on": true,
+    "warnings": [],
+    "clamped": "load_percent"
+   }
+  },
+  {
+   "name": "clamped with a number in it",
+   "valid": false,
+   "payload": {
+    "kind": "inverter",
+    "node_id": "solar-1",
+    "device": "axpert-1",
+    "timestamp_ms": 1000,
+    "mode": "line",
+    "grid_v": 232.0,
+    "grid_hz": 50.0,
+    "out_v": 230.0,
+    "out_hz": 50.0,
+    "out_va": 161,
+    "out_w": 119,
+    "load_percent": 3,
+    "battery_v": 57.5,
+    "battery_a": 12.0,
+    "battery_percent": 100,
+    "pv_v": 103.8,
+    "pv_a": 14.0,
+    "pv_w": 856,
+    "heatsink_c": 69,
+    "ac_charging": false,
+    "pv_charging": true,
+    "load_on": true,
+    "warnings": [],
+    "clamped": [
+     200
+    ]
+   }
+  },
+  {
    "name": "warning that is not a name",
    "valid": false,
    "payload": {

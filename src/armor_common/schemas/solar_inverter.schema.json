@@ -158,6 +158,12 @@
       "type": "boolean",
       "description": "False when the inverter's dialect has no way to ask for its warnings (the REVO dialect has no warning query): warnings is then empty because it is unknown, not because there are none. Absent means true."
     },
+    "clamped": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {"type": "string", "maxLength": 32},
+      "description": "The numbers of this message that the inverter sent beyond what is possible and that the node held at the limit the contract accepts (for example load_percent cut to 200), by their names in this message. Absent when nothing was cut: a consumer treats the named values as not real."
+    },
     "pv2_v": {
       "type": "number",
       "minimum": 0,
