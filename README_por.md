@@ -28,7 +28,7 @@
 
 ---
 
-**Verificação de honestidade - o que funciona hoje:** Os esquemas (telemetria, saúde, comando, informação do nó, inversor e bateria solares, elétrico, alarme com o seu comando e resultado, e rede), o validador Python, os 1222 vetores de conformidade, os tipos TypeScript e Kotlin gerados, o ficheiro OpenAPI do servidor (136 caminhos), a base de firmware partilhada pelos cinco nós e o lançador de projetos partilhado são reais e testados (156 testes). O ficheiro Kotlin é gerado mas **ainda não é consumido** pelo ARMOR-ANDROID-CONTROL (que mantém a sua própria leitura), e o comando `set_thresholds` leva um único campo `sensitivity` porque os parâmetros reais do radar só ficam definidos quando existir firmware.
+**Verificação de honestidade - o que funciona hoje:** Os esquemas (telemetria, saúde, comando, informação do nó, inversor e bateria solares, elétrico, alarme com o seu comando e resultado, e rede), o validador Python, os 1222 vetores de conformidade, os tipos TypeScript e Kotlin gerados, o ficheiro OpenAPI do servidor (136 caminhos), a base de firmware partilhada pelos cinco nós e o lançador de projetos partilhado são reais e testados (157 testes). O ficheiro Kotlin é gerado mas **ainda não é consumido** pelo ARMOR-ANDROID-CONTROL (que mantém a sua própria leitura), e o comando `set_thresholds` leva um único campo `sensitivity` porque os parâmetros reais do radar só ficam definidos quando existir firmware.
 
 ---
 
@@ -38,7 +38,7 @@
 |---|---|
 | Versão | `0.7.5` |
 | Maturidade | Estabelecido |
-| Testes | 156 (`python -m unittest discover -s tests`) e 1222 vetores de conformidade |
+| Testes | 157 (`python -m unittest discover -s tests`) e 1222 vetores de conformidade |
 | Tecnologia | Python 3.11+ / JSON Schema / OpenAPI |
 | Em hardware real | Só o nó radar funcionou numa placa: as suas mensagens são as que o servidor do CM5, o Studio e a aplicação Android falam todos os dias; as mensagens dos outros nós são verificadas contra substitutos |
 
@@ -95,7 +95,7 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 156 tests, 1222 conformance vectors
+python -m unittest discover -s tests      # 157 tests, 1222 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list (--check: they are current)
 python tools/sync_firmware_base.py check  # the firmware the node projects share has not drifted (see docs/FIRMWARE_BASE.md)

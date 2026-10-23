@@ -28,7 +28,7 @@
 
 ---
 
-**Comprobación de honestidad - qué funciona hoy:** Los esquemas (telemetría, salud, comando, información del nodo, inversor y batería solares, eléctrico, alarma con su comando y resultado, y red), el validador de Python, los 1222 vectores de conformidad, los tipos generados de TypeScript y Kotlin, el fichero OpenAPI del servidor (136 rutas), la base de firmware compartida por los cinco nodos y el lanzador de proyectos compartido son reales y están probados (156 tests). El fichero de Kotlin está generado pero **todavía no lo consume** ARMOR-ANDROID-CONTROL (que conserva su propia lectura), y el comando `set_thresholds` lleva un único campo `sensitivity` porque los parámetros reales del radar no se definen hasta que exista el firmware.
+**Comprobación de honestidad - qué funciona hoy:** Los esquemas (telemetría, salud, comando, información del nodo, inversor y batería solares, eléctrico, alarma con su comando y resultado, y red), el validador de Python, los 1222 vectores de conformidad, los tipos generados de TypeScript y Kotlin, el fichero OpenAPI del servidor (136 rutas), la base de firmware compartida por los cinco nodos y el lanzador de proyectos compartido son reales y están probados (157 tests). El fichero de Kotlin está generado pero **todavía no lo consume** ARMOR-ANDROID-CONTROL (que conserva su propia lectura), y el comando `set_thresholds` lleva un único campo `sensitivity` porque los parámetros reales del radar no se definen hasta que exista el firmware.
 
 ---
 
@@ -38,7 +38,7 @@
 |---|---|
 | Versión | `0.7.5` |
 | Madurez | Establecido |
-| Tests | 156 (`python -m unittest discover -s tests`) y 1222 vectores de conformidad |
+| Tests | 157 (`python -m unittest discover -s tests`) y 1222 vectores de conformidad |
 | Tecnología | Python 3.11+ / JSON Schema / OpenAPI |
 | En hardware real | Solo el nodo radar ha funcionado en una placa: sus mensajes son los que hablan cada día el servidor de la CM5, Studio y la app Android; los mensajes de los demás nodos se comprueban contra sustitutos |
 
@@ -95,7 +95,7 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 156 tests, 1222 conformance vectors
+python -m unittest discover -s tests      # 157 tests, 1222 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list (--check: they are current)
 python tools/sync_firmware_base.py check  # the firmware the node projects share has not drifted (see docs/FIRMWARE_BASE.md)

@@ -28,7 +28,7 @@
 
 ---
 
-**正直さのチェック - 今日動いているもの:** スキーマ（テレメトリ、状態、コマンド、ノード情報、ソーラーのインバーターとバッテリー、電気、コマンドと結果を含む警報、ネットワーク）、Python の検証器、1222 個の適合ベクトル、生成された TypeScript と Kotlin の型、サーバーの OpenAPI ファイル（136 パス）、5 つのノードが共有するファームウェア基盤、共通のプロジェクトランチャーは実在し、テストされています（156 件）。Kotlin ファイルは生成されますが ARMOR-ANDROID-CONTROL では**まだ使われていません**（独自の解析を保持）。`set_thresholds` コマンドは `sensitivity` フィールド 1 つだけを持ちます。実際のレーダーパラメーターはファームウェアができるまで定義できないためです。
+**正直さのチェック - 今日動いているもの:** スキーマ（テレメトリ、状態、コマンド、ノード情報、ソーラーのインバーターとバッテリー、電気、コマンドと結果を含む警報、ネットワーク）、Python の検証器、1222 個の適合ベクトル、生成された TypeScript と Kotlin の型、サーバーの OpenAPI ファイル（136 パス）、5 つのノードが共有するファームウェア基盤、共通のプロジェクトランチャーは実在し、テストされています（157 件）。Kotlin ファイルは生成されますが ARMOR-ANDROID-CONTROL では**まだ使われていません**（独自の解析を保持）。`set_thresholds` コマンドは `sensitivity` フィールド 1 つだけを持ちます。実際のレーダーパラメーターはファームウェアができるまで定義できないためです。
 
 ---
 
@@ -38,7 +38,7 @@
 |---|---|
 | バージョン | `0.7.5` |
 | 成熟度 | 確立 |
-| テスト | 156 (`python -m unittest discover -s tests`) と 1222 件の適合ベクトル |
+| テスト | 157 (`python -m unittest discover -s tests`) と 1222 件の適合ベクトル |
 | 技術 | Python 3.11+ / JSON Schema / OpenAPI |
 | 実機での確認 | 基板上で動いたのはレーダーノードだけです。そのメッセージは CM5 サーバー、Studio、Android アプリが毎日話しているもので、他のノードのメッセージは代替に対して検査されます |
 
@@ -95,7 +95,7 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 156 tests, 1222 conformance vectors
+python -m unittest discover -s tests      # 157 tests, 1222 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list (--check: they are current)
 python tools/sync_firmware_base.py check  # the firmware the node projects share has not drifted (see docs/FIRMWARE_BASE.md)
