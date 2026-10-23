@@ -2601,7 +2601,7 @@ components:
                         system_fault: { type: string }
               registered: { $ref: '#/components/schemas/SolarDeviceRegistration' }
         waiting: { type: array, items: { $ref: '#/components/schemas/SolarDeviceRegistration' }, description: Declared devices with no reading yet }
-        totals: { type: object, additionalProperties: true }
+        totals: { type: object, required: [inverters, batteries, stale, pv_w, load_w, battery_w, soc_percent, grid_present, mode], properties: { inverters: { type: integer }, batteries: { type: integer }, stale: { type: integer }, pv_w: { type: number }, load_w: { type: number }, battery_w: { type: [number, 'null'] }, soc_percent: { type: [number, 'null'] }, capacity_ah: { type: [number, 'null'] }, full_capacity_ah: { type: [number, 'null'] }, energy_kwh: { type: [number, 'null'] }, grid_present: { type: boolean }, mode: { type: [string, 'null'] } } }
         catalog:
           type: object
           required: [inverter_models, battery_models, connections]
@@ -2657,8 +2657,16 @@ components:
       required: [nodes, waiting, totals, levels]
       properties:
         nodes: { type: array, items: { $ref: '#/components/schemas/NodeHealthEntry' } }
-        waiting: { type: array, items: { type: object, additionalProperties: true }, description: Nodes the server knows that have not reported their health yet }
-        totals: { type: object, additionalProperties: true }
+        waiting:
+          type: array
+          description: Nodes the server knows that have not reported their health yet
+          items:
+            type: object
+            required: [node_id, family]
+            properties:
+              node_id: { type: string }
+              family: { type: string, enum: [radar, solar, electrical, alarm, hmi] }
+        totals: { type: object, required: [nodes, stale, with_warnings], properties: { nodes: { type: integer }, stale: { type: integer }, with_warnings: { type: integer } } }
         levels: { type: array, items: { type: string } }
     NodeHealthEntry:
       type: object
@@ -2691,13 +2699,22 @@ components:
               current_a: { type: number }
               energy_kwh: { type: number }
               switchable: { type: boolean }
-        totals: { type: object, additionalProperties: true }
+        totals: { type: object, required: [elements, online, 'on', power_w, energy_kwh], properties: { elements: { type: integer }, online: { type: integer }, 'on': { type: integer }, power_w: { type: number }, energy_kwh: { type: number } } }
     ElectricalReadings:
       type: object
       required: [nodes, totals]
       properties:
-        nodes: { type: array, items: { type: object, additionalProperties: true } }
-        totals: { type: object, additionalProperties: true }
+        nodes:
+          type: array
+          items:
+            type: object
+            required: [node_id, reading, received_at, stale]
+            properties:
+              node_id: { type: string }
+              reading: { $ref: '../src/armor_common/schemas/electrical.schema.json' }
+              received_at: { type: string, format: date-time }
+              stale: { type: boolean }
+        totals: { type: object, required: [nodes, channels, stale, grid_w, grid_estimated, grid_kwh, alarms], properties: { nodes: { type: integer }, channels: { type: integer }, stale: { type: integer }, grid_w: { type: [number, 'null'] }, grid_estimated: { type: boolean }, grid_kwh: { type: [number, 'null'] }, alarms: { type: integer } } }
     ElectricalEnergy:
       type: object
       required: [channels]
@@ -2726,7 +2743,17 @@ components:
         node_id: { type: string }
         channel: { type: string }
         minutes: { type: integer }
-        samples: { type: array, items: { type: object, additionalProperties: true } }
+        samples:
+          type: array
+          items:
+            type: object
+            required: [t]
+            properties:
+              t: { type: integer, description: Milliseconds since 1970 }
+              voltage_v: { type: number }
+              current_a: { type: number }
+              power_w: { type: number }
+              energy_kwh: { type: number }
     ElectricalSwitching:
       type: object
       additionalProperties: true
@@ -2941,8 +2968,17 @@ components:
       type: object
       required: [nodes, totals]
       properties:
-        nodes: { type: array, items: { type: object, additionalProperties: true } }
-        totals: { type: object, additionalProperties: true, description: 'nodes, stale, armed, sounding' }
+        nodes:
+          type: array
+          items:
+            type: object
+            required: [node_id, state, received_at, stale]
+            properties:
+              node_id: { type: string }
+              state: { $ref: '../src/armor_common/schemas/alarm.schema.json' }
+              received_at: { type: string, format: date-time }
+              stale: { type: boolean }
+        totals: { type: object, required: [nodes, stale, armed, sounding], properties: { nodes: { type: integer }, stale: { type: integer }, armed: { type: integer }, sounding: { type: integer } } }
     AlarmCommandStatus:
       type: object
       additionalProperties: true
@@ -3037,17 +3073,66 @@ components:
       type: object
       required: [nodes, totals, events, outages]
       properties:
-        nodes: { type: array, items: { type: object, additionalProperties: true } }
-        totals: { type: object, additionalProperties: true }
-        events: { type: array, items: { type: object, additionalProperties: true } }
-        outages: { type: array, maxItems: 50, items: { type: object, additionalProperties: true } }
+        nodes:
+          type: array
+          items:
+            type: object
+            required: [node_id, received_at, stale, interface, internet, devices, hidden]
+            properties:
+              node_id: { type: string }
+              received_at: { type: string, format: date-time }
+              stale: { type: boolean }
+              interface: { type: object, description: 'The interface the node watches, as the network message has it' }
+              internet: { type: object, description: 'The state of the internet, as the network message has it' }
+              scan: { type: object, description: The last sweep }
+              public: { type: object, description: What the internet sees of the connection }
+              devices: { type: array, items: { type: object, description: 'A device as the network message has it, with the note an operator gave it (note) and the login kept for it (login), when there are any' } }
+              hidden: { type: integer, minimum: 0, description: How many devices an operator hid }
+        totals: { type: object, required: [nodes, stale, devices, online, unknown, internet], properties: { nodes: { type: integer }, stale: { type: integer }, devices: { type: integer }, online: { type: integer }, unknown: { type: integer }, internet: { type: [string, 'null'] } } }
+        events:
+          type: array
+          items:
+            type: object
+            required: [id, kind, at_ms, node_id]
+            properties:
+              id: { type: string }
+              kind: { type: string }
+              at_ms: { type: integer }
+              node_id: { type: string }
+              device_id: { type: string }
+              port: { type: integer }
+              outage_s: { type: integer }
+              detail: { type: string }
+        outages:
+          type: array
+          maxItems: 50
+          items:
+            type: object
+            required: [node_id, kind, started_ms, ended_ms, duration_s]
+            properties:
+              node_id: { type: string }
+              kind: { type: string, enum: [internet, gateway] }
+              started_ms: { type: integer }
+              ended_ms: { type: integer }
+              duration_s: { type: integer }
     NetworkHistory:
       type: object
       required: [node_id, minutes, samples]
       properties:
         node_id: { type: string }
         minutes: { type: integer }
-        samples: { type: array, items: { type: object, additionalProperties: true } }
+        samples:
+          type: array
+          items:
+            type: object
+            required: [t, state]
+            properties:
+              t: { type: integer }
+              state: { type: string }
+              latency_ms: { type: number }
+              loss_percent: { type: number }
+              rx_bps: { type: number }
+              tx_bps: { type: number }
     NetworkCommand:
       type: object
       additionalProperties: true
@@ -3099,10 +3184,44 @@ components:
     SystemMetrics:
       type: object
       required: [history]
-      additionalProperties: true
-      description: The latest sample (cpu, memory, temperature, load) and the samples before it
+      additionalProperties: false
+      description: The latest sample (cpu, memory, temperatures, disks, network, uptime) and the samples before it
       properties:
-        history: { type: array, items: { type: object, additionalProperties: true } }
+        at_ms: { type: integer }
+        cpu:
+          type: object
+          required: [percent, cores, load]
+          properties:
+            percent: { type: [number, 'null'] }
+            cores: { type: integer }
+            load: { type: array, minItems: 3, maxItems: 3, items: { type: number } }
+            mhz: { type: number }
+        memory:
+          type: object
+          required: [total, used, available, swap_total, swap_used]
+          properties:
+            total: { type: integer }
+            used: { type: integer }
+            available: { type: integer }
+            swap_total: { type: integer }
+            swap_used: { type: integer }
+        temperatures: { type: array, items: { type: object, required: [name, celsius], properties: { name: { type: string }, celsius: { type: number } } } }
+        disks: { type: array, items: { type: object, required: [mount, device, kind, fs, total, used], properties: { mount: { type: string }, device: { type: string }, kind: { type: string, enum: [sd, usb, nvme, other] }, fs: { type: string }, total: { type: integer }, used: { type: integer } } } }
+        network: { type: array, items: { type: object, required: [name, up, rx_bps, tx_bps, rx_bytes, tx_bytes], properties: { name: { type: string }, up: { type: boolean }, rx_bps: { type: [number, 'null'] }, tx_bps: { type: [number, 'null'] }, rx_bytes: { type: integer }, tx_bytes: { type: integer } } } }
+        uptime_s: { type: number }
+        history:
+          type: array
+          items:
+            type: object
+            required: [t, cpu, memory, swap, temperature, rx_bps, tx_bps]
+            properties:
+              t: { type: integer }
+              cpu: { type: [number, 'null'] }
+              memory: { type: number }
+              swap: { type: number }
+              temperature: { type: [number, 'null'] }
+              rx_bps: { type: number }
+              tx_bps: { type: number }
     Preflight:
       type: object
       required: [ready, checked_at, blocking, warnings, issues]
@@ -3179,7 +3298,20 @@ components:
           properties:
             online: { type: integer }
             total: { type: integer }
-        energy: { type: [object, 'null'], additionalProperties: true }
+        energy:
+          type: object
+          description: The solar part of the summary, in the words of a small panel
+          required: [reporting, pv_w, load_w, battery_w, soc_percent, mode, inverters, batteries, stale]
+          properties:
+            reporting: { type: boolean, description: Whether any inverter or battery has reported }
+            pv_w: { type: number }
+            load_w: { type: number }
+            battery_w: { type: [number, 'null'] }
+            soc_percent: { type: [number, 'null'] }
+            mode: { type: [string, 'null'] }
+            inverters: { type: integer }
+            batteries: { type: integer }
+            stale: { type: integer }
         alarms:
           type: object
           required: [active, unacknowledged, items]
@@ -3219,7 +3351,19 @@ components:
       type: object
       required: [entries]
       properties:
-        entries: { type: array, items: { type: object, additionalProperties: true, description: 'Who did what: action, outcome, actor, target, detail and the time' } }
+        entries:
+          type: array
+          items:
+            type: object
+            description: Who did what, newest first
+            required: [at, action, outcome]
+            properties:
+              at: { type: string, format: date-time }
+              action: { type: string }
+              outcome: { type: string, enum: [allowed, denied, failed] }
+              actor: { type: string }
+              target: { type: string }
+              detail: { type: string }
     AdminAvailability:
       type: object
       required: [available]
@@ -3232,12 +3376,40 @@ components:
       type: object
       required: [services]
       properties:
-        services: { type: array, items: { type: object, additionalProperties: true } }
+        services:
+          type: array
+          items:
+            type: object
+            required: [id, unit, description, installed, active, sub, enabled, pid, since, paused]
+            properties:
+              id: { type: string }
+              unit: { type: string }
+              description: { type: string }
+              installed: { type: boolean }
+              active: { type: string, description: 'The state systemd reports (active, inactive, failed ...)' }
+              sub: { type: string }
+              enabled: { type: string }
+              pid: { type: integer }
+              since: { type: string }
+              paused: { type: boolean }
     AdminFiles:
       type: object
       required: [files]
       properties:
-        files: { type: array, items: { type: object, additionalProperties: true } }
+        files:
+          type: array
+          description: The settings files the agent manages, without their content
+          items:
+            type: object
+            required: [id, path, format, description, units, exists, mtime]
+            properties:
+              id: { type: string }
+              path: { type: string }
+              format: { type: string }
+              description: { type: string }
+              units: { type: array, items: { type: string } }
+              exists: { type: boolean }
+              mtime: { type: number }
     AdminFile:
       type: object
       required: [id, path, format, content, mtime, masked]
@@ -3258,7 +3430,17 @@ components:
       type: object
       required: [accounts]
       properties:
-        accounts: { type: array, items: { type: object, additionalProperties: true } }
+        accounts:
+          type: array
+          items:
+            type: object
+            required: [user, role, name, manageable, topics]
+            properties:
+              user: { type: string }
+              role: { type: string, description: 'The kind of identity (field-node, solar-node, electrical-node, network-node, alarm-node, alarm, device, bridge) or other' }
+              name: { type: string }
+              manageable: { type: boolean, description: Whether Studio may remove it }
+              topics: { type: array, items: { type: string }, description: 'What it may read and write, as the access list words it' }
     MqttAccountCreated:
       type: object
       required: [ok, user, password]
@@ -3349,10 +3531,10 @@ components:
       type: object
       required: [webhook, mqtt, telegram, homeassistant, language]
       properties:
-        webhook: { type: object, additionalProperties: true }
-        mqtt: { type: object, additionalProperties: true }
-        telegram: { type: object, additionalProperties: true }
-        homeassistant: { type: object, additionalProperties: true }
+        webhook: { type: boolean, description: Whether the signed webhook is set up }
+        mqtt: { type: boolean, description: Whether the MQTT output is connected }
+        telegram: { type: boolean }
+        homeassistant: { type: boolean }
         ntfy: { type: boolean }
         language: { type: string }
         metrics:
@@ -3575,7 +3757,14 @@ components:
       type: object
       required: [cameras, scanned]
       properties:
-        cameras: { type: array, items: { type: object, additionalProperties: true } }
+        cameras:
+          type: array
+          items:
+            type: object
+            required: [host, ports]
+            properties:
+              host: { type: string }
+              ports: { type: array, items: { type: integer }, description: 'The camera ports that answered (80, 554, 8000, 8080, 8899)' }
         scanned: { type: array, items: { type: string }, description: 'The networks that were scanned, as 192.168.0.0/24' }
     PtzResult:
       type: object
