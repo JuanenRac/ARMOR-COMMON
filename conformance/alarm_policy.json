@@ -52,7 +52,67 @@
     "config_hash": true,
     "zone_feed": true,
     "zone_feed_signature": false,
+    "colour": "red"
+   }
+  },
+  {
+   "name": "the PIN never asked",
+   "valid": true,
+   "payload": {
+    "config_hash": true,
+    "zone_feed": true,
+    "zone_feed_signature": false,
     "disarm_pin": "never"
+   }
+  },
+  {
+   "name": "the PIN asked of everybody",
+   "valid": true,
+   "payload": {
+    "config_hash": true,
+    "zone_feed": true,
+    "zone_feed_signature": false,
+    "disarm_pin": "always"
+   }
+  },
+  {
+   "name": "the PIN asked if there is one",
+   "valid": true,
+   "payload": {
+    "config_hash": true,
+    "zone_feed": true,
+    "zone_feed_signature": false,
+    "disarm_pin": "if_set"
+   }
+  },
+  {
+   "name": "a PIN rule that is not one",
+   "valid": false,
+   "payload": {
+    "config_hash": true,
+    "zone_feed": true,
+    "zone_feed_signature": false,
+    "disarm_pin": "sometimes"
+   }
+  },
+  {
+   "name": "a PIN rule in capitals",
+   "valid": false,
+   "payload": {
+    "config_hash": true,
+    "zone_feed": true,
+    "zone_feed_signature": false,
+    "disarm_pin": "NEVER"
+   }
+  },
+  {
+   "name": "a PIN rule that is a flag",
+   "valid": false,
+   "payload": {
+    "config_hash": true,
+    "zone_feed": true,
+    "zone_feed_signature": false,
+    "disarm_pin": true
    }
   },
   {

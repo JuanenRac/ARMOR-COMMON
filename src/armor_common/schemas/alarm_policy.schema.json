@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://armor.local/schemas/alarm-policy-0.1.0.json",
   "title": "A.R.M.O.R. security policy of the server, told to the panel of an alarm node",
-  "description": "What the server tells an ARMOR-ALARM panel about the security options an administrator set in Studio, on armor/alarm/{node_id}/policy (never retained, said again every 30 seconds so a panel that restarts learns it). config_hash: the panel binds its saved armed state to its zones and PIN and does not restore that state when either changed. zone_feed: the panel takes the Zigbee zone messages of the server (false: it ignores them). zone_feed_signature: the panel refuses a zone message that is not signed. A panel that has not heard the policy, or does not know it, keeps the behaviour it has: config_hash and zone_feed true, zone_feed_signature false.",
+  "description": "What the server tells an ARMOR-ALARM panel about the security options an administrator set in Studio, on armor/alarm/{node_id}/policy (never retained, said again every 30 seconds so a panel that restarts learns it). config_hash: the panel binds its saved armed state to its zones and PIN and does not restore that state when either changed. zone_feed: the panel takes the Zigbee zone messages of the server (false: it ignores them). zone_feed_signature: the panel refuses a zone message that is not signed. disarm_pin (optional): what the panel asks for to disarm or to silence the siren from its own page or the central's API: never (no PIN, and no wrong PIN is counted), if_set or always (the PIN, as the panel always did; a panel with zones always has one). The server leaves it out when it is if_set, so a message without it means if_set; a panel that does not know the field ignores the whole message. A panel that has not heard the policy, or does not know it, keeps the behaviour it has: config_hash and zone_feed true, zone_feed_signature false, the PIN asked.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -19,6 +19,14 @@
     },
     "zone_feed_signature": {
       "type": "boolean"
+    },
+    "disarm_pin": {
+      "type": "string",
+      "enum": [
+        "never",
+        "if_set",
+        "always"
+      ]
     }
   }
 }

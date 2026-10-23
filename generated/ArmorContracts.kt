@@ -658,7 +658,8 @@ data class AlarmZoneFeed(
 data class AlarmPolicy(
     val config_hash: Boolean,
     val zone_feed: Boolean,
-    val zone_feed_signature: Boolean
+    val zone_feed_signature: Boolean,
+    val disarm_pin: String? = null
 )
 
 data class NodeHealthBoot(
