@@ -86,6 +86,46 @@
    }
   },
   {
+   "name": "the secrets kept encrypted",
+   "valid": true,
+   "payload": {
+    "config_hash": true,
+    "zone_feed": true,
+    "zone_feed_signature": false,
+    "nvs_encryption": "secrets"
+   }
+  },
+  {
+   "name": "encryption of everything",
+   "valid": false,
+   "payload": {
+    "config_hash": true,
+    "zone_feed": true,
+    "zone_feed_signature": false,
+    "nvs_encryption": "all"
+   }
+  },
+  {
+   "name": "encryption off said out loud",
+   "valid": false,
+   "payload": {
+    "config_hash": true,
+    "zone_feed": true,
+    "zone_feed_signature": false,
+    "nvs_encryption": "off"
+   }
+  },
+  {
+   "name": "encryption as a flag",
+   "valid": false,
+   "payload": {
+    "config_hash": true,
+    "zone_feed": true,
+    "zone_feed_signature": false,
+    "nvs_encryption": true
+   }
+  },
+  {
    "name": "a PIN rule that is not one",
    "valid": false,
    "payload": {
