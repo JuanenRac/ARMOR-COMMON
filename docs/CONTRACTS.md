@@ -151,7 +151,17 @@ Framing is the usual one (RFC 7578, with the strictness a small chip needs): the
 
 **Errors** (JSON `{error}`): `400 bad_multipart` (boundary, framing, part headers), `411 bad audio length` (no audio, or an odd number of bytes), `413 audio_too_large`, `415 unsupported_audio_type` (the audio part is not 16 kHz PCM) or `415 multipart_turn_disabled` (the option below is off), `422 unknown_part`, `422 duplicate_part`, `422 missing_audio`, `422 bad_meta`, `401` for the token, `502 voice_bad_reply` if the gateway answers something that is not a voice reply, `503` for a gateway that is not there.
 
-**The option.** `voice.multipart_turn` (`true` by default) in the security options of the server turns the binary request on or off; off, a multipart request is answered `415` and the raw one is the only way in. The server speaks to the voice gateway as before (raw audio with the language and the policy in headers): the binary form is between the panel and the server, so ARMOR-VOICE-AI does not have to change to be used with it. `armor_common.voice` has the reference reader and writer of both forms (`parse_voice_turn_request`, `build_voice_turn_request`, `parse_voice_turn_reply`, `build_voice_turn_reply`) and the server's reader is checked with the same cases. The panel (ARMOR-HMI) still sends the raw request.
+**The option.** `voice.multipart_turn` (`true` by default) in the security options of the server turns the binary request on or off; off, a multipart request is answered `415` and the raw one is the only way in. The server speaks to the voice gateway as before (raw audio with the language and the policy in headers): the binary form is between the panel and the server, so ARMOR-VOICE-AI does not have to change to be used with it. `armor_common.voice` has the reference reader and writer of both forms (`parse_voice_turn_request`, `build_voice_turn_request`, `parse_voice_turn_reply`, `build_voice_turn_reply`) and the server's reader is checked with the same cases. The panel (ARMOR-HMI) sends the binary request and, when the server answers `415`, the same recording the older way at once (and does not try the binary form again for ten minutes); its setting `voice.binary_turn` turns the binary form off.
+
+## The panel's live channel
+
+A wall panel can listen to `/api/v1/panel/events`, a WebSocket of the server, instead of asking `GET /api/v1/panel/summary` every few seconds. It is admitted with the session of a panel, operator or administrator account and only while the security option `panel.live_events` is on (`true` by default). The server sends text frames and nothing else; the client sends nothing (anything it sends closes the socket with 1003):
+
+```
+{"type":"summary","heartbeat_ms":5000,"summary":{ ...the document of GET /api/v1/panel/summary... }}
+```
+
+One frame when the socket opens, one whenever the summary changes (the time in it does not count) and the same summary again every `heartbeat_ms`, so a client can tell a quiet channel from a dead one: it takes the channel as lost after three heartbeats without a frame and asks `GET /api/v1/panel/summary` meanwhile. A client ignores a frame whose `type` it does not know. The server closes with `4401` when the session ends and `4403` when the option is turned off (the client asks, and looks at the channel again only after a long wait). An older server has no such path and refuses the upgrade; the client then asks as before. ARMOR-HMI reads the frames with `core/panel_feed.hpp`.
 
 ## Keeping every implementation in step
 
@@ -176,7 +186,7 @@ a body is described as a bare object, and, with ARMOR-SERVER checked out next to
 this repository, when the routes the server registers differ from the ones the
 contract describes (method and path).
 
-`GET /api/v1/studio/session` carries `capabilities` for a signed-in person: `actions` (arm, disarm, acknowledge, operate, camera_control, administer, manage_users, security_settings), the `features` the server offers and the `security` options in force (`alarm.disarm_pin`, `voice.silence_confirmation`, `alarm.config_hash`, `server.zone_feed`, `server.zone_feed_signature`, `media.rtsp_proxy`, `network.login_secure_only`, `voice.multipart_turn`, and `locked`, the ones the server's environment fixes). A client that finds no `capabilities` is talking to an older server and allows what the role allows. `GET` and `PUT /api/v1/security/settings` read and change the options (an administrator only), and `GET /api/v1/alarm/zone-feed/key/{node}` gives an administrator the key of one panel.
+`GET /api/v1/studio/session` carries `capabilities` for a signed-in person: `actions` (arm, disarm, acknowledge, operate, camera_control, administer, manage_users, security_settings), the `features` the server offers and the `security` options in force (`alarm.disarm_pin`, `voice.silence_confirmation`, `alarm.config_hash`, `server.zone_feed`, `server.zone_feed_signature`, `media.rtsp_proxy`, `network.login_secure_only`, `voice.multipart_turn`, `panel.live_events`, and `locked`, the ones the server's environment fixes). A client that finds no `capabilities` is talking to an older server and allows what the role allows. `GET` and `PUT /api/v1/security/settings` read and change the options (an administrator only), and `GET /api/v1/alarm/zone-feed/key/{node}` gives an administrator the key of one panel.
 
 ## Changing a contract
 
