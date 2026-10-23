@@ -22,6 +22,11 @@
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
     },
+    "contract": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The version of this contract the node speaks (1 today), so that the server can tell a node that is older than it from one that is current. A node that does not say it speaks the first version."
+    },
     "timestamp_ms": {
       "type": "integer",
       "minimum": 0

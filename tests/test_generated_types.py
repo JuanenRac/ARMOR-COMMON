@@ -35,5 +35,34 @@ class GeneratedTypesTests(unittest.TestCase):
         self.assertNotIn("List<Any>", KOTLIN)
 
 
+try:
+    import yaml   # noqa: F401 - the generator of the types of the HTTP contract reads the OpenAPI document with it
+except ImportError:      # a machine without the contract tests skips this class
+    yaml = None
+
+
+@unittest.skipIf(yaml is None, "PyYAML is not installed (pip install -e .[contract-tests])")
+class RestTypesTests(unittest.TestCase):
+    def setUp(self):
+        import sys
+        sys.path.insert(0, str(ROOT / "tools"))
+        import generate_rest_types
+        self.generated = generate_rest_types.render()
+        self.rest = (ROOT / "generated" / "armor-rest.ts").read_text(encoding="utf-8").replace("\r\n", "\n")
+
+    def test_the_types_of_the_http_contract_are_current(self):
+        self.assertEqual(self.generated, self.rest, "run python tools/generate_rest_types.py")
+
+    def test_every_component_of_the_contract_has_its_type_and_the_messages_of_the_nodes_are_not_repeated(self):
+        import generate_rest_types
+        document = yaml.load(generate_rest_types.OPENAPI.read_text(encoding="utf-8"), Loader=generate_rest_types.Loader)
+        for name in document["components"]["schemas"]:
+            self.assertIn(f"export type {name} = ", self.rest, name)
+        self.assertIn("export type ConnectionClient = Contracts.ConnectionClient;", self.rest)
+
+    def test_a_property_called_on_keeps_its_name(self):
+        self.assertRegex(self.rest, r"\bon\??: ")
+
+
 if __name__ == "__main__":
     unittest.main()

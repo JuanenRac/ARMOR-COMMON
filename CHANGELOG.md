@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased]
+
+- **The types of the HTTP contract are generated too:** `tools/generate_rest_types.py` writes `generated/armor-rest.ts` from every component of `openapi/armor-server.yaml` (the messages of the nodes are not repeated: they use the types of `armor-contracts.ts`), `--check` and a test fail when it is stale, and ARMOR-STUDIO compares the types it reads the server's answers with against them at compile time.
+- **A node says which version of the network contract it speaks:** the network message takes an optional whole `contract` (1 today; a node that says nothing speaks the first), with vectors for a good one, zero and a text, and the overview of the server says it and whether the node is older than the server.
+- **More of the HTTP contract is typed:** the switching and alarm-command statuses (what is pending and what became of the latest commands), the orders for a network node and the fields of an event that every client reads.
+- **The workflow that tries Studio and the server together has its template here** (`tools/e2e.yml.template`), vendored into ARMOR-STUDIO and ARMOR-SERVER by the sync tool of ARMOR-DOCS.
+
 ## [0.7.5] - Security options as settings, new guards and a validator that reports every fault
 
 - **The pairing text of the installation's HTTPS is in the contract:** `GET /api/v1/admin/remote/tls` gives the pin of the authority that signs it (SHA-256 of its public key, base64) and the text `armor-pin:<host>:<pin>` that a phone takes to trust it the first time.

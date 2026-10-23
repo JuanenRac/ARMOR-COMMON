@@ -919,6 +919,7 @@ data class NetworkResults(
 data class Network(
     val kind: String = "network",
     val node_id: String,
+    val contract: Long? = null,
     val timestamp_ms: Long,
     val `interface`: NetworkInterface,
     val internet: NetworkInternet,
