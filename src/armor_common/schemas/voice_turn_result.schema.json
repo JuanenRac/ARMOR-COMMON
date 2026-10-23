@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/voice-turn-result-0.1.0.json",
+  "title": "A.R.M.O.R. answer to one spoken turn, the JSON of the voice reply",
+  "description": "What the voice gateway answers to a spoken turn: what it heard and what it replies. In the older raw request, and in a binary request with `reply_audio` `base64`, the spoken answer is the optional `audio` field (base64 of 16 kHz 16-bit mono PCM). In a binary request with `reply_audio` `binary` it is the `audio` part of a `multipart/mixed` answer and this JSON is its `result` part, without the `audio` field. `audio_omitted` is set, with the reason, when the server left the spoken answer out: `too_large` (it was above the limit of the server).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "heard",
+    "reply"
+  ],
+  "properties": {
+    "heard": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "reply": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "audio": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+      "maxLength": 1400000
+    },
+    "audio_omitted": {
+      "type": "string",
+      "enum": [
+        "too_large"
+      ]
+    }
+  }
+}

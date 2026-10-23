@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/voice-turn-meta-0.1.0.json",
+  "title": "A.R.M.O.R. description of one spoken turn, the metadata part of the binary voice request",
+  "description": "The `meta` part of a `multipart/form-data` request to POST /api/v1/voice/turn (and to the voice gateway's /v1/turn): what the audio part is and what the sender wants back. The audio is raw binary, not base64. `language` is the language of the person; `encoding`, `sample_rate` and `channels` say what the audio is (today only 16 kHz 16-bit signed little-endian mono PCM); `reply_audio` says how the spoken answer comes back: `base64` (the default, as in the older raw request: an `audio` field inside the JSON answer), `binary` (a second multipart part, 33 percent smaller and needing no decoding in the panel) or `none` (text only). The part is optional: without it the language is the one of the X-Armor-Language header (English when there is none) and the answer is as in the older request.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "language",
+    "encoding",
+    "sample_rate",
+    "channels"
+  ],
+  "properties": {
+    "language": {
+      "type": "string",
+      "enum": [
+        "en",
+        "es",
+        "de",
+        "fr",
+        "it",
+        "ja",
+        "zh",
+        "pt"
+      ]
+    },
+    "encoding": {
+      "type": "string",
+      "enum": [
+        "pcm_s16le"
+      ]
+    },
+    "sample_rate": {
+      "type": "integer",
+      "enum": [
+        16000
+      ]
+    },
+    "channels": {
+      "type": "integer",
+      "enum": [
+        1
+      ]
+    },
+    "reply_audio": {
+      "type": "string",
+      "enum": [
+        "base64",
+        "binary",
+        "none"
+      ]
+    }
+  }
+}

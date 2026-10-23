@@ -34,6 +34,8 @@ MESSAGE_RULES = {
     "diagnostic_token_created": validate_diagnostic_token_created,
     "diagnostic_token_info": validate_diagnostic_token_info,
     "arm_profile": validate_arm_profile,
+    "voice_turn_meta": lambda payload: validate_payload("voice_turn_meta", payload),
+    "voice_turn_result": lambda payload: validate_payload("voice_turn_result", payload),
 }
 
 
