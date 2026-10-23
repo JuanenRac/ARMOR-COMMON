@@ -152,7 +152,7 @@ def near_misses(root: Path, shared: dict) -> list[tuple[str, list[str]]]:
             for second in names[index + 1:]:
                 changed = sum(1 for line in difflib.unified_diff(texts[first], texts[second], lineterm="", n=0) if line[:1] in "+-" and line[:3] not in ("+++", "---"))
                 if 0 < changed <= 24:
-                    out.append((candidate, [first.removeprefix("ARMOR-"), second.removeprefix("ARMOR-")]))
+                    out.append((candidate, [first.removeprefix("ARMOR-NODE-").removeprefix("ARMOR-"), second.removeprefix("ARMOR-NODE-").removeprefix("ARMOR-")]))
     return out
 
 
@@ -199,7 +199,7 @@ def do_sync(root: Path) -> int:
 
 def do_status() -> int:
     for candidate, entry in load_manifest()["files"].items():
-        print(f"{candidate:32} {', '.join(p.removeprefix('ARMOR-') for p in entry['targets'])}")
+        print(f"{candidate:32} {', '.join(p.removeprefix('ARMOR-NODE-').removeprefix('ARMOR-') for p in entry['targets'])}")
     own = [c for c in CANDIDATES if c not in load_manifest()["files"]]
     print("\nnot shared (each project's own): " + ", ".join(own))
     for candidate, projects in near_misses(ROOT, load_manifest()["files"]):

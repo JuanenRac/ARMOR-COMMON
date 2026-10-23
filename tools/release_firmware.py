@@ -132,7 +132,7 @@ def build_release(project: Path, dist: Path, out: Path, signer: Callable[[list[s
     """Write the release files of every board that has a public build of the project's current version. Returns the files written."""
     manifest = json.loads((project / "armor.project.json").read_text(encoding="utf-8"))
     name, version = str(manifest["name"]), str(manifest["version"])
-    kind = name.removeprefix("ARMOR-").lower()
+    kind = name.removeprefix("ARMOR-NODE-").removeprefix("ARMOR-").lower()
     if kind not in KINDS:
         raise ReleaseError(f"{name} is not a node project")
     expected_project = f"armor_{kind}"
