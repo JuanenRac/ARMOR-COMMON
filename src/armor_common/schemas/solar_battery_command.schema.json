@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://armor.local/schemas/solar-battery-command-0.1.0.json",
   "title": "A.R.M.O.R. order to write to a Pylontech battery",
-  "description": "An order to one battery port of one ARMOR-SOLAR node, published by the server to armor/solar/{node_id}/maintenance/command (never retained, at most once). Only typed operations exist (see battery_ops.json). Writing is two steps: `arm` (the node reads the battery, checks every precondition and answers with a one-time `token` and the exact operation) then `execute` carrying that token within two minutes and the same operation and serial. `cancel` stops an operation that may still be stopped. `stage` carries one piece of a firmware image to the node before an arm of firmware_update. A node refuses everything unless its own setting allows it.",
+  "description": "An order to one battery port of one ARMOR-NODE-SOLAR node, published by the server to armor/solar/{node_id}/maintenance/command (never retained, at most once). Only typed operations exist (see battery_ops.json). Writing is two steps: `arm` (the node reads the battery, checks every precondition and answers with a one-time `token` and the exact operation) then `execute` carrying that token within two minutes and the same operation and serial. `cancel` stops an operation that may still be stopped. `stage` carries one piece of a firmware image to the node before an arm of firmware_update. A node refuses everything unless its own setting allows it.",
   "type": "object",
   "additionalProperties": false,
   "required": [

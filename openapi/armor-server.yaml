@@ -515,13 +515,16 @@ paths:
         '200': { description: '{ deleted }', content: { application/json: { schema: { $ref: '#/components/schemas/Count' } } } }
   /api/v1/alarms/acknowledge:
     post:
-      summary: Acknowledge every alarm
+      summary: Acknowledge every alarm (a wall panel may add the PIN of its account, and then it counts as a person standing there)
       security: [{ operator: [] }]
+      requestBody: { required: false, content: { application/json: { schema: { $ref: '#/components/schemas/PostAlarmsAcknowledgeRequest' } } } }
       responses:
         '200': { description: '{ acknowledged }', content: { application/json: { schema: { $ref: '#/components/schemas/Count' } } } }
+        '403': { description: The PIN of the panel is not right, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: Too many wrong PINs, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/alarms/{id}/acknowledge:
     post:
-      summary: Acknowledge one alarm
+      summary: Acknowledge one alarm (not open to a wall panel's account)
       security: [{ operator: [] }]
       parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
       responses:
@@ -709,7 +712,7 @@ paths:
         '200': { description: '{ elements: [{ id, name, kind, protocol, location, online, last_seen, risk, on?, power_w?, voltage_v?, current_a?, energy_kwh?, switchable }], totals }', content: { application/json: { schema: { $ref: '#/components/schemas/ElectricalDevices' } } } }
   /api/v1/electrical/readings:
     post:
-      summary: A reading from an ARMOR-ELECTRICAL node (the `electrical` message of the shared contract, one entry per measured channel); the same message arrives over MQTT on armor/electrical/{node_id}/state
+      summary: A reading from an ARMOR-NODE-ELECTRICAL node (the `electrical` message of the shared contract, one entry per measured channel); the same message arrives over MQTT on armor/electrical/{node_id}/state
       security: [{ ingestBearer: [] }]
       requestBody: { required: true, content: { application/json: { schema: { $ref: '../src/armor_common/schemas/electrical.schema.json' } } } }
       responses:
@@ -3586,6 +3589,11 @@ components:
       properties:
         paths: { type: array, items: { type: string } }
         camera: { $ref: '#/components/schemas/Camera' }
+    PostAlarmsAcknowledgeRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        pin: { type: string, maxLength: 12, description: 'Only for the account of a wall panel: its PIN, checked under the lockout of the disarm PIN. Without it the acknowledgement stays unverified and a critical alarm keeps being escalated' }
     PostCamerasIdStreamTicketRequest:
       type: object
       additionalProperties: false

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://armor.local/schemas/alarm-command-0.1.0.json",
   "title": "A.R.M.O.R. command to the panel of an alarm node",
-  "description": "A command to one ARMOR-ALARM node, published by the server to armor/alarm/{node_id}/command (never retained): arm in `away` or `stay`, disarm, or silence the siren (the system stays armed and the alarm stays latched). A disarm or a silence carries no PIN: the PIN is for whoever stands at the panel, and the authority of the server is the broker's access list plus the node's own setting. An arm carries its `mode` and may carry `force` and an arming `profile` (whose base is that mode); a disarm or a silence carries neither a mode, a profile nor `force: true`. A node with commands off, or a command that is not exactly this, gets no answer at all.",
+  "description": "A command to one ARMOR-NODE-ALARM node, published by the server to armor/alarm/{node_id}/command (never retained): arm in `away` or `stay`, disarm, or silence the siren (the system stays armed and the alarm stays latched). A disarm or a silence carries no PIN: the PIN is for whoever stands at the panel, and the authority of the server is the broker's access list plus the node's own setting. An arm carries its `mode` and may carry `force` and an arming `profile` (whose base is that mode); a disarm or a silence carries neither a mode, a profile nor `force: true`. A node with commands off, or a command that is not exactly this, gets no answer at all.",
   "type": "object",
   "additionalProperties": false,
   "required": [

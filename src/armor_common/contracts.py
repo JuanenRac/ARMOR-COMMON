@@ -32,13 +32,13 @@ KINDS = ("telemetry", "health", "command", "info")
 SOLAR_TOPIC_PREFIX = "armor/solar/"
 SOLAR_KINDS = ("inverter", "battery")
 _SOLAR_SCHEMAS = {"inverter": "solar_inverter", "battery": "solar_battery"}
-# The electrical message (ARMOR-ELECTRICAL nodes measuring the house's network) has one topic per node: armor/electrical/{node_id}/state. The switches of a node are
+# The electrical message (ARMOR-NODE-ELECTRICAL nodes measuring the house's network) has one topic per node: armor/electrical/{node_id}/state. The switches of a node are
 # commanded on armor/electrical/{node_id}/command (server -> node) and answered on armor/electrical/{node_id}/result (node -> server).
 ELECTRICAL_TOPIC_PREFIX = "armor/electrical/"
 ELECTRICAL_LEAVES = ("state", "command", "result")
 ELECTRICAL_KINDS = ("electrical", "electrical_command", "electrical_result")
 _TOKEN_ACTIONS = ("close_a", "close_b")
-# The alarm message (an ARMOR-ALARM node) has one topic per node: armor/alarm/{node_id}/state; the panel is commanded on armor/alarm/{node_id}/command (server -> node)
+# The alarm message (an ARMOR-NODE-ALARM node) has one topic per node: armor/alarm/{node_id}/state; the panel is commanded on armor/alarm/{node_id}/command (server -> node)
 # and answered on armor/alarm/{node_id}/result (node -> server).
 ALARM_TOPIC_PREFIX = "armor/alarm/"
 ALARM_LEAVES = ("state", "command", "result", "zigbee", "policy")   # "zigbee": what the server tells the panel about the Zigbee sensor of a zone (alarm_zone_feed); "policy": the security options it keeps (alarm_policy)

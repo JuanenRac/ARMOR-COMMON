@@ -9,8 +9,8 @@
 * GPL-3.0-or-later - see LICENSE
 *****************************************************************************
 
-    python tools/release_firmware.py ARMOR-RADAR                 # reads ../ARMOR-RADAR/dist, writes ../ARMOR-RADAR/dist/release-<version>/
-    python tools/release_firmware.py ARMOR-RADAR --dist DIR --out DIR --signer "node tools/firmware_sign.mjs"
+    python tools/release_firmware.py ARMOR-NODE-RADAR                 # reads ../ARMOR-NODE-RADAR/dist, writes ../ARMOR-NODE-RADAR/dist/release-<version>/
+    python tools/release_firmware.py ARMOR-NODE-RADAR --dist DIR --out DIR --signer "node tools/firmware_sign.mjs"
 
 For each board it finds ``armor-<kind>-<version>-<board>-publica-app.bin`` (the image built WITHOUT the secret of a fleet; the one built with it, ``-local-``, is refused) and writes
 
@@ -175,7 +175,7 @@ def build_release(project: Path, dist: Path, out: Path, signer: Callable[[list[s
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("project", help="the node project, e.g. ARMOR-RADAR")
+    parser.add_argument("project", help="the node project, e.g. ARMOR-NODE-RADAR")
     parser.add_argument("--dist", type=Path, help="the folder with the built images (default: <project>/dist)")
     parser.add_argument("--out", type=Path, help="where the release files are written (default: <dist>/release-<version>)")
     parser.add_argument("--signer", help='the command that signs (default: node tools/firmware_sign.mjs); it is given "--public", "--digest <hash>" or "--manifest <project> <board> <version> <hash>"')

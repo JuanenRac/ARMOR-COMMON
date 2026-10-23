@@ -29,7 +29,7 @@ def stub_signer(arguments: list[str]) -> str:
 
 
 class Project:
-    def __init__(self, test: unittest.TestCase, name="ARMOR-RADAR", version="0.6.7"):
+    def __init__(self, test: unittest.TestCase, name="ARMOR-NODE-RADAR", version="0.6.7"):
         self.dir = tempfile.TemporaryDirectory()
         test.addCleanup(self.dir.cleanup)
         self.root = Path(self.dir.name) / name

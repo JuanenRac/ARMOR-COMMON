@@ -9,7 +9,7 @@
 * GPL-3.0-or-later - see LICENSE
 *****************************************************************************
 
-The node projects (ARMOR-RADAR, ARMOR-SOLAR, ARMOR-ELECTRICAL, ARMOR-ALARM, ARMOR-HMI) grew from one base, and a fix made in one used to have to be made in each. The files
+The node projects (ARMOR-NODE-RADAR, ARMOR-NODE-SOLAR, ARMOR-NODE-ELECTRICAL, ARMOR-NODE-ALARM, ARMOR-NODE-HMI) grew from one base, and a fix made in one used to have to be made in each. The files
 they share are kept here, once, in `firmware_base/`, with the name of the project written as placeholders; this tool writes them into every project that uses
 them, and `check` says when a copy has drifted (a fix made in one project only). A project keeps its own copy in its own tree, so each builds on its own, exactly as
 before: nothing is shared at build time.
@@ -19,7 +19,7 @@ before: nothing is shared at build time.
     python tools/sync_firmware_base.py import    # (re)make the base from the projects' current files: what is identical in two or more of them becomes shared
     python tools/sync_firmware_base.py status    # which file goes where
 
-The project's name appears in a shared file in four forms, each with a placeholder: ARMOR-SOLAR (@PROJECT@), armor-solar (@project-@), armor_solar (@project_@) and solar
+The project's name appears in a shared file in four forms, each with a placeholder: ARMOR-NODE-SOLAR (@PROJECT@), armor-solar (@project-@), armor_solar (@project_@) and solar
 (@kind@). A file that says something else in one project than in the others (a route of the panel, a topic of the broker) is not shared: it stays the project's own.
 
 `import` makes the base on its own: for each file it tries the text as it is (apart from the three unambiguous forms of the name) and the text with the short name turned into @kind@,
@@ -41,15 +41,15 @@ ROOT = HERE.parent.parent                 # the folder that holds the ARMOR repo
 
 # project -> (ARMOR-X, armor-x, armor_x, x); the forms in this order become the placeholders below
 PROJECTS = {
-    "ARMOR-SOLAR": ("ARMOR-SOLAR", "armor-solar", "armor_solar", "solar"),
-    "ARMOR-ELECTRICAL": ("ARMOR-ELECTRICAL", "armor-electrical", "armor_electrical", "electrical"),
-    "ARMOR-RADAR": ("ARMOR-RADAR", "armor-radar", "armor_radar", "radar"),
-    "ARMOR-HMI": ("ARMOR-HMI", "armor-hmi", "armor_hmi", "hmi"),
-    "ARMOR-ALARM": ("ARMOR-ALARM", "armor-alarm", "armor_alarm", "alarm"),
+    "ARMOR-NODE-SOLAR": ("ARMOR-NODE-SOLAR", "armor-solar", "armor_solar", "solar"),
+    "ARMOR-NODE-ELECTRICAL": ("ARMOR-NODE-ELECTRICAL", "armor-electrical", "armor_electrical", "electrical"),
+    "ARMOR-NODE-RADAR": ("ARMOR-NODE-RADAR", "armor-radar", "armor_radar", "radar"),
+    "ARMOR-NODE-HMI": ("ARMOR-NODE-HMI", "armor-hmi", "armor_hmi", "hmi"),
+    "ARMOR-NODE-ALARM": ("ARMOR-NODE-ALARM", "armor-alarm", "armor_alarm", "alarm"),
 }
 PLACEHOLDERS = ("@PROJECT@", "@project-@", "@project_@", "@kind@")
 
-# The files worth trying to share, by their place in ARMOR-SOLAR (a project keeps its `core/` under `main/core/` in ARMOR-RADAR).
+# The files worth trying to share, by their place in ARMOR-NODE-SOLAR (a project keeps its `core/` under `main/core/` in ARMOR-NODE-RADAR).
 CANDIDATES = [
     "main/board_ethernet.cpp", "main/board_ethernet.hpp", "main/entropy.cpp", "main/entropy.hpp", "main/log_buffer.cpp", "main/log_buffer.hpp",
     "core/node_settings.hpp", "core/config_common.hpp", "core/io_config.hpp", "core/base_board.hpp", "core/relay_bank.hpp", "core/relay_remote.hpp", "core/zigbee_bridge.hpp", "main/relay_outputs.cpp", "main/relay_outputs.hpp", "main/zigbee_bridge.cpp", "main/zigbee_bridge.hpp", "main/github_update.cpp", "main/github_update.hpp", "core/semver.hpp", "core/release_assets.hpp", "core/mqtt_topic.hpp", "tests/test_release.cpp", "main/mqtt_link.cpp", "main/mqtt_link.hpp", "main/network.cpp", "main/network.hpp", "main/node_store.cpp", "main/node_store.hpp",
@@ -64,8 +64,8 @@ CANDIDATES = [
 
 
 def project_path(project: str, candidate: str) -> str:
-    """Where a project keeps a candidate file: ARMOR-RADAR has its `core/` inside `main/`."""
-    if project == "ARMOR-RADAR" and candidate.startswith("core/"):
+    """Where a project keeps a candidate file: ARMOR-NODE-RADAR has its `core/` inside `main/`."""
+    if project == "ARMOR-NODE-RADAR" and candidate.startswith("core/"):
         return "main/" + candidate
     return candidate
 
@@ -119,7 +119,7 @@ def do_import(root: Path) -> int:
             groups: dict[str, list[str]] = {}
             for project, text in sources.items():
                 groups.setdefault(to_base(text, project, short_name), []).append(project)
-            grouped = max(groups.items(), key=lambda item: (len(item[1]), "ARMOR-SOLAR" in item[1]), default=None)
+            grouped = max(groups.items(), key=lambda item: (len(item[1]), "ARMOR-NODE-SOLAR" in item[1]), default=None)
             if grouped is not None and (best is None or len(grouped[1]) > len(best[1])):
                 best = grouped
         if best is None or len(best[1]) < 2:
