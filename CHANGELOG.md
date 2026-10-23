@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [0.7.5] - Security options as settings, new guards and a validator that reports every fault
 
+- **The HTTP contract types more of what the server answers:** the sums of the solar, electrical, alarm, network and health pages, the node views of the electrical, alarm and network pages (with the message each node sent), the samples of the electrical and network histories, the metrics of the machine, the audit trail, the services, files and broker accounts of the administration, the cameras found and the energy of the panel summary are objects with their fields and no longer open ones (65 open objects before, 39 now). The four places of the notification page (`webhook`, `mqtt`, `telegram`, `homeassistant`) are flags, as the server has always sent them, not objects.
 - **A wall panel can acknowledge with its PIN:** `POST /api/v1/alarms/acknowledge` takes an optional `pin` (the PIN of the panel's account), with the refusals 403 and 429 described in the OpenAPI file.
 - **The live picture has a lighter profile in the contract:** the stream ticket takes `quality` (`auto`, `normal`, `low`) and says the one it granted, and the live address accepts `?quality=low` for an operator without a ticket, described in the OpenAPI file.
 - **The voice turn may say which panel spoke:** the header `X-Armor-Panel` (the node id of the panel) is described in the contracts guide, for the commands the voice gateway carries out to be written as that panel's.
