@@ -28,7 +28,7 @@
 
 ---
 
-**Vérification d'honnêteté - ce qui fonctionne aujourd'hui:** Les schémas (télémétrie, santé, commande, information du nœud, onduleur et batterie solaires, électrique, alarme avec sa commande et son résultat, et réseau), le validateur Python, les 1225 vecteurs de conformité, les types TypeScript et Kotlin générés, le fichier OpenAPI du serveur (136 chemins), la base firmware partagée par les cinq nœuds et le lanceur de projet partagé sont réels et testés (160 tests). Le fichier Kotlin est généré mais **pas encore consommé** par ARMOR-ANDROID-CONTROL (qui garde sa propre lecture), et la commande `set_thresholds` porte un seul champ `sensitivity` car les vrais paramètres du radar ne sont définis que lorsque le firmware existe.
+**Vérification d'honnêteté - ce qui fonctionne aujourd'hui:** Les schémas (télémétrie, santé, commande, information du nœud, onduleur et batterie solaires, électrique, alarme avec sa commande et son résultat, et réseau), le validateur Python, les 1225 vecteurs de conformité, les types TypeScript et Kotlin générés, le fichier OpenAPI du serveur (136 chemins), la base firmware partagée par les cinq nœuds et le lanceur de projet partagé sont réels et testés (167 tests). Le fichier Kotlin est généré mais **pas encore consommé** par ARMOR-ANDROID-CONTROL (qui garde sa propre lecture), et la commande `set_thresholds` porte un seul champ `sensitivity` car les vrais paramètres du radar ne sont définis que lorsque le firmware existe.
 
 ---
 
@@ -38,7 +38,7 @@
 |---|---|
 | Version | `0.7.5` |
 | Maturité | Établi |
-| Tests | 160 (`python -m unittest discover -s tests`) et 1225 vecteurs de conformité |
+| Tests | 167 (`python -m unittest discover -s tests`) et 1225 vecteurs de conformité |
 | Technologie | Python 3.11+ / JSON Schema / OpenAPI |
 | Sur matériel réel | Seul le nœud radar a tourné sur une carte : ses messages sont ceux que parlent chaque jour le serveur CM5, Studio et l'application Android ; les messages des autres nœuds sont vérifiés contre des substituts |
 
@@ -84,6 +84,7 @@ ARMOR-COMMON/
 ├── firmware_base/      the firmware that the five nodes share, once (synced into each by tools/sync_firmware_base.py)
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
 ├── openapi/            armor-server.yaml
+├── registry/           repositories.json: the one list of the repositories of the family (kind, group, technologies, place on the map, who feeds whom) that the documentation, deployment and update tools read
 ├── tools/              armor_project_tool.py, generate_types.py, generate_rest_types.py, make_conformance.py, sync_firmware_base.py, release_firmware.py, firmware_sign.mjs
 ├── tests/              unit tests and conformance runner
 └── docs/               contracts guide, the shared firmware base
@@ -95,7 +96,7 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 160 tests, 1225 conformance vectors
+python -m unittest discover -s tests      # 167 tests, 1225 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/generate_rest_types.py --check    # the types of the HTTP contract are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list (--check: they are current)
