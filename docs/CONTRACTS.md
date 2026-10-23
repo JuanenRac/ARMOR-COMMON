@@ -135,6 +135,8 @@ The server can give a node one typed order without opening the node's configurat
 
 A wall panel sends one spoken turn to `POST /api/v1/voice/turn` (or `/api/v1/voice/v1/turn`, the path it builds from the server's address). It is authenticated with the voice token in `X-Armor-Voice-Token`, not with a session. There are two ways to send the turn, told apart by the request's `Content-Type`; the older one does not change and keeps working for every panel already made.
 
+The panel may add `X-Armor-Panel` with its node id (`^[a-z0-9][a-z0-9_-]{0,63}$`, anything else is ignored) to either request: the server passes it to the voice gateway, which hands it back on the commands it carries out, so that they are written as that panel's and a pending confirmation belongs to that panel and not to its address.
+
 * **The raw request (older).** `Content-Type: audio/L16;rate=16000`, the whole body is the audio, the language is in `X-Armor-Language`. The answer is JSON `{heard, reply, audio?}` with the spoken answer as base64 in `audio`.
 * **The binary request (`multipart/form-data`).** The audio travels as raw bytes in a part, and the language and what the sender wants back travel in a checked JSON part. It is for the panel, which gains 33 percent in the answer and does not have to decode base64 on a small chip.
 
