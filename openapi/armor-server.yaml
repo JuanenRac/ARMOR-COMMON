@@ -2035,6 +2035,28 @@ components:
         lux: { type: number }
         rssi: { type: number }
         co_ppm: { type: number }
+    DeviceSource:
+      description: 'Where the state of a device comes from: push (it reports with the ingest token) or mqtt (a state topic, an optional availability topic and a map from its payload to canonical fields)'
+      oneOf:
+        - { type: object, additionalProperties: false, required: [type], properties: { type: { const: push } } }
+        - type: object
+          additionalProperties: false
+          required: [type, topic]
+          properties:
+            type: { const: mqtt }
+            topic: { type: string }
+            availability_topic: { type: string, description: 'A topic that says online or offline (Zigbee2MQTT, Tasmota, ESPHome)' }
+            map:
+              type: array
+              maxItems: 12
+              items: { type: object, additionalProperties: false, required: [field, path], properties: { field: { type: string }, path: { type: string, description: 'A dotted path in the payload; $ is the whole payload' }, invert: { type: boolean } } }
+    DeviceCommands:
+      type: object
+      additionalProperties: false
+      description: 'How the server switches the device: by MQTT and/or by an address on the local network'
+      properties:
+        mqtt: { type: object, additionalProperties: false, required: [topic], properties: { topic: { type: string }, 'on': { type: string }, 'off': { type: string }, toggle: { type: string }, assume_state: { type: boolean, description: 'Set the state as soon as the command is sent, for devices that never report back' } } }
+        http: { type: object, additionalProperties: false, properties: { 'on': { type: string }, 'off': { type: string }, toggle: { type: string } }, description: URLs on the local network only }
     DeviceInput:
       type: object
       properties:
@@ -2043,17 +2065,50 @@ components:
         kind: { type: string, enum: [smoke, co, gas, water_leak, panic_button, door, window, motion, glass_break, vibration, climate, temperature, humidity, light_level, smart_plug, smart_light, smart_switch, siren, lock, valve] }
         protocol: { type: string, enum: [wifi, bluetooth, zigbee, zwave, thread, lora, rf433, wired, other] }
         location: { type: string, maxLength: 80 }
-        source: { type: object, description: 'push (reports with the ingest token) or mqtt (a state topic, an optional availability topic and a map from its payload to canonical fields)' }
-        commands: { type: object, description: 'mqtt { topic, on, off, toggle, assume_state } and/or http { on, off, toggle } (URLs on the local network only)' }
+        source: { $ref: '#/components/schemas/DeviceSource' }
+        commands: { $ref: '#/components/schemas/DeviceCommands' }
         expected_interval_s: { type: integer, minimum: 0, description: Seconds of silence after which the device is offline; 0 never }
+    AutomationTrigger:
+      description: What starts an automation
+      oneOf:
+        - type: object
+          additionalProperties: false
+          required: [type, device_id, field, equals]
+          properties:
+            type: { const: device }
+            device_id: { type: string }
+            field: { type: string, pattern: '^[a-z_]{2,20}$' }
+            equals: { type: [boolean, number], description: 'The value to wait for; with op gt or lt, the limit' }
+            op: { type: string, enum: [eq, gt, lt], default: eq, description: 'Numbers only: eq waits for the value, gt for it to go above, lt for it to go below' }
+        - type: object
+          additionalProperties: false
+          required: [type]
+          properties:
+            type: { const: alarm }
+            severity: { type: string, enum: [critical, high, warning] }
+            source_type: { type: string, enum: [node, camera, device, solar, electrical, network, alarm] }
+            source_id: { type: string }
+        - { type: object, additionalProperties: false, required: [type, mode], properties: { type: { const: mode }, mode: { type: string, enum: [armed, disarmed] } } }
+    AutomationAction:
+      description: What an automation does
+      oneOf:
+        - type: object
+          additionalProperties: false
+          required: [type, device_id, command]
+          properties:
+            type: { const: device }
+            device_id: { type: string }
+            command: { type: string, enum: ['on', 'off', toggle] }
+            for_s: { type: integer, minimum: 1, maximum: 3600, description: Switch back after this many seconds }
+        - { type: object, additionalProperties: false, required: [type], properties: { type: { const: notify } } }
     AutomationInput:
       type: object
       properties:
         name: { type: string, maxLength: 80 }
         enabled: { type: boolean }
         when_mode: { type: string, enum: [any, armed, disarmed] }
-        trigger: { type: object, description: 'device { device_id, field, equals } | alarm { severity?, source_type?, source_id? } | mode { mode }' }
-        actions: { type: array, maxItems: 6, items: { type: object, description: 'device { device_id, command: on|off|toggle, for_s? } | notify' } }
+        trigger: { $ref: '#/components/schemas/AutomationTrigger' }
+        actions: { type: array, maxItems: 6, items: { $ref: '#/components/schemas/AutomationAction' } }
     NewUser:
       type: object
       additionalProperties: false
@@ -2487,8 +2542,8 @@ components:
         kind: { $ref: '#/components/schemas/DeviceInput/properties/kind' }
         protocol: { $ref: '#/components/schemas/DeviceInput/properties/protocol' }
         location: { type: string }
-        source: { type: object, additionalProperties: true }
-        commands: { type: object, additionalProperties: true }
+        source: { $ref: '#/components/schemas/DeviceSource' }
+        commands: { $ref: '#/components/schemas/DeviceCommands' }
         expected_interval_s: { type: integer }
         risk: { type: string }
         state: { $ref: '#/components/schemas/DeviceState' }
@@ -2518,8 +2573,8 @@ components:
         name: { type: string }
         enabled: { type: boolean }
         when_mode: { type: string, enum: [any, armed, disarmed] }
-        trigger: { type: object, additionalProperties: true }
-        actions: { type: array, items: { type: object, additionalProperties: true } }
+        trigger: { $ref: '#/components/schemas/AutomationTrigger' }
+        actions: { type: array, items: { $ref: '#/components/schemas/AutomationAction' } }
     AutomationList:
       type: object
       required: [automations]
@@ -2549,7 +2604,11 @@ components:
               node_id: { type: string }
               device: { type: string }
               kind: { type: string, enum: [inverter, battery] }
-              reading: { type: object, additionalProperties: true, description: The latest message of the solar contract }
+              reading:
+                description: The latest message of the solar contract, an inverter or a battery
+                oneOf:
+                  - { $ref: '../src/armor_common/schemas/solar_inverter.schema.json' }
+                  - { $ref: '../src/armor_common/schemas/solar_battery.schema.json' }
               received_at: { type: string, format: date-time }
               stale: { type: boolean }
               example: { type: boolean }
@@ -2606,9 +2665,18 @@ components:
           type: object
           required: [inverter_models, battery_models, connections]
           properties:
-            inverter_models: { type: array, items: { type: object, additionalProperties: true } }
-            battery_models: { type: array, items: { type: object, additionalProperties: true } }
-            connections: { type: array, items: { type: string } }
+            inverter_models: { type: array, items: { type: string }, description: 'The inverter families that can be declared (the last is other)' }
+            battery_models: { type: array, items: { type: string }, description: 'The battery models that can be declared (the last is other)' }
+            connections: { type: array, items: { type: string, enum: [rs232, rs485, usb, can, wifi, other] } }
+            battery_profiles: { type: object, additionalProperties: { type: object, description: 'What the maker states for the model: ranges and limits' }, description: 'By model, the figures of the manuals of the models that have them' }
+            labels: { type: object, additionalProperties: { type: string }, description: 'By model, the name to show (other is worded by each client, in its language)' }
+            inverter_dialects: { type: object, additionalProperties: { type: string }, description: 'By inverter family, the dialect of its serial protocol' }
+            ant_bms:
+              type: object
+              required: [cell_counts, currents_a]
+              properties:
+                cell_counts: { type: array, items: { type: integer } }
+                currents_a: { type: array, items: { type: integer } }
     SolarEnergy:
       type: object
       required: [days]
@@ -3024,7 +3092,10 @@ components:
       required: [settings, recent]
       properties:
         settings: { $ref: '#/components/schemas/CaptureSettings' }
-        recent: { type: array, items: { type: object, additionalProperties: true }, description: The latest automatic captures }
+        recent:
+          type: array
+          description: The latest automatic captures
+          items: { type: object, required: [camera_id, at, photos, video], properties: { camera_id: { type: string }, at: { type: string, format: date-time }, photos: { type: integer }, video: { type: boolean } } }
     CaptureSettingsSaved:
       type: object
       required: [settings]
@@ -3157,7 +3228,11 @@ components:
       required: [id, login]
       properties:
         id: { type: string }
-        login: { type: object, additionalProperties: true, description: 'Who the stored login is for, never the password' }
+        login:
+          type: object
+          required: [user]
+          properties:
+            user: { type: string, description: 'Who the stored login is for, never the password' }
     SystemSummary:
       type: object
       required: [service, version, uptime_s, mode, revision, counts, storage]
@@ -3240,7 +3315,7 @@ components:
               level: { type: string }
               code: { type: string }
               id: { type: string }
-              detail: { type: object, additionalProperties: true }
+              detail: { type: string, description: 'What the issue is about, such as the zone that is open' }
     IngestLog:
       type: object
       required: [topics]
@@ -3916,7 +3991,7 @@ components:
       required: [accepted, commands]
       properties:
         accepted: { type: boolean, enum: [true] }
-        commands: { type: array, items: { type: object, additionalProperties: true }, description: The orders waiting for the node that reported }
+        commands: { $ref: '../src/armor_common/schemas/network_orders.schema.json#/properties/commands', description: The orders waiting for the node that reported }
     PostSolarRequest: { oneOf: [ { $ref: '../src/armor_common/schemas/solar_inverter.schema.json' }, { $ref: '../src/armor_common/schemas/solar_battery.schema.json' } ] }
     PostSolarDevicesRequest: { type: object, required: [kind, name, node_id], properties: { kind: { type: string, enum: [inverter, battery] }, name: { type: string, maxLength: 60 }, node_id: { type: string }, device: { type: string, description: Taken from the name when omitted }, model: { type: string }, connection: { type: string, enum: [rs232, rs485, usb, can, wifi, other] }, notes: { type: string, maxLength: 200 } } }
     PutUsersIdPinRequest: { type: object, required: [pin], properties: { pin: { type: string, pattern: '^[0-9]{4,10}$' }, duress_pin: { type: string, pattern: '^[0-9]{4,10}$' } } }
