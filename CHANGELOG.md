@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [0.7.5] - Security options as settings, new guards and a validator that reports every fault
 
+- **The live picture has a lighter profile in the contract:** the stream ticket takes `quality` (`auto`, `normal`, `low`) and says the one it granted, and the live address accepts `?quality=low` for an operator without a ticket, described in the OpenAPI file.
 - **The voice turn may say which panel spoke:** the header `X-Armor-Panel` (the node id of the panel) is described in the contracts guide, for the commands the voice gateway carries out to be written as that panel's.
 - **The name the house is reached by is checked against the public address:** the network message may carry `public.dns` (`name`, `addresses`, `matches`) with its schema, vectors and types, and the alarm table has `network_dns_stale` for the day the address changed and the dynamic DNS did not follow.
 - **The notification channels report their counters:** `GET /api/v1/admin/notifications` may carry `metrics` by place (delivered, failed, dropped, queued, and when and why the last one failed) and `ntfy`, described in the OpenAPI file.
