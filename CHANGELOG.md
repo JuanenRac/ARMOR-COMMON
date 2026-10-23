@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [0.7.5] - Security options as settings, new guards and a validator that reports every fault
 
+- **The notification channels report their counters:** `GET /api/v1/admin/notifications` may carry `metrics` by place (delivered, failed, dropped, queued, and when and why the last one failed) and `ntfy`, described in the OpenAPI file.
 - **Keeping the stored secrets encrypted is an option of the contract:** the security option `nodes.nvs_encryption` (`off` by default, `secrets`) in the OpenAPI file and the optional `nvs_encryption` of the policy message (`alarm_policy`), with the schema, vectors and generated types; it asks a node to encrypt only the secrets it stores, with no eFuse burned.
 - **The words of every alarm code are one table in the eight languages** (`src/armor_common/alarm_codes.json`, described in the contracts guide and kept whole by `tests/test_alarm_codes.py`), so the server tells a person what happened instead of the internal code.
 - **Fixed: a node with stored settings no longer restarts in a loop at power-up.** The start-up code read the stored settings and the copy made before the last update on the stack of the main task (about 3 KB each, plus the reader's own copy); with settings stored the 16 KB stack overflowed and the node restarted again and again before it could start the network. They now live on the heap.

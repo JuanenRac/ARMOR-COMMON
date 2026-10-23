@@ -3347,7 +3347,22 @@ components:
         mqtt: { type: object, additionalProperties: true }
         telegram: { type: object, additionalProperties: true }
         homeassistant: { type: object, additionalProperties: true }
+        ntfy: { type: boolean }
         language: { type: string }
+        metrics:
+          type: object
+          description: What each place the alarms went to has come to since the server started, by place (webhook, telegram, homeassistant, ntfy); a place that has been sent nothing is not listed. No message and no address is in it.
+          additionalProperties:
+            type: object
+            required: [delivered, failed, dropped, queued]
+            properties:
+              delivered: { type: integer, minimum: 0, description: Messages taken by the place }
+              failed: { type: integer, minimum: 0, description: Messages that never arrived after the retries }
+              dropped: { type: integer, minimum: 0, description: Messages thrown out of a full queue }
+              queued: { type: integer, minimum: 0, description: Messages waiting now }
+              last_delivered_at: { type: string, format: date-time }
+              last_failure_at: { type: string, format: date-time }
+              last_failure: { type: string, description: 'Why the last one failed (an HTTP status or a kind of network error), at most 80 characters' }
     NotificationTest:
       type: object
       required: [results]
