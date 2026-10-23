@@ -658,6 +658,7 @@ export type AlarmPolicy = {
   config_hash: boolean;
   zone_feed: boolean;
   zone_feed_signature: boolean;
+  disarm_pin?: "never" | "if_set" | "always";
 };
 
 export type NodeHealthBoot = {
