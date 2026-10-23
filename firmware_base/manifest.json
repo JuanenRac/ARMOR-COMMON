@@ -774,6 +774,33 @@
         "ARMOR-NODE-HMI": "tests/test_diag.cpp",
         "ARMOR-NODE-ALARM": "tests/test_diag.cpp"
       }
+    },
+    "core/secret_seal.hpp": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "core/secret_seal.hpp",
+        "ARMOR-NODE-ELECTRICAL": "core/secret_seal.hpp",
+        "ARMOR-NODE-RADAR": "main/core/secret_seal.hpp",
+        "ARMOR-NODE-HMI": "core/secret_seal.hpp",
+        "ARMOR-NODE-ALARM": "core/secret_seal.hpp"
+      }
+    },
+    "main/secret_vault.hpp": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "main/secret_vault.hpp",
+        "ARMOR-NODE-ELECTRICAL": "main/secret_vault.hpp",
+        "ARMOR-NODE-RADAR": "main/secret_vault.hpp",
+        "ARMOR-NODE-HMI": "main/secret_vault.hpp",
+        "ARMOR-NODE-ALARM": "main/secret_vault.hpp"
+      }
+    },
+    "main/secret_vault.cpp": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "main/secret_vault.cpp",
+        "ARMOR-NODE-ELECTRICAL": "main/secret_vault.cpp",
+        "ARMOR-NODE-RADAR": "main/secret_vault.cpp",
+        "ARMOR-NODE-HMI": "main/secret_vault.cpp",
+        "ARMOR-NODE-ALARM": "main/secret_vault.cpp"
+      }
     }
   }
 }
