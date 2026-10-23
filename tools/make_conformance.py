@@ -994,6 +994,9 @@ cases = {
     ],
     "network": [
         ("a whole network state", True, network()),
+        ("a node that says which version of the contract it speaks", True, network(contract=1)),
+        ("a contract version of zero", False, network(contract=0)),
+        ("a contract version that is not a whole number", False, network(contract="1")),
         ("the public address of the connection", True, network(public={"ip": "203.0.113.9", "hostname": "host-203-0-113-9.example.net", "city": "Madrid", "region": "Madrid", "country": "ES", "org": "AS64496 EXAMPLE TELECOM", "timezone": "Europe/Madrid", "checked_ms": 1790000050000, "changed_ms": 1789990000000})),
         ("the name the house is reached by, resolving to the public address", True, network(public={"ip": "203.0.113.9", "checked_ms": 1790000050000, "dns": {"name": "home.example.net", "addresses": ["203.0.113.9"], "matches": True}})),
         ("the name resolving to an old address", True, network(public={"ip": "203.0.113.9", "checked_ms": 1790000050000, "dns": {"name": "home.example.net", "addresses": ["198.51.100.4"], "matches": False}})),

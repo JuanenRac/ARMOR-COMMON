@@ -2833,8 +2833,38 @@ components:
               energy_kwh: { type: number }
     ElectricalSwitching:
       type: object
-      additionalProperties: true
+      required: [enabled, pending, recent]
       description: The status of the switching commands (what is armed, what was sent and what the node answered)
+      properties:
+        enabled: { type: boolean, description: 'False unless the server runs with ARMOR_ELECTRICAL_SWITCHING=1' }
+        pending:
+          type: array
+          description: The commands sent to a node that has not answered yet
+          items:
+            type: object
+            required: [command_id, node_id, switch, action, actor, at]
+            properties:
+              command_id: { type: string }
+              node_id: { type: string }
+              switch: { type: string }
+              action: { type: string, enum: [arm, close_a, close_b, open, acknowledge] }
+              actor: { type: string }
+              at: { type: string, format: date-time }
+        recent:
+          type: array
+          description: What became of the latest commands, the newest first
+          items:
+            type: object
+            required: [command_id, node_id, switch, action, accepted, refusal, actor, at]
+            properties:
+              command_id: { type: string }
+              node_id: { type: string }
+              switch: { type: string }
+              action: { type: string, enum: [arm, close_a, close_b, open, acknowledge] }
+              accepted: { type: boolean }
+              refusal: { type: string, enum: [none, disabled, fault, not_armed, not_confirmed_open, unknown_switch, bad_token, not_supported, timeout] }
+              actor: { type: string }
+              at: { type: string, format: date-time }
     BatteryOpsCatalog:
       type: object
       required: [enabled, catalog]
@@ -3058,8 +3088,41 @@ components:
         totals: { type: object, required: [nodes, stale, armed, sounding], properties: { nodes: { type: integer }, stale: { type: integer }, armed: { type: integer }, sounding: { type: integer } } }
     AlarmCommandStatus:
       type: object
-      additionalProperties: true
+      required: [enabled, pending, recent]
       description: The status of the commands sent to the alarm panels
+      properties:
+        enabled: { type: boolean, description: 'False unless the server runs with ARMOR_ALARM_COMMANDS=1' }
+        pending:
+          type: array
+          description: The commands sent to a panel that has not answered yet
+          items:
+            type: object
+            required: [command_id, node_id, action, actor, at]
+            properties:
+              command_id: { type: string }
+              node_id: { type: string }
+              action: { type: string, enum: [arm, disarm, silence] }
+              mode: { type: string, enum: [away, stay] }
+              profile: { type: string }
+              actor: { type: string }
+              at: { type: string, format: date-time }
+        recent:
+          type: array
+          description: What became of the latest commands, the newest first
+          items:
+            type: object
+            required: [command_id, node_id, action, accepted, refusal, actor, at]
+            properties:
+              command_id: { type: string }
+              node_id: { type: string }
+              action: { type: string, enum: [arm, disarm, silence] }
+              mode: { type: string, enum: [away, stay] }
+              profile: { type: string }
+              accepted: { type: boolean }
+              refusal: { type: string, enum: [none, not_disarmed, zones_open, not_armed, bad_pin, locked_out, timeout] }
+              phase: { type: string, enum: [disarmed, exit_delay, armed, entry_delay, alarm] }
+              actor: { type: string }
+              at: { type: string, format: date-time }
     IgnoreZone:
       type: object
       examples: [{"x": 0.1, "y": 0.2, "w": 0.3, "h": 0.2}]
@@ -3157,11 +3220,13 @@ components:
           type: array
           items:
             type: object
-            required: [node_id, received_at, stale, interface, internet, devices, hidden]
+            required: [node_id, received_at, stale, contract, outdated, interface, internet, devices, hidden]
             properties:
               node_id: { type: string }
               received_at: { type: string, format: date-time }
               stale: { type: boolean }
+              contract: { type: integer, minimum: 1, description: 'The version of the network contract the node says it speaks (1 when it says nothing)' }
+              outdated: { type: boolean, description: 'Whether that version is older than the one the server speaks' }
               interface: { type: object, description: 'The interface the node watches, as the network message has it' }
               internet: { type: object, description: 'The state of the internet, as the network message has it' }
               scan: { type: object, description: The last sweep }
@@ -3220,7 +3285,13 @@ components:
       description: An order for a network node and how far it got
       properties:
         id: { type: string }
-        status: { type: string }
+        status: { type: string, enum: [queued, sent, done, expired] }
+        type: { type: string, enum: [scan_now, ping, traceroute, wake, ports, http, inspect] }
+        node_id: { type: string }
+        by: { type: string }
+        created_at: { type: string, format: date-time }
+        sent_at: { type: string, format: date-time }
+        result: { type: object, additionalProperties: true, description: 'What the node did with it (ok, finished_ms, output, ports, latency_ms)' }
     NetworkCommandList:
       type: object
       required: [commands]
@@ -3954,11 +4025,20 @@ components:
       type: object
       required: [id, at, type]
       additionalProperties: true
-      description: One thing that changed. The fields besides id, at and type depend on the type (alert, node, camera, mode, device or alarm).
+      description: One thing that changed. The fields besides id, at and type depend on the type (alert, node, camera, mode, device or alarm); the ones every client reads are named here.
       properties:
         id: { type: integer }
         at: { type: string, format: date-time }
         type: { type: string, enum: [alert, node, camera, mode, device, alarm, connection, system] }
+        subject: { type: string, description: 'What it is about: a node, a camera, a device or an alarm source' }
+        from: { type: [string, 'null'], description: What it was before }
+        to: { type: [string, 'null'], description: What it is now }
+        mode: { type: string, enum: [armed, disarmed] }
+        targets: { type: integer, minimum: 0 }
+        code: { type: string, description: 'The code of an alarm, as in the table of alarm codes' }
+        severity: { type: string, enum: [critical, high, warning] }
+        source_type: { type: string }
+        field: { type: string }
     ConnectionEvent: { $ref: '../src/armor_common/schemas/connection_event.schema.json' }
     SystemEvent: { $ref: '../src/armor_common/schemas/system_event.schema.json' }
     ConnectionClient: { $ref: '../src/armor_common/schemas/connection_client.schema.json' }

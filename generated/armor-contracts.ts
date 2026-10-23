@@ -918,6 +918,7 @@ export type NetworkResults = {
 export type Network = {
   kind: "network";
   node_id: string;
+  contract?: number;
   timestamp_ms: number;
   interface: NetworkInterface;
   internet: NetworkInternet;

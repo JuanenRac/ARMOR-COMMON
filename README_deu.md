@@ -21,14 +21,14 @@
   <img src="https://img.shields.io/badge/License-GPL%203.0-blue.svg" alt="GPL 3.0">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-1222-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Vectors-1225-00E5FF.svg" alt="Vectors">
   <img src="https://img.shields.io/badge/Version-0.7.5-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
 ---
 
-**Ehrlichkeitsprüfung - was heute läuft:** Die Schemas (Telemetrie, Zustand, Befehl, Knoteninformation, Solar-Wechselrichter und -Batterie, Elektro, Alarm mit Befehl und Ergebnis sowie Netzwerk), der Python-Validator, die 1222 Konformitätsvektoren, die erzeugten TypeScript- und Kotlin-Typen, die OpenAPI-Datei des Servers (136 Pfade), die von den fünf Knoten geteilte Firmware-Basis und der gemeinsame Projektstarter sind real und getestet (157 Tests). Die Kotlin-Datei wird erzeugt, aber **noch nicht verwendet** von ARMOR-ANDROID-CONTROL (das sein eigenes Parsen behält), und der Befehl `set_thresholds` trägt nur ein Feld `sensitivity`, weil die echten Radarparameter erst definiert sind, wenn Firmware existiert.
+**Ehrlichkeitsprüfung - was heute läuft:** Die Schemas (Telemetrie, Zustand, Befehl, Knoteninformation, Solar-Wechselrichter und -Batterie, Elektro, Alarm mit Befehl und Ergebnis sowie Netzwerk), der Python-Validator, die 1225 Konformitätsvektoren, die erzeugten TypeScript- und Kotlin-Typen, die OpenAPI-Datei des Servers (136 Pfade), die von den fünf Knoten geteilte Firmware-Basis und der gemeinsame Projektstarter sind real und getestet (160 Tests). Die Kotlin-Datei wird erzeugt, aber **noch nicht verwendet** von ARMOR-ANDROID-CONTROL (das sein eigenes Parsen behält), und der Befehl `set_thresholds` trägt nur ein Feld `sensitivity`, weil die echten Radarparameter erst definiert sind, wenn Firmware existiert.
 
 ---
 
@@ -38,7 +38,7 @@
 |---|---|
 | Version | `0.7.5` |
 | Reifegrad | Etabliert |
-| Tests | 157 (`python -m unittest discover -s tests`) und 1222 Konformitätsvektoren |
+| Tests | 160 (`python -m unittest discover -s tests`) und 1225 Konformitätsvektoren |
 | Technik | Python 3.11+ / JSON Schema / OpenAPI |
 | Auf echter Hardware | Nur der Radarknoten hat auf einer Platine gelaufen: Seine Nachrichten sind die, die der CM5-Server, Studio und die Android-App täglich sprechen; die Nachrichten der anderen Knoten werden gegen Ersatz geprüft |
 
@@ -48,7 +48,7 @@
 
 * **Eine einzige Quelle der Wahrheit:** JSON-Schemas in `src/armor_common/schemas/` für Telemetrie, Zustand, Befehl, Knoteninformation, die beiden Solar-Nachrichten (Wechselrichter, Batterie mit Zellen und Kapazitäten), die Elektro-Nachrichten (Messwerte, Befehl, Ergebnis), die Alarmnachrichten (Zustand, Befehl, Ergebnis) und die Netzwerknachricht. Unbekannte Felder und unmögliche Kombinationen werden abgelehnt.
 * **Ein Validator, der keine Regel überspringen kann:** er interpretiert das Schema direkt und lehnt ein Schema ab, das ein nicht implementiertes Schlüsselwort verwendet.
-* **Konformitätsvektoren:** 1222 akzeptierte und abgelehnte Nutzlasten, von jeder Implementierung ausgeführt (hier Python, TypeScript in ARMOR-SERVER, die Prüfungen der Firmware-Repositories), sodass eine Abweichung einen Build scheitern lässt.
+* **Konformitätsvektoren:** 1225 akzeptierte und abgelehnte Nutzlasten, von jeder Implementierung ausgeführt (hier Python, TypeScript in ARMOR-SERVER, die Prüfungen der Firmware-Repositories), sodass eine Abweichung einen Build scheitern lässt.
 * **Erzeugte Clients:** TypeScript- und Kotlin-Typen entstehen aus den Schemas (`tools/generate_types.py --check` hält sie aktuell).
 * **HTTP-Vertrag:** `openapi/armor-server.yaml` beschreibt jede Route des Servers (163 Pfade, 215 Operationen), ihre Zugriffsregel und ein benanntes Schema für jeden Anfragekörper, jede Antwort und jeden Fehler, und ein Test prüft, dass die vom Server registrierten Routen genau die beschriebenen sind (Methode und Pfad).
 * **Firmware-Basis:** `firmware_base/` hält jede von den fünf Knoten geteilte Datei einmal (Netzwerk, Einstellungen und Benutzer, Panel-Server und Login, HTTPS-Zertifikat, Log, Bluetooth mit PIN-Kopplung, Prüfung signierter Updates; Relais und Zigbee in den Knoten, die sie haben); `tools/sync_firmware_base.py` schreibt sie in jeden Knoten und prüft, dass keine Kopie abweicht ([die Anleitung](docs/FIRMWARE_BASE.md), [signierte Firmware](docs/SIGNED_FIRMWARE.md)).
@@ -84,7 +84,7 @@ ARMOR-COMMON/
 ├── firmware_base/      the firmware that the five nodes share, once (synced into each by tools/sync_firmware_base.py)
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
 ├── openapi/            armor-server.yaml
-├── tools/              armor_project_tool.py, generate_types.py, make_conformance.py, sync_firmware_base.py, release_firmware.py, firmware_sign.mjs
+├── tools/              armor_project_tool.py, generate_types.py, generate_rest_types.py, make_conformance.py, sync_firmware_base.py, release_firmware.py, firmware_sign.mjs
 ├── tests/              unit tests and conformance runner
 └── docs/               contracts guide, the shared firmware base
 ```
@@ -95,8 +95,9 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 157 tests, 1222 conformance vectors
+python -m unittest discover -s tests      # 160 tests, 1225 conformance vectors
 python tools/generate_types.py --check    # generated types are current
+python tools/generate_rest_types.py --check    # the types of the HTTP contract are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list (--check: they are current)
 python tools/sync_firmware_base.py check  # the firmware the node projects share has not drifted (see docs/FIRMWARE_BASE.md)
 ```
