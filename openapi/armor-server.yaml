@@ -1784,11 +1784,13 @@ paths:
         '409': { description: Credentials are incomplete, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/cameras/{id}/stream-ticket:
     post:
-      summary: Issue a five-minute stream ticket bound to this camera
+      summary: Issue a five-minute stream ticket bound to this camera, for the normal picture or the lighter one (fewer and narrower pictures, for a slow link)
       security: [{ operator: [] }]
       parameters: [{ $ref: '#/components/parameters/CameraId' }]
+      requestBody: { required: false, content: { application/json: { schema: { $ref: '#/components/schemas/PostCamerasIdStreamTicketRequest' } } } }
       responses:
-        '201': { description: Stream path with ticket, content: { application/json: { schema: { $ref: '#/components/schemas/StreamTicket' } } } }
+        '422': { description: A quality that does not exist, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '201': { description: Stream path with ticket and the quality granted, content: { application/json: { schema: { $ref: '#/components/schemas/StreamTicket' } } } }
   /api/v1/cameras/{id}/mjpeg:
     get:
       security: [{ streamTicket: [] }]
@@ -1796,6 +1798,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CameraId'
         - { name: ticket, in: query, required: false, schema: { type: string } }
+        - { name: quality, in: query, required: false, schema: { type: string, enum: [normal, low] }, description: 'Only for an operator who skips the ticket: low asks for the lighter picture; a ticket carries the quality it was issued with' }
       responses:
         '200': { description: multipart/x-mixed-replace stream, content: { multipart/x-mixed-replace: { schema: { type: string, format: binary } } } }
         '401': { description: Neither an operator nor a valid ticket, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
@@ -3583,12 +3586,18 @@ components:
       properties:
         paths: { type: array, items: { type: string } }
         camera: { $ref: '#/components/schemas/Camera' }
+    PostCamerasIdStreamTicketRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        quality: { type: string, enum: [auto, normal, low], default: auto, description: 'auto gives the lighter picture to a person who came from outside the house and the normal one otherwise' }
     StreamTicket:
       type: object
       required: [path, expiresAt]
       properties:
         path: { type: string }
         expiresAt: { type: string, format: date-time }
+        quality: { type: string, enum: [normal, low], description: The picture the ticket gives }
     MediaItem:
       type: object
       examples: [{"id": "cam1/snapshot/a.jpg", "cameraId": "cam1", "kind": "snapshot", "file": "a.jpg", "createdAt": "2026-01-01T00:00:00.000Z", "bytes": 1024, "protected": false}]
