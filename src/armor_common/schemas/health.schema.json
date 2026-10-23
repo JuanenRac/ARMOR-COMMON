@@ -27,7 +27,7 @@
         "radar",
         "panel"
       ],
-      "description": "What sends it: a radar (the default, absent means radar) or a wall panel (ARMOR-HMI). A panel is not a field node of the perimeter: the server keeps it apart, so it does not count as a radar and its silence is not a node down."
+      "description": "What sends it: a radar (the default, absent means radar) or a wall panel (ARMOR-NODE-HMI). A panel is not a field node of the perimeter: the server keeps it apart, so it does not count as a radar and its silence is not a node down."
     }
   }
 }

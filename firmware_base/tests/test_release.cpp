@@ -95,17 +95,17 @@ static void test_assets() {
 
 // Only what GitHub publishes for this very repository is downloaded.
 static void test_official_urls() {
-  const std::string repo = "JuanenRac/ARMOR-RADAR";
-  const std::string base = "https://github.com/JuanenRac/ARMOR-RADAR/releases/download/";
+  const std::string repo = "JuanenRac/ARMOR-NODE-RADAR";
+  const std::string base = "https://github.com/JuanenRac/ARMOR-NODE-RADAR/releases/download/";
   CHECK(release::is_official_url(base + "v0.6.7/armor_radar-s3-eth.bin", repo));
-  CHECK(!release::is_official_url("http://github.com/JuanenRac/ARMOR-RADAR/releases/download/v0.6.7/armor_radar-s3-eth.bin", repo));
-  CHECK(!release::is_official_url("https://github.com/JuanenRac/ARMOR-SOLAR/releases/download/v0.6.7/armor_radar-s3-eth.bin", repo));
-  CHECK(!release::is_official_url("https://github.com.evil.example/JuanenRac/ARMOR-RADAR/releases/download/v1/a.bin", repo));
-  CHECK(!release::is_official_url("https://github.com/JuanenRac/ARMOR-RADAR/releases/download/../../../evil/a.bin", repo));
+  CHECK(!release::is_official_url("http://github.com/JuanenRac/ARMOR-NODE-RADAR/releases/download/v0.6.7/armor_radar-s3-eth.bin", repo));
+  CHECK(!release::is_official_url("https://github.com/JuanenRac/ARMOR-NODE-SOLAR/releases/download/v0.6.7/armor_radar-s3-eth.bin", repo));
+  CHECK(!release::is_official_url("https://github.com.evil.example/JuanenRac/ARMOR-NODE-RADAR/releases/download/v1/a.bin", repo));
+  CHECK(!release::is_official_url("https://github.com/JuanenRac/ARMOR-NODE-RADAR/releases/download/../../../evil/a.bin", repo));
   CHECK(!release::is_official_url(base + "v0.6.7/a.bin?x=1", repo) && !release::is_official_url(base + "v0.6.7/a.bin#x", repo) && !release::is_official_url(base + "v0.6.7/a b.bin", repo));
   CHECK(!release::is_official_url(base + "v0.6.7/sub/a.bin", repo) && !release::is_official_url(base + "a.bin", repo) && !release::is_official_url(base + "v0.6.7/", repo) && !release::is_official_url(base, repo));
   CHECK(!release::is_official_url(base + "v0.6.7/a.bin", "") && !release::is_official_url("", repo));
-  CHECK(!release::is_official_url("https://github.com/JuanenRac/ARMOR-RADAR/releases/download/v1@evil/a.bin", repo));
+  CHECK(!release::is_official_url("https://github.com/JuanenRac/ARMOR-NODE-RADAR/releases/download/v1@evil/a.bin", repo));
 }
 
 // The signature binds the hash to the project, the board and the version: a hash signed for one image cannot be presented for another. The signature below was made with the key of the

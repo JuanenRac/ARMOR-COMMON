@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://armor.local/schemas/solar-battery-result-0.1.0.json",
   "title": "A.R.M.O.R. answer of a node to an order to write to a battery",
-  "description": "What an ARMOR-SOLAR node says about an order, published to armor/solar/{node_id}/maintenance/result (never retained). `stage` says which point of the order this is: armed (an arm was accepted: the token and the exact operation), started (an execute was accepted), progress, cancel_requested, final (the operation ended: see `outcome`), rejected (nothing was done: see `refusal`) or staged (a piece of an image was kept). The service password of the battery never appears in any field, and a text that was kept (before, after, transcript, snapshot_before) has it replaced. An accepted order is not an operation that worked: only `final` with outcome ok, and the read-back it carries, say that.",
+  "description": "What an ARMOR-NODE-SOLAR node says about an order, published to armor/solar/{node_id}/maintenance/result (never retained). `stage` says which point of the order this is: armed (an arm was accepted: the token and the exact operation), started (an execute was accepted), progress, cancel_requested, final (the operation ended: see `outcome`), rejected (nothing was done: see `refusal`) or staged (a piece of an image was kept). The service password of the battery never appears in any field, and a text that was kept (before, after, transcript, snapshot_before) has it replaced. An accepted order is not an operation that worked: only `final` with outcome ok, and the read-back it carries, say that.",
   "type": "object",
   "additionalProperties": false,
   "required": [

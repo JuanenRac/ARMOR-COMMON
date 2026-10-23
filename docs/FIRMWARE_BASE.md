@@ -1,6 +1,6 @@
 # The firmware the node projects share
 
-ARMOR-RADAR, ARMOR-SOLAR and ARMOR-ELECTRICAL grew from one base: the network (Ethernet and Wi-Fi), the settings and users kept in flash, the web panel's server and its
+ARMOR-NODE-RADAR, ARMOR-NODE-SOLAR and ARMOR-NODE-ELECTRICAL grew from one base: the network (Ethernet and Wi-Fi), the settings and users kept in flash, the web panel's server and its
 login, the certificate of the HTTPS panel, the log, the source of randomness, the Bluetooth channel, the small JSON reader, the panel's page and its build. A fix made in
 one project used to have to be made in the other two by hand, and the copies drifted.
 
@@ -20,7 +20,7 @@ python tools/sync_firmware_base.py import    # (re)make the base from the projec
 ## How to change a shared file
 
 1. Edit it in `firmware_base/` (write the project's name as `@PROJECT@`, `@project-@`, `@project_@` or `@kind@`: see the top of the tool).
-2. Run `sync`: the file is written into ARMOR-RADAR, ARMOR-SOLAR and ARMOR-ELECTRICAL (or the two or one that use it), each with its own name, keeping the line endings of the
+2. Run `sync`: the file is written into ARMOR-NODE-RADAR, ARMOR-NODE-SOLAR and ARMOR-NODE-ELECTRICAL (or the two or one that use it), each with its own name, keeping the line endings of the
    checkout.
 3. Build and test each project as usual.
 
@@ -31,8 +31,8 @@ If a change was made in a project's copy by mistake, `check` says so and `sync` 
 
 `status` lists it. A file is shared by exactly the projects whose copies are identical once the name is turned into placeholders: the Ethernet driver, the entropy, the log, the
 certificate, the settings store, the network, the Bluetooth channel and its framing, the login and the URL and address rules, the panel's page and the panel's build are shared;
-what a project says in its own words is not: its settings, its panel's routes and pages (`web_server.cpp`, `api_shared`), its pins and its build profile, and, in ARMOR-RADAR, the
-parts of the network and the broker link that only a radar node has (`mqtt_link` is shared by ARMOR-SOLAR and ARMOR-ELECTRICAL only).
+what a project says in its own words is not: its settings, its panel's routes and pages (`web_server.cpp`, `api_shared`), its pins and its build profile, and, in ARMOR-NODE-RADAR, the
+parts of the network and the broker link that only a radar node has (`mqtt_link` is shared by ARMOR-NODE-SOLAR and ARMOR-NODE-ELECTRICAL only).
 
 ## Limits
 
@@ -42,11 +42,11 @@ parts of the network and the broker link that only a radar node has (`mqtt_link`
 
 ## Files that are not shared with every node
 
-`main/zigbee_bridge.cpp` and `main/zigbee_bridge.hpp` are listed for ARMOR-ELECTRICAL only: ARMOR-ALARM keeps its own copy, which takes a hook for the node itself to speak Zigbee while the radio is its own (see ARMOR-ALARM's `docs/FAILOVER.md`). `core/zigbee_bridge.hpp` (who may connect, the arbiter, the reset sequence) is still shared by both.
+`main/zigbee_bridge.cpp` and `main/zigbee_bridge.hpp` are listed for ARMOR-NODE-ELECTRICAL only: ARMOR-NODE-ALARM keeps its own copy, which takes a hook for the node itself to speak Zigbee while the radio is its own (see ARMOR-NODE-ALARM's `docs/FAILOVER.md`). `core/zigbee_bridge.hpp` (who may connect, the arbiter, the reset sequence) is still shared by both.
 
 ## The health report
 
-`core/node_health.hpp`, `main/node_health.hpp` and `main/node_health.cpp` are shared by the five nodes: the report every node publishes to `armor/health/<node>` (the `node_health` contract). `core/node_health.hpp` holds what is decided without hardware - the words of the ESP-IDF reset reasons, which link the node is on, the last error of the log, the JSON of the report - and is tested in `tests/test_base.cpp`; `main/node_health.cpp` reads the real values (heap, uptime, reset reason, the network status, the log) and sends the message about once a minute. `mqtt_link.cpp` counts the connections to the broker for it (ARMOR-RADAR's own `mqtt_link.cpp` too). Each node calls `node_health::start` from its `app_main.cpp` and lists `node_health.cpp` in its `main/CMakeLists.txt`. It has not run on a board.
+`core/node_health.hpp`, `main/node_health.hpp` and `main/node_health.cpp` are shared by the five nodes: the report every node publishes to `armor/health/<node>` (the `node_health` contract). `core/node_health.hpp` holds what is decided without hardware - the words of the ESP-IDF reset reasons, which link the node is on, the last error of the log, the JSON of the report - and is tested in `tests/test_base.cpp`; `main/node_health.cpp` reads the real values (heap, uptime, reset reason, the network status, the log) and sends the message about once a minute. `mqtt_link.cpp` counts the connections to the broker for it (ARMOR-NODE-RADAR's own `mqtt_link.cpp` too). Each node calls `node_health::start` from its `app_main.cpp` and lists `node_health.cpp` in its `main/CMakeLists.txt`. It has not run on a board.
 
 `core/memory_budget.hpp`, `main/psram_mem.hpp` and `main/psram_mem.cpp` are shared by the five nodes: where the memory goes. A node has two kinds, the internal one (about 300 KB, shared by the radio, the drivers and every task stack) and 8 MB of external RAM (PSRAM) that nothing may touch while the flash is being written. `core/memory_budget.hpp` decides without hardware - when the internal memory is low (under 40 KB, back to normal over 48 KB, or no free block of 8 KB), where a big buffer or a task stack goes and whether that was a fallback, when the log says it (every minute, and at once when the state changes) - and is tested in `tests/test_base.cpp`. `main/psram_mem.cpp` reads the real heap and acts: `install_tls_allocator` (first thing in `app_main`: mbedTLS takes the external RAM and falls back to the internal memory where a board has none, which the stock "external" mode of ESP-IDF does not), `snapshot`, `allocate`/`release` for a long-lived buffer that only the CPU touches, `start_task` for a task whose stack may live in the external RAM, and `start_monitor`, the task that writes the line `memory: internal ... KB free (least ..., biggest block ...), PSRAM ...` in the log every minute. A task may use `start_task` only if it runs for ever and touches no flash at all (no NVS - not even a read -, no partition, no update, no restart of its own) and owns no DMA buffer on its stack; the update check, the broker link's sender and watchdog, the health report and the radar map qualify, the radio, the network, the settings, the update itself and the equipment's own tasks do not. The sdkconfig sends a request of up to 4096 bytes to the internal memory first and a bigger one to the external RAM first (`CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL`), and keeps 32 KB of the internal memory for what must be there. The health report carries the internal memory on its own (`heap_internal_*`, `psram_free`), because `heap_free` adds the external RAM and so never looks short. None of it has run on a board.
 

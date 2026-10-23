@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [0.7.5] - Security options as settings, new guards and a validator that reports every fault
 
+- **A wall panel can acknowledge with its PIN:** `POST /api/v1/alarms/acknowledge` takes an optional `pin` (the PIN of the panel's account), with the refusals 403 and 429 described in the OpenAPI file.
 - **The live picture has a lighter profile in the contract:** the stream ticket takes `quality` (`auto`, `normal`, `low`) and says the one it granted, and the live address accepts `?quality=low` for an operator without a ticket, described in the OpenAPI file.
 - **The voice turn may say which panel spoke:** the header `X-Armor-Panel` (the node id of the panel) is described in the contracts guide, for the commands the voice gateway carries out to be written as that panel's.
 - **The name the house is reached by is checked against the public address:** the network message may carry `public.dns` (`name`, `addresses`, `matches`) with its schema, vectors and types, and the alarm table has `network_dns_stale` for the day the address changed and the dynamic DNS did not follow.
@@ -14,7 +15,7 @@ All notable changes to this project are documented here.
 - **The lock of the phone app is a security option of the contract:** `client.device_lock` (`user`, `sensitive`, `always`) in the security options of the session and of `/api/v1/security/settings`, described in the OpenAPI file and in `docs/CONTRACTS.md`.
 - **The two sizes of a spoken turn are options of the contract:** `voice.turn_max_bytes` and `voice.reply_audio_max_bytes` (whole numbers, 3200 to 1920000 and 3200 to 1000000) in `SecuritySettings`, so a client edits them with the rest.
 - **The PIN to disarm reaches the alarm node:** the policy message (`alarm_policy`) may carry `disarm_pin` (`never`, `if_set` or `always`, the server's `alarm.disarm_pin`); it is left out while it is `if_set`, so a message of the older form means the same and a panel that does not know the field simply ignores the whole message. Schema, validator, vectors (the three words, a word that is not one, capitals, a flag) and the contracts guide describe it.
-- **The live channel of the wall panel is a contract:** `docs/CONTRACTS.md` describes the WebSocket `/api/v1/panel/events` (the frame, the heartbeat, the close codes 4401 and 4403, what a client does when it is missing), and `SecuritySettings` has `panel.live_events` (on by default) in the OpenAPI file. The contract of the binary voice turn now says that ARMOR-HMI sends it, with the fall back to the raw request on `415`.
+- **The live channel of the wall panel is a contract:** `docs/CONTRACTS.md` describes the WebSocket `/api/v1/panel/events` (the frame, the heartbeat, the close codes 4401 and 4403, what a client does when it is missing), and `SecuritySettings` has `panel.live_events` (on by default) in the OpenAPI file. The contract of the binary voice turn now says that ARMOR-NODE-HMI sends it, with the fall back to the raw request on `415`.
 - **The limit on wrong passwords per minute is a setting of the node** in the shared firmware: `system.login_limit_per_minute` (30 as always, 0 for none, at most 120), read by the five panels.
 - **A relay can be interlocked with another** (`interlock` in the relay settings, empty by default): a request to close one while the other is closed is refused from the panel, the broker and the central alike, the node never opens the partner by itself, and the alarm's siren is not held back.
 - **The universal image holds no fleet secret unless asked for:** `tools/build_node.sh generic` adds `secrets/generic.conf` only with `ARMOR_WITH_FLEET_SECRET=1`, names that image `*-local` and says it is never to be published, and a public build is refused when the configuration it ended with holds a secret or a set-up code; the option's help says the same.
@@ -22,7 +23,7 @@ All notable changes to this project are documented here.
 - **New checks shared by the five nodes:** the Bluetooth session under its lock (`check_ble_session.py`) and the routes, the panels and the stand-in nodes (`check_routes.py`); the guard on the paths of a save also keeps the tolerant read of the settings, the serial set-up and the update check.
 - **The binary voice turn is a contract:** a wall panel can send the audio of a spoken turn as `multipart/form-data` (the audio as raw bytes and an optional `meta` part, `voice_turn_meta`) and ask for the spoken answer as a second part of a `multipart/mixed` answer (`voice_turn_result`) instead of base64; the raw request keeps working. The rules (parts, framing, limits, errors, the option `voice.multipart_turn`) are in `docs/CONTRACTS.md`, in the OpenAPI document and in the new `armor_common.voice` (reader and writer), with 43 shared byte-level cases in `conformance/voice/turn_multipart.json` and the two schemas with their vectors and generated types.
 - **The validator can say every fault of a message at once** (`collect_payload_errors`, built on `iter_errors`); the first one is the one `validate_payload` has always raised, and a published schema is still a copy nobody can change for the others.
-- **The contract:** `SecuritySettings` has `network.login_secure_only` (off by default) in the OpenAPI file, and the contracts guide says that ARMOR-ALARM now applies the policy of the server and checks the signed zone feed.
+- **The contract:** `SecuritySettings` has `network.login_secure_only` (off by default) in the OpenAPI file, and the contracts guide says that ARMOR-NODE-ALARM now applies the policy of the server and checks the signed zone feed.
 - **Board names in the shared text:** the touch panel is one board (`lcd7box`), and the shared Kconfig and network comments say so.
 
 ## [0.7.4] - Node diagnostics, reading quality and held values in the contract
@@ -230,7 +231,7 @@ All notable changes to this project are documented here.
 
 ## [0.4.4] - The Zigbee bridge is the alarm node's own
 
-- **`main/zigbee_bridge.cpp` and `.hpp` are shared with ARMOR-ELECTRICAL only**; ARMOR-ALARM has its own copy with a hook for the node to hold the radio itself. `core/zigbee_bridge.hpp` stays shared. `sync_firmware_base.py check` passes for 52 files in 197 copies.
+- **`main/zigbee_bridge.cpp` and `.hpp` are shared with ARMOR-NODE-ELECTRICAL only**; ARMOR-NODE-ALARM has its own copy with a hook for the node to hold the radio itself. `core/zigbee_bridge.hpp` stays shared. `sync_firmware_base.py check` passes for 52 files in 197 copies.
 
 ## [0.4.3] - The alarm messages, and a firmware base that every node shares
 
@@ -282,9 +283,9 @@ All notable changes to this project are documented here.
 - **`openapi/armor-server-0.4.0.yaml`: two summaries had an unquoted "word: word" inside parentheses** (the network and services routes), which a real YAML parser reads as a second mapping key, not plain text - this repo's own conformance test only ever did a substring check, so it never caught it. Both quoted now; the file parses cleanly.
 - Added `GET`/`PUT /api/v1/preferences` to the same file, for ARMOR-SERVER 0.4.1's new per-account language/theme/weather-place storage.
 
-## [0.3.3] - ARMOR-HMI was missing from the shared firmware's checks
+## [0.3.3] - ARMOR-NODE-HMI was missing from the shared firmware's checks
 
-- **`firmware_base/manifest.json` reconciled with what the four node projects actually run:** the fixes made to `ble_provision.cpp` (the Bluetooth stack size and the advertise-while-in-setup condition) and to the panel's titled `<title>`, among others, had been written straight into ARMOR-RADAR/-SOLAR/-ELECTRICAL's own copies without ever updating this project's shared base - `sync_firmware_base.py check` had nothing current to compare ARMOR-HMI against, so its own copies (never fixed) went unnoticed. The base now reflects the fixed content, and ARMOR-HMI has been synced to it (see its own 0.0.4).
+- **`firmware_base/manifest.json` reconciled with what the four node projects actually run:** the fixes made to `ble_provision.cpp` (the Bluetooth stack size and the advertise-while-in-setup condition) and to the panel's titled `<title>`, among others, had been written straight into ARMOR-NODE-RADAR/-SOLAR/-ELECTRICAL's own copies without ever updating this project's shared base - `sync_firmware_base.py check` had nothing current to compare ARMOR-NODE-HMI against, so its own copies (never fixed) went unnoticed. The base now reflects the fixed content, and ARMOR-NODE-HMI has been synced to it (see its own 0.0.4).
 - **`openapi/armor-server-0.2.0.yaml` renamed to `armor-server-0.4.0.yaml`, its own `info.version` bumped from 0.1.7 to match**, catching the file's name and its own declared version up to ARMOR-SERVER's real current one; its content (76 routes) was already reasonably current, only the name and the version field had stopped following it.
 
 ## [0.3.2] - The services route
@@ -299,10 +300,10 @@ All notable changes to this project are documented here.
 
 ## [0.3.0] - The touch panel joins the shared firmware
 
-- **`firmware_base` serves ARMOR-HMI too:** the sync tool and the manifest list the new project (27 shared files), whose settings are its own.
+- **`firmware_base` serves ARMOR-NODE-HMI too:** the sync tool and the manifest list the new project (27 shared files), whose settings are its own.
 - **The certificate no longer overflows the stack:** the 4 KB buffer that mbedTLS writes the certificate into lives on the heap, and the main task has 16 KB of stack (`CONFIG_ESP_MAIN_TASK_STACK_SIZE=16384`), after the first board reset in a loop right there ("A stack overflow in task main").
 - OpenAPI: `GET /api/v1/panel/summary`, `GET /api/v1/system/metrics` and `GET/PUT /api/v1/system/connection`.
-- The shared project tool builds and tests ARMOR-HMI (`test_hmi`).
+- The shared project tool builds and tests ARMOR-NODE-HMI (`test_hmi`).
 - The conformance vectors of the network message use documentation addresses instead of a real one.
 
 ## [0.2.9] - The network message carries the public address and the results of manual orders
@@ -322,7 +323,7 @@ All notable changes to this project are documented here.
 
 - `tools/armor_ci_validate.py`, `tools/_armor_readme_parity.py` and `tools/ci.yml.template`, the canonical CI baseline every other A.R.M.O.R. repository vendors (via ARMOR-DOCS' new `tools/sync_ci_tools.py`): the manifest, its version, CHANGELOG.md's heading, the seven README translations' structure and its local Markdown links are checked before the project's own real build/test runs.
 - `armor_project_tool.py`: `bump()`'s version odometer now rolls PATCH past 9 into MINOR (`0.2.9` -> `0.3.0`) instead of continuing to `0.2.10` - the same real mistake found and corrected on ARMOR-SERVER's own version once already, now fixed at the source; ARMOR-DEVOPS's own build-test step now runs `scripts/generate_secrets.sh` first when no local `.env` exists, so `docker compose config` has real (disposable) values to interpolate; ARMOR-UPDATER's pytest-based suite is now a recognized project.
-- Found while writing the validator and running it once against every repository: four real manifest/build drifts (ARMOR-RADAR, ARMOR-SOLAR, ARMOR-ELECTRICAL, ARMOR-SIMULATOR each had `native_version` behind `version`, and ARMOR-ELECTRICAL's manifest was missing the field outright) - all four fixed.
+- Found while writing the validator and running it once against every repository: four real manifest/build drifts (ARMOR-NODE-RADAR, ARMOR-NODE-SOLAR, ARMOR-NODE-ELECTRICAL, ARMOR-SIMULATOR each had `native_version` behind `version`, and ARMOR-NODE-ELECTRICAL's manifest was missing the field outright) - all four fixed.
 
 ## [0.2.5] - The state of the local network
 
@@ -339,23 +340,23 @@ All notable changes to this project are documented here.
 
 - `solar_inverter.schema.json` gains **optional** fields: `pv2_v`, `pv2_a`, `pv2_w` (a second PV input; `pv_w` is then the sum of both), `units` (up to ten units of a parallel system, each with its number, mode and, when known, serial, fault code and figures) and the totals `total_out_w`, `total_out_va`, `total_load_percent` and `total_charging_a`. Nothing that was valid stops being valid.
 - 16 new conformance vectors (193 in all); the generated types are current.
-- **The firmware the node projects share, once** (`firmware_base/`, `tools/sync_firmware_base.py`, `docs/FIRMWARE_BASE.md`): 35 files (the network, the settings store, the certificate, the log, the Bluetooth channel and its framing, the login and the address rules, the panel's page and its build...) that ARMOR-RADAR, ARMOR-SOLAR and ARMOR-ELECTRICAL used to keep as three copies now have one master with the project's name as placeholders; `sync` writes it into each project (keeping its line endings), `check` fails when a copy has drifted (it is part of `check_all.sh`) and `import` takes the projects' files as they are. Nothing is shared at build time: each project builds from its own tree as before. 9 tests (30 in all).
+- **The firmware the node projects share, once** (`firmware_base/`, `tools/sync_firmware_base.py`, `docs/FIRMWARE_BASE.md`): 35 files (the network, the settings store, the certificate, the log, the Bluetooth channel and its framing, the login and the address rules, the panel's page and its build...) that ARMOR-NODE-RADAR, ARMOR-NODE-SOLAR and ARMOR-NODE-ELECTRICAL used to keep as three copies now have one master with the project's name as placeholders; `sync` writes it into each project (keeping its line endings), `check` fails when a copy has drifted (it is part of `check_all.sh`) and `import` takes the projects' files as they are. Nothing is shared at build time: each project builds from its own tree as before. 9 tests (30 in all).
 
 
 ## [0.2.2] - The health of a battery
 
 - **`health_percent`** (an integer from 0 to 100, optional) on the battery message and on each module of its stack: the capacity the battery has learned against its rated one. A node that cannot tell leaves it out. Five new conformance vectors (147 in all); the generated TypeScript and Kotlin types carry it.
 - OpenAPI: `GET` and `PUT /api/v1/electrical/design` (the electrical design of the house, kept apart from the site design).
-- **The `electrical` message** (kind `electrical`, topic `armor/electrical/{node_id}/state`): what an ARMOR-ELECTRICAL node measures on the house's network, one entry per channel (up to 16: a circuit, a line, the grid input, a DC bus) with AC or DC, voltage, current, power (positive when it draws from the network), energy, frequency, power factor, the state of a switch it sees (`closed`, `open`, `unknown`), an alarm and its code, and whether the node is allowed to switch at all. It carries a state, never a command. Schema, 30 conformance vectors (177 in all), the generated TypeScript and Kotlin types, the Python validator (`validate_electrical_message`: the topic, the schema and a channel id once) and OpenAPI for `POST` and `GET /api/v1/electrical/readings` and `GET /api/v1/electrical/history`.
+- **The `electrical` message** (kind `electrical`, topic `armor/electrical/{node_id}/state`): what an ARMOR-NODE-ELECTRICAL node measures on the house's network, one entry per channel (up to 16: a circuit, a line, the grid input, a DC bus) with AC or DC, voltage, current, power (positive when it draws from the network), energy, frequency, power factor, the state of a switch it sees (`closed`, `open`, `unknown`), an alarm and its code, and whether the node is allowed to switch at all. It carries a state, never a command. Schema, 30 conformance vectors (177 in all), the generated TypeScript and Kotlin types, the Python validator (`validate_electrical_message`: the topic, the schema and a channel id once) and OpenAPI for `POST` and `GET /api/v1/electrical/readings` and `GET /api/v1/electrical/history`.
 
 ## [0.2.1] - The project tool runs the tests of both boards
 
-- `armor_project_tool.py` also builds and runs the board-profile tests of ARMOR-RADAR (`test_board_wifi`) and ARMOR-SOLAR (`test_board_eth`). No change to the messages, the schemas or the vectors.
+- `armor_project_tool.py` also builds and runs the board-profile tests of ARMOR-NODE-RADAR (`test_board_wifi`) and ARMOR-NODE-SOLAR (`test_board_eth`). No change to the messages, the schemas or the vectors.
 
 ## [0.2.0] - Declaring solar equipment
 
 - **OpenAPI 0.2.0:** `POST /api/v1/solar/devices` (declare an inverter or a battery stack: name, model, connection, gateway node), `DELETE /api/v1/solar/devices/{node}/{device}` and `POST /api/v1/solar/devices/{node}/{device}/example` (one made-up reading, marked as an example); `GET /api/v1/solar` also lists the declared devices that have not reported yet and the catalogue of models and connections. The file is renamed `armor-server-0.2.0.yaml`. No schema changed.
-- `armor_project_tool.py` also tests ARMOR-SOLAR's node (settings, network plan, emulated UART, the exchange with stand-in equipment) and checks the messages its ports make against the contract. No change to the messages, the schemas or the vectors.
+- `armor_project_tool.py` also tests ARMOR-NODE-SOLAR's node (settings, network plan, emulated UART, the exchange with stand-in equipment) and checks the messages its ports make against the contract. No change to the messages, the schemas or the vectors.
 
 ## [0.1.9] - The solar messages
 
@@ -363,9 +364,9 @@ All notable changes to this project are documented here.
 - **OpenAPI 0.1.9**: `POST /api/v1/solar` (an ingest token), `GET /api/v1/solar` and `GET /api/v1/solar/history` (an operator); the file is renamed `armor-server-0.1.9.yaml`.
 - The generator writes the types of an array of plain values (the list of warning names). Tests: 19.
 
-## [0.1.8] - The shared project tool knows ARMOR-SOLAR
+## [0.1.8] - The shared project tool knows ARMOR-NODE-SOLAR
 
-- `armor_project_tool.py` tests ARMOR-SOLAR (its protocol library and the messages its serialiser prints) and runs all three host tests of ARMOR-RADAR (it ran only one). No change to the messages, the schemas or the vectors.
+- `armor_project_tool.py` tests ARMOR-NODE-SOLAR (its protocol library and the messages its serialiser prints) and runs all three host tests of ARMOR-NODE-RADAR (it ran only one). No change to the messages, the schemas or the vectors.
 
 ## [0.1.7] - The node information message
 

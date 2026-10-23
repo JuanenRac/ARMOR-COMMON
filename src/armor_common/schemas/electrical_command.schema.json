@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://armor.local/schemas/electrical-command-0.1.0.json",
   "title": "A.R.M.O.R. command to the switch of an electrical node",
-  "description": "A command to one switch of one ARMOR-ELECTRICAL node, published by the server to armor/electrical/{node_id}/command (never retained). Only these actions exist. Closing is two steps: `arm` (the node answers with a one-time `token`), then `close_a` or `close_b` carrying that token within ten seconds; the token is what stops an old message from closing anything. `open` and `acknowledge` carry no token. `open` is always accepted; a node without switching enabled refuses the rest.",
+  "description": "A command to one switch of one ARMOR-NODE-ELECTRICAL node, published by the server to armor/electrical/{node_id}/command (never retained). Only these actions exist. Closing is two steps: `arm` (the node answers with a one-time `token`), then `close_a` or `close_b` carrying that token within ten seconds; the token is what stops an old message from closing anything. `open` and `acknowledge` carry no token. `open` is always accepted; a node without switching enabled refuses the rest.",
   "type": "object",
   "additionalProperties": false,
   "required": [

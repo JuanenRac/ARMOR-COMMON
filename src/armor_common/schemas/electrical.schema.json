@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://armor.local/schemas/electrical-0.1.0.json",
   "title": "A.R.M.O.R. electrical readings of one node",
-  "description": "What an ARMOR-ELECTRICAL node measures on the house's electrical network: one entry per measured channel (a circuit, a line, the grid input, a DC bus) and, when the node has them, the state of its switches. Published to armor/electrical/{node_id}/state. It carries states, never a command: what a switch was asked to do travels in electrical_command.schema.json and what the node answered in electrical_result.schema.json.",
+  "description": "What an ARMOR-NODE-ELECTRICAL node measures on the house's electrical network: one entry per measured channel (a circuit, a line, the grid input, a DC bus) and, when the node has them, the state of its switches. Published to armor/electrical/{node_id}/state. It carries states, never a command: what a switch was asked to do travels in electrical_command.schema.json and what the node answered in electrical_result.schema.json.",
   "type": "object",
   "additionalProperties": false,
   "required": [
