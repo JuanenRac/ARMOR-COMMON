@@ -36,7 +36,7 @@ class Project:
         self.dist = self.root / "dist"
         self.dist.mkdir(parents=True)
         (self.root / "armor.project.json").write_text(json.dumps({"name": name, "version": version}), encoding="utf-8")
-        self.kind, self.version = name.removeprefix("ARMOR-").lower(), version
+        self.kind, self.version = name.removeprefix("ARMOR-NODE-").removeprefix("ARMOR-").lower(), version
 
     def build(self, board="s3-eth", mode="publica", project=None, version=None, configuration="# no secret\n"):
         if configuration is not None:   # the configuration the build kept (.compile/<mode>-<board>/sdkconfig), which the release reads
