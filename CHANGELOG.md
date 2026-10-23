@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [0.7.5] - Security options as settings, new guards and a validator that reports every fault
 
+- **The name the house is reached by is checked against the public address:** the network message may carry `public.dns` (`name`, `addresses`, `matches`) with its schema, vectors and types, and the alarm table has `network_dns_stale` for the day the address changed and the dynamic DNS did not follow.
 - **The notification channels report their counters:** `GET /api/v1/admin/notifications` may carry `metrics` by place (delivered, failed, dropped, queued, and when and why the last one failed) and `ntfy`, described in the OpenAPI file.
 - **Keeping the stored secrets encrypted is an option of the contract:** the security option `nodes.nvs_encryption` (`off` by default, `secrets`) in the OpenAPI file and the optional `nvs_encryption` of the policy message (`alarm_policy`), with the schema, vectors and generated types; it asks a node to encrypt only the secrets it stores, with no eFuse burned.
 - **The words of every alarm code are one table in the eight languages** (`src/armor_common/alarm_codes.json`, described in the contracts guide and kept whole by `tests/test_alarm_codes.py`), so the server tells a person what happened instead of the internal code.

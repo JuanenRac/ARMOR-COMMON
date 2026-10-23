@@ -886,6 +886,12 @@ data class NetworkScan(
     val duration_ms: Long? = null
 )
 
+data class NetworkPublicDns(
+    val name: String,
+    val addresses: List<String>,
+    val matches: Boolean
+)
+
 data class NetworkPublic(
     val ip: String,
     val hostname: String? = null,
@@ -895,7 +901,8 @@ data class NetworkPublic(
     val org: String? = null,
     val timezone: String? = null,
     val checked_ms: Long,
-    val changed_ms: Long? = null
+    val changed_ms: Long? = null,
+    val dns: NetworkPublicDns? = null
 )
 
 data class NetworkResults(
