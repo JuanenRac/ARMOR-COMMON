@@ -53,6 +53,8 @@ MESSAGES = {
     "alarm_zone_feed": ("AlarmZoneFeed", {}),
     "alarm_policy": ("AlarmPolicy", {}),
     "node_health": ("NodeHealth", {}),
+    "voice_turn_meta": ("VoiceTurnMeta", {}),
+    "voice_turn_result": ("VoiceTurnResult", {}),
     "connection_event": ("ConnectionEvent", {}),
     "system_event": ("SystemEvent", {}),
     "connection_client": ("ConnectionClient", {}),

@@ -1,0 +1,136 @@
+{
+ "kind": "voice_turn_meta",
+ "vectors": [
+  {
+   "name": "the defaults of a panel",
+   "valid": true,
+   "payload": {
+    "language": "es",
+    "encoding": "pcm_s16le",
+    "sample_rate": 16000,
+    "channels": 1
+   }
+  },
+  {
+   "name": "the answer in binary",
+   "valid": true,
+   "payload": {
+    "language": "es",
+    "encoding": "pcm_s16le",
+    "sample_rate": 16000,
+    "channels": 1,
+    "reply_audio": "binary"
+   }
+  },
+  {
+   "name": "the answer as text only",
+   "valid": true,
+   "payload": {
+    "language": "pt",
+    "encoding": "pcm_s16le",
+    "sample_rate": 16000,
+    "channels": 1,
+    "reply_audio": "none"
+   }
+  },
+  {
+   "name": "the answer in base64",
+   "valid": true,
+   "payload": {
+    "language": "es",
+    "encoding": "pcm_s16le",
+    "sample_rate": 16000,
+    "channels": 1,
+    "reply_audio": "base64"
+   }
+  },
+  {
+   "name": "a language that is not one",
+   "valid": false,
+   "payload": {
+    "language": "xx",
+    "encoding": "pcm_s16le",
+    "sample_rate": 16000,
+    "channels": 1
+   }
+  },
+  {
+   "name": "a missing language",
+   "valid": false,
+   "payload": {
+    "encoding": "pcm_s16le",
+    "sample_rate": 16000,
+    "channels": 1
+   }
+  },
+  {
+   "name": "another sample rate",
+   "valid": false,
+   "payload": {
+    "language": "es",
+    "encoding": "pcm_s16le",
+    "sample_rate": 8000,
+    "channels": 1
+   }
+  },
+  {
+   "name": "a sample rate that is a text",
+   "valid": false,
+   "payload": {
+    "language": "es",
+    "encoding": "pcm_s16le",
+    "sample_rate": "16000",
+    "channels": 1
+   }
+  },
+  {
+   "name": "two channels",
+   "valid": false,
+   "payload": {
+    "language": "es",
+    "encoding": "pcm_s16le",
+    "sample_rate": 16000,
+    "channels": 2
+   }
+  },
+  {
+   "name": "another encoding",
+   "valid": false,
+   "payload": {
+    "language": "es",
+    "encoding": "mp3",
+    "sample_rate": 16000,
+    "channels": 1
+   }
+  },
+  {
+   "name": "a way of answering that does not exist",
+   "valid": false,
+   "payload": {
+    "language": "es",
+    "encoding": "pcm_s16le",
+    "sample_rate": 16000,
+    "channels": 1,
+    "reply_audio": "stream"
+   }
+  },
+  {
+   "name": "an unknown field",
+   "valid": false,
+   "payload": {
+    "language": "es",
+    "encoding": "pcm_s16le",
+    "sample_rate": 16000,
+    "channels": 1,
+    "token": "x"
+   }
+  },
+  {
+   "name": "not an object",
+   "valid": false,
+   "payload": [
+    "es"
+   ]
+  }
+ ]
+}

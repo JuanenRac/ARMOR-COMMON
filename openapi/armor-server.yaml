@@ -1486,20 +1486,37 @@ paths:
       parameters:
         - { name: X-Armor-Voice-Token, in: header, required: true, schema: { type: string } }
         - { name: X-Armor-Language, in: header, required: false, schema: { type: string, enum: [en, es, de, fr, it, ja, zh, pt] } }
-      requestBody: { required: true, content: { 'audio/L16;rate=16000': { schema: { type: string, format: binary, maxLength: 480000 } } } }
+      requestBody:
+        required: true
+        description: 'Either the audio alone as the whole body (the older request: audio/L16;rate=16000, raw 16 kHz 16-bit mono PCM) or, when the server allows it (security option voice.multipart_turn), multipart/form-data with the parts meta (optional, application/json, VoiceTurnMeta) and audio (the same PCM as raw bytes), each at most once and nothing else. The limit of the audio is 480 000 bytes (15 seconds) unless the administrator of the server set another one (ARMOR_VOICE_TURN_MAX_BYTES, up to 1 920 000).'
+        content:
+          'audio/L16;rate=16000': { schema: { type: string, format: binary, maxLength: 480000 } }
+          multipart/form-data:
+            schema: { $ref: '#/components/schemas/VoiceTurnForm' }
+            encoding:
+              meta: { contentType: application/json }
+              audio: { contentType: 'audio/L16;rate=16000, application/octet-stream' }
       responses:
-        '200': { description: '{ heard, reply, audio? } - audio is base64 16 kHz 16-bit mono PCM', content: { application/json: { schema: { $ref: '#/components/schemas/VoiceTurn' } } } }
+        '200':
+          description: '{ heard, reply, audio? } - audio is base64 16 kHz 16-bit mono PCM; or, to a multipart request whose meta says reply_audio binary, multipart/mixed with the parts result (application/json, VoiceTurnResult without audio) and audio (raw PCM, at most 200 000 bytes - a longer one is left out and the result says audio_omitted)'
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/VoiceTurn' } }
+            multipart/mixed: { schema: { type: string, format: binary } }
+        '400': { description: 'The multipart framing is wrong (boundary, part headers, closing delimiter)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '401': { description: 'The voice token is wrong', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
-        '411': { description: 'No audio', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
-        '413': { description: 'More than 480 000 bytes (15 seconds)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '411': { description: 'No audio, or an audio of an odd number of bytes in a multipart request', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '413': { description: 'More audio than the limit of the server (480 000 bytes, 15 seconds, by default)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '415': { description: 'The audio part is not 16 kHz PCM (unsupported_audio_type), or the server does not take multipart turns (multipart_turn_disabled)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'A part that is not meta or audio (unknown_part), a part twice (duplicate_part), no audio (missing_audio) or a meta that is not VoiceTurnMeta (bad_meta)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '502': { description: 'The voice gateway answered something that is not a voice reply', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '503': { description: 'No voice gateway is set up, or it does not answer', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/voice/v1/turn:
     post:
       summary: The same as /api/v1/voice/turn, at the path a panel builds when its voice address is this server plus /api/v1/voice
       security: []
-      requestBody: { required: true, content: { 'audio/L16;rate=16000': { schema: { type: string, format: binary } } } }
+      requestBody: { required: true, description: 'See /api/v1/voice/turn', content: { 'audio/L16;rate=16000': { schema: { type: string, format: binary } }, multipart/form-data: { schema: { $ref: '#/components/schemas/VoiceTurnForm' } } } }
       responses:
-        '200': { description: 'See /api/v1/voice/turn', content: { application/json: { schema: { $ref: '#/components/schemas/VoiceTurn' } } } }
+        '200': { description: 'See /api/v1/voice/turn', content: { application/json: { schema: { $ref: '#/components/schemas/VoiceTurn' } }, multipart/mixed: { schema: { type: string, format: binary } } } }
   /api/v1/studio/session/totp:
     post:
       security: []
@@ -2345,7 +2362,7 @@ components:
     SecuritySettings:
       type: object
       additionalProperties: false
-      description: 'The security options an administrator sets in Studio. The default of each is the way the server always behaved. alarm.disarm_pin never = no PIN is asked to disarm or silence a siren (the duress PIN is untouched), if_set = asked of a user who has one, always = asked of everybody and a user without one cannot disarm (ARMOR_DISARM_PIN=required fixes it to always and wins over the setting). voice.silence_confirmation is sent to the voice service with every turn (header X-Armor-Policy). alarm.config_hash, server.zone_feed and server.zone_feed_signature reach the panels as the policy message (armor/alarm/{node_id}/policy). media.rtsp_proxy off puts the camera login in the command line of FFmpeg, visible to every user of the machine. network.login_secure_only on keeps the login stored for a device of the network from a node whose request did not come over TLS or from the machine of the server (off by default: any request of the node)'
+      description: 'The security options an administrator sets in Studio. The default of each is the way the server always behaved. alarm.disarm_pin never = no PIN is asked to disarm or silence a siren (the duress PIN is untouched), if_set = asked of a user who has one, always = asked of everybody and a user without one cannot disarm (ARMOR_DISARM_PIN=required fixes it to always and wins over the setting). voice.silence_confirmation is sent to the voice service with every turn (header X-Armor-Policy). alarm.config_hash, server.zone_feed and server.zone_feed_signature reach the panels as the policy message (armor/alarm/{node_id}/policy). media.rtsp_proxy off puts the camera login in the command line of FFmpeg, visible to every user of the machine. voice.multipart_turn on lets the wall panel send a spoken turn as multipart/form-data with the audio as raw bytes (off: only the older raw request is taken and a multipart one is answered 415). network.login_secure_only on keeps the login stored for a device of the network from a node whose request did not come over TLS or from the machine of the server (off by default: any request of the node)'
       properties:
         alarm.disarm_pin: { type: string, enum: [never, if_set, always], default: if_set }
         voice.silence_confirmation: { type: string, enum: ['off', pin, double_turn], default: 'off' }
@@ -2354,6 +2371,7 @@ components:
         server.zone_feed_signature: { type: boolean, default: true }
         media.rtsp_proxy: { type: boolean, default: true }
         network.login_secure_only: { type: boolean, default: false }
+        voice.multipart_turn: { type: boolean, default: true }
     SecuritySettingsState:
       type: object
       required: [settings, stored, defaults, locked]
@@ -3468,6 +3486,24 @@ components:
         heard: { type: string }
         reply: { type: string }
         audio: { type: string, contentEncoding: base64, description: 16 kHz 16-bit mono PCM }
+        audio_omitted: { type: string, enum: [too_large], description: 'Set by the server, to a request in the binary form, when the spoken answer was above its limit and was left out' }
+    VoiceTurnForm:
+      type: object
+      required: [audio]
+      description: 'The binary form of a spoken turn: meta (optional) and audio, see docs/CONTRACTS.md, Voice turn'
+      properties:
+        meta: { $ref: '#/components/schemas/VoiceTurnMeta' }
+        audio: { type: string, format: binary, description: 'Raw 16 kHz 16-bit signed little-endian mono PCM, an even number of bytes' }
+    VoiceTurnMeta:
+      type: object
+      additionalProperties: false
+      required: [language, encoding, sample_rate, channels]
+      properties:
+        language: { type: string, enum: [en, es, de, fr, it, ja, zh, pt] }
+        encoding: { type: string, enum: [pcm_s16le] }
+        sample_rate: { type: integer, enum: [16000] }
+        channels: { type: integer, enum: [1] }
+        reply_audio: { type: string, enum: [base64, binary, none], description: 'How the spoken answer comes back; base64 when absent' }
     Camera:
       type: object
       required: [id, name, host, snapshotUrl, rtspPath, onvifPort, rtspPort, username, hasCredentials, liveVideoAvailable]

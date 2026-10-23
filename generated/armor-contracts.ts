@@ -746,6 +746,21 @@ export type NodeHealth = {
   radar?: NodeHealthRadar;
 };
 
+export type VoiceTurnMeta = {
+  language: "en" | "es" | "de" | "fr" | "it" | "ja" | "zh" | "pt";
+  encoding: "pcm_s16le";
+  sample_rate: 16000;
+  channels: 1;
+  reply_audio?: "base64" | "binary" | "none";
+};
+
+export type VoiceTurnResult = {
+  heard: string;
+  reply: string;
+  audio?: string;
+  audio_omitted?: "too_large";
+};
+
 export type ConnectionEvent = {
   id: number;
   at: string;

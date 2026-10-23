@@ -747,6 +747,21 @@ data class NodeHealth(
     val radar: NodeHealthRadar? = null
 )
 
+data class VoiceTurnMeta(
+    val language: String,
+    val encoding: String,
+    val sample_rate: Long,
+    val channels: Long,
+    val reply_audio: String? = null
+)
+
+data class VoiceTurnResult(
+    val heard: String,
+    val reply: String,
+    val audio: String? = null,
+    val audio_omitted: String? = null
+)
+
 data class ConnectionEvent(
     val id: Long,
     val at: String,

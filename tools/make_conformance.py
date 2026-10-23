@@ -9,6 +9,9 @@ import json
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import voice_cases   # noqa: E402  (the bytes of the binary voice turn)
+
 ROOT = Path(__file__).resolve().parents[1] / "conformance"
 track = {"sensor_id": 1, "track_id": 1, "x_mm": 1200.5, "y_mm": -300, "speed_mm_s": 0}
 
@@ -297,6 +300,18 @@ def network(**changes):
 
 def zone_feed(**changes):
     base = {"zone": "front-door", "state": "triggered", "battery_low": False}
+    base.update(changes)
+    return base
+
+
+def voice_meta(**changes):
+    base = {"language": "es", "encoding": "pcm_s16le", "sample_rate": 16000, "channels": 1}
+    base.update(changes)
+    return base
+
+
+def voice_result(**changes):
+    base = {"heard": "arm the system", "reply": "Arm the system? Say yes to confirm."}
     base.update(changes)
     return base
 
@@ -1092,6 +1107,32 @@ cases = {
         ("an option that does not exist", False, alarm_policy(disarm_pin="never")),
         ("not an object", False, [True]),
     ],
+    "voice_turn_meta": [
+        ("the defaults of a panel", True, voice_meta()),
+        ("the answer in binary", True, voice_meta(reply_audio="binary")),
+        ("the answer as text only", True, voice_meta(language="pt", reply_audio="none")),
+        ("the answer in base64", True, voice_meta(reply_audio="base64")),
+        ("a language that is not one", False, voice_meta(language="xx")),
+        ("a missing language", False, without(voice_meta(), "language")),
+        ("another sample rate", False, voice_meta(sample_rate=8000)),
+        ("a sample rate that is a text", False, voice_meta(sample_rate="16000")),
+        ("two channels", False, voice_meta(channels=2)),
+        ("another encoding", False, voice_meta(encoding="mp3")),
+        ("a way of answering that does not exist", False, voice_meta(reply_audio="stream")),
+        ("an unknown field", False, voice_meta(token="x")),
+        ("not an object", False, ["es"]),
+    ],
+    "voice_turn_result": [
+        ("what was heard and the reply", True, voice_result()),
+        ("with the audio in base64", True, voice_result(audio="AAAA")),
+        ("with the audio left out", True, voice_result(audio_omitted="too_large")),
+        ("empty texts", True, voice_result(heard="", reply="")),
+        ("a missing reply", False, without(voice_result(), "reply")),
+        ("a reason that does not exist", False, voice_result(audio_omitted="other")),
+        ("a text that is too long", False, voice_result(reply="x" * 2001)),
+        ("an unknown field", False, voice_result(intent="arm")),
+        ("not an object", False, "text"),
+    ],
     "device_state": [
         ("a relay that is on", True, {"on": True}),
         ("a relay that is off", True, {"on": False}),
@@ -1644,6 +1685,15 @@ for kind, entries in cases.items():
     else:
         (ROOT / f"{kind}.json").write_text(text, encoding="utf-8", newline="\n")
         print(kind, len(vectors), "vectors")
+voice_path = ROOT / "voice" / "turn_multipart.json"
+voice_text = voice_cases.render()
+if CHECK:
+    if not voice_path.is_file() or voice_path.read_text(encoding="utf-8").replace("\r\n", "\n") != voice_text:
+        stale.append("voice/turn_multipart.json")
+else:
+    voice_path.parent.mkdir(exist_ok=True)
+    voice_path.write_text(voice_text, encoding="utf-8", newline="\n")
+    print("voice/turn_multipart", len(voice_cases.cases()), "cases")
 if CHECK:
     if stale:
         print("CONFORMANCE=FAIL these files are not what tools/make_conformance.py writes (run it): " + ", ".join(stale))
