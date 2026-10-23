@@ -1669,6 +1669,15 @@ paths:
       responses:
         '200': { description: '{ wireguard: { tool, script, configured, running, qr, peers, endpoint?, subnet?, port?, lan?, route_lan? }, ddns: { script, configured, provider?, name?, last_address? } }', content: { application/json: { schema: { $ref: '#/components/schemas/RemoteState' } } } }
         '503': { description: 'The maintenance agent is not there', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/admin/remote/tls:
+    get:
+      security: [{ admin: [] }]
+      summary: 'The key of the authority that signs the installation''s own HTTPS, as a phone pins it, and the text that pairs a phone with it (an administrator; a hash of a public key, no secret)'
+      parameters:
+        - { name: host, in: query, required: false, schema: { type: string, maxLength: 253 }, description: 'The name the phone reaches the house by; it goes into the text (armor-pin:<host>:<pin>)' }
+      responses:
+        '200': { description: The authority and its pin, content: { application/json: { schema: { $ref: '#/components/schemas/RemoteTls' } } } }
+        '503': { description: The maintenance agent is not there, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/admin/remote/wireguard/setup:
     post:
       security: [{ admin: [] }]
@@ -3858,6 +3867,16 @@ components:
       additionalProperties: false
       properties:
         pin: { type: string, maxLength: 12, description: 'Only for the account of a wall panel: its PIN, checked under the lockout of the disarm PIN. Without it the acknowledgement stays unverified and a critical alarm keeps being escalated' }
+    RemoteTls:
+      type: object
+      required: [present]
+      properties:
+        present: { type: boolean, description: Whether the root certificate of the installation's authority was found }
+        pin: { type: string, pattern: '^[A-Za-z0-9+/]{43}=$', description: 'SHA-256 of the public key of the authority (its SubjectPublicKeyInfo), in base64' }
+        text: { type: string, description: 'What to paste in the app or to put in a QR code: armor-pin:<host>:<pin>, or armor-pin:<pin> without a host' }
+        subject: { type: string }
+        not_after: { type: string, description: When the authority ends }
+        error: { type: string, description: 'Why the certificate could not be read (openssl_failed, unreadable_certificate)' }
     PostCamerasIdStreamTicketRequest:
       type: object
       additionalProperties: false
