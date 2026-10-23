@@ -885,6 +885,12 @@ export type NetworkScan = {
   duration_ms?: number;
 };
 
+export type NetworkPublicDns = {
+  name: string;
+  addresses: string[];
+  matches: boolean;
+};
+
 export type NetworkPublic = {
   ip: string;
   hostname?: string;
@@ -895,6 +901,7 @@ export type NetworkPublic = {
   timezone?: string;
   checked_ms: number;
   changed_ms?: number;
+  dns?: NetworkPublicDns;
 };
 
 export type NetworkResults = {

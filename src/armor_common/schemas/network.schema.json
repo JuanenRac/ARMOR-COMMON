@@ -439,6 +439,34 @@
           "type": "integer",
           "minimum": 0,
           "description": "When the address was seen to change last (absent when it never has)."
+        },
+        "dns": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "addresses",
+            "matches"
+          ],
+          "description": "Present when the node was told the name the house is reached by from outside (--dns-name): what that name resolves to now and whether it is the public address above. matches false for long means the address changed and the dynamic DNS did not follow.",
+          "properties": {
+            "name": {
+              "type": "string",
+              "maxLength": 253
+            },
+            "addresses": {
+              "type": "array",
+              "maxItems": 8,
+              "items": {
+                "type": "string",
+                "maxLength": 45
+              },
+              "description": "The addresses the name resolved to (empty when it did not resolve)."
+            },
+            "matches": {
+              "type": "boolean"
+            }
+          }
         }
       }
     },
