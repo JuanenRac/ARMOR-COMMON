@@ -15,4 +15,4 @@ contract-tests = ["pyyaml>=6", "openapi-spec-validator>=0.7", "jsonschema>=4"]
 where = ["src"]
 
 [tool.setuptools.package-data]
-armor_common = ["schemas/*.json", "battery_ops.json"]
+armor_common = ["schemas/*.json", "battery_ops.json", "alarm_codes.json"]

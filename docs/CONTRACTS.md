@@ -163,6 +163,10 @@ A wall panel can listen to `/api/v1/panel/events`, a WebSocket of the server, in
 
 One frame when the socket opens, one whenever the summary changes (the time in it does not count) and the same summary again every `heartbeat_ms`, so a client can tell a quiet channel from a dead one: it takes the channel as lost after three heartbeats without a frame and asks `GET /api/v1/panel/summary` meanwhile. A client ignores a frame whose `type` it does not know. The server closes with `4401` when the session ends and `4403` when the option is turned off (the client asks, and looks at the channel again only after a long wait). An older server has no such path and refuses the upgrade; the client then asks as before. ARMOR-HMI reads the frames with `core/panel_feed.hpp`.
 
+## The words of an alarm code
+
+An alarm (`alarm.raised`, `alarm.escalated`) carries a stable `code`; what a person reads for it is one table, `src/armor_common/alarm_codes.json`, with the sentence of every code in the eight languages (`en`, `es`, `de`, `fr`, `it`, `ja`, `zh`, `pt`). The server uses it for the messages it sends out (chat, push, Home Assistant) and a test compares its copy with this file; a console may keep its own text, but a code that is not in the table is a code nobody has described, and `tests/test_alarm_codes.py` keeps the table whole (every language, no empty sentence). A new code is added here first.
+
 ## Keeping every implementation in step
 
 1. **Python** (`armor_common`) interprets the schema files directly with a small
