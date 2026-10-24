@@ -101,9 +101,11 @@ ARMOR-COMMON/
 ├── generated/          TypeScript and Kotlin types (generated, do not edit)
 ├── openapi/            armor-server.yaml
 ├── registry/           repositories.json: the one list of the repositories of the family (kind, group, technologies, place on the map, who feeds whom) that the documentation, deployment and update tools read
-├── tools/              armor_project_tool.py, generate_types.py, generate_rest_types.py, make_conformance.py, sync_firmware_base.py, release_firmware.py, firmware_sign.mjs
+├── fuzz/               libFuzzer targets for the JSON, Bluetooth-frame and Improv parsers of the nodes, with their corpus and run_fuzz.sh
+├── scripts/            armor-project.sh and armor-project.bat: the launcher of armor_project_tool.py
+├── tools/              armor_project_tool.py, generate_types.py, generate_rest_types.py, make_conformance.py, sync_firmware_base.py, release_firmware.py, firmware_sign.mjs, voice_cases.py, ci.yml.template and e2e.yml.template (the shared workflows), armor_ci_validate.py + _armor_readme_parity.py (the shared CI checks)
 ├── tests/              unit tests and conformance runner
-└── docs/               contracts guide, the shared firmware base
+└── docs/               CONTRACTS, FIRMWARE_BASE, FUZZING, PROJECT_MANIFEST, SIGNED_FIRMWARE
 ```
 
 ## 🛠️ 开发环境
