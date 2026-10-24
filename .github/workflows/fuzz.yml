@@ -1,0 +1,27 @@
+name: Fuzz the firmware parsers
+
+on:
+  push:
+    paths:
+      - "firmware_base/core/**"
+      - "fuzz/**"
+      - ".github/workflows/fuzz.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fuzz:
+    name: libFuzzer on the JSON parser, the Bluetooth framing and the Improv parser
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Fuzz for 30 seconds per target
+        run: bash fuzz/run_fuzz.sh 30
+      - name: Keep what a failing input looks like
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-artifacts
+          path: fuzz/artifacts/
