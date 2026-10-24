@@ -146,7 +146,7 @@ paths:
       security: [{ operator: [] }]
       parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
       responses:
-        '200': { description: The node, content: { application/json: { schema: { $ref: '#/components/schemas/NodeHealthEntry' } } } }
+        '200': { description: The node, content: { application/json: { schema: { $ref: '#/components/schemas/NodeHealthDetail' } } } }
         '404': { description: Unknown node, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
     delete:
       summary: Forget a node that was taken away, with its health warnings (an administrator only)
@@ -217,7 +217,7 @@ paths:
       security: [{ diagnosticBearer: [] }]
       parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,63}$' } }]
       responses:
-        '200': { description: The node, content: { application/json: { schema: { $ref: '#/components/schemas/NodeHealthEntry' } } } }
+        '200': { description: The node, content: { application/json: { schema: { $ref: '#/components/schemas/NodeHealthDetail' } } } }
         '401': { description: 'invalid_token', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '403': { description: 'out_of_scope: the token does not cover this node', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '404': { description: 'not_found: the node has not reported', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
@@ -2201,6 +2201,7 @@ components:
               target_count: { type: integer }
               panel:
                 type: [object, 'null']
+                required: [name, firmware, ip, port]
                 description: Where the node's own web panel is, as the node said itself in its information message; null until it has. Not stored, the node repeats it.
                 properties:
                   name: { type: string }
@@ -2506,7 +2507,7 @@ components:
       properties:
         enabled: { type: boolean }
         recovery_left: { type: integer }
-        policy: { type: string }
+        policy: { type: string, enum: [off, remote, always] }
     TotpSetup:
       type: object
       required: [secret, uri]
@@ -2521,16 +2522,16 @@ components:
         recovery_codes: { type: array, items: { type: string } }
     RemoteCheck:
       type: object
-      required: [ip, protocol, cookie_secure, trust_proxy, totp_policy, totp_enabled, remote_session_ttl_s, remote_idle_s, elevation_s]
+      required: [ip, origin, session_origin, protocol, forwarded_for, cookie_secure, trust_proxy, totp_policy, totp_enabled, remote_session_ttl_s, remote_idle_s, elevation_s]
       properties:
         ip: { type: string }
-        origin: { type: [string, 'null'] }
-        session_origin: { type: [string, 'null'] }
+        origin: { type: string, enum: [local, remote], description: Where this request comes from }
+        session_origin: { type: [string, 'null'], enum: [local, remote, null], description: Where the session was opened; null without a session }
         protocol: { type: string }
         forwarded_for: { type: [string, 'null'] }
         cookie_secure: { type: boolean }
         trust_proxy: { type: [boolean, integer, string] }
-        totp_policy: { type: string }
+        totp_policy: { type: string, enum: [off, remote, always] }
         totp_enabled: { type: boolean }
         remote_session_ttl_s: { type: integer }
         remote_idle_s: { type: integer }
@@ -2541,7 +2542,16 @@ components:
       properties:
         language: { type: string }
         theme: { type: string }
-        weatherPlace: { type: string }
+        weatherPlace:
+          type: [object, 'null']
+          description: The place the weather is shown for; null when none is chosen
+          required: [name, region, country, lat, lon]
+          properties:
+            name: { type: string }
+            region: { type: string }
+            country: { type: string }
+            lat: { type: number }
+            lon: { type: number }
     Device:
       type: object
       required: [id, name, kind, protocol, location, expected_interval_s, state, online, last_seen, created_at]
@@ -2576,7 +2586,7 @@ components:
         device: { $ref: '#/components/schemas/Device' }
     Automation:
       type: object
-      required: [id, name, enabled]
+      required: [id, name, enabled, trigger, when_mode, actions, created_at, last_run, runs]
       properties:
         id: { type: string }
         name: { type: string }
@@ -2584,6 +2594,9 @@ components:
         when_mode: { type: string, enum: [any, armed, disarmed] }
         trigger: { $ref: '#/components/schemas/AutomationTrigger' }
         actions: { type: array, items: { $ref: '#/components/schemas/AutomationAction' } }
+        created_at: { type: string, format: date-time }
+        last_run: { type: [string, 'null'], format: date-time, description: 'When it last ran; null when it never did' }
+        runs: { type: integer, minimum: 0 }
     AutomationList:
       type: object
       required: [automations]
@@ -2591,7 +2604,7 @@ components:
         automations: { type: array, items: { $ref: '#/components/schemas/Automation' } }
     SolarDeviceRegistration:
       type: object
-      required: [node_id, device, kind, name]
+      required: [node_id, device, kind, name, model, connection, notes, created_at]
       properties:
         node_id: { type: string }
         device: { type: string }
@@ -2600,6 +2613,7 @@ components:
         model: { type: string }
         connection: { type: string, enum: [rs232, rs485, usb, can, wifi, other] }
         notes: { type: string }
+        created_at: { type: string, format: date-time }
     SolarOverview:
       type: object
       required: [devices, waiting, totals, catalog]
@@ -2669,7 +2683,7 @@ components:
                         system_fault: { type: string }
               registered: { $ref: '#/components/schemas/SolarDeviceRegistration' }
         waiting: { type: array, items: { $ref: '#/components/schemas/SolarDeviceRegistration' }, description: Declared devices with no reading yet }
-        totals: { type: object, required: [inverters, batteries, stale, pv_w, load_w, battery_w, soc_percent, grid_present, mode], properties: { inverters: { type: integer }, batteries: { type: integer }, stale: { type: integer }, pv_w: { type: number }, load_w: { type: number }, battery_w: { type: [number, 'null'] }, soc_percent: { type: [number, 'null'] }, capacity_ah: { type: [number, 'null'] }, full_capacity_ah: { type: [number, 'null'] }, energy_kwh: { type: [number, 'null'] }, grid_present: { type: boolean }, mode: { type: [string, 'null'] } } }
+        totals: { type: object, required: [inverters, batteries, stale, pv_w, load_w, battery_w, soc_percent, capacity_ah, full_capacity_ah, energy_kwh, grid_present, mode], properties: { inverters: { type: integer }, batteries: { type: integer }, stale: { type: integer }, pv_w: { type: number }, load_w: { type: number }, battery_w: { type: [number, 'null'] }, soc_percent: { type: [number, 'null'] }, capacity_ah: { type: [number, 'null'] }, full_capacity_ah: { type: [number, 'null'] }, energy_kwh: { type: [number, 'null'] }, grid_present: { type: boolean }, mode: { type: [string, 'null'], enum: [power_on, standby, line, battery, fault, power_saving, shutdown, unknown, null] } } }
         catalog:
           type: object
           required: [inverter_models, battery_models, connections]
@@ -2744,14 +2758,98 @@ components:
               node_id: { type: string }
               family: { type: string, enum: [radar, solar, electrical, alarm, hmi] }
         totals: { type: object, required: [nodes, stale, with_warnings], properties: { nodes: { type: integer }, stale: { type: integer }, with_warnings: { type: integer } } }
-        levels: { type: array, items: { type: string } }
+        levels:
+          type: object
+          description: The levels the server judges by, so a console can say what low means
+          required: [low_heap_b, low_heap_clear_b, restarts_per_day, abnormal_window_min, flap_reconnects, flap_window_min, weak_signal_dbm, weak_signal_reports, silent_after_s]
+          properties:
+            low_heap_b: { type: integer }
+            low_heap_clear_b: { type: integer }
+            low_internal_b: { type: integer }
+            low_internal_clear_b: { type: integer }
+            low_block_b: { type: integer }
+            restarts_per_day: { type: integer }
+            abnormal_window_min: { type: integer }
+            flap_reconnects: { type: integer }
+            flap_window_min: { type: integer }
+            weak_signal_dbm: { type: integer }
+            weak_signal_reports: { type: integer }
+            silent_after_s: { type: integer }
     NodeHealthEntry:
       type: object
-      description: The latest health report of one node, with the level the server gave it
-      additionalProperties: true
+      required: [node_id, family, firmware, report, received_at, stale, status, warnings, restarts_24h]
+      description: The latest health report of one node, with what the server makes of it
       properties:
         node_id: { type: string }
-        level: { type: string }
+        family: { type: string, enum: [radar, solar, electrical, alarm, hmi] }
+        firmware: { type: string }
+        board: { type: string }
+        report: { $ref: '../src/armor_common/schemas/node_health.schema.json' }
+        received_at: { type: string, format: date-time }
+        stale: { type: boolean, description: No report for a few minutes - what is shown is the last one }
+        status: { type: string, enum: [ok, warning, stale] }
+        warnings:
+          type: array
+          items:
+            type: object
+            required: [code, detail]
+            properties:
+              code: { type: string, enum: [node_low_memory, node_frequent_resets, node_link_flapping, node_weak_signal, node_sensor_bluetooth_open, node_radar_masked, node_wifi_jam] }
+              detail: { type: object, additionalProperties: { type: [string, number, boolean] } }
+        restarts_24h: { type: integer, minimum: 0 }
+        last_restart: { $ref: '#/components/schemas/NodeHealthRestart' }
+        control:
+          type: object
+          required: [state, maintenance, source]
+          description: What remote control has done to the node, and its planned-maintenance window; absent while nothing is known
+          properties:
+            state: { type: string, enum: [running, paused, standby] }
+            maintenance: { type: boolean }
+            since_ms: { type: integer }
+            by: { type: string }
+            until_s: { type: integer }
+            maintenance_until_s: { type: integer }
+            window:
+              type: object
+              required: [source, reason, remaining_s]
+              properties:
+                source: { type: string, enum: [node, operator, both] }
+                reason: { type: string, enum: [restart, pause, standby, update, upload, operator] }
+                remaining_s: { type: integer }
+                requested_by: { type: string }
+            source: { type: string, enum: [node, server], description: 'Who knows: the node''s own report, or what the server remembers of the orders it gave' }
+    NodeHealthRestart:
+      type: object
+      required: [at, reason, abnormal]
+      properties:
+        at: { type: string, format: date-time }
+        reason: { type: string }
+        abnormal: { type: boolean, description: A restart nobody asked for }
+        uptime_before_s: { type: integer }
+        boot: { $ref: '../src/armor_common/schemas/node_health.schema.json#/properties/boot' }
+    NodeHealthDetail:
+      description: One node with the history of its memory and signal (up to 120 reports) and the log of its restarts, newest first
+      allOf:
+        - { $ref: '#/components/schemas/NodeHealthEntry' }
+        - type: object
+          required: [samples, restarts]
+          properties:
+            samples:
+              type: array
+              items:
+                type: object
+                required: [at, heap_free, heap_min, link_up, uptime_s, broker_reconnects]
+                properties:
+                  at: { type: integer }
+                  heap_free: { type: integer }
+                  heap_min: { type: integer }
+                  heap_internal_free: { type: integer }
+                  heap_internal_largest: { type: integer }
+                  rssi_dbm: { type: integer }
+                  link_up: { type: boolean }
+                  uptime_s: { type: integer }
+                  broker_reconnects: { type: integer }
+            restarts: { type: array, items: { $ref: '#/components/schemas/NodeHealthRestart' } }
     ElectricalDevices:
       type: object
       required: [elements, totals]
@@ -2897,7 +2995,7 @@ components:
         version: { type: string, description: 'Major.minor read at offset 0x400' }
     BatteryOperation:
       type: object
-      required: [id, node, port, op, stage, actor, created_at, updated_at]
+      required: [id, node, port, op, params, stage, actor, created_at, updated_at]
       properties:
         id: { type: string }
         node: { type: string }
@@ -2912,7 +3010,16 @@ components:
         risk: { type: string, enum: [low, medium, high, irreversible] }
         atomic: { type: boolean }
         canonical: { type: string }
-        battery: { type: object, additionalProperties: true }
+        battery:
+          type: object
+          required: [model, serial, soft_version, board]
+          description: Who the battery says it is
+          properties:
+            model: { type: string }
+            serial: { type: string }
+            soft_version: { type: string }
+            board: { type: string }
+            capacity_ah: { type: number }
         refusal: { type: string }
         snapshot_before: { type: string }
         outcome: { type: string, enum: [running, ok, failed, partial, retry, rejected] }
@@ -2923,10 +3030,42 @@ components:
         packets_total: { type: integer }
         before: { type: string }
         after: { type: string }
-        diff: { type: array, items: { type: object, additionalProperties: true } }
+        diff:
+          type: array
+          items:
+            type: object
+            required: [label, before, after]
+            properties:
+              label: { type: string }
+              before: { type: string }
+              after: { type: string }
         transcript: { type: string }
         armed_until: { type: string, description: 'When an armed operation stops being executable' }
-        restore: { type: object, additionalProperties: true, nullable: true }
+        restore:
+          type: [object, 'null']
+          description: The operation that puts back what this one changed, when there is one
+          required: [op, params]
+          properties:
+            op: { type: string }
+            params: { type: object, additionalProperties: true }
+        staging:
+          type: object
+          required: [sent, total]
+          description: How much of a firmware image the node has kept
+          properties:
+            sent: { type: integer }
+            total: { type: integer }
+        writes_started: { type: boolean }
+        image:
+          type: object
+          required: [id, board, version, sha256, size]
+          properties:
+            id: { type: string }
+            board: { type: string }
+            version: { type: string }
+            sha256: { type: string }
+            size: { type: integer }
+        cancel_requested: { type: boolean }
     BatteryOperationList:
       type: object
       required: [enabled, operations]
@@ -3033,7 +3172,22 @@ components:
         offline_at: { type: string }
         back_at: { type: string }
         back_after_s: { type: integer, description: 'Seconds from the order to the first report after the restart' }
-        diagnostics: { type: object, description: 'After a diagnostics order: the snapshot the node gave (firmware, uptime_s, reset_reason, heap_free, heap_min, mqtt_connected, state, maintenance and, if it has them, psram_free, stack_min_free, rssi)', additionalProperties: true }
+        diagnostics:
+          type: object
+          required: [firmware, uptime_s, reset_reason, heap_free, heap_min, mqtt_connected, state, maintenance]
+          description: After a diagnostics order, the snapshot the node gave
+          properties:
+            firmware: { type: string }
+            uptime_s: { type: integer }
+            reset_reason: { type: string }
+            heap_free: { type: integer }
+            heap_min: { type: integer }
+            psram_free: { type: integer }
+            stack_min_free: { type: integer }
+            rssi: { type: integer }
+            mqtt_connected: { type: boolean }
+            state: { type: string, enum: [running, paused, standby] }
+            maintenance: { type: boolean }
     NodeControlOperation:
       type: object
       required: [id, scope, operation, mode, actor, created_at, updated_at, state, nodes]
@@ -3204,7 +3358,7 @@ components:
         devices: { type: integer }
     ArmProfiles:
       type: object
-      required: [revision, profiles, max]
+      required: [revision, updated_at, updated_by, profiles, max]
       description: The arming profiles and the number of them that may be kept
       properties:
         revision: { type: integer }
@@ -3227,13 +3381,37 @@ components:
               stale: { type: boolean }
               contract: { type: integer, minimum: 1, description: 'The version of the network contract the node says it speaks (1 when it says nothing)' }
               outdated: { type: boolean, description: 'Whether that version is older than the one the server speaks' }
-              interface: { type: object, description: 'The interface the node watches, as the network message has it' }
-              internet: { type: object, description: 'The state of the internet, as the network message has it' }
-              scan: { type: object, description: The last sweep }
-              public: { type: object, description: What the internet sees of the connection }
-              devices: { type: array, items: { type: object, description: 'A device as the network message has it, with the note an operator gave it (note) and the login kept for it (login), when there are any' } }
+              interface: { $ref: '../src/armor_common/schemas/network.schema.json#/properties/interface', description: 'The interface the node watches, as the network message has it' }
+              internet: { $ref: '../src/armor_common/schemas/network.schema.json#/properties/internet', description: 'The state of the internet, as the network message has it' }
+              scan: { $ref: '../src/armor_common/schemas/network.schema.json#/properties/scan', description: The last sweep }
+              public: { $ref: '../src/armor_common/schemas/network.schema.json#/properties/public', description: What the internet sees of the connection }
+              devices:
+                type: array
+                items:
+                  allOf:
+                    - { $ref: '../src/armor_common/schemas/network.schema.json#/properties/devices/items' }
+                    - type: object
+                      description: 'A device as the network message has it, with the note an operator gave it (note) and the login kept for it (login), when there are any'
+                      properties:
+                        note:
+                          type: object
+                          required: [updated_at]
+                          properties:
+                            name: { type: string }
+                            notes: { type: string }
+                            trusted: { type: boolean }
+                            kind: { type: string, enum: [router, computer, phone, tv, printer, camera, iot, server, nas, network, unknown] }
+                            hidden: { type: boolean, description: Left out of the list }
+                            watch: { type: boolean, description: Tell me the next time it comes onto the network }
+                            updated_at: { type: string }
+                        login:
+                          type: object
+                          required: [user]
+                          description: The user of the login kept for its web administration (never the password)
+                          properties:
+                            user: { type: string }
               hidden: { type: integer, minimum: 0, description: How many devices an operator hid }
-        totals: { type: object, required: [nodes, stale, devices, online, unknown, internet], properties: { nodes: { type: integer }, stale: { type: integer }, devices: { type: integer }, online: { type: integer }, unknown: { type: integer }, internet: { type: [string, 'null'] } } }
+        totals: { type: object, required: [nodes, stale, devices, online, unknown, internet], properties: { nodes: { type: integer }, stale: { type: integer }, devices: { type: integer }, online: { type: integer }, unknown: { type: integer }, internet: { type: [string, 'null'], enum: [up, degraded, down, lan_down, unknown, null] } } }
         events:
           type: array
           items:
@@ -3241,7 +3419,7 @@ components:
             required: [id, kind, at_ms, node_id]
             properties:
               id: { type: string }
-              kind: { type: string }
+              kind: { type: string, enum: [new_device, device_online, device_offline, ip_changed, arp_conflict, port_opened, port_closed, internet_down, internet_up, gateway_down, gateway_up] }
               at_ms: { type: integer }
               node_id: { type: string }
               device_id: { type: string }
@@ -3315,12 +3493,12 @@ components:
             user: { type: string, description: 'Who the stored login is for, never the password' }
     SystemSummary:
       type: object
-      required: [service, version, uptime_s, mode, revision, counts, storage]
+      required: [service, version, node, uptime_s, mode, revision, mqtt, live_video, webhook, cameras_check_s, counts, storage]
       additionalProperties: true
       properties:
         service: { type: string }
         version: { type: string }
-        node: { type: string }
+        node: { type: string, description: The version of Node.js the server runs on }
         uptime_s: { type: integer }
         mode: { type: string, enum: [armed, disarmed] }
         revision: { type: integer }
@@ -3328,14 +3506,27 @@ components:
         live_video: { type: boolean }
         webhook: { type: boolean }
         cameras_check_s: { type: number }
-        counts: { type: object, additionalProperties: { type: integer } }
+        counts:
+          type: object
+          required: [nodes, nodes_online, cameras, devices, devices_online, alarms_active, automations, users, events]
+          properties:
+            nodes: { type: integer }
+            nodes_online: { type: integer }
+            cameras: { type: integer }
+            devices: { type: integer }
+            devices_online: { type: integer }
+            alarms_active: { type: integer }
+            automations: { type: integer }
+            users: { type: integer }
+            events: { type: integer }
         storage:
           type: object
+          required: [media_files, media_bytes, media_limit_bytes, disk]
           properties:
             media_files: { type: integer }
             media_bytes: { type: integer }
             media_limit_bytes: { type: integer }
-            disk: { type: [object, 'null'], properties: { free_bytes: { type: number }, total_bytes: { type: number } } }
+            disk: { type: [object, 'null'], required: [free_bytes, total_bytes], properties: { free_bytes: { type: number }, total_bytes: { type: number } } }
     SystemMetrics:
       type: object
       required: [history]
@@ -3391,9 +3582,9 @@ components:
             type: object
             required: [kind, level, code, id]
             properties:
-              kind: { type: string }
-              level: { type: string }
-              code: { type: string }
+              kind: { type: string, enum: [node, panel, zone, camera, device, alarm] }
+              level: { type: string, enum: [block, warn] }
+              code: { type: string, enum: [node_offline, panel_silent, zone_open, camera_down, opening_open, device_offline, alarm_unseen] }
               id: { type: string }
               detail: { type: string, description: 'What the issue is about, such as the zone that is open' }
     IngestLog:
@@ -3499,8 +3690,28 @@ components:
             port: { type: integer }
             tls: { type: boolean }
             studio_origins: { type: array, items: { type: string } }
-        mqtt_tls: { type: object, additionalProperties: true }
-        saved: { type: object, additionalProperties: true, description: What the settings file holds (host, port, studio_port) }
+        mqtt_tls:
+          type: object
+          required: [configured, tls, pinned_ca]
+          description: Whether the server's link to the MQTT broker is encrypted and, when the installation's own authority is pinned, which one (never a path or a key)
+          properties:
+            configured: { type: boolean }
+            tls: { type: boolean }
+            pinned_ca: { type: boolean }
+            ca:
+              type: object
+              required: [fingerprint256, subject, valid_to]
+              properties:
+                fingerprint256: { type: string }
+                subject: { type: string }
+                valid_to: { type: string }
+        saved:
+          type: object
+          description: What the settings file holds
+          properties:
+            host: { type: string }
+            port: { type: integer }
+            studio_port: { type: integer }
         restart_required: { type: boolean }
     AuditEntries:
       type: object
@@ -3567,14 +3778,17 @@ components:
               mtime: { type: number }
     AdminFile:
       type: object
-      required: [id, path, format, content, mtime, masked]
+      required: [id, path, format, description, units, exists, content, mtime]
       properties:
         id: { type: string }
         path: { type: string }
         format: { type: string }
+        description: { type: string }
+        units: { type: array, items: { type: string } }
+        exists: { type: boolean, description: Whether the file is there (a file that is not has no content yet) }
         content: { type: string }
         mtime: { type: number }
-        masked: { type: boolean }
+        masked: { type: boolean, description: 'Only for an env file: its secrets are shown as stars' }
     AdminFileSaved:
       type: object
       required: [ok, restarted]
@@ -3637,10 +3851,11 @@ components:
     InstallationReport:
       type: object
       required: [applied, skipped, failed, cameras_need_credentials]
+      description: 'What importing an installation file did, by part (cameras, site, rules, automations, devices, solar_devices, energy_alarms, users...)'
       properties:
-        applied: { type: array, items: { type: string } }
-        skipped: { type: array, items: { type: string } }
-        failed: { type: array, items: { type: object, additionalProperties: true } }
+        applied: { type: object, additionalProperties: { type: string }, description: 'For each part that was applied: what happened to it, in words' }
+        skipped: { type: object, additionalProperties: { type: string }, description: 'For each part that was left out: why' }
+        failed: { type: object, additionalProperties: { type: string }, description: 'For each part that did not check out: the reason (nothing of it was applied)' }
         cameras_need_credentials: { type: array, items: { type: string } }
     FirmwareUpload:
       type: object
@@ -3654,11 +3869,11 @@ components:
       type: object
       required: [kind, repo, version, bytes, checksum]
       properties:
-        kind: { type: string }
+        kind: { type: string, enum: [radar, solar, electrical, hmi, alarm] }
         repo: { type: string }
         version: { type: string }
         bytes: { type: integer }
-        checksum: { type: string }
+        checksum: { type: boolean, description: Whether the release carries the checksum of its image }
     FirmwareProbe:
       type: object
       required: [nodes]
@@ -3674,6 +3889,7 @@ components:
               node_id: { type: string }
               version: { type: string }
               board: { type: string }
+              kind: { type: string, description: 'radar, solar, electrical or hmi, from the firmware that says it' }
     Job:
       type: object
       additionalProperties: true
@@ -3721,7 +3937,7 @@ components:
               detail: { type: string }
     ConsoleState:
       type: object
-      required: [available, enabled]
+      required: [available, enabled, unlocked_until]
       properties:
         available: { type: boolean }
         enabled: { type: boolean }
@@ -4001,12 +4217,40 @@ components:
       required: [version, issued_at, issuer, file, custody, signature]
       description: A signed statement of what a file was, with the chain of what was done to it
       properties:
-        version: { type: integer }
+        version: { type: integer, enum: [1] }
         issued_at: { type: string, format: date-time }
-        issuer: { type: string }
-        file: { type: object, required: [sha256], additionalProperties: true, properties: { sha256: { type: string } } }
-        custody: { type: array, items: { type: object, additionalProperties: true } }
-        signature: { type: string }
+        issuer: { type: string, enum: [armor-server] }
+        file:
+          type: object
+          required: [camera, kind, name, bytes, created_at, sha256, protected]
+          properties:
+            camera: { type: string }
+            kind: { type: string }
+            name: { type: string }
+            bytes: { type: integer }
+            created_at: { type: string, format: date-time }
+            sha256: { type: string }
+            protected: { type: boolean }
+        custody:
+          type: array
+          description: Every line of the audit trail that touched the file
+          items:
+            type: object
+            required: [at, action, outcome]
+            properties:
+              at: { type: string, format: date-time }
+              action: { type: string }
+              outcome: { type: string }
+              actor: { type: string }
+              target: { type: string }
+        custody_complete: { type: boolean, description: Whether the audit trail reaches back to the moment the file was made; absent in the proofs issued before this was recorded }
+        audit_from: { type: [string, 'null'], description: The time of the oldest line of the audit trail that is still kept }
+        signature:
+          type: object
+          required: [algorithm, value]
+          properties:
+            algorithm: { type: string, enum: [HMAC-SHA256] }
+            value: { type: string }
     EvidenceVerdict:
       type: object
       required: [genuine, matches]
@@ -4031,8 +4275,8 @@ components:
         at: { type: string, format: date-time }
         type: { type: string, enum: [alert, node, camera, mode, device, alarm, connection, system] }
         subject: { type: string, description: 'What it is about: a node, a camera, a device or an alarm source' }
-        from: { type: [string, 'null'], description: What it was before }
-        to: { type: [string, 'null'], description: What it is now }
+        from: { type: [string, number, boolean, 'null'], description: What it was before }
+        to: { type: [string, number, boolean, 'null'], description: What it is now }
         mode: { type: string, enum: [armed, disarmed] }
         targets: { type: integer, minimum: 0 }
         code: { type: string, description: 'The code of an alarm, as in the table of alarm codes' }
@@ -4054,7 +4298,19 @@ components:
         total: { type: integer }
         oldest_at: { type: [string, 'null'] }
         newest_at: { type: [string, 'null'] }
-        by_type: { type: object, additionalProperties: { type: integer }, description: Events per type (alert, node, camera, mode, device, alarm, connection, system) }
+        by_type:
+          type: object
+          description: Events per type
+          required: [alert, node, camera, mode, device, alarm, connection, system]
+          properties:
+            alert: { type: integer }
+            node: { type: integer }
+            camera: { type: integer }
+            mode: { type: integer }
+            device: { type: integer }
+            alarm: { type: integer }
+            connection: { type: integer }
+            system: { type: integer }
         last_24h:
           type: object
           required: [events, high_alerts, node_incidents, camera_incidents]

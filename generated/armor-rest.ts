@@ -34,9 +34,14 @@ export type AdminFile = {
   id: string;
   path: string;
   format: string;
+  description: string;
+  units: string[];
+  /** Whether the file is there (a file that is not has no content yet) */
+  exists: boolean;
   content: string;
   mtime: number;
-  masked: boolean;
+  /** Only for an env file: its secrets are shown as stars */
+  masked?: boolean;
 };
 
 export type AdminFileSaved = {
@@ -194,9 +199,9 @@ export type ApiError = {
 /** The arming profiles and the number of them that may be kept */
 export type ArmProfiles = {
   revision: number;
-  updated_at?: string;
-  updated_by?: string;
-  profiles: unknown[];
+  updated_at: string;
+  updated_by: string;
+  profiles: Contracts.ArmProfile[];
   max: number;
 };
 
@@ -208,9 +213,9 @@ export type ArmorEvent = {
   /** What it is about: a node, a camera, a device or an alarm source */
   subject?: string;
   /** What it was before */
-  from?: string | null;
+  from?: string | number | boolean | null;
   /** What it is now */
-  to?: string | null;
+  to?: string | number | boolean | null;
   mode?: "armed" | "disarmed";
   targets?: number;
   /** The code of an alarm, as in the table of alarm codes */
@@ -236,9 +241,13 @@ export type Automation = {
   id: string;
   name: string;
   enabled: boolean;
-  when_mode?: "any" | "armed" | "disarmed";
-  trigger?: AutomationTrigger;
-  actions?: AutomationAction[];
+  when_mode: "any" | "armed" | "disarmed";
+  trigger: AutomationTrigger;
+  actions: AutomationAction[];
+  created_at: string;
+  /** When it last ran; null when it never did */
+  last_run: string | null;
+  runs: number;
 };
 
 /** What an automation does */
@@ -317,7 +326,7 @@ export type BatteryOperation = {
   node: string;
   port: number;
   op: string;
-  params?: {
+  params: {
     [key: string]: unknown;
   };
   actor: string;
@@ -328,8 +337,13 @@ export type BatteryOperation = {
   risk?: "low" | "medium" | "high" | "irreversible";
   atomic?: boolean;
   canonical?: string;
+  /** Who the battery says it is */
   battery?: {
-    [key: string]: unknown;
+    model: string;
+    serial: string;
+    soft_version: string;
+    board: string;
+    capacity_ah?: number;
   };
   refusal?: string;
   snapshot_before?: string;
@@ -342,14 +356,34 @@ export type BatteryOperation = {
   before?: string;
   after?: string;
   diff?: {
-    [key: string]: unknown;
+    label: string;
+    before: string;
+    after: string;
   }[];
   transcript?: string;
   /** When an armed operation stops being executable */
   armed_until?: string;
+  /** The operation that puts back what this one changed, when there is one */
   restore?: {
-    [key: string]: unknown;
+    op: string;
+    params: {
+      [key: string]: unknown;
+    };
   } | null;
+  /** How much of a firmware image the node has kept */
+  staging?: {
+    sent: number;
+    total: number;
+  };
+  writes_started?: boolean;
+  image?: {
+    id: string;
+    board: string;
+    version: string;
+    sha256: string;
+    size: number;
+  };
+  cancel_requested?: boolean;
 };
 
 export type BatteryOperationList = {
@@ -481,12 +515,22 @@ export type ConnectionState = {
     tls: boolean;
     studio_origins: string[];
   };
+  /** Whether the server's link to the MQTT broker is encrypted and, when the installation's own authority is pinned, which one (never a path or a key) */
   mqtt_tls?: {
-    [key: string]: unknown;
+    configured: boolean;
+    tls: boolean;
+    pinned_ca: boolean;
+    ca?: {
+      fingerprint256: string;
+      subject: string;
+      valid_to: string;
+    };
   };
-  /** What the settings file holds (host */
+  /** What the settings file holds */
   saved: {
-    [key: string]: unknown;
+    host?: string;
+    port?: number;
+    studio_port?: number;
   };
   restart_required: boolean;
 };
@@ -495,7 +539,7 @@ export type ConsoleState = {
   available: boolean;
   enabled: boolean;
   /** Epoch milliseconds, 0 when locked */
-  unlocked_until?: number;
+  unlocked_until: number;
 };
 
 export type ConsoleUnlocked = {
@@ -658,7 +702,7 @@ export type DiagnosticPackageAnswer = {
   node_id: string;
   /** When the node delivered it */
   at: string;
-  package: unknown;
+  package: Contracts.NodeControlResultDiagnosticsPackage;
 };
 
 export type DiagnosticTokenList = {
@@ -792,17 +836,34 @@ export type EnergyAlarmSettings = {
 
 /** A signed statement of what a file was, with the chain of what was done to it */
 export type EvidenceProof = {
-  version: number;
+  version: 1;
   issued_at: string;
-  issuer: string;
+  issuer: "armor-server";
   file: {
+    camera: string;
+    kind: string;
+    name: string;
+    bytes: number;
+    created_at: string;
     sha256: string;
-    [key: string]: unknown;
+    protected: boolean;
   };
+  /** Every line of the audit trail that touched the file */
   custody: {
-    [key: string]: unknown;
+    at: string;
+    action: string;
+    outcome: string;
+    actor?: string;
+    target?: string;
   }[];
-  signature: string;
+  /** Whether the audit trail reaches back to the moment the file was made; absent in the proofs issued before this was recorded */
+  custody_complete?: boolean;
+  /** The time of the oldest line of the audit trail that is still kept */
+  audit_from?: string | null;
+  signature: {
+    algorithm: "HMAC-SHA256";
+    value: string;
+  };
 };
 
 export type EvidenceVerdict = {
@@ -820,15 +881,18 @@ export type FirmwareProbe = {
     node_id?: string;
     version?: string;
     board?: string;
+    /** radar, solar, electrical or hmi, from the firmware that says it */
+    kind?: string;
   }[];
 };
 
 export type FirmwareRelease = {
-  kind: string;
+  kind: "radar" | "solar" | "electrical" | "hmi" | "alarm";
   repo: string;
   version: string;
   bytes: number;
-  checksum: string;
+  /** Whether the release carries the checksum of its image */
+  checksum: boolean;
 };
 
 export type FirmwareUpload = {
@@ -859,9 +923,16 @@ export type HistorySummary = {
   total: number;
   oldest_at: string | null;
   newest_at: string | null;
-  /** Events per type (alert */
+  /** Events per type */
   by_type: {
-    [key: string]: number;
+    alert: number;
+    node: number;
+    camera: number;
+    mode: number;
+    device: number;
+    alarm: number;
+    connection: number;
+    system: number;
   };
   last_24h: {
     events: number;
@@ -911,12 +982,20 @@ export type InstallationBundle = {
   };
 };
 
+/** What importing an installation file did, by part (cameras, site, rules, automations, devices, solar_devices, energy_alarms, users...) */
 export type InstallationReport = {
-  applied: string[];
-  skipped: string[];
+  /** For each part that was applied: what happened to it, in words */
+  applied: {
+    [key: string]: string;
+  };
+  /** For each part that was left out: why */
+  skipped: {
+    [key: string]: string;
+  };
+  /** For each part that did not check out: the reason (nothing of it was applied) */
   failed: {
-    [key: string]: unknown;
-  }[];
+    [key: string]: string;
+  };
   cameras_need_credentials: string[];
 };
 
@@ -1046,24 +1125,30 @@ export type NetworkOverview = {
     /** Whether that version is older than the one the server speaks */
     outdated: boolean;
     /** The interface the node watches, as the network message has it */
-    interface: {
-      [key: string]: unknown;
-    };
+    interface: Contracts.NetworkInterface;
     /** The state of the internet, as the network message has it */
-    internet: {
-      [key: string]: unknown;
-    };
+    internet: Contracts.NetworkInternet;
     /** The last sweep */
-    scan?: {
-      [key: string]: unknown;
-    };
+    scan?: Contracts.NetworkScan;
     /** What the internet sees of the connection */
-    public?: {
-      [key: string]: unknown;
-    };
-    devices: {
-      [key: string]: unknown;
-    }[];
+    public?: Contracts.NetworkPublic;
+    devices: (Contracts.NetworkDevice & {
+      note?: {
+        name?: string;
+        notes?: string;
+        trusted?: boolean;
+        kind?: "router" | "computer" | "phone" | "tv" | "printer" | "camera" | "iot" | "server" | "nas" | "network" | "unknown";
+        /** Left out of the list */
+        hidden?: boolean;
+        /** Tell me the next time it comes onto the network */
+        watch?: boolean;
+        updated_at: string;
+      };
+      /** The user of the login kept for its web administration (never the password) */
+      login?: {
+        user: string;
+      };
+    })[];
     /** How many devices an operator hid */
     hidden: number;
   }[];
@@ -1073,11 +1158,11 @@ export type NetworkOverview = {
     devices: number;
     online: number;
     unknown: number;
-    internet: string | null;
+    internet: "up" | "degraded" | "down" | "lan_down" | "unknown" | null | null;
   };
   events: {
     id: string;
-    kind: string;
+    kind: "new_device" | "device_online" | "device_offline" | "ip_changed" | "arp_conflict" | "port_opened" | "port_closed" | "internet_down" | "internet_up" | "gateway_down" | "gateway_up";
     at_ms: number;
     node_id: string;
     device_id?: string;
@@ -1136,9 +1221,19 @@ export type NodeControlLine = {
   back_at?: string;
   /** Seconds from the order to the first report after the restart */
   back_after_s?: number;
-  /** After a diagnostics order: the snapshot the node gave (firmware, uptime_s, reset_reason, heap_free, heap_min, mqtt_connected, state, maintenance and, if it has them, psram_free, stack_min_free, rssi) */
+  /** After a diagnostics order, the snapshot the node gave */
   diagnostics?: {
-    [key: string]: unknown;
+    firmware: string;
+    uptime_s: number;
+    reset_reason: string;
+    heap_free: number;
+    heap_min: number;
+    psram_free?: number;
+    stack_min_free?: number;
+    rssi?: number;
+    mqtt_connected: boolean;
+    state: "running" | "paused" | "standby";
+    maintenance: boolean;
   };
 };
 
@@ -1178,11 +1273,58 @@ export type NodeDiagnostics = {
   log?: StoredDiagnostic;
 };
 
-/** The latest health report of one node, with the level the server gave it */
+/** One node with the history of its memory and signal (up to 120 reports) and the log of its restarts, newest first */
+export type NodeHealthDetail = NodeHealthEntry & {
+  samples: {
+    at: number;
+    heap_free: number;
+    heap_min: number;
+    heap_internal_free?: number;
+    heap_internal_largest?: number;
+    rssi_dbm?: number;
+    link_up: boolean;
+    uptime_s: number;
+    broker_reconnects: number;
+  }[];
+  restarts: NodeHealthRestart[];
+};
+
+/** The latest health report of one node, with what the server makes of it */
 export type NodeHealthEntry = {
-  node_id?: string;
-  level?: string;
-  [key: string]: unknown;
+  node_id: string;
+  family: "radar" | "solar" | "electrical" | "alarm" | "hmi";
+  firmware: string;
+  board?: string;
+  report: Contracts.NodeHealth;
+  received_at: string;
+  /** No report for a few minutes - what is shown is the last one */
+  stale: boolean;
+  status: "ok" | "warning" | "stale";
+  warnings: {
+    code: "node_low_memory" | "node_frequent_resets" | "node_link_flapping" | "node_weak_signal" | "node_sensor_bluetooth_open" | "node_radar_masked" | "node_wifi_jam";
+    detail: {
+      [key: string]: string | number | boolean;
+    };
+  }[];
+  restarts_24h: number;
+  last_restart?: NodeHealthRestart;
+  /** What remote control has done to the node, and its planned-maintenance window; absent while nothing is known */
+  control?: {
+    state: "running" | "paused" | "standby";
+    maintenance: boolean;
+    since_ms?: number;
+    by?: string;
+    until_s?: number;
+    maintenance_until_s?: number;
+    window?: {
+      source: "node" | "operator" | "both";
+      reason: "restart" | "pause" | "standby" | "update" | "upload" | "operator";
+      remaining_s: number;
+      requested_by?: string;
+    };
+    /** Who knows: the node's own report, or what the server remembers of the orders it gave */
+    source: "node" | "server";
+  };
 };
 
 export type NodeHealthList = {
@@ -1197,7 +1339,30 @@ export type NodeHealthList = {
     stale: number;
     with_warnings: number;
   };
-  levels: string[];
+  /** The levels the server judges by, so a console can say what low means */
+  levels: {
+    low_heap_b: number;
+    low_heap_clear_b: number;
+    low_internal_b?: number;
+    low_internal_clear_b?: number;
+    low_block_b?: number;
+    restarts_per_day: number;
+    abnormal_window_min: number;
+    flap_reconnects: number;
+    flap_window_min: number;
+    weak_signal_dbm: number;
+    weak_signal_reports: number;
+    silent_after_s: number;
+  };
+};
+
+export type NodeHealthRestart = {
+  at: string;
+  reason: string;
+  /** A restart nobody asked for */
+  abnormal: boolean;
+  uptime_before_s?: number;
+  boot?: Contracts.NodeHealthBoot;
 };
 
 export type NodeMaintenanceList = {
@@ -1524,7 +1689,14 @@ export type PostVoiceCommandRequest = {
 export type Preferences = {
   language?: string;
   theme?: string;
-  weatherPlace?: string;
+  /** The place the weather is shown for; null when none is chosen */
+  weatherPlace?: {
+    name: string;
+    region: string;
+    country: string;
+    lat: number;
+    lon: number;
+  } | null;
 };
 
 export type Preflight = {
@@ -1533,9 +1705,9 @@ export type Preflight = {
   blocking: number;
   warnings: number;
   issues: {
-    kind: string;
-    level: string;
-    code: string;
+    kind: "node" | "panel" | "zone" | "camera" | "device" | "alarm";
+    level: "block" | "warn";
+    code: "node_offline" | "panel_silent" | "zone_open" | "camera_down" | "opening_open" | "device_offline" | "alarm_unseen";
     id: string;
     /** What the issue is about, such as the zone that is open */
     detail?: string;
@@ -1601,7 +1773,7 @@ export type PutAlarmDesignRequest = {
 
 export type PutAlarmProfilesRequest = {
   revision?: number;
-  profiles: unknown[];
+  profiles: Contracts.ArmProfile[];
 };
 
 export type PutElectricalDesignRequest = {
@@ -1675,13 +1847,15 @@ export type RecordingStarted = {
 
 export type RemoteCheck = {
   ip: string;
-  origin?: string | null;
-  session_origin?: string | null;
+  /** Where this request comes from */
+  origin: "local" | "remote";
+  /** Where the session was opened; null without a session */
+  session_origin: "local" | "remote" | null | null;
   protocol: string;
-  forwarded_for?: string | null;
+  forwarded_for: string | null;
   cookie_secure: boolean;
   trust_proxy: boolean | number | string;
-  totp_policy: string;
+  totp_policy: "off" | "remote" | "always";
   totp_enabled: boolean;
   remote_session_ttl_s: number;
   remote_idle_s: number;
@@ -1829,9 +2003,10 @@ export type SolarDeviceRegistration = {
   device: string;
   kind: "inverter" | "battery";
   name: string;
-  model?: string;
-  connection?: "rs232" | "rs485" | "usb" | "can" | "wifi" | "other";
-  notes?: string;
+  model: string;
+  connection: "rs232" | "rs485" | "usb" | "can" | "wifi" | "other";
+  notes: string;
+  created_at: string;
 };
 
 export type SolarEnergy = {
@@ -1922,11 +2097,11 @@ export type SolarOverview = {
     load_w: number;
     battery_w: number | null;
     soc_percent: number | null;
-    capacity_ah?: number | null;
-    full_capacity_ah?: number | null;
-    energy_kwh?: number | null;
+    capacity_ah: number | null;
+    full_capacity_ah: number | null;
+    energy_kwh: number | null;
     grid_present: boolean;
-    mode: string | null;
+    mode: "power_on" | "standby" | "line" | "battery" | "fault" | "power_saving" | "shutdown" | "unknown" | null | null;
   };
   catalog: {
     /** The inverter families that can be declared (the last is other) */
@@ -1962,7 +2137,7 @@ export type StoredDiagnostic = {
   at: string;
   /** The administrator who asked for it */
   requested_by: string;
-  data: unknown;
+  data: Contracts.NodeControlResultDiagnosticsPackage;
 };
 
 export type StreamTicket = {
@@ -2093,10 +2268,10 @@ export type SystemState = {
       target_count: number;
       /** Where the node's own web panel is, as the node said itself in its information message; null until it has. Not stored, the node repeats it. */
       panel: {
-        name?: string;
-        firmware?: string;
-        ip?: string;
-        port?: number;
+        name: string;
+        firmware: string;
+        ip: string;
+        port: number;
       } | null;
       /** The targets of the node's latest report, in the radar's own frame; empty until it reports and after a restart. `counted` is false inside an ignore zone. */
       targets?: {
@@ -2117,24 +2292,33 @@ export type SystemState = {
 export type SystemSummary = {
   service: string;
   version: string;
-  node?: string;
+  /** The version of Node.js the server runs on */
+  node: string;
   uptime_s: number;
   mode: "armed" | "disarmed";
   revision: number;
-  mqtt?: boolean;
-  live_video?: boolean;
-  webhook?: boolean;
-  cameras_check_s?: number;
+  mqtt: boolean;
+  live_video: boolean;
+  webhook: boolean;
+  cameras_check_s: number;
   counts: {
-    [key: string]: number;
+    nodes: number;
+    nodes_online: number;
+    cameras: number;
+    devices: number;
+    devices_online: number;
+    alarms_active: number;
+    automations: number;
+    users: number;
+    events: number;
   };
   storage: {
-    media_files?: number;
-    media_bytes?: number;
-    media_limit_bytes?: number;
-    disk?: {
-      free_bytes?: number;
-      total_bytes?: number;
+    media_files: number;
+    media_bytes: number;
+    media_limit_bytes: number;
+    disk: {
+      free_bytes: number;
+      total_bytes: number;
     } | null;
   };
   [key: string]: unknown;
@@ -2153,7 +2337,7 @@ export type TotpSetup = {
 export type TotpState = {
   enabled: boolean;
   recovery_left: number;
-  policy: string;
+  policy: "off" | "remote" | "always";
 };
 
 export type UserChange = {
