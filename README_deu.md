@@ -42,6 +42,22 @@
 | Technik | Python 3.11+ / JSON Schema / OpenAPI |
 | Auf echter Hardware | Nur der Radarknoten hat auf einer Platine gelaufen: Seine Nachrichten sind die, die der CM5-Server, Studio und die Android-App täglich sprechen; die Nachrichten der anderen Knoten werden gegen Ersatz geprüft |
 
+## 🚦 Projektstatus
+
+Jede Zeile ist ein Teil dieses Repositorys, und die Ampel sagt, wie weit er heute ist. Sie beruht auf dem, was das Repository zeigen kann (Tests, Builds, Läufe), nicht auf dem, was geplant ist.
+
+🟢 Fertig und überprüft · 🟡 Funktioniert, mit bekannten Grenzen · 🟠 Teilweise fertig oder noch nicht überprüft · 🔴 Nicht gemacht oder funktioniert nicht
+
+| Bereich | Stand | Was das hier bedeutet |
+|---|---|---|
+| Software | 🟢 | Die Schemas, der Python-Validator, die erzeugten TypeScript- und Kotlin-Typen, die OpenAPI-Datei des Servers und die von den fünf Knoten gemeinsam genutzte Firmware-Basis sind vorhanden. |
+| Tests | 🟢 | 170 Tests und 1225 Konformitätsvektoren bestehen; die JSON-, Bluetooth- und Improv-Parser der Firmware werden außerdem mit libFuzzer gefuzzt. |
+| Protokolle und Daten | 🟡 | Nur die Nachrichten des Radar-Knotens werden täglich mit einer echten Platine und dem Server genutzt; die der anderen Knoten werden gegen Nachbildungen geprüft. |
+| Integration | 🟡 | Es wird geprüft, dass die Firmware-Basis in jedem Knoten identisch ist; die Kotlin-Typen sind erzeugt, werden von der Android-App aber noch nicht genutzt, sie behält ihr eigenes Parsing. |
+| Hardware | 🟠 | Nur der Radar-Knoten hat diese gemeinsame Firmware auf einer Platine ausgeführt; die anderen vier Knoten nicht. |
+| Sicherheit | 🟡 | Die Prüfung der Firmware-Signatur und die Ableitung der Bluetooth-PIN sind auf dem Host getestet; es gab keine unabhängige Prüfung. |
+| Dokumentation | 🟢 | Acht Sprachen, die OpenAPI-Datei, der Konformitätsleitfaden und das Änderungsprotokoll sind aktuell. |
+
 ## 🎯 Überblick
 
 **ARMOR-COMMON** besitzt die Bedeutung jeder A.R.M.O.R.-Nachricht. Radarknoten, Solar-Gateway-Knoten und der Simulator erzeugen diese Nachrichten; der Server, die visuelle KI und der Sprachdienst verbrauchen sie. Wenn zwei Projekte über ein Feld uneins sind, entscheidet dieses Repository.

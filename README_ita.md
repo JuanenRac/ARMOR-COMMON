@@ -42,6 +42,22 @@
 | Tecnologia | Python 3.11+ / JSON Schema / OpenAPI |
 | Su hardware reale | Solo il nodo radar ha girato su una scheda: i suoi messaggi sono quelli che parlano ogni giorno il server CM5, Studio e l'app Android; i messaggi degli altri nodi sono controllati contro sostituti |
 
+## 🚦 Stato del progetto
+
+Ogni riga è una parte di questo repository e il semaforo dice a che punto è oggi. È scritta in base a ciò che il repository può mostrare (test, compilazioni, esecuzioni), non a ciò che è previsto.
+
+🟢 Fatto e verificato · 🟡 Funziona, con limiti noti · 🟠 Fatto a metà o non ancora verificato · 🔴 Non fatto o non funzionante
+
+| Area | Stato | Cosa significa qui |
+|---|---|---|
+| Software | 🟢 | Gli schemi, il validatore Python, i tipi TypeScript e Kotlin generati, il file OpenAPI del server e la base firmware condivisa dai cinque nodi sono pronti. |
+| Test | 🟢 | Superano 170 test e 1225 vettori di conformità; i parser JSON, Bluetooth e Improv del firmware sono sottoposti anche a fuzzing con libFuzzer. |
+| Protocolli e dati | 🟡 | Solo i messaggi del nodo radar sono usati ogni giorno con una scheda reale e il server; quelli degli altri nodi sono verificati contro simulazioni. |
+| Integrazione | 🟡 | Si verifica che la base firmware sia identica in ogni nodo; i tipi Kotlin sono generati ma l'app Android non li usa ancora, perché mantiene il proprio parsing. |
+| Hardware | 🟠 | Solo il nodo radar ha eseguito questo firmware condiviso su una scheda; gli altri quattro nodi no. |
+| Sicurezza | 🟡 | Il controllo della firma del firmware e la derivazione del PIN Bluetooth sono testati sull'host; non c'è stata una revisione indipendente. |
+| Documentazione | 🟢 | Otto lingue, il file OpenAPI, la guida di conformità e il registro delle modifiche sono aggiornati. |
+
 ## 🎯 Panoramica
 
 **ARMOR-COMMON** possiede il significato di ogni messaggio di A.R.M.O.R. I nodi radar, i nodi gateway solari e il simulatore producono questi messaggi; il server, l'IA visiva e il servizio vocale li consumano. Se due progetti non concordano su un campo, decide questo repository.

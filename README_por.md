@@ -42,6 +42,22 @@
 | Tecnologia | Python 3.11+ / JSON Schema / OpenAPI |
 | Em hardware real | Só o nó radar funcionou numa placa: as suas mensagens são as que o servidor do CM5, o Studio e a aplicação Android falam todos os dias; as mensagens dos outros nós são verificadas contra substitutos |
 
+## 🚦 Estado do projeto
+
+Cada linha é uma parte deste repositório e a luz diz até onde chega hoje. É escrita com o que o repositório consegue demonstrar (testes, compilações, execuções), não com o que está previsto.
+
+🟢 Feito e verificado · 🟡 Funciona, com limites conhecidos · 🟠 Feito a meio ou ainda por verificar · 🔴 Por fazer ou a não funcionar
+
+| Área | Estado | O que significa aqui |
+|---|---|---|
+| Software | 🟢 | Os esquemas, o validador de Python, os tipos gerados de TypeScript e Kotlin, o ficheiro OpenAPI do servidor e a base de firmware partilhada pelos cinco nós estão feitos. |
+| Testes | 🟢 | Passam 170 testes e 1225 vetores de conformidade; os analisadores de JSON, Bluetooth e Improv do firmware são também testados com libFuzzer. |
+| Protocolos e dados | 🟡 | Só as mensagens do nó radar são usadas todos os dias com uma placa real e o servidor; as dos outros nós são verificadas contra simulações. |
+| Integração | 🟡 | Verifica-se que a base de firmware é idêntica em cada nó; os tipos de Kotlin estão gerados, mas a app Android ainda não os usa, porque mantém a sua própria análise. |
+| Hardware | 🟠 | Só o nó radar executou este firmware partilhado numa placa; os outros quatro nós não. |
+| Segurança | 🟡 | A verificação da assinatura do firmware e a derivação do PIN Bluetooth estão testadas no anfitrião; não houve revisão independente. |
+| Documentação | 🟢 | Oito idiomas, o ficheiro OpenAPI, o guia de conformidade e o registo de alterações estão atualizados. |
+
 ## 🎯 Visão geral
 
 O **ARMOR-COMMON** é dono do que significa cada mensagem do A.R.M.O.R. Os nós de radar, os nós de ligação solares e o simulador produzem estas mensagens; o servidor, a IA visual e o serviço de voz consomem-nas. Se dois projetos discordarem sobre um campo, este repositório decide.

@@ -42,6 +42,22 @@
 | Tecnología | Python 3.11+ / JSON Schema / OpenAPI |
 | En hardware real | Solo el nodo radar ha funcionado en una placa: sus mensajes son los que hablan cada día el servidor de la CM5, Studio y la app Android; los mensajes de los demás nodos se comprueban contra sustitutos |
 
+## 🚦 Estado del proyecto
+
+Cada línea es una parte de este repositorio y la luz dice hasta dónde llega hoy. Se escribe con lo que el repositorio puede demostrar (pruebas, compilaciones, ejecuciones), no con lo previsto.
+
+🟢 Hecho y verificado · 🟡 Funciona, con límites conocidos · 🟠 Hecho a medias o sin verificar · 🔴 Sin hacer o sin funcionar
+
+| Área | Estado | Qué significa aquí |
+|---|---|---|
+| Software | 🟢 | Los esquemas, el validador de Python, los tipos generados de TypeScript y Kotlin, el archivo OpenAPI del servidor y la base de firmware compartida por los cinco nodos están hechos. |
+| Pruebas | 🟢 | Pasan 170 pruebas y 1225 vectores de conformidad; los analizadores de JSON, Bluetooth e Improv del firmware se prueban además con libFuzzer. |
+| Protocolos y datos | 🟡 | Solo los mensajes del nodo radar se usan a diario con una placa real y el servidor; los de los demás nodos se comprueban contra simulaciones. |
+| Integración | 🟡 | Se comprueba que la base de firmware sea idéntica en cada nodo; los tipos de Kotlin están generados pero la app de Android aún no los usa, porque conserva su propio análisis. |
+| Hardware | 🟠 | Solo el nodo radar ha ejecutado este firmware compartido en una placa; los otros cuatro nodos no. |
+| Seguridad | 🟡 | La comprobación de la firma del firmware y la derivación del PIN Bluetooth están probadas en el host; no ha habido una revisión independiente. |
+| Documentación | 🟢 | Ocho idiomas, el archivo OpenAPI, la guía de conformidad y el historial de cambios están al día. |
+
 ## 🎯 Descripción general
 
 **ARMOR-COMMON** es dueño de lo que significa cada mensaje de A.R.M.O.R. Los nodos de radar, los nodos pasarela solares y el simulador producen estos mensajes; el servidor, la IA visual y el servicio de voz los consumen. Si dos proyectos discrepan sobre un campo, decide este repositorio.
