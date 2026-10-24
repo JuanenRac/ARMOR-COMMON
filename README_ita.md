@@ -28,7 +28,7 @@
 
 ---
 
-**Controllo di onestà - cosa funziona oggi:** Gli schemi (telemetria, salute, comando, informazioni del nodo, inverter e batteria solari, elettrico, allarme con il suo comando e risultato, e rete), il validatore Python, i 1225 vettori di conformità, i tipi TypeScript e Kotlin generati, il file OpenAPI del server (136 percorsi), la base firmware condivisa dai cinque nodi e il lanciatore di progetto condiviso sono reali e provati (167 test). Il file Kotlin è generato ma **non ancora consumato** da ARMOR-ANDROID-CONTROL (che mantiene una propria lettura), e il comando `set_thresholds` porta un solo campo `sensitivity` perché i veri parametri del radar non sono definiti finché non esiste il firmware.
+**Controllo di onestà - cosa funziona oggi:** Gli schemi (telemetria, salute, comando, informazioni del nodo, inverter e batteria solari, elettrico, allarme con il suo comando e risultato, e rete), il validatore Python, i 1225 vettori di conformità, i tipi TypeScript e Kotlin generati, il file OpenAPI del server (136 percorsi), la base firmware condivisa dai cinque nodi e il lanciatore di progetto condiviso sono reali e provati (170 test). Il file Kotlin è generato ma **non ancora consumato** da ARMOR-ANDROID-CONTROL (che mantiene una propria lettura), e il comando `set_thresholds` porta un solo campo `sensitivity` perché i veri parametri del radar non sono definiti finché non esiste il firmware.
 
 ---
 
@@ -38,7 +38,7 @@
 |---|---|
 | Versione | `0.7.6` |
 | Maturità | Consolidato |
-| Test | 167 (`python -m unittest discover -s tests`) e 1225 vettori di conformità |
+| Test | 170 (`python -m unittest discover -s tests`) e 1225 vettori di conformità |
 | Tecnologia | Python 3.11+ / JSON Schema / OpenAPI |
 | Su hardware reale | Solo il nodo radar ha girato su una scheda: i suoi messaggi sono quelli che parlano ogni giorno il server CM5, Studio e l'app Android; i messaggi degli altri nodi sono controllati contro sostituti |
 
@@ -96,7 +96,7 @@ ARMOR-COMMON/
 
 ```powershell
 python -m pip install -e .
-python -m unittest discover -s tests      # 167 tests, 1225 conformance vectors
+python -m unittest discover -s tests      # 170 tests, 1225 conformance vectors
 python tools/generate_types.py --check    # generated types are current
 python tools/generate_rest_types.py --check    # the types of the HTTP contract are current
 python tools/make_conformance.py          # regenerate the vectors after editing the case list (--check: they are current)
