@@ -1714,6 +1714,11 @@ export type Preflight = {
   }[];
 };
 
+export type PreviewTicket = {
+  path: string;
+  expiresAt: string;
+};
+
 export type PtzCommand = {
   command: "left" | "right" | "up" | "down" | "zoomIn" | "zoomOut" | "stop";
 };
