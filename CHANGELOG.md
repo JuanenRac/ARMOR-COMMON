@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased]
+
+- **The HTTP contract describes the still picture of a camera:** `POST /api/v1/cameras/{id}/preview-ticket` and `GET /api/v1/cameras/{id}/preview` (and the schema `PreviewTicket`), with the generated types.
+- **The parsers of the firmware are fuzzed:** `fuzz/` holds libFuzzer targets for the JSON parser, the Bluetooth set-up framing and the Improv serial parser (AddressSanitizer and UndefinedBehaviorSanitizer), seeds, `fuzz/run_fuzz.sh`, a workflow that runs them when the shared code changes, and a test; see `docs/FUZZING.md`.
+
 ## [0.7.6] - One list of the repositories of the family and the types of the HTTP contract are generated too
 
 - **The answers of the HTTP contract say what they hold, and the generator knows the parts of the messages:** the arming profiles, the diagnostic package of a node, the interface, the internet, the scan, the public address and the devices of a network node, and the boot report of a node health message are now types of their own where the contract points at them. The automations, the battery operations, the connection settings (and the state of the MQTT encryption), the history summary, the report of an installation import, the preferences (the weather place is an object), the preflight issues (kind, level and code), the remote check, the system summary, the registrations and totals of the solar overview, the health of every node (with the restarts, the control state and the levels) and the proof of custody (with its signature as the server writes it) are described field by field, and each field the server always sends is required. The generator stops when the contract points at a type that the generated messages do not have.
