@@ -42,6 +42,22 @@
 | Technologie | Python 3.11+ / JSON Schema / OpenAPI |
 | Sur matériel réel | Seul le nœud radar a tourné sur une carte : ses messages sont ceux que parlent chaque jour le serveur CM5, Studio et l'application Android ; les messages des autres nœuds sont vérifiés contre des substituts |
 
+## 🚦 État du projet
+
+Chaque ligne est une partie de ce dépôt et le feu dit où elle en est aujourd'hui. Elle est écrite d'après ce que le dépôt peut montrer (tests, compilations, exécutions), pas d'après ce qui est prévu.
+
+🟢 Fait et vérifié · 🟡 Fonctionne, avec des limites connues · 🟠 À moitié fait ou pas encore vérifié · 🔴 Pas fait ou ne fonctionne pas
+
+| Domaine | État | Ce que cela veut dire ici |
+|---|---|---|
+| Logiciel | 🟢 | Les schémas, le validateur Python, les types TypeScript et Kotlin générés, le fichier OpenAPI du serveur et la base de firmware partagée par les cinq nœuds sont en place. |
+| Tests | 🟢 | 170 tests et 1225 vecteurs de conformité réussissent ; les analyseurs JSON, Bluetooth et Improv du firmware sont aussi soumis à du fuzzing avec libFuzzer. |
+| Protocoles et données | 🟡 | Seuls les messages du nœud radar sont utilisés chaque jour avec une vraie carte et le serveur ; ceux des autres nœuds sont vérifiés par rapport à des simulations. |
+| Intégration | 🟡 | On vérifie que la base de firmware est identique dans chaque nœud ; les types Kotlin sont générés mais l'application Android ne les utilise pas encore, elle garde son propre analyseur. |
+| Matériel | 🟠 | Seul le nœud radar a exécuté ce firmware partagé sur une carte ; les quatre autres nœuds ne l'ont pas fait. |
+| Sécurité | 🟡 | La vérification de la signature du firmware et la dérivation du PIN Bluetooth sont testées sur l'hôte ; il n'y a pas eu de revue indépendante. |
+| Documentation | 🟢 | Huit langues, le fichier OpenAPI, le guide de conformité et le journal des modifications sont à jour. |
+
 ## 🎯 Présentation
 
 **ARMOR-COMMON** possède le sens de chaque message d'A.R.M.O.R. Les nœuds radar, les nœuds passerelles solaires et le simulateur produisent ces messages ; le serveur, l'IA visuelle et le service vocal les consomment. Si deux projets divergent sur un champ, ce dépôt tranche.

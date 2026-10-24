@@ -42,6 +42,22 @@
 | Stack | Python 3.11+ / JSON Schema / OpenAPI |
 | On real hardware | Only the radar node has run on a board: its messages are the ones the CM5 server, Studio and the Android app speak every day; the messages of the other nodes are checked against stand-ins |
 
+## 🚦 Project status
+
+Each line is one part of this repository and the light says how far it is today. It is written from what the repository can show (tests, builds, runs), not from what is planned.
+
+🟢 Done and verified · 🟡 Works, with known limits · 🟠 Partly done or not verified yet · 🔴 Not done or not working
+
+| Area | State | What it means here |
+|---|---|---|
+| Software | 🟢 | The schemas, the Python validator, the generated TypeScript and Kotlin types, the OpenAPI file of the server and the firmware base shared by the five nodes are in place. |
+| Tests | 🟢 | 170 tests and 1225 conformance vectors pass; the JSON, Bluetooth and Improv parsers of the firmware are also fuzzed with libFuzzer. |
+| Protocols and data | 🟡 | Only the radar node's messages are used every day with a real board and the server; those of the other nodes are checked against stand-ins. |
+| Integration | 🟡 | The firmware base is checked to be identical in every node; the Kotlin types are generated but not yet used by the Android app, which keeps its own parsing. |
+| Hardware | 🟠 | Only the radar node has run this shared firmware on a board; the other four nodes have not. |
+| Security | 🟡 | The firmware signature check and the derivation of the Bluetooth PIN are tested on the host; there has been no independent review. |
+| Documentation | 🟢 | Eight languages, the OpenAPI file, the conformance guide and the changelog are up to date. |
+
 ## 🎯 Overview
 
 **ARMOR-COMMON** owns what every A.R.M.O.R. message means. Radar nodes, solar gateway nodes and the simulator produce these messages; the server, the visual AI and the voice service consume them. If two projects disagree about a field, this repository decides.
