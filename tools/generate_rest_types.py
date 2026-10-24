@@ -29,6 +29,18 @@ from generate_types import MESSAGES  # noqa: E402
 HEADER = "Generated from openapi/armor-server.yaml by tools/generate_rest_types.py. Do not edit."
 SCALARS = {"string": "string", "integer": "number", "number": "number", "boolean": "boolean", "null": "null"}
 IDENTIFIER = re.compile(r"^[A-Za-z_$][A-Za-z0-9_$]*$")
+CONTRACTS = ROOT / "generated" / "armor-contracts.ts"
+# The parts of a message that have a type of their own in generated/armor-contracts.ts, by the end of the reference that points at them.
+NESTED = {
+    "arm_profile.schema.json": "ArmProfile",
+    "node_control_result.schema.json#/properties/diagnostics/properties/package": "NodeControlResultDiagnosticsPackage",
+    "node_health.schema.json#/properties/boot": "NodeHealthBoot",
+    "network.schema.json#/properties/interface": "NetworkInterface",
+    "network.schema.json#/properties/internet": "NetworkInternet",
+    "network.schema.json#/properties/scan": "NetworkScan",
+    "network.schema.json#/properties/public": "NetworkPublic",
+    "network.schema.json#/properties/devices/items": "NetworkDevice",
+}
 
 
 class Loader(yaml.SafeLoader):
@@ -74,6 +86,10 @@ def ref(target: str, context: Context, indent: int) -> str:
         for piece in pieces:
             node = node[piece]
         return convert(node, context, indent)
+    nested = NESTED.get(target.rsplit("/schemas/", 1)[-1])
+    if nested:
+        context.used_messages.add(nested)
+        return "Contracts." + nested
     name = target.rsplit("/", 1)[-1]
     if name in context.messages:
         context.used_messages.add(context.messages[name])
@@ -146,6 +162,11 @@ def render(document: dict | None = None) -> str:
         if description:
             body.append(f"/** {' '.join(str(description).split()).replace('*/', '* /')} */")
         body.append(f"export type {name} = {convert(schema, context)};\n")
+    if CONTRACTS.is_file():
+        known = set(re.findall(r"^export type (\w+)", CONTRACTS.read_text(encoding="utf-8"), re.M))
+        missing = sorted(context.used_messages - known)
+        if missing:
+            raise SystemExit("the contract points at types that generated/armor-contracts.ts does not have: " + ", ".join(missing))
     imports = 'import type * as Contracts from "./armor-contracts";\n\n' if context.used_messages else ""
     return f"// {HEADER}\n{imports}" + "\n".join(body)
 
