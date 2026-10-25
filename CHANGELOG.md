@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The OpenAPI describes the removal of the example readings of the solar equipment:** `DELETE /api/v1/solar/devices/{node}/{device}/example` and `DELETE /api/v1/solar/examples`.
 - **The HTTP contract describes the still picture of a camera:** `POST /api/v1/cameras/{id}/preview-ticket` and `GET /api/v1/cameras/{id}/preview` (and the schema `PreviewTicket`), with the generated types.
 - **The parsers of the firmware are fuzzed:** `fuzz/` holds libFuzzer targets for the JSON parser, the Bluetooth set-up framing and the Improv serial parser (AddressSanitizer and UndefinedBehaviorSanitizer), seeds, `fuzz/run_fuzz.sh`, a workflow that runs them when the shared code changes, and a test; see `docs/FUZZING.md`.
 

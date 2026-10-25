@@ -86,6 +86,21 @@ paths:
         '202': { description: Accepted, content: { application/json: { schema: { $ref: '#/components/schemas/Accepted' } } } }
         '401': { description: Operator authorization is required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
         '404': { description: The device was not declared, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+    delete:
+      summary: Take away the example reading of a declared device, so that it waits for its first real reading (a device that reports for real is never touched)
+      security: [{ operator: [] }]
+      parameters: [{ name: node, in: path, required: true, schema: { type: string } }, { name: device, in: path, required: true, schema: { type: string } }]
+      responses:
+        '204': { description: The example reading was removed }
+        '401': { description: Operator authorization is required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+        '404': { description: The device has no example reading, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/solar/examples:
+    delete:
+      summary: Take away every example reading, so that the devices wait for their first real reading (a device that reports for real is never touched)
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: How many example readings were removed, content: { application/json: { schema: { type: object, required: [removed], properties: { removed: { type: integer, minimum: 0 } } } } } }
+        '401': { description: Operator authorization is required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
   /api/v1/solar/energy:
     get:
       summary: What the panels made, the load used and the battery took and gave, day by day (the last `days`, default 30, at most 400), in kilowatt-hours
