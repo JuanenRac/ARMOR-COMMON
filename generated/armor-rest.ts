@@ -2024,6 +2024,10 @@ export type SolarEnergy = {
   }[];
 };
 
+export type SolarExamplesRemoved = {
+  removed: number;
+};
+
 export type SolarHistory = {
   node_id: string;
   device: string;
