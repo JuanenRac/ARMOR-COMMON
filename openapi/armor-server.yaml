@@ -99,7 +99,7 @@ paths:
       summary: Take away every example reading, so that the devices wait for their first real reading (a device that reports for real is never touched)
       security: [{ operator: [] }]
       responses:
-        '200': { description: How many example readings were removed, content: { application/json: { schema: { type: object, required: [removed], properties: { removed: { type: integer, minimum: 0 } } } } } }
+        '200': { description: How many example readings were removed, content: { application/json: { schema: { $ref: '#/components/schemas/SolarExamplesRemoved' } } } }
         '401': { description: Operator authorization is required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
   /api/v1/solar/energy:
     get:
@@ -2302,6 +2302,12 @@ components:
       properties:
         acknowledged: { type: integer, minimum: 0 }
         deleted: { type: integer, minimum: 0 }
+        removed: { type: integer, minimum: 0 }
+    SolarExamplesRemoved:
+      type: object
+      examples: [{"removed": 2}]
+      required: [removed]
+      properties:
         removed: { type: integer, minimum: 0 }
     Accepted:
       type: object
