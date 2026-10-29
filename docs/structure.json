@@ -1,0 +1,536 @@
+{
+ "repo": "ARMOR-COMMON",
+ "ecosystem": "armor",
+ "svg": "en",
+ "cards": [
+  {
+   "name": "src/armor_common/",
+   "span": 2,
+   "accent": "a",
+   "sub": {
+    "en": "the Python library",
+    "es": "la biblioteca Python",
+    "de": "die Python-Bibliothek",
+    "fr": "la bibliothèque Python",
+    "it": "la libreria Python",
+    "ja": "Python ライブラリ",
+    "zh": "Python 库",
+    "pt": "a biblioteca Python"
+   },
+   "rows": [
+    {
+     "name": "contracts.py",
+     "desc": {
+      "en": "topics and validators",
+      "es": "topics y validadores",
+      "de": "Topics und Validatoren",
+      "fr": "topics et validateurs",
+      "it": "topic e validatori",
+      "ja": "トピックと検証",
+      "zh": "主题与校验",
+      "pt": "tópicos e validadores"
+     }
+    },
+    {
+     "name": "schema.py",
+     "desc": {
+      "en": "the schema interpreter",
+      "es": "el intérprete de esquemas",
+      "de": "der Schema-Interpreter",
+      "fr": "l'interpréteur de schémas",
+      "it": "l'interprete di schemi",
+      "ja": "スキーマ解釈器",
+      "zh": "模式解释器",
+      "pt": "o intérprete de esquemas"
+     }
+    },
+    {
+     "name": "envelope.py",
+     "desc": {
+      "en": "the common envelope",
+      "es": "el sobre común",
+      "de": "der gemeinsame Umschlag",
+      "fr": "l'enveloppe commune",
+      "it": "la busta comune",
+      "ja": "共通エンベロープ",
+      "zh": "通用信封",
+      "pt": "o envelope comum"
+     }
+    },
+    {
+     "name": "voice.py",
+     "desc": {
+      "en": "the voice turn contract",
+      "es": "el contrato de voz",
+      "de": "der Sprachvertrag",
+      "fr": "le contrat vocal",
+      "it": "il contratto vocale",
+      "ja": "音声の契約",
+      "zh": "语音契约",
+      "pt": "o contrato de voz"
+     }
+    },
+    {
+     "name": "schemas/",
+     "desc": {
+      "en": "34 JSON Schemas",
+      "es": "34 JSON Schema",
+      "de": "34 JSON-Schemas",
+      "fr": "34 JSON Schema",
+      "it": "34 JSON Schema",
+      "ja": "34 個の JSON Schema",
+      "zh": "34 个 JSON Schema",
+      "pt": "34 JSON Schema"
+     }
+    },
+    {
+     "name": "alarm_codes.json",
+     "desc": {
+      "en": "words of each alarm code",
+      "es": "palabras de cada alarma",
+      "de": "Wörter je Alarmcode",
+      "fr": "mots de chaque alarme",
+      "it": "parole di ogni allarme",
+      "ja": "アラームコードの文言",
+      "zh": "报警码的文字",
+      "pt": "palavras de cada alarme"
+     }
+    },
+    {
+     "name": "battery_ops.json",
+     "desc": {
+      "en": "battery operations",
+      "es": "operaciones de batería",
+      "de": "Batterieoperationen",
+      "fr": "opérations de batterie",
+      "it": "operazioni batteria",
+      "ja": "バッテリー操作",
+      "zh": "电池操作",
+      "pt": "operações de bateria"
+     }
+    }
+   ]
+  },
+  {
+   "name": "firmware_base/",
+   "span": 1,
+   "accent": "b",
+   "sub": "",
+   "rows": [
+    {
+     "desc": {
+      "en": "core/: no hardware",
+      "es": "core/: sin hardware",
+      "de": "core/: ohne Hardware",
+      "fr": "core/ : sans matériel",
+      "it": "core/: senza hardware",
+      "ja": "core/：HW 不要",
+      "zh": "core/：无需硬件",
+      "pt": "core/: sem hardware"
+     }
+    },
+    {
+     "desc": {
+      "en": "main/: network, web, BLE",
+      "es": "main/: red, web, BLE",
+      "de": "main/: Netz, Web, BLE",
+      "fr": "main/ : réseau, web, BLE",
+      "it": "main/: rete, web, BLE",
+      "ja": "main/：網・Web・BLE",
+      "zh": "main/：网络、网页、BLE",
+      "pt": "main/: rede, web, BLE"
+     }
+    },
+    {
+     "desc": "panel/  tests/  tools/"
+    }
+   ],
+   "tree": {
+    "en": "the firmware that the five nodes share, once",
+    "es": "el firmware que comparten los cinco nodos, una sola vez",
+    "de": "die Firmware, die die fünf Knoten teilen, nur einmal",
+    "fr": "le firmware que les cinq nœuds partagent, une seule fois",
+    "it": "il firmware che i cinque nodi condividono, una volta sola",
+    "ja": "5 つのノードが共有するファームウェア（1 か所）",
+    "zh": "五个节点共用的固件（只此一份）",
+    "pt": "o firmware que os cinco nós partilham, uma só vez"
+   }
+  },
+  {
+   "name": {
+    "en": "contracts and data",
+    "es": "contratos y datos",
+    "de": "Verträge und Daten",
+    "fr": "contrats et données",
+    "it": "contratti e dati",
+    "ja": "契約とデータ",
+    "zh": "契约与数据",
+    "pt": "contratos e dados"
+   },
+   "kind": "group",
+   "span": 3,
+   "accent": "c",
+   "columns": 2,
+   "sub": {
+    "en": "generated, checked, shared",
+    "es": "generado, comprobado, compartido",
+    "de": "erzeugt, geprüft, geteilt",
+    "fr": "généré, vérifié, partagé",
+    "it": "generato, verificato, condiviso",
+    "ja": "生成・検証・共有",
+    "zh": "生成、检查、共享",
+    "pt": "gerado, verificado, partilhado"
+   },
+   "rows": [
+    {
+     "name": "conformance/",
+     "desc": {
+      "en": "1225 accepted and rejected payloads",
+      "es": "1225 mensajes válidos e inválidos",
+      "de": "1225 gültige und ungültige Nachrichten",
+      "fr": "1225 messages valides et refusés",
+      "it": "1225 messaggi validi e rifiutati",
+      "ja": "受理・拒否 1225 件",
+      "zh": "1225 条有效与无效消息",
+      "pt": "1225 mensagens válidas e recusadas"
+     }
+    },
+    {
+     "name": "generated/",
+     "desc": {
+      "en": "TypeScript and Kotlin types",
+      "es": "tipos TypeScript y Kotlin",
+      "de": "TypeScript- und Kotlin-Typen",
+      "fr": "types TypeScript et Kotlin",
+      "it": "tipi TypeScript e Kotlin",
+      "ja": "TypeScript と Kotlin の型",
+      "zh": "TypeScript 和 Kotlin 类型",
+      "pt": "tipos TypeScript e Kotlin"
+     },
+     "tree_desc": {
+      "en": "TypeScript and Kotlin types (generated, do not edit)",
+      "es": "tipos TypeScript y Kotlin (generados, no editar)",
+      "de": "TypeScript- und Kotlin-Typen (erzeugt, nicht bearbeiten)",
+      "fr": "types TypeScript et Kotlin (générés, ne pas modifier)",
+      "it": "tipi TypeScript e Kotlin (generati, non modificare)",
+      "ja": "TypeScript と Kotlin の型（生成物、編集不可）",
+      "zh": "TypeScript 和 Kotlin 类型（自动生成，勿编辑）",
+      "pt": "tipos TypeScript e Kotlin (gerados, não editar)"
+     }
+    },
+    {
+     "name": "openapi/",
+     "desc": {
+      "en": "armor-server.yaml, HTTP contract",
+      "es": "armor-server.yaml, contrato HTTP",
+      "de": "armor-server.yaml, HTTP-Vertrag",
+      "fr": "armor-server.yaml, contrat HTTP",
+      "it": "armor-server.yaml, contratto HTTP",
+      "ja": "armor-server.yaml（HTTP 契約）",
+      "zh": "armor-server.yaml（HTTP 契约）",
+      "pt": "armor-server.yaml, contrato HTTP"
+     }
+    },
+    {
+     "name": "registry/",
+     "desc": {
+      "en": "repositories.json, the family list",
+      "es": "repositories.json, lista de la familia",
+      "de": "repositories.json, Familienliste",
+      "fr": "repositories.json, liste de la famille",
+      "it": "repositories.json, elenco famiglia",
+      "ja": "repositories.json（一覧）",
+      "zh": "repositories.json（清单）",
+      "pt": "repositories.json, lista da família"
+     }
+    },
+    {
+     "name": "fuzz/",
+     "desc": {
+      "en": "libFuzzer targets",
+      "es": "objetivos libFuzzer",
+      "de": "libFuzzer-Ziele",
+      "fr": "cibles libFuzzer",
+      "it": "target libFuzzer",
+      "ja": "libFuzzer ターゲット",
+      "zh": "libFuzzer 目标",
+      "pt": "alvos libFuzzer"
+     }
+    },
+    {
+     "name": "scripts/",
+     "desc": {
+      "en": "armor-project launcher",
+      "es": "lanzador armor-project",
+      "de": "armor-project-Starter",
+      "fr": "lanceur armor-project",
+      "it": "avviatore armor-project",
+      "ja": "armor-project 起動",
+      "zh": "armor-project 启动器",
+      "pt": "lançador armor-project"
+     }
+    },
+    {
+     "name": "tools/",
+     "desc": {
+      "en": "generators, sync, release, CI",
+      "es": "generadores, sincronía, CI",
+      "de": "Generatoren, Abgleich, CI",
+      "fr": "générateurs, synchro, CI",
+      "it": "generatori, sincronia, CI",
+      "ja": "生成・同期・CI",
+      "zh": "生成器、同步、CI",
+      "pt": "geradores, sincronia, CI"
+     },
+     "tree_desc": {
+      "en": "generators, firmware sync and release, launcher, CI checks",
+      "es": "generadores, sincronía y publicación del firmware, lanzador, comprobaciones de CI",
+      "de": "Generatoren, Firmware-Abgleich und -Release, Starter, CI-Prüfungen",
+      "fr": "générateurs, synchronisation et publication du firmware, lanceur, vérifications CI",
+      "it": "generatori, sincronia e rilascio del firmware, avviatore, controlli CI",
+      "ja": "ジェネレーター、ファームウェアの同期とリリース、ランチャー、CI 検査",
+      "zh": "生成器、固件同步与发布、启动器、CI 检查",
+      "pt": "geradores, sincronia e publicação do firmware, lançador, verificações de CI"
+     }
+    },
+    {
+     "name": "tests/",
+     "desc": {
+      "en": "214 tests",
+      "es": "214 pruebas",
+      "de": "214 Tests",
+      "fr": "214 tests",
+      "it": "214 test",
+      "ja": "214 件のテスト",
+      "zh": "214 项测试",
+      "pt": "214 testes"
+     }
+    },
+    {
+     "name": "docs/",
+     "desc": {
+      "en": "contracts, firmware, fuzzing",
+      "es": "contratos, firmware, fuzzing",
+      "de": "Verträge, Firmware, Fuzzing",
+      "fr": "contrats, firmware, fuzzing",
+      "it": "contratti, firmware, fuzzing",
+      "ja": "契約・FW・ファジング",
+      "zh": "契约、固件、模糊测试",
+      "pt": "contratos, firmware, fuzzing"
+     }
+    }
+   ]
+  },
+  {
+   "name": {
+    "en": "support",
+    "es": "apoyo",
+    "de": "Unterstützung",
+    "fr": "support",
+    "it": "supporto",
+    "ja": "サポート",
+    "zh": "支持",
+    "pt": "apoio"
+   },
+   "kind": "group",
+   "span": 1,
+   "accent": "d",
+   "sub": {
+    "en": "support",
+    "es": "apoyo",
+    "de": "Unterstützung",
+    "fr": "support",
+    "it": "supporto",
+    "ja": "サポート",
+    "zh": "支持",
+    "pt": "apoio"
+   },
+   "rows": [
+    {
+     "name": "images/",
+     "desc": {
+      "en": "banner, icon, README pictures",
+      "es": "banner, icono, imágenes del README",
+      "de": "Banner, Symbol, README-Bilder",
+      "fr": "bannière, icône, images du README",
+      "it": "banner, icona, immagini del README",
+      "ja": "バナー、アイコン、README の画像",
+      "zh": "横幅图、图标、README 图片",
+      "pt": "faixa, ícone, imagens do README"
+     },
+     "tree_desc": {
+      "en": "banner, icon and the pictures of the README",
+      "es": "banner, icono y las imágenes del README",
+      "de": "Banner, Symbol und die Bilder des READMEs",
+      "fr": "bannière, icône et images du README",
+      "it": "banner, icona e immagini del README",
+      "ja": "バナー、アイコン、README の画像",
+      "zh": "横幅图、图标和 README 的图片",
+      "pt": "faixa, ícone e as imagens do README"
+     }
+    },
+    {
+     "name": ".github/",
+     "desc": {
+      "en": "CI, dashboard notice, templates",
+      "es": "CI, aviso al panel, plantillas",
+      "de": "CI, Dashboard-Hinweis, Vorlagen",
+      "fr": "CI, avis au tableau de bord, modèles",
+      "it": "CI, avviso alla dashboard, modelli",
+      "ja": "CI、ダッシュボード通知、テンプレート",
+      "zh": "CI、仪表板通知、模板",
+      "pt": "CI, aviso ao painel, modelos"
+     },
+     "tree_desc": {
+      "en": "CI workflow, dashboard notice, issue and pull-request templates",
+      "es": "flujo de CI, aviso al panel, plantillas de incidencias y pull requests",
+      "de": "CI-Workflow, Dashboard-Hinweis, Vorlagen für Issues und Pull Requests",
+      "fr": "workflow CI, avis au tableau de bord, modèles d'issues et de pull requests",
+      "it": "workflow CI, avviso alla dashboard, modelli per issue e pull request",
+      "ja": "CI ワークフロー、ダッシュボード通知、Issue と Pull Request のテンプレート",
+      "zh": "CI 工作流、仪表板通知、议题和 pull request 模板",
+      "pt": "fluxo de CI, aviso ao painel, modelos de issues e pull requests"
+     }
+    }
+   ]
+  },
+  {
+   "name": {
+    "en": "project files",
+    "es": "ficheros del proyecto",
+    "de": "Projektdateien",
+    "fr": "fichiers du projet",
+    "it": "file del progetto",
+    "ja": "プロジェクトのファイル",
+    "zh": "项目文件",
+    "pt": "ficheiros do projeto"
+   },
+   "kind": "group",
+   "span": 3,
+   "accent": "a",
+   "columns": 2,
+   "sub": {
+    "en": "at the root",
+    "es": "en la raíz",
+    "de": "im Stammordner",
+    "fr": "à la racine",
+    "it": "alla radice",
+    "ja": "ルート",
+    "zh": "根目录",
+    "pt": "na raiz"
+   },
+   "rows": [
+    {
+     "name": "armor.project.json",
+     "desc": {
+      "en": "manifest: version, role, maturity",
+      "es": "manifiesto: versión, función, madurez",
+      "de": "Manifest: Version, Rolle, Reife",
+      "fr": "manifeste : version, rôle, maturité",
+      "it": "manifesto: versione, ruolo, maturità",
+      "ja": "マニフェスト：版・役割・成熟度",
+      "zh": "清单：版本、角色、成熟度",
+      "pt": "manifesto: versão, função, maturidade"
+     }
+    },
+    {
+     "name": "pyproject.toml",
+     "desc": {
+      "en": "package metadata, entry points",
+      "es": "metadatos del paquete, entradas",
+      "de": "Paket-Metadaten, Einstiege",
+      "fr": "métadonnées du paquet, entrées",
+      "it": "metadati del pacchetto, ingressi",
+      "ja": "パッケージ情報とエントリー",
+      "zh": "包元数据、入口",
+      "pt": "metadados do pacote, entradas"
+     }
+    },
+    {
+     "name": "CHANGELOG.md",
+     "desc": {
+      "en": "what changed in each version",
+      "es": "qué cambió en cada versión",
+      "de": "was sich in jeder Version geändert hat",
+      "fr": "ce qui a changé à chaque version",
+      "it": "cosa è cambiato in ogni versione",
+      "ja": "各バージョンの変更点",
+      "zh": "每个版本的变化",
+      "pt": "o que mudou em cada versão"
+     }
+    },
+    {
+     "name": "run.sh  run.bat",
+     "tree_name": "run.sh run.bat",
+     "desc": {
+      "en": "start, shared workflow",
+      "es": "arrancar, flujo compartido",
+      "de": "Start, gemeinsamer Ablauf",
+      "fr": "démarrer, flux partagé",
+      "it": "avvio, flusso condiviso",
+      "ja": "起動（共通フロー）",
+      "zh": "启动（共用流程）",
+      "pt": "arrancar, fluxo partilhado"
+     }
+    },
+    {
+     "name": "build.sh  build.bat",
+     "tree_name": "build.sh build.bat",
+     "desc": {
+      "en": "build and test, shared workflow",
+      "es": "construir y probar, flujo compartido",
+      "de": "Bauen und Testen, gemeinsamer Ablauf",
+      "fr": "construire et tester, flux partagé",
+      "it": "compila e prova, flusso condiviso",
+      "ja": "ビルドとテスト（共通フロー）",
+      "zh": "构建并测试（共用流程）",
+      "pt": "compilar e testar, fluxo partilhado"
+     }
+    },
+    {
+     "name": "build-test.sh  build-test.bat",
+     "tree_name": "build-test.sh build-test.bat",
+     "desc": {
+      "en": "build, test and package",
+      "es": "construir, probar y empaquetar",
+      "de": "Bauen, Testen und Verpacken",
+      "fr": "construire, tester, empaqueter",
+      "it": "compila, prova e impacchetta",
+      "ja": "ビルド、テスト、パッケージ化",
+      "zh": "构建、测试并打包",
+      "pt": "compilar, testar e empacotar"
+     }
+    },
+    {
+     "name": "test.sh  test.bat",
+     "tree_name": "test.sh test.bat",
+     "desc": {
+      "en": "only the tests, never the version",
+      "es": "solo las pruebas, nunca la versión",
+      "de": "nur die Tests, nie die Version",
+      "fr": "seulement les tests, jamais la version",
+      "it": "solo i test, mai la versione",
+      "ja": "テストのみ（版は変えません）",
+      "zh": "只运行测试，不改版本",
+      "pt": "só os testes, nunca a versão"
+     }
+    },
+    {
+     "name": "SECURITY  SUPPORT  CONTRIBUTING  LICENSE",
+     "tree_name": "SECURITY.md SUPPORT.md CONTRIBUTING.md CODE_OF_CONDUCT.md LICENSE",
+     "desc": {
+      "en": "community and licence files",
+      "es": "comunidad y licencia",
+      "de": "Community und Lizenz",
+      "fr": "communauté et licence",
+      "it": "comunità e licenza",
+      "ja": "コミュニティとライセンス",
+      "zh": "社区与许可证",
+      "pt": "comunidade e licença"
+     },
+     "tree_desc": ""
+    }
+   ]
+  }
+ ]
+}
