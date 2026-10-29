@@ -53,6 +53,8 @@ CONFIG_MBEDTLS_DYNAMIC_FREE_CA_CERT=y
 CONFIG_ESP_MAIN_TASK_STACK_SIZE=16384
 # the system event task runs every network, Wi-Fi and Bluetooth handler: the default 2304 bytes left 276 bytes free on a running node
 CONFIG_ESP_SYSTEM_EVENT_TASK_STACK_SIZE=4096
+# the inter-processor call tasks (ipc0, ipc1) run what one core asks of the other (a flash write, a Wi-Fi call): the default left 532 bytes free on a running node
+CONFIG_ESP_IPC_TASK_STACK_SIZE=2048
 
 # The emulated serial ports time the line with interrupts: the GPIO functions and the timer's interrupt live in IRAM so that a flash write (a setting saved,
 # a firmware update) never delays them.
