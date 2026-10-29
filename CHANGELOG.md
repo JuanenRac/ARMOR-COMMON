@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The framed values of the Overview page have the same width:** each value fills the column next to its label, so the boxes of a card line up instead of having the width of their text.
 - **The OpenAPI describes the traits of a camera:** the camera and camera-view schemas carry the optional layout (one stream or two lenses split), group and lens name, type of camera, whether it pans, tilts and zooms, the address of its own configurator page, its field of view and ranges, and the new `CameraParams` schema for its internal parameters. The REST types are regenerated.
 - **The OpenAPI describes the removal of the example readings of the solar equipment:** `DELETE /api/v1/solar/devices/{node}/{device}/example` and `DELETE /api/v1/solar/examples`.
 - **The HTTP contract describes the still picture of a camera:** `POST /api/v1/cameras/{id}/preview-ticket` and `GET /api/v1/cameras/{id}/preview` (and the schema `PreviewTicket`), with the generated types.
