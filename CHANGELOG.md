@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## [Unreleased]
+## [0.7.7] - The contract describes the traits of a camera and the PIN of the written voice command
 
 - **The OpenAPI describes `silence_pin` of the written voice command:** the PIN that silencing by voice asks for in the `pin` mode, apart from the PIN of the signed-in user. The REST types are regenerated.
 - **The inter-processor call tasks of every node have more stack:** `CONFIG_ESP_IPC_TASK_STACK_SIZE` is 2048 (the default left 532 bytes free in `ipc0` on a running node), in the shared firmware base and in the two nodes that keep their own configuration.
