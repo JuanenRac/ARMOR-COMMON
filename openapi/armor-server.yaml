@@ -4135,11 +4135,32 @@ components:
         snapshotUrl: { type: string }
         rtspPath: { type: string }
         previewPath: { type: string }
+        layout: { type: string, enum: [single, split], description: 'split: one stream carrying two lenses, one above the other, shown as two windows' }
+        group: { type: string, description: 'Cameras that are the lenses of one body share this identifier' }
+        lensName: { type: string }
+        preset: { type: string }
+        ptz: { type: boolean, description: 'The lens pans and tilts' }
+        zoom: { type: boolean, description: 'The lens zooms' }
+        webUrl: { type: string, description: 'The web page of the camera configurator' }
+        fovDeg: { type: number }
+        panRangeDeg: { type: number }
+        tiltRangeDeg: { type: number }
+        rangeM: { type: number }
+        params: { $ref: '#/components/schemas/CameraParams' }
         onvifPort: { type: integer }
         rtspPort: { type: integer }
         username: { type: string }
         hasCredentials: { type: boolean }
         liveVideoAvailable: { type: boolean }
+    CameraParams:
+      type: object
+      description: Internal parameters of a camera that the operator noted
+      properties:
+        wifiSsid: { type: string }
+        ip: { type: string }
+        encoder: { type: string }
+        bitrateKbps: { type: number }
+        resolution: { type: string }
     CameraView:
       type: object
       required: [id, name, host, snapshotUrl, rtspPath, onvifPort, rtspPort, hasCredentials, liveVideoAvailable]
@@ -4151,6 +4172,18 @@ components:
         snapshotUrl: { type: string }
         rtspPath: { type: string }
         previewPath: { type: string }
+        layout: { type: string, enum: [single, split], description: 'split: one stream carrying two lenses, one above the other, shown as two windows' }
+        group: { type: string, description: 'Cameras that are the lenses of one body share this identifier' }
+        lensName: { type: string }
+        preset: { type: string }
+        ptz: { type: boolean, description: 'The lens pans and tilts' }
+        zoom: { type: boolean, description: 'The lens zooms' }
+        webUrl: { type: string, description: 'The web page of the camera configurator' }
+        fovDeg: { type: number }
+        panRangeDeg: { type: number }
+        tiltRangeDeg: { type: number }
+        rangeM: { type: number }
+        params: { $ref: '#/components/schemas/CameraParams' }
         onvifPort: { type: integer }
         rtspPort: { type: integer }
         hasCredentials: { type: boolean }

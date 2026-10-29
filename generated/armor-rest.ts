@@ -408,6 +408,23 @@ export type Camera = {
   snapshotUrl: string;
   rtspPath: string;
   previewPath?: string;
+  /** split: one stream carrying two lenses, one above the other, shown as two windows */
+  layout?: "single" | "split";
+  /** Cameras that are the lenses of one body share this identifier */
+  group?: string;
+  lensName?: string;
+  preset?: string;
+  /** The lens pans and tilts */
+  ptz?: boolean;
+  /** The lens zooms */
+  zoom?: boolean;
+  /** The web page of the camera configurator */
+  webUrl?: string;
+  fovDeg?: number;
+  panRangeDeg?: number;
+  tiltRangeDeg?: number;
+  rangeM?: number;
+  params?: CameraParams;
   onvifPort: number;
   rtspPort: number;
   username: string;
@@ -442,6 +459,15 @@ export type CameraList = {
   cameras: Camera[];
 };
 
+/** Internal parameters of a camera that the operator noted */
+export type CameraParams = {
+  wifiSsid?: string;
+  ip?: string;
+  encoder?: string;
+  bitrateKbps?: number;
+  resolution?: string;
+};
+
 export type CameraStatusList = {
   cameras: {
     id: string;
@@ -460,6 +486,23 @@ export type CameraView = {
   snapshotUrl: string;
   rtspPath: string;
   previewPath?: string;
+  /** split: one stream carrying two lenses, one above the other, shown as two windows */
+  layout?: "single" | "split";
+  /** Cameras that are the lenses of one body share this identifier */
+  group?: string;
+  lensName?: string;
+  preset?: string;
+  /** The lens pans and tilts */
+  ptz?: boolean;
+  /** The lens zooms */
+  zoom?: boolean;
+  /** The web page of the camera configurator */
+  webUrl?: string;
+  fovDeg?: number;
+  panRangeDeg?: number;
+  tiltRangeDeg?: number;
+  rangeM?: number;
+  params?: CameraParams;
   onvifPort: number;
   rtspPort: number;
   hasCredentials: boolean;
