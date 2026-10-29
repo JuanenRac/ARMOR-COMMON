@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.7.8] - The contract of the sign-in country, the language of a phone and the alarm audio, and the shared tools of the pictures and the live panel
+
 - **The contract knows the country of a sign-in and the language of a phone:** the alert `login.remote` may carry `login_country` (two capital letters) and `login_country_new` (always true when present), only on a sign-in from outside and never the second without the first, with three new conformance vectors; the security option `login.country_alert` (on by default) is in the HTTP contract; `POST /api/v1/push/register` accepts `language`, one of the eight, so the notice of an alarm is told in the language of the phone.
 - **The contract describes the sound of an alarm for the wall panel:** `GET /api/v1/alarm-audio`, `GET /api/v1/alarm-audio/spoken` and `GET`, `PUT` and `DELETE /api/v1/alarm-audio/sounds/{source}` with their schemas, the two security options `alarm_audio.spoken` and `alarm_audio.custom_sounds` (both off by default), the feature `alarm_audio` and the generated types; the section *The sound of an alarm* of the contracts document says how the audio is asked for and checked.
 - **The README follows the universal layout in the eight languages:** the sections of the layout with the figures taken from the code (34 schemas, 1225 vectors, 191 paths and 247 operations of the HTTP contract, 214 tests), the broker topics, the build options of the firmware base, a threat and defence table, troubleshooting, and the Repository Structure drawn from `docs/structure.json` next to the architecture picture; the Mermaid diagram stays inside a collapsible block.
