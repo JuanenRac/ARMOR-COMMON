@@ -1,0 +1,34 @@
+{
+  "repo": "ARMOR-VOICE-AI",
+  "ecosystem": "armor",
+  "tagline": "A spoken phrase becomes one of fifteen commands, or nothing. It only decides; ARMOR-SERVER acts.",
+  "description": "ARMOR-SERVER and the wall panel call the voice service on the loopback address. It normalises the transcript, matches it against fifteen commands in eight languages, issues signed single-use confirmations and applies the silence policy. Speech engines are programs the installation chooses.",
+  "columns": ["CALLERS", "THE VOICE SERVICE  -  127.0.0.1:18090", "ITS OWN CHOICE"],
+  "nodes": [
+    {"id": "panel", "column": 0, "level": "untested", "title": "ARMOR-NODE-HMI",
+     "lines": ["Wall panel: microphone + speaker", ["has not run on a board yet", "bad"]]},
+    {"id": "server", "column": 0, "level": "contract", "title": "ARMOR-SERVER",
+     "lines": ["/api/v1/voice/command", ["authorises and carries out", "muted"], ["writes the audit trail", "muted"]]},
+    {"id": "turn", "column": 1, "level": "tested", "title": "turn.py",
+     "lines": ["audio, then words, then the answer", "9 s budget, 2 turns at once", "a spoken yes or no confirms"],
+     "code": ["src/armor_voice_ai/turn.py"]},
+    {"id": "intent", "column": 1, "level": "tested", "title": "intent.py + phrases.py",
+     "lines": ["NFKC, no accents, no filler words", "exact match, 8 languages,", "15 commands, 200 chars at most"],
+     "code": ["src/armor_voice_ai/intent.py", "src/armor_voice_ai/phrases.py"]},
+    {"id": "confirm", "column": 1, "level": "contract", "title": "confirmation.py",
+     "lines": ["HMAC-SHA-256 token, 30 s, once", "bound to the intent and to the", "person; arm and disarm only"],
+     "code": ["src/armor_voice_ai/confirmation.py"]},
+    {"id": "silence", "column": 1, "level": "contract", "title": "silence_policy.py",
+     "lines": ["off  |  pin  |  double_turn", "3 wrong PINs lock it for 5 min;", "an unreadable policy is strict"],
+     "code": ["src/armor_voice_ai/silence_policy.py"]},
+    {"id": "engines", "column": 2, "level": "config", "title": "Speech engines",
+     "lines": ["ARMOR_VOICE_STT_COMMAND", "ARMOR_VOICE_TTS_COMMAND", ["not shipped; no shell, short env", "muted"]]}
+  ],
+  "edges": [
+    {"from": "panel", "to": "turn", "label": "/v1/turn", "level": "tested"},
+    {"from": "server", "to": "intent", "label": "/v1/command", "level": "contract"},
+    {"from": "turn", "to": "engines", "label": "stdin / stdout", "level": "config"}
+  ],
+  "legend": {"tested": "decides, tested", "contract": "signed and policy parts, or the server", "config": "engine you configure, never tried with a microphone", "untested": "not run on a board"},
+  "footer": "Nothing is kept: the audio is not stored and the log carries a hash of the words, never the words."
+}

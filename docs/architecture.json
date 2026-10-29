@@ -1,0 +1,194 @@
+{
+  "repo": "ARMOR-COMMON",
+  "ecosystem": "armor",
+  "tagline": "What every message of the family means: schemas, vectors, types and the firmware base the five nodes share.",
+  "description": "ARMOR-COMMON holds the JSON Schemas of the node messages, a Python validator that interprets them, the conformance vectors that every implementation runs, the generated TypeScript and Kotlin types, the OpenAPI file of the server and the firmware base shared by the five nodes. ARMOR-SERVER runs the vectors and implements the routes, ARMOR-STUDIO keeps a copy of the generated types, the nodes receive the firmware base, and the Android app does not consume the Kotlin types yet.",
+  "columns": [
+    "WHO USES IT",
+    "WHAT THIS REPOSITORY OWNS",
+    "RECEIVES IT"
+  ],
+  "nodes": [
+    {
+      "id": "studio",
+      "column": 0,
+      "level": "external",
+      "title": "ARMOR-STUDIO",
+      "lines": [
+        "keeps a copy of the generated",
+        "types; a test fails on drift"
+      ]
+    },
+    {
+      "id": "android",
+      "column": 0,
+      "level": "config",
+      "title": "ARMOR-ANDROID-CONTROL",
+      "lines": [
+        "has its own parsing; the Kotlin",
+        "types are generated, not used"
+      ],
+      "title_size": 12
+    },
+    {
+      "id": "server",
+      "column": 0,
+      "level": "external",
+      "title": "ARMOR-SERVER",
+      "lines": [
+        "runs the vectors; implements",
+        "every route of the OpenAPI file"
+      ]
+    },
+    {
+      "id": "types",
+      "column": 1,
+      "level": "tested",
+      "title": "generated/",
+      "lines": [
+        "TypeScript and Kotlin types and",
+        "the types of the HTTP contract;",
+        "generate_types.py --check"
+      ],
+      "code": [
+        "generated/armor-contracts.ts",
+        "generated/armor-rest.ts",
+        "generated/ArmorContracts.kt",
+        "tools/generate_types.py",
+        "tools/generate_rest_types.py"
+      ]
+    },
+    {
+      "id": "schemas",
+      "column": 1,
+      "level": "contract",
+      "title": "schemas/*.json",
+      "lines": [
+        "the source of truth of every",
+        "message; unknown fields and",
+        "impossible combinations refused"
+      ],
+      "code": [
+        "src/armor_common/schemas"
+      ]
+    },
+    {
+      "id": "vectors",
+      "column": 1,
+      "level": "tested",
+      "title": "conformance/",
+      "lines": [
+        "accepted and rejected payloads",
+        "run by every implementation;",
+        "make_conformance.py writes them"
+      ],
+      "code": [
+        "conformance",
+        "tools/make_conformance.py"
+      ]
+    },
+    {
+      "id": "validator",
+      "column": 1,
+      "level": "tested",
+      "title": "armor_common",
+      "lines": [
+        "Python validator that reads the",
+        "schema itself and refuses a",
+        "keyword it does not implement"
+      ],
+      "code": [
+        "src/armor_common/__init__.py"
+      ]
+    },
+    {
+      "id": "openapi",
+      "column": 1,
+      "level": "tested",
+      "title": "openapi/",
+      "lines": [
+        "armor-server.yaml: 191 paths,",
+        "each with its access rule and",
+        "a named schema per body"
+      ],
+      "code": [
+        "openapi/armor-server.yaml"
+      ]
+    },
+    {
+      "id": "base",
+      "column": 1,
+      "level": "tested",
+      "title": "firmware_base/",
+      "lines": [
+        "network, settings, web panel,",
+        "HTTPS, log, Bluetooth, signed",
+        "update check, written once"
+      ],
+      "code": [
+        "firmware_base/manifest.json",
+        "tools/sync_firmware_base.py"
+      ]
+    },
+    {
+      "id": "nodes",
+      "column": 2,
+      "level": "external",
+      "title": "The five nodes",
+      "lines": [
+        "firmware_base is written into",
+        "each; two run the vectors",
+        "in their host tests"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "studio",
+      "to": "types",
+      "label": "types",
+      "level": "tested"
+    },
+    {
+      "from": "android",
+      "to": "types",
+      "label": "Kotlin",
+      "level": "config"
+    },
+    {
+      "from": "server",
+      "to": "vectors",
+      "label": "vectors",
+      "level": "tested"
+    },
+    {
+      "from": "server",
+      "to": "openapi",
+      "label": "routes",
+      "level": "contract"
+    },
+    {
+      "from": "base",
+      "to": "nodes",
+      "label": "copied",
+      "level": "tested"
+    },
+    {
+      "from": "schemas",
+      "to": "types",
+      "level": "contract"
+    },
+    {
+      "from": "schemas",
+      "to": "validator",
+      "level": "contract"
+    }
+  ],
+  "legend": {
+    "tested": "checked in CI by a test or a --check",
+    "contract": "the source the rest is made from",
+    "config": "generated but not consumed yet",
+    "external": "another repository"
+  },
+  "footer": "The schemas decide: if two projects disagree about a field, this repository is right."
+}

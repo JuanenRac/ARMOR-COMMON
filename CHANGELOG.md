@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased]
+
+- **The Architecture and Repository Structure pictures of the READMEs are drawn by shared tools:** `tools/make_architecture.py` (from `docs/architecture.json`, at most twelve boxes in three columns, discreet SMIL motion, `--check` that fails when the picture, the JSON or the code a box points to disagree) and `tools/make_structure.py` (from `docs/structure.json`, the text tree in eight languages and the animated picture, checked against the files Git versions), with their shared kit `tools/_readme_svg.py` that measures every text and refuses overflow and overlap. They are vendored into the other repositories by the sync tool of ARMOR-DOCS; `docs/README_PICTURES.md` explains them and `tests/test_readme_tools.py` tries them, screenshots included.
+- **The architecture of ARMOR-COMMON is a picture:** `docs/architecture.json` and the generated `images/architecture.svg` (the Mermaid diagram stays in the README as text).
+
 ## [0.7.7] - The contract describes the traits of a camera and the PIN of the written voice command
 
 - **The OpenAPI describes `silence_pin` of the written voice command:** the PIN that silencing by voice asks for in the `pin` mode, apart from the PIN of the signed-in user. The REST types are regenerated.

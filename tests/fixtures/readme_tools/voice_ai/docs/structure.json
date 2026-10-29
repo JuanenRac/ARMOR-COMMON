@@ -1,0 +1,34 @@
+{
+  "repo": "ARMOR-VOICE-AI",
+  "ecosystem": "armor",
+  "svg": "en",
+  "cards": [
+    {"name": "src/armor_voice_ai/", "span": 3, "accent": "a", "sub": "the code, standard library only",
+     "rows": [
+       {"name": "phrases.py", "desc": "the 420 phrases of the fifteen commands, in eight languages"},
+       {"name": "intent.py", "desc": "normalising and exact matching: the closed allow-list"},
+       {"name": "confirmation.py", "desc": "signed, single-use, per-person confirmation tokens"},
+       {"name": "silence_policy.py", "desc": "off / pin / double_turn, the spoken PIN, the lock"},
+       {"name": "session.py", "desc": "the two-turn rule for each command"},
+       {"name": "gateway.py", "desc": "JSON lines on stdin and stdout, the audit, the sentences said back"},
+       {"name": "service.py", "desc": "the local HTTP service: /healthz, /v1/command, /v1/turn"},
+       {"name": "turn.py", "desc": "one spoken turn: engines, yes or no, time budget"}
+     ]},
+    {"name": "tests/", "span": 1, "accent": "b", "sub": {"en": "114 tests", "es": "114 pruebas", "de": "114 Tests", "fr": "114 tests", "it": "114 test", "ja": "114件のテスト", "zh": "114 项测试", "pt": "114 testes"},
+     "tree": "114 tests: silence, edges, gateway, turn, languages, service",
+     "rows": [{"desc": "silence policy"}, {"desc": "edge cases"}, {"desc": "gateway and turn"}, {"desc": "languages and service"}]},
+    {"name": "docs/", "span": 1, "accent": "c", "sub": "three guides", "tree": "SAFETY.md, SERVICE.md, SILENCE_POLICY.md",
+     "rows": [{"name": "SAFETY.md", "desc": "what it may and may not do"}, {"name": "SERVICE.md", "desc": "the local HTTP service"}, {"name": "SILENCE_POLICY.md", "desc": "the modes and the lock"}]},
+    {"name": "support", "kind": "group", "span": 1, "accent": "d", "sub": "assets",
+     "rows": [{"name": "tools/", "desc": "shared CI checks and tooling", "tree_desc": "the shared CI checks and project tooling"},
+              {"name": "images/", "desc": "banner and icon"},
+              {"name": ".github/", "desc": "CI, dashboard notice, templates", "tree_desc": "CI workflow, dashboard notice, issue and pull-request templates"}]},
+    {"name": "project files", "kind": "group", "span": 3, "accent": "a", "columns": 2, "sub": "at the root",
+     "rows": [{"name": "armor.project.json", "desc": "manifest: version, role, maturity"},
+              {"name": "pyproject.toml", "desc": "package metadata, the armor-voice-gateway command"},
+              {"name": "CHANGELOG.md", "desc": "what changed in each version"},
+              {"name": "run.sh  run.bat", "tree_name": "run.sh run.bat", "desc": "start through the shared workflow"},
+              {"name": "build.sh  build.bat", "tree_name": "build.sh build.bat", "desc": "build and test through the shared workflow"},
+              {"name": "SECURITY  SUPPORT  CONTRIBUTING  LICENSE", "tree_name": "SECURITY.md SUPPORT.md CONTRIBUTING.md CODE_OF_CONDUCT.md LICENSE", "desc": "community and licence files", "tree_desc": ""}]}
+  ]
+}
