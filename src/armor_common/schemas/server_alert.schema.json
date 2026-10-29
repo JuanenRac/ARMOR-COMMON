@@ -119,6 +119,16 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 64
+    },
+    "login_country": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$",
+      "description": "The country (ISO 3166-1 alpha-2) the address of a sign-in from outside belongs to, when the server has a local address database"
+    },
+    "login_country_new": {
+      "type": "boolean",
+      "const": true,
+      "description": "Present when that person had never signed in from that country before"
     }
   }
 }

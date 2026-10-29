@@ -877,6 +877,10 @@ def validate_server_alert(topic: str, payload: Mapping[str, object]) -> None:
         raise ContractError("an alarm event names the alarm, its code and its severity")
     if event == "login.remote" and not {"login_user", "login_from"} <= set(payload):
         raise ContractError("a sign-in from outside names the person and the address")
+    if event != "login.remote" and ({"login_country", "login_country_new"} & set(payload)):
+        raise ContractError("only a sign-in from outside names a country")
+    if "login_country_new" in payload and "login_country" not in payload:
+        raise ContractError("a new country is a country")
     if payload.get("silent") is True and event != "alarm.raised":
         raise ContractError("only a raised alarm is silent")
 

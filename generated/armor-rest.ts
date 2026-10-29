@@ -1720,6 +1720,8 @@ export type PostModeRequest = {
 
 export type PostPushRegisterRequest = {
   token: string;
+  /** The language of the phone's app; the notice of an alarm is told in it */
+  language?: "en" | "es" | "de" | "fr" | "it" | "ja" | "zh" | "pt";
 };
 
 export type PostPushUnregisterRequest = {
@@ -2016,6 +2018,7 @@ export type SecuritySettings = {
   "server.zone_feed_signature"?: boolean;
   "media.rtsp_proxy"?: boolean;
   "network.login_secure_only"?: boolean;
+  "login.country_alert"?: boolean;
   "voice.multipart_turn"?: boolean;
   "panel.live_events"?: boolean;
   "client.device_lock"?: "user" | "sensitive" | "always";

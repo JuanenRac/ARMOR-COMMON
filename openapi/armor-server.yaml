@@ -2547,6 +2547,7 @@ components:
         server.zone_feed_signature: { type: boolean, default: true }
         media.rtsp_proxy: { type: boolean, default: true }
         network.login_secure_only: { type: boolean, default: false }
+        login.country_alert: { type: boolean, default: true }
         voice.multipart_turn: { type: boolean, default: true }
         panel.live_events: { type: boolean, default: true }
         client.device_lock: { type: string, enum: [user, sensitive, always], default: user }
@@ -4543,7 +4544,7 @@ components:
     PutSiteRequest: { type: object, required: [revision, site], properties: { revision: { type: integer }, site: { type: object } } }
     PutElectricalDesignRequest: { type: object, required: [revision, electrical], properties: { revision: { type: integer }, electrical: { type: object } } }
     PostElectricalSwitchRequest: { type: object, required: [node, switch, action], properties: { node: { type: string }, switch: { type: string }, action: { type: string, enum: [arm, close_a, close_b, open, acknowledge] } } }
-    PostPushRegisterRequest: { type: object, required: [token], properties: { token: { type: string } } }
+    PostPushRegisterRequest: { type: object, required: [token], properties: { token: { type: string }, language: { type: string, enum: [en, es, de, fr, it, ja, zh, pt], description: "The language of the phone's app; the notice of an alarm is told in it" } } }
     DeletePushRegisterRequest: { type: object, properties: { token: { type: string } } }
     PostPushUnregisterRequest: { type: object, properties: { token: { type: string } } }
     PutAlarmProfilesRequest: { type: object, required: [profiles], properties: { revision: { type: integer }, profiles: { type: array, maxItems: 8, items: { $ref: '../src/armor_common/schemas/arm_profile.schema.json' } } } }

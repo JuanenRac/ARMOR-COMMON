@@ -76,6 +76,45 @@
    }
   },
   {
+   "name": "a sign-in from outside from a country never seen",
+   "valid": true,
+   "payload": {
+    "service": "armor-server",
+    "event": "login.remote",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "login_user": "admin",
+    "login_from": "203.0.113.9",
+    "login_country": "ES",
+    "login_country_new": true
+   }
+  },
+  {
+   "name": "a new country on an event that is not a sign-in",
+   "valid": false,
+   "payload": {
+    "service": "armor-server",
+    "event": "alert.test",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "login_country": "ES"
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a country that is not two capital letters",
+   "valid": false,
+   "payload": {
+    "service": "armor-server",
+    "event": "login.remote",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "login_user": "admin",
+    "login_from": "203.0.113.9",
+    "login_country": "es"
+   }
+  },
+  {
    "name": "a sign-in from outside that names no one",
    "valid": false,
    "payload": {
