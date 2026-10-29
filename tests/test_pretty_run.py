@@ -53,5 +53,33 @@ class PanelRun(unittest.TestCase):
         self.assertIn("was not found", done.stdout)
 
 
+class WrapScript(unittest.TestCase):
+    def wrapped(self, body: str) -> subprocess.CompletedProcess[str]:
+        script = Path(__import__("tempfile").mkdtemp()) / "build.py"
+        script.write_text(body, encoding="utf-8")
+        return subprocess.run([sys.executable, str(TOOLS / "pretty_run.py"), "--wrap", "--mode", "build", "--", sys.executable, str(script)], capture_output=True, text=True, encoding="utf-8",
+                              env={**os.environ, "PRETTY_PLAIN": "1", "PRETTY_PAUSE": "0"}, check=False)
+
+    def test_the_marked_lines_of_a_script_become_its_steps(self):
+        done = self.wrapped("print('banner'); print('[1/2] Reading the version'); print('[2/2] Running the tests'); print('Ran 7 tests in 0.1s'); print('OK')")
+        self.assertEqual(done.returncode, 0, done.stdout)
+        self.assertIn("Reading the version", done.stdout)
+        self.assertIn("Running the tests", done.stdout)
+        self.assertIn("7 tests passed", done.stdout)
+        self.assertNotIn("banner", done.stdout)
+
+    def test_the_step_that_was_running_when_the_script_failed_is_the_failed_one(self):
+        done = self.wrapped("print('[1/2] First'); print('[2/2] Second'); print('the reason'); raise SystemExit(4)")
+        self.assertEqual(done.returncode, 4)
+        self.assertIn("FAIL Second", done.stdout)
+        self.assertIn("the reason", done.stdout)
+
+    def test_command_lines_are_the_steps_of_a_script_without_marks(self):
+        done = self.wrapped("print('+ npm run typecheck'); print('fine'); print('+ npm test'); print('Tests  3 passed (3)')")
+        self.assertEqual(done.returncode, 0)
+        self.assertIn("npm run typecheck", done.stdout)
+        self.assertIn("3 tests passed", done.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()
