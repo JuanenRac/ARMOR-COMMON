@@ -1488,6 +1488,70 @@ paths:
       security: [{ operator: [] }]
       responses:
         '200': { description: '{ available }', content: { application/json: { schema: { $ref: '#/components/schemas/VoiceStatus' } } } }
+  /api/v1/alarm-audio:
+    get:
+      summary: What the sound of an alarm offers on this server - whether the spoken alarm and the uploaded sounds are on (two options of the security settings, both off by default), whether a voice gateway is set up, the limits of a sound and the sounds stored
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: '{ spoken, custom }', content: { application/json: { schema: { $ref: '#/components/schemas/AlarmAudioState' } } } }
+  /api/v1/alarm-audio/spoken:
+    get:
+      summary: An alarm said out loud - the sentence (origin, severity and what the alarm code means, in the language asked) made by the voice gateway and kept in a cache; answers 16 kHz 16-bit mono PCM. The wall panel may call it. Off (404) until the option alarm_audio.spoken is turned on
+      security: [{ operator: [] }]
+      parameters:
+        - { name: language, in: query, required: true, schema: { type: string, enum: [en, es, de, fr, it, ja, zh, pt] } }
+        - { name: source, in: query, required: true, schema: { $ref: '#/components/schemas/AlarmAudioSource' } }
+        - { name: severity, in: query, required: true, schema: { type: string, enum: [critical, high, warning, info] } }
+        - { name: code, in: query, required: false, description: 'The alarm code; a code the server does not know is not read out', schema: { type: string, pattern: '^[a-z0-9][a-z0-9_.:-]{0,63}$' } }
+      responses:
+        '200':
+          description: The samples of the sentence
+          headers: { X-Armor-Audio-Sha256: { description: 'SHA-256 of the samples, in hexadecimal (also the ETag)', schema: { type: string, pattern: '^[0-9a-f]{64}$' } } }
+          content:
+            'audio/L16;rate=16000': { schema: { type: string, format: binary } }
+        '404': { description: 'The option alarm_audio.spoken is off (spoken_alarms_disabled)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'A language, origin, severity or code that is not one of the closed lists', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '502': { description: 'The voice gateway answered something that is not audio of the right size (voice_bad_answer)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: 'No voice gateway is set up, it has no speech engine (tts_unavailable) or it does not answer', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/alarm-audio/sounds/{source}:
+    parameters:
+      - { name: source, in: path, required: true, schema: { $ref: '#/components/schemas/AlarmAudioSource' } }
+    get:
+      summary: The sound an administrator uploaded for an origin of alarm, as 16 kHz 16-bit mono PCM. The wall panel may call it. Off (404) until the option alarm_audio.custom_sounds is turned on; 304 when the panel already has these samples (If-None-Match)
+      security: [{ operator: [] }]
+      responses:
+        '200':
+          description: The samples
+          headers: { X-Armor-Audio-Sha256: { description: 'SHA-256 of the samples, in hexadecimal (also the ETag)', schema: { type: string, pattern: '^[0-9a-f]{64}$' } } }
+          content:
+            'audio/L16;rate=16000': { schema: { type: string, format: binary } }
+        '304': { description: The panel holds exactly these samples, content: { text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+        '404': { description: 'No sound for that origin, or the option is off (custom_sounds_disabled)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+    put:
+      summary: Stores the sound for an origin (administrator; asks for the proof of identity again from outside the house). The body is a WAVE file of 16 kHz, 16-bit, mono PCM, longer than a tenth of a second and not longer than the limit (ARMOR_ALARM_SOUND_MAX_BYTES, 4 seconds by default); only its samples are kept. Refused with 409 while the option alarm_audio.custom_sounds is off
+      security: [{ admin: [] }]
+      requestBody:
+        required: true
+        content:
+          audio/wav: { schema: { type: string, format: binary } }
+      responses:
+        '200': { description: What was stored, content: { application/json: { schema: { $ref: '#/components/schemas/AlarmAudioSound' } } } }
+        '401': { description: 'Not signed in', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'Not an administrator, or the proof of identity is needed again', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'Not one of the six origins (unknown_source)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'The option alarm_audio.custom_sounds is off (custom_sounds_disabled)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '411': { description: 'No body (no_sound)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '413': { description: 'More than the limit (sound_too_long)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '415': { description: 'Not a WAVE file of 16 kHz, 16-bit, mono PCM (not_a_wave_file, wave_truncated, wave_unreadable, unsupported_wave_format)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'Shorter than a tenth of a second (sound_too_short) or silence (sound_is_silent)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+    delete:
+      summary: Takes the sound of an origin away (administrator; allowed with the option off as well)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: '{ removed }', content: { application/json: { schema: { $ref: '#/components/schemas/AlarmAudioRemoved' } } } }
+        '401': { description: 'Not signed in', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'Not an administrator, or the proof of identity is needed again', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'There was no sound for that origin', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/voice/command:
     post:
       summary: A written or spoken command (as text) - the voice gateway says which of its closed commands it is (arm, disarm, status, silence, alarms, nodes, cameras, radar, solar, electrical, network, time, help, lights on, lights off) and this server carries out what was accepted, with the session of the person; arm and disarm need a second turn with the confirmation token
@@ -2468,7 +2532,7 @@ components:
             administer: { type: boolean }
             manage_users: { type: boolean }
             security_settings: { type: boolean }
-        features: { type: array, items: { type: string, enum: [security_settings, zone_feed_key, rtsp_tunnel] }, description: The parts of this server that exist in this version }
+        features: { type: array, items: { type: string, enum: [security_settings, zone_feed_key, rtsp_tunnel, alarm_audio] }, description: The parts of this server that exist in this version }
         security:
           allOf: [{ $ref: '#/components/schemas/SecuritySettings' }, { type: object, properties: { locked: { type: array, items: { type: string }, description: The options the environment of the server fixes } } }]
     SecuritySettings:
@@ -2489,6 +2553,46 @@ components:
         nodes.nvs_encryption: { type: string, enum: ['off', secrets], default: 'off' }
         voice.turn_max_bytes: { type: integer, minimum: 3200, maximum: 1920000, default: 480000 }
         voice.reply_audio_max_bytes: { type: integer, minimum: 3200, maximum: 1000000, default: 200000 }
+        alarm_audio.spoken: { type: boolean, default: false, description: 'The wall panel may ask for an alarm to be said out loud (off: 404)' }
+        alarm_audio.custom_sounds: { type: boolean, default: false, description: 'Administrators may upload a sound for an alarm origin and the wall panel may ask for it (off: nothing is accepted or served)' }
+    AlarmAudioSource: { type: string, enum: [device, solar, electrical, network, alarm, other], description: 'The origin of an alarm, as the wall panel names it (the source_type of the alarm; anything else is other)' }
+    AlarmAudioSound:
+      type: object
+      required: [source, bytes, duration_ms, sha256, uploaded_at, uploaded_by]
+      examples: [{ source: solar, bytes: 32000, duration_ms: 1000, sha256: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef, uploaded_at: '2000-01-01T00:00:00.000Z', uploaded_by: admin }]
+      properties:
+        source: { $ref: '#/components/schemas/AlarmAudioSource' }
+        bytes: { type: integer, minimum: 3200 }
+        duration_ms: { type: integer, minimum: 100 }
+        sha256: { type: string, pattern: '^[0-9a-f]{64}$' }
+        uploaded_at: { type: string, format: date-time }
+        uploaded_by: { type: string }
+    AlarmAudioRemoved:
+      type: object
+      required: [removed]
+      examples: [{ removed: true }]
+      properties:
+        removed: { type: boolean }
+    AlarmAudioState:
+      type: object
+      required: [spoken, custom]
+      examples: [{ spoken: { enabled: false, available: false }, custom: { enabled: false, max_bytes: 128000, min_bytes: 3200, sources: [device, solar, electrical, network, alarm, other], sounds: [] } }]
+      properties:
+        spoken:
+          type: object
+          required: [enabled, available]
+          properties:
+            enabled: { type: boolean, description: The option alarm_audio.spoken }
+            available: { type: boolean, description: A voice gateway is set up }
+        custom:
+          type: object
+          required: [enabled, max_bytes, min_bytes, sources, sounds]
+          properties:
+            enabled: { type: boolean, description: The option alarm_audio.custom_sounds }
+            max_bytes: { type: integer, description: 'The most samples one sound may have (ARMOR_ALARM_SOUND_MAX_BYTES)' }
+            min_bytes: { type: integer }
+            sources: { type: array, items: { $ref: '#/components/schemas/AlarmAudioSource' } }
+            sounds: { type: array, items: { $ref: '#/components/schemas/AlarmAudioSound' } }
     SecuritySettingsState:
       type: object
       required: [settings, stored, defaults, locked]

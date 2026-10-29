@@ -165,6 +165,15 @@ A wall panel can listen to `/api/v1/panel/events`, a WebSocket of the server, in
 
 One frame when the socket opens, one whenever the summary changes (the time in it does not count) and the same summary again every `heartbeat_ms`, so a client can tell a quiet channel from a dead one: it takes the channel as lost after three heartbeats without a frame and asks `GET /api/v1/panel/summary` meanwhile. A client ignores a frame whose `type` it does not know. The server closes with `4401` when the session ends and `4403` when the option is turned off (the client asks, and looks at the channel again only after a long wait). An older server has no such path and refuses the upgrade; the client then asks as before. ARMOR-NODE-HMI reads the frames with `core/panel_feed.hpp`.
 
+## The sound of an alarm
+
+Two reads that the wall panel makes when an alarm arrives, and the routes an administrator uses to put a sound of their own on the server (OpenAPI `/api/v1/alarm-audio`). Both are off until the security options `alarm_audio.spoken` and `alarm_audio.custom_sounds` are turned on, and a panel that does not get the audio plays its own tone.
+
+* `GET /api/v1/alarm-audio/spoken?language=&source=&severity=&code=`: the alarm said out loud. Only closed values go in: the eight languages, the origins `device`, `solar`, `electrical`, `network`, `alarm` and `other`, the severities `critical`, `high`, `warning` and `info`, and an alarm code of lower-case letters, digits and `_.:-` (at most 64). The sentence is made on the server from the words of the alarm codes, so no free text reaches the speech engine.
+* `GET /api/v1/alarm-audio/sounds/{source}`: the sound uploaded for that origin. `PUT` (administrator) takes a WAVE file of 16 kHz, 16-bit, mono PCM, not shorter than a tenth of a second and not longer than the limit of the server, not silence; only its samples are kept. `DELETE` takes it away.
+* Both reads answer raw 16 kHz 16-bit mono PCM (`audio/L16;rate=16000`) with its SHA-256 in lower-case hexadecimal in `X-Armor-Audio-Sha256` (also the ETag; `If-None-Match` gets `304`). A client checks the length (a whole number of 16-bit samples, within its own limit) and the hash before it plays anything.
+* The voice gateway says the sentence for the server: `POST /v1/speak` with `{text, language}` answers `{audio}`, base64 of the same PCM.
+
 ## The words of an alarm code
 
 An alarm (`alarm.raised`, `alarm.escalated`) carries a stable `code`; what a person reads for it is one table, `src/armor_common/alarm_codes.json`, with the sentence of every code in the eight languages (`en`, `es`, `de`, `fr`, `it`, `ja`, `zh`, `pt`). The server uses it for the messages it sends out (chat, push, Home Assistant) and a test compares its copy with this file; a console may keep its own text, but a code that is not in the table is a code nobody has described, and `tests/test_alarm_codes.py` keeps the table whole (every language, no empty sentence). A new code is added here first.

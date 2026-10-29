@@ -123,6 +123,40 @@ export type Alarm = {
   acknowledged_unverified?: true;
 };
 
+export type AlarmAudioRemoved = {
+  removed: boolean;
+};
+
+export type AlarmAudioSound = {
+  source: AlarmAudioSource;
+  bytes: number;
+  duration_ms: number;
+  sha256: string;
+  uploaded_at: string;
+  uploaded_by: string;
+};
+
+/** The origin of an alarm, as the wall panel names it (the source_type of the alarm; anything else is other) */
+export type AlarmAudioSource = "device" | "solar" | "electrical" | "network" | "alarm" | "other";
+
+export type AlarmAudioState = {
+  spoken: {
+    /** The option alarm_audio.spoken */
+    enabled: boolean;
+    /** A voice gateway is set up */
+    available: boolean;
+  };
+  custom: {
+    /** The option alarm_audio.custom_sounds */
+    enabled: boolean;
+    /** The most samples one sound may have (ARMOR_ALARM_SOUND_MAX_BYTES) */
+    max_bytes: number;
+    min_bytes: number;
+    sources: AlarmAudioSource[];
+    sounds: AlarmAudioSound[];
+  };
+};
+
 /** The status of the commands sent to the alarm panels */
 export type AlarmCommandStatus = {
   /** False unless the server runs with ARMOR_ALARM_COMMANDS=1 */
@@ -1988,6 +2022,10 @@ export type SecuritySettings = {
   "nodes.nvs_encryption"?: "off" | "secrets";
   "voice.turn_max_bytes"?: number;
   "voice.reply_audio_max_bytes"?: number;
+  /** The wall panel may ask for an alarm to be said out loud (off: 404) */
+  "alarm_audio.spoken"?: boolean;
+  /** Administrators may upload a sound for an alarm origin and the wall panel may ask for it (off: nothing is accepted or served) */
+  "alarm_audio.custom_sounds"?: boolean;
 };
 
 export type SecuritySettingsState = {
@@ -2217,7 +2255,7 @@ export type StudioCapabilities = {
     security_settings: boolean;
   };
   /** The parts of this server that exist in this version */
-  features: ("security_settings" | "zone_feed_key" | "rtsp_tunnel")[];
+  features: ("security_settings" | "zone_feed_key" | "rtsp_tunnel" | "alarm_audio")[];
   security: SecuritySettings & {
     /** The options the environment of the server fixes */
     locked?: string[];
