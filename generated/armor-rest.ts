@@ -1727,6 +1727,8 @@ export type PostVoiceCommandRequest = {
   text: string;
   language?: "en" | "es" | "de" | "fr" | "it" | "ja" | "zh" | "pt";
   confirmation?: string;
+  /** The PIN that silencing by voice asks for in the pin mode; it is not the PIN of the signed-in user */
+  silence_pin?: string;
 };
 
 export type Preferences = {

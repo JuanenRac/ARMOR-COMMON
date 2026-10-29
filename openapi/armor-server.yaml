@@ -4461,7 +4461,7 @@ components:
     PostAdminConsoleUnlockRequest: { type: object, required: [password], properties: { password: { type: string } } }
     PostAdminConsoleRunRequest: { type: object, required: [command], properties: { command: { type: string }, cwd: { type: string }, timeout_s: { type: integer } } }
     PostAiObservationsRequest: { type: object, required: [camera_id, severity, reasons, profile, motion, radar_tracks], properties: { camera_id: { type: string }, severity: { type: string, enum: [review, high] }, reasons: { type: array, items: { type: string } }, profile: { type: string, enum: [daylight, low-light] }, motion: { type: number }, radar_tracks: { type: integer } } }
-    PostVoiceCommandRequest: { type: object, required: [text], properties: { text: { type: string, maxLength: 200 }, language: { type: string, enum: [en, es, de, fr, it, ja, zh, pt] }, confirmation: { type: string } } }
+    PostVoiceCommandRequest: { type: object, required: [text], properties: { text: { type: string, maxLength: 200 }, language: { type: string, enum: [en, es, de, fr, it, ja, zh, pt] }, confirmation: { type: string }, silence_pin: { type: string, maxLength: 32, description: 'The PIN that silencing by voice asks for in the pin mode; it is not the PIN of the signed-in user' } } }
     PostStudioSessionTotpRequest: { type: object, required: [challenge, code], properties: { challenge: { type: string }, code: { type: string } } }
     PostStudioElevateRequest: { type: object, properties: { password: { type: string }, code: { type: string } } }
     DeleteStudioTotpRequest: { type: object, required: [password], properties: { password: { type: string } } }
