@@ -162,8 +162,9 @@ class VerdictTests(unittest.TestCase):
                              ("ELECTRO-HOBBY-3D-UPDATER", "EH3D"), ("other", "")):
             self.assertEqual(tool.family_of(Path(name)), family)
 
-    def test_the_ci_hook_only_warns_until_the_family_is_strict_and_never_crashes(self):
+    def test_the_ci_hook_fails_only_for_a_strict_family_and_never_crashes(self):
         saved = dict(tool.FAMILY_STRICT)
+        tool.FAMILY_STRICT["ARMOR"] = False
         try:
             with tempfile.TemporaryDirectory() as folder:
                 root = Path(folder) / "ARMOR-DEMO"
