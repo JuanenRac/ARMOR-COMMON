@@ -4,6 +4,9 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The contract has the route to set a node's sign-in limit and the option to set old readings aside:** `POST /api/v1/admin/nodes/settings`, `stale_channels` and `totals.stale_readings` in the electrical readings, and `electrical.set_aside_old_readings` in the security settings; the generated types follow.
+- **The tests of the field nodes play the node's MQTT client against a real Mosquitto:** the shared `tests/check_mosquitto.py` starts a broker with the account rules of a node, connects as the node does (retained last will, retained birth, QoS 1, its own order topic) and checks that what the node prints reaches the server on the right topic, that an order reaches the node, that the node cannot write on another node's topic and that the last will arrives when the connection dies; the shared workflow installs Mosquitto in the node repositories and makes its absence a failure. A stand-in broker tries the check in the tests of this repository.
+
 ## [0.7.8] - The contract of the sign-in country, the language of a phone and the alarm audio, and the shared tools of the pictures and the live panel
 
 - **The contract knows the country of a sign-in and the language of a phone:** the alert `login.remote` may carry `login_country` (two capital letters) and `login_country_new` (always true when present), only on a sign-in from outside and never the second without the first, with three new conformance vectors; the security option `login.country_alert` (on by default) is in the HTTP contract; `POST /api/v1/push/register` accepts `language`, one of the eight, so the notice of an alarm is told in the language of the phone.

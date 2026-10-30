@@ -854,11 +854,15 @@ export type ElectricalReadings = {
     reading: Contracts.Electrical;
     received_at: string;
     stale: boolean;
+    /** The channels whose own reading is older than a minute; only given while electrical.set_aside_old_readings is on */
+    stale_channels?: string[];
   }[];
   totals: {
     nodes: number;
     channels: number;
     stale: number;
+    /** Channels left out of the grid figure because their own reading is old */
+    stale_readings?: number;
     grid_w: number | null;
     grid_estimated: boolean;
     grid_kwh: number | null;
@@ -1490,6 +1494,13 @@ export type NodeProvisioned = {
   };
 };
 
+export type NodeSettings = {
+  ok: boolean;
+  written: boolean;
+  why: string;
+  login_limit_per_minute?: number;
+};
+
 export type NodeToken = {
   node_id: string;
   token: string;
@@ -1628,6 +1639,15 @@ export type PostAdminNodesProvisionRequest = {
   panel_password?: string;
   broker_host: string;
   broker_port?: number;
+};
+
+export type PostAdminNodesSettingsRequest = {
+  node_id: string;
+  address: string;
+  panel_user: string;
+  panel_password: string;
+  /** Wrong passwords per minute the node lets through before it locks sign-in (0 for no limit); left out, the node is only read */
+  login_limit_per_minute?: number;
 };
 
 export type PostAdminNotificationsTestRequest = {
@@ -2019,6 +2039,8 @@ export type SecuritySettings = {
   "media.rtsp_proxy"?: boolean;
   "network.login_secure_only"?: boolean;
   "login.country_alert"?: boolean;
+  /** A channel of an electrical node whose own reading is old is left out of the grid figure and the graphs and marked as having no data */
+  "electrical.set_aside_old_readings"?: boolean;
   "voice.multipart_turn"?: boolean;
   "panel.live_events"?: boolean;
   "client.device_lock"?: "user" | "sensitive" | "always";

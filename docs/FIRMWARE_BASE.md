@@ -34,6 +34,14 @@ certificate, the settings store, the network, the Bluetooth channel and its fram
 what a project says in its own words is not: its settings, its panel's routes and pages (`web_server.cpp`, `api_shared`), its pins and its build profile, and, in ARMOR-NODE-RADAR, the
 parts of the network and the broker link that only a radar node has (`mqtt_link` is shared by ARMOR-NODE-SOLAR and ARMOR-NODE-ELECTRICAL only).
 
+## The test against a real broker
+
+`tests/check_mosquitto.py` is shared with the five projects. It starts Mosquitto on a free port of the loopback address with the account rules of a node, plays the MQTT client of the node
+(esp-mqtt: client id, retained birth and last will, QoS 1, its own order topic) with a small codec, and checks that what the node's serialiser prints (`emit_samples`) reaches the server
+on the right topic, that an order reaches the node, that the node cannot write on another node's topics and that the retained last will arrives when the connection dies. Where Mosquitto is
+not installed it says so and passes; the shared workflow installs it in the node repositories and sets `ARMOR_REQUIRE_MOSQUITTO`, so there a missing broker is a failure. `tests/test_check_mosquitto.py`
+of this repository tries the script against a stand-in broker.
+
 ## Limits
 
 * The base is only as good as the projects' tests: a change to a shared file is tested by each project's host tests and built in each project's container, as any change.

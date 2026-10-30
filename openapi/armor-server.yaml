@@ -1259,6 +1259,14 @@ paths:
       responses:
         '200': { description: '{ ok, written, why, broker } - written is false when the panel could not be written to; broker then holds what to type by hand', content: { application/json: { schema: { $ref: '#/components/schemas/NodeProvisioned' } } } }
         '422': { description: Not a node id or a local address, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/admin/nodes/settings:
+    post:
+      summary: Read, and optionally change, a setting of a node that has a screen in Studio (system.login_limit_per_minute) through the node's own panel, with the login given, which is used once and never kept (an administrator)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostAdminNodesSettingsRequest' } } } }
+      responses:
+        '200': { description: '{ ok, written, why, login_limit_per_minute } - why says what failed (panel_login_refused, panel_not_reachable...); written is true when the value was changed', content: { application/json: { schema: { $ref: '#/components/schemas/NodeSettings' } } } }
+        '422': { description: 'Not a node id or a local address, no login, or a limit outside 0 to 120', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/admin/firmware/uploads:
     post:
       summary: Keep a firmware image (the .bin of a node project, as application/octet-stream, at most 4 MB) for a firmware job; kept for an hour (an administrator)
@@ -2548,6 +2556,7 @@ components:
         media.rtsp_proxy: { type: boolean, default: true }
         network.login_secure_only: { type: boolean, default: false }
         login.country_alert: { type: boolean, default: true }
+        electrical.set_aside_old_readings: { type: boolean, default: true, description: 'A channel of an electrical node whose own reading is old is left out of the grid figure and the graphs and marked as having no data' }
         voice.multipart_turn: { type: boolean, default: true }
         panel.live_events: { type: boolean, default: true }
         client.device_lock: { type: string, enum: [user, sensitive, always], default: user }
@@ -3035,7 +3044,8 @@ components:
               reading: { $ref: '../src/armor_common/schemas/electrical.schema.json' }
               received_at: { type: string, format: date-time }
               stale: { type: boolean }
-        totals: { type: object, required: [nodes, channels, stale, grid_w, grid_estimated, grid_kwh, alarms], properties: { nodes: { type: integer }, channels: { type: integer }, stale: { type: integer }, grid_w: { type: [number, 'null'] }, grid_estimated: { type: boolean }, grid_kwh: { type: [number, 'null'] }, alarms: { type: integer } } }
+              stale_channels: { type: array, items: { type: string }, description: 'The channels whose own reading is older than a minute; only given while electrical.set_aside_old_readings is on' }
+        totals: { type: object, required: [nodes, channels, stale, grid_w, grid_estimated, grid_kwh, alarms], properties: { nodes: { type: integer }, channels: { type: integer }, stale: { type: integer }, stale_readings: { type: integer, description: 'Channels left out of the grid figure because their own reading is old' }, grid_w: { type: [number, 'null'] }, grid_estimated: { type: boolean }, grid_kwh: { type: [number, 'null'] }, alarms: { type: integer } } }
     ElectricalEnergy:
       type: object
       required: [channels]
@@ -3963,6 +3973,14 @@ components:
         ok: { type: boolean }
         user: { type: string }
         password: { type: string, description: Shown once }
+    NodeSettings:
+      type: object
+      required: [ok, written, why]
+      properties:
+        ok: { type: boolean }
+        written: { type: boolean }
+        why: { type: string }
+        login_limit_per_minute: { type: integer, minimum: 0, maximum: 120 }
     NodeProvisioned:
       type: object
       required: [ok, written, why, broker]
@@ -4557,6 +4575,7 @@ components:
     PutAdminFilesIdRequest: { type: object, required: [content], properties: { content: { type: string }, restart: { type: boolean }, expect_mtime: { type: number } } }
     PostAdminMqttAccountsRequest: { type: object, required: [role, name], properties: { role: { type: string, enum: [node, solar-node, electrical-node, network-node, consumer, device, bridge] }, name: { type: string } } }
     PostAdminNodesProvisionRequest: { type: object, required: [node_id, address, broker_host], properties: { node_id: { type: string }, address: { type: string }, panel_user: { type: string }, panel_password: { type: string }, broker_host: { type: string }, broker_port: { type: integer } } }
+    PostAdminNodesSettingsRequest: { type: object, required: [node_id, address, panel_user, panel_password], properties: { node_id: { type: string }, address: { type: string }, panel_user: { type: string }, panel_password: { type: string }, login_limit_per_minute: { type: integer, minimum: 0, maximum: 120, description: 'Wrong passwords per minute the node lets through before it locks sign-in (0 for no limit); left out, the node is only read' } } }
     PostAdminInstallationRequest: { type: object, required: [bundle], properties: { bundle: { type: object }, parts: { type: array, items: { type: string, enum: [cameras, site, electrical, network, rules, automations, devices, solar_devices, energy_alarms, users] } } } }
     PostAdminFirmwareProbeRequest: { type: object, required: [addresses], properties: { addresses: { type: array, items: { type: string } } } }
     PostAdminFirmwareJobsRequest: { type: object, required: [kind, source, targets, panel_user, panel_password], properties: { kind: { type: string, enum: [radar, solar, electrical, alarm, hmi] }, source: { type: string, enum: [github, upload] }, upload_id: { type: string }, targets: { type: array, items: { type: object, required: [address], properties: { address: { type: string }, node_id: { type: string } } } }, panel_user: { type: string }, panel_password: { type: string } } }

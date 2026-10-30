@@ -622,6 +622,15 @@
         "ARMOR-NODE-ALARM": "tests/check_routes.py"
       }
     },
+    "tests/check_mosquitto.py": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "tests/check_mosquitto.py",
+        "ARMOR-NODE-ELECTRICAL": "tests/check_mosquitto.py",
+        "ARMOR-NODE-RADAR": "tests/check_mosquitto.py",
+        "ARMOR-NODE-HMI": "tests/check_mosquitto.py",
+        "ARMOR-NODE-ALARM": "tests/check_mosquitto.py"
+      }
+    },
     "tests/check_ble_session.py": {
       "targets": {
         "ARMOR-NODE-SOLAR": "tests/check_ble_session.py",
