@@ -13,6 +13,7 @@
   ],
   "deployment_target": "All A.R.M.O.R. services and tools",
   "maturity": "established",
+  "evidence": "bench",
   "family": "Platform Contracts",
   "parent": null,
   "native_version": "0.7.8",

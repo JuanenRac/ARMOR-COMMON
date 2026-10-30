@@ -22,14 +22,14 @@
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
   <img src="https://img.shields.io/badge/Vectors-1225-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Tests-214%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-235%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.7.8-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
 ---
 
-**正直さのチェック - 今日動いているもの:** スキーマ（テレメトリ、状態、コマンド、ノード情報、ソーラーのインバーターとバッテリー、電気、コマンドと結果を含む警報、ネットワーク）、Python の検証器、1225 個の適合ベクトル、生成された TypeScript と Kotlin の型、サーバーの OpenAPI ファイル（191 パス）、5 つのノードが共有するファームウェア基盤、共通のプロジェクトランチャーは実在し、テストされています（214 件）。Kotlin ファイルは生成されますが ARMOR-ANDROID-CONTROL では**まだ使われていません**（独自の解析を保持）。`set_thresholds` コマンドは `sensitivity` フィールド 1 つだけを持ちます。実際のレーダーパラメーターはファームウェアができるまで定義できないためです。
+**正直さのチェック - 今日動いているもの:** スキーマ（テレメトリ、状態、コマンド、ノード情報、ソーラーのインバーターとバッテリー、電気、コマンドと結果を含む警報、ネットワーク）、Python の検証器、1225 個の適合ベクトル、生成された TypeScript と Kotlin の型、サーバーの OpenAPI ファイル（191 パス）、5 つのノードが共有するファームウェア基盤、共通のプロジェクトランチャーは実在し、テストされています（235 件）。Kotlin ファイルは生成されますが ARMOR-ANDROID-CONTROL では**まだ使われていません**（独自の解析を保持）。`set_thresholds` コマンドは `sensitivity` フィールド 1 つだけを持ちます。実際のレーダーパラメーターはファームウェアができるまで定義できないためです。
 
 ---
 
@@ -41,7 +41,7 @@
 | 成熟度 | 確立 |
 | 役割 | ファミリー共通の契約、検証器、ファームウェア基盤 |
 | 技術 | Python 3.11+、JSON Schema、OpenAPI、C++ のファームウェア基盤（ESP-IDF） |
-| テスト | 214 件（`python -m unittest discover -s tests`）、適合ベクター 1225 件 |
+| テスト | 235 件（`python -m unittest discover -s tests`）、適合ベクター 1225 件 |
 | 契約 | JSON Schema 34 個、HTTP パス 191 本（247 操作） |
 | 動作環境 | 任意のコンピューター（ライブラリとツール）。ファームウェア基盤は 5 つのノード内で動作 |
 | 実機での確認 | 共通ファームウェアを実機で動かしたのはレーダーノードのみで、他の 4 つは未実施 |
@@ -58,7 +58,7 @@
 | 領域 | 状態 | ここでの意味 |
 |---|---|---|
 | ソフトウェア | 🟢 | スキーマ、Python の検証ツール、生成された TypeScript と Kotlin の型、サーバーの OpenAPI ファイル、5 つのノードが共有するファームウェアの基盤が揃っています。 |
-| テスト | 🟢 | 214 件のテストと 1225 件の適合ベクターが通ります。ファームウェアの JSON、Bluetooth、Improv のパーサーは libFuzzer でファジングも行っています。 |
+| テスト | 🟢 | 235 件のテストと 1225 件の適合ベクターが通ります。ファームウェアの JSON、Bluetooth、Improv のパーサーは libFuzzer でファジングも行っています。 |
 | プロトコルとデータ | 🟡 | 毎日、実機のボードとサーバーで使われているのはレーダーノードのメッセージだけです。他のノードのメッセージは模擬に対して検証しています。 |
 | 連携 | 🟡 | ファームウェアの基盤が全ノードで同一であることを確認しています。Kotlin の型は生成済みですが、Android アプリは独自の解析を使っていて、まだ使っていません。 |
 | ハードウェア | 🟠 | この共有ファームウェアをボード上で動かしたのはレーダーノードだけで、他の 4 つのノードはまだです。 |
@@ -206,7 +206,7 @@ flowchart LR
 
 ```powershell
 python -m pip install -e .                   # ライブラリをインストール
-python -m unittest discover -s tests         # 214 件のテスト、1225 ベクター
+python -m unittest discover -s tests         # 235 件のテスト、1225 ベクター
 python tools/generate_types.py --check       # 生成された型は最新
 python tools/generate_rest_types.py --check  # HTTP 契約の型は最新
 python tools/make_conformance.py             # ケース一覧の編集後にベクターを再生成（--check：最新か確認）
@@ -216,7 +216,7 @@ python tools/sync_firmware_base.py check     # 共有ファームウェアにず
 ## 🧪 テスト
 
 ```powershell
-python -m unittest discover -s tests  # 214 件
+python -m unittest discover -s tests  # 235 件
 python -I tools/armor_ci_validate.py
 ```
 
@@ -275,7 +275,7 @@ ARMOR-COMMON/
 ├── fuzz/                          libFuzzer ターゲット
 ├── scripts/                       armor-project 起動
 ├── tools/                         ジェネレーター、ファームウェアの同期とリリース、ランチャー、CI 検査
-├── tests/                         214 件のテスト
+├── tests/                         235 件のテスト
 ├── docs/                          契約・FW・ファジング
 ├── images/                        バナー、アイコン、README の画像
 ├── .github/                       CI ワークフロー、ダッシュボード通知、Issue と Pull Request のテンプレート

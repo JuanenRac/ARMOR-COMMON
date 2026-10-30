@@ -22,14 +22,14 @@
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
   <img src="https://img.shields.io/badge/Vectors-1225-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Tests-214%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-235%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.7.8-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
 ---
 
-**诚实性检查 - 今天真正能运行的部分：** 各模式（遥测、健康、命令、节点信息、太阳能逆变器和电池、电气、带命令和结果的报警、网络）、Python 验证器、1225 个一致性向量、生成的 TypeScript 和 Kotlin 类型、服务器的 OpenAPI 文件（191 个路径）、五个节点共用的固件基础以及共享的项目启动器都是真实的并经过测试（214 个测试）。Kotlin 文件已生成，但 ARMOR-ANDROID-CONTROL **尚未使用**（它保留自己的解析），`set_thresholds` 命令只带一个 `sensitivity` 字段，因为真实的雷达参数要等固件存在才能确定。
+**诚实性检查 - 今天真正能运行的部分：** 各模式（遥测、健康、命令、节点信息、太阳能逆变器和电池、电气、带命令和结果的报警、网络）、Python 验证器、1225 个一致性向量、生成的 TypeScript 和 Kotlin 类型、服务器的 OpenAPI 文件（191 个路径）、五个节点共用的固件基础以及共享的项目启动器都是真实的并经过测试（235 个测试）。Kotlin 文件已生成，但 ARMOR-ANDROID-CONTROL **尚未使用**（它保留自己的解析），`set_thresholds` 命令只带一个 `sensitivity` 字段，因为真实的雷达参数要等固件存在才能确定。
 
 ---
 
@@ -41,7 +41,7 @@
 | 成熟度 | 成熟 |
 | 角色 | 家族共用的契约、校验器和固件基础 |
 | 技术栈 | Python 3.11+、JSON Schema、OpenAPI；C++ 固件基础（ESP-IDF） |
-| 测试 | 214 项（`python -m unittest discover -s tests`），1225 个一致性向量 |
+| 测试 | 235 项（`python -m unittest discover -s tests`），1225 个一致性向量 |
 | 契约 | 34 个 JSON Schema，191 条 HTTP 路径（247 个操作） |
 | 运行位置 | 任意计算机（库和工具）；固件基础运行在五个节点内 |
 | 真实硬件 | 只有雷达节点在开发板上运行过共用固件；其他四个没有 |
@@ -58,7 +58,7 @@
 | 领域 | 状态 | 在这里的含义 |
 |---|---|---|
 | 软件 | 🟢 | 模式、Python 验证器、生成的 TypeScript 和 Kotlin 类型、服务器的 OpenAPI 文件以及五个节点共用的固件基础均已就绪。 |
-| 测试 | 🟢 | 214 项测试和 1225 个一致性向量通过；固件的 JSON、蓝牙和 Improv 解析器还用 libFuzzer 做了模糊测试。 |
+| 测试 | 🟢 | 235 项测试和 1225 个一致性向量通过；固件的 JSON、蓝牙和 Improv 解析器还用 libFuzzer 做了模糊测试。 |
 | 协议与数据 | 🟡 | 只有雷达节点的消息每天在真实板子和服务器上使用；其他节点的消息是对照模拟检查的。 |
 | 集成 | 🟡 | 会检查固件基础在每个节点中完全相同；Kotlin 类型已生成，但 Android 应用尚未使用，它仍保留自己的解析。 |
 | 硬件 | 🟠 | 只有雷达节点在板子上运行过这套共用固件；其他四个节点没有。 |
@@ -206,7 +206,7 @@ flowchart LR
 
 ```powershell
 python -m pip install -e .                   # 安装库
-python -m unittest discover -s tests         # 214 项测试、1225 个向量
+python -m unittest discover -s tests         # 235 项测试、1225 个向量
 python tools/generate_types.py --check       # 生成的类型是最新的
 python tools/generate_rest_types.py --check  # HTTP 契约的类型是最新的
 python tools/make_conformance.py             # 修改用例列表后重新生成向量（--check：检查是否最新）
@@ -216,7 +216,7 @@ python tools/sync_firmware_base.py check     # 共用固件没有偏离
 ## 🧪 测试
 
 ```powershell
-python -m unittest discover -s tests  # 214 项
+python -m unittest discover -s tests  # 235 项
 python -I tools/armor_ci_validate.py
 ```
 
@@ -275,7 +275,7 @@ ARMOR-COMMON/
 ├── fuzz/                          libFuzzer 目标
 ├── scripts/                       armor-project 启动器
 ├── tools/                         生成器、固件同步与发布、启动器、CI 检查
-├── tests/                         214 项测试
+├── tests/                         235 项测试
 ├── docs/                          契约、固件、模糊测试
 ├── images/                        横幅图、图标和 README 的图片
 ├── .github/                       CI 工作流、仪表板通知、议题和 pull request 模板
