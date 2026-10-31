@@ -73,13 +73,13 @@ def project_path(project: str, candidate: str) -> str:
 def to_base(text: str, project: str, short_name: bool = True) -> str:
     """A project's file with its name turned into placeholders (line endings as LF). `short_name` False leaves the plain word ("solar") as it is: only the three unambiguous forms."""
     text = text.replace("\r\n", "\n")
-    for form, placeholder in list(zip(PROJECTS[project], PLACEHOLDERS))[: 4 if short_name else 3]:
+    for form, placeholder in list(zip(PROJECTS[project], PLACEHOLDERS, strict=True))[: 4 if short_name else 3]:
         text = text.replace(form, placeholder)
     return text
 
 
 def from_base(text: str, project: str) -> str:
-    for form, placeholder in zip(PROJECTS[project], PLACEHOLDERS):
+    for form, placeholder in zip(PROJECTS[project], PLACEHOLDERS, strict=True):
         text = text.replace(placeholder, form)
     return text
 
