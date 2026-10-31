@@ -71,7 +71,7 @@
 <text x="1122" y="537" font-family="'Segoe UI','Noto Sans','Noto Sans CJK SC','Microsoft YaHei','Yu Gothic','Helvetica Neue',Helvetica,Arial,sans-serif" font-size="12" font-weight="400" fill="#7D8A99" text-anchor="end" letter-spacing="0.3">generated, checked, shared</text>
 <line x1="382" y1="551" x2="1122" y2="551" stroke="#3D9BFF" stroke-opacity="0.35" stroke-width="1"/>
 <text x="392" y="579" font-family="'JetBrains Mono','Cascadia Code','SFMono-Regular',Consolas,'Liberation Mono',monospace" font-size="13.5" font-weight="600" fill="#E6EDF3" text-anchor="start">conformance/</text>
-<text x="392" y="595" font-family="'Segoe UI','Noto Sans','Noto Sans CJK SC','Microsoft YaHei','Yu Gothic','Helvetica Neue',Helvetica,Arial,sans-serif" font-size="11.8" font-weight="400" fill="#7D8A99" text-anchor="start">1225 accepted and rejected payloads</text>
+<text x="392" y="595" font-family="'Segoe UI','Noto Sans','Noto Sans CJK SC','Microsoft YaHei','Yu Gothic','Helvetica Neue',Helvetica,Arial,sans-serif" font-size="11.8" font-weight="400" fill="#7D8A99" text-anchor="start">1228 accepted and rejected payloads</text>
 <text x="392" y="615" font-family="'JetBrains Mono','Cascadia Code','SFMono-Regular',Consolas,'Liberation Mono',monospace" font-size="13.5" font-weight="600" fill="#E6EDF3" text-anchor="start">generated/</text>
 <text x="392" y="631" font-family="'Segoe UI','Noto Sans','Noto Sans CJK SC','Microsoft YaHei','Yu Gothic','Helvetica Neue',Helvetica,Arial,sans-serif" font-size="11.8" font-weight="400" fill="#7D8A99" text-anchor="start">TypeScript and Kotlin types</text>
 <text x="392" y="651" font-family="'JetBrains Mono','Cascadia Code','SFMono-Regular',Consolas,'Liberation Mono',monospace" font-size="13.5" font-weight="600" fill="#E6EDF3" text-anchor="start">openapi/</text>
@@ -85,7 +85,7 @@
 <text x="755" y="615" font-family="'JetBrains Mono','Cascadia Code','SFMono-Regular',Consolas,'Liberation Mono',monospace" font-size="13.5" font-weight="600" fill="#E6EDF3" text-anchor="start">tools/</text>
 <text x="755" y="631" font-family="'Segoe UI','Noto Sans','Noto Sans CJK SC','Microsoft YaHei','Yu Gothic','Helvetica Neue',Helvetica,Arial,sans-serif" font-size="11.8" font-weight="400" fill="#7D8A99" text-anchor="start">generators, sync, release, CI</text>
 <text x="755" y="651" font-family="'JetBrains Mono','Cascadia Code','SFMono-Regular',Consolas,'Liberation Mono',monospace" font-size="13.5" font-weight="600" fill="#E6EDF3" text-anchor="start">tests/</text>
-<text x="755" y="667" font-family="'Segoe UI','Noto Sans','Noto Sans CJK SC','Microsoft YaHei','Yu Gothic','Helvetica Neue',Helvetica,Arial,sans-serif" font-size="11.8" font-weight="400" fill="#7D8A99" text-anchor="start">214 tests</text>
+<text x="755" y="667" font-family="'Segoe UI','Noto Sans','Noto Sans CJK SC','Microsoft YaHei','Yu Gothic','Helvetica Neue',Helvetica,Arial,sans-serif" font-size="11.8" font-weight="400" fill="#7D8A99" text-anchor="start">237 tests</text>
 <text x="755" y="687" font-family="'JetBrains Mono','Cascadia Code','SFMono-Regular',Consolas,'Liberation Mono',monospace" font-size="13.5" font-weight="600" fill="#E6EDF3" text-anchor="start">docs/</text>
 <text x="755" y="703" font-family="'Segoe UI','Noto Sans','Noto Sans CJK SC','Microsoft YaHei','Yu Gothic','Helvetica Neue',Helvetica,Arial,sans-serif" font-size="11.8" font-weight="400" fill="#7D8A99" text-anchor="start">contracts, firmware, fuzzing</text>
 <rect x="360" y="795" width="243.333" height="154" rx="10" fill="url(#card)" stroke="#1E2A36" stroke-width="1"/>

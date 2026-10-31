@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The documentation covers the manifest evidence, the shared panel page and the old readings:** the manifest guide describes `evidence` and `hardware_bound`, the firmware base guide the green frames of the Overview and the failed-login limit of every node, and the contracts guide how a channel with an old reading is set aside; the figures follow the contract (195 paths, 253 operations, 1228 conformance vectors, 237 tests).
+
 ## [0.7.9] - The sign-in limit of a node and the stale-readings option in the contract, the green frames of the Overview fit their text, status lights kept inside what the manifest allows and clean type check and lint
 
 - **The Ed25519 generator of the firmware base has no unused import:** `firmware_base/tools/gen_ed25519.py` no longer imports `isqrt`; what it writes is the same.

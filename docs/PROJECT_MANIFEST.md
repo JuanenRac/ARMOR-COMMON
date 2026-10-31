@@ -52,3 +52,11 @@ ends in `.service`). At least one of `port` or `systemd_unit` must be present.
 ### `deployment_target_note`
 
 A sentence that explains a `deployment_target` whose meaning is not clear from the words alone.
+
+### `evidence`
+
+How far the repository has been shown to work: `none`, `host-test` (tests on a computer only), `simulator` (run against a simulated or fake board or bus), `bench` (run on a real board on the bench) or `field` (used in the field). It is the ceiling of the lights of the Project status table together with `maturity`: the hardware and integration rows are orange at most for `none`, `host-test` and `simulator`, yellow at most for `bench` and green only for `field`. `tools/status_lights.py` (canonical here, copied to every repository by `sync_ci_tools.py`) fails the validator when a light is above its ceiling; `--suggest` lists what could be better and `--apply` lowers the lights in the eight READMEs and in the source of the generator, never a sentence.
+
+### `hardware_bound`
+
+`false` for a repository that has no hardware (a document, a service, a client): its hardware and integration rows are then not limited by `evidence`. Leave it out when the repository does run on hardware.

@@ -21,7 +21,7 @@
   <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-1225-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Vectors-1228-00E5FF.svg" alt="Vectors">
   <img src="https://img.shields.io/badge/Tests-237%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.7.9-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
@@ -29,7 +29,7 @@
 
 ---
 
-**正直さのチェック - 今日動いているもの:** スキーマ（テレメトリ、状態、コマンド、ノード情報、ソーラーのインバーターとバッテリー、電気、コマンドと結果を含む警報、ネットワーク）、Python の検証器、1225 個の適合ベクトル、生成された TypeScript と Kotlin の型、サーバーの OpenAPI ファイル（191 パス）、5 つのノードが共有するファームウェア基盤、共通のプロジェクトランチャーは実在し、テストされています（237 件）。Kotlin ファイルは生成されますが ARMOR-ANDROID-CONTROL では**まだ使われていません**（独自の解析を保持）。`set_thresholds` コマンドは `sensitivity` フィールド 1 つだけを持ちます。実際のレーダーパラメーターはファームウェアができるまで定義できないためです。
+**正直さのチェック - 今日動いているもの:** スキーマ（テレメトリ、状態、コマンド、ノード情報、ソーラーのインバーターとバッテリー、電気、コマンドと結果を含む警報、ネットワーク）、Python の検証器、1228 個の適合ベクトル、生成された TypeScript と Kotlin の型、サーバーの OpenAPI ファイル（195 パス）、5 つのノードが共有するファームウェア基盤、共通のプロジェクトランチャーは実在し、テストされています（237 件）。Kotlin ファイルは生成されますが ARMOR-ANDROID-CONTROL では**まだ使われていません**（独自の解析を保持）。`set_thresholds` コマンドは `sensitivity` フィールド 1 つだけを持ちます。実際のレーダーパラメーターはファームウェアができるまで定義できないためです。
 
 ---
 
@@ -41,8 +41,8 @@
 | 成熟度 | 確立 |
 | 役割 | ファミリー共通の契約、検証器、ファームウェア基盤 |
 | 技術 | Python 3.11+、JSON Schema、OpenAPI、C++ のファームウェア基盤（ESP-IDF） |
-| テスト | 237 件（`python -m unittest discover -s tests`）、適合ベクター 1225 件 |
-| 契約 | JSON Schema 34 個、HTTP パス 191 本（247 操作） |
+| テスト | 237 件（`python -m unittest discover -s tests`）、適合ベクター 1228 件 |
+| 契約 | JSON Schema 34 個、HTTP パス 195 本（253 操作） |
 | 動作環境 | 任意のコンピューター（ライブラリとツール）。ファームウェア基盤は 5 つのノード内で動作 |
 | 実機での確認 | 共通ファームウェアを実機で動かしたのはレーダーノードのみで、他の 4 つは未実施 |
 | ライセンス | GPL-3.0-or-later |
@@ -58,7 +58,7 @@
 | 領域 | 状態 | ここでの意味 |
 |---|---|---|
 | ソフトウェア | 🟢 | スキーマ、Python の検証ツール、生成された TypeScript と Kotlin の型、サーバーの OpenAPI ファイル、5 つのノードが共有するファームウェアの基盤が揃っています。 |
-| テスト | 🟢 | 237 件のテストと 1225 件の適合ベクターが通ります。ファームウェアの JSON、Bluetooth、Improv のパーサーは libFuzzer でファジングも行っています。 |
+| テスト | 🟢 | 237 件のテストと 1228 件の適合ベクターが通ります。ファームウェアの JSON、Bluetooth、Improv のパーサーは libFuzzer でファジングも行っています。 |
 | プロトコルとデータ | 🟡 | 毎日、実機のボードとサーバーで使われているのはレーダーノードのメッセージだけです。他のノードのメッセージは模擬に対して検証しています。 |
 | 連携 | 🟡 | ファームウェアの基盤が全ノードで同一であることを確認しています。Kotlin の型は生成済みですが、Android アプリは独自の解析を使っていて、まだ使っていません。 |
 | ハードウェア | 🟠 | この共有ファームウェアをボード上で動かしたのはレーダーノードだけで、他の 4 つのノードはまだです。 |
@@ -71,9 +71,9 @@
 
 * **唯一の信頼できる情報源：**`src/armor_common/schemas/` の JSON Schema。テレメトリ、状態、コマンド、ノード情報、2 つのソーラーメッセージ（インバーター、セルと容量を含むバッテリー）、電気メッセージ（測定値、コマンド、結果）、警報メッセージ（状態、コマンド、結果）、ネットワークメッセージ。未知のフィールドや不可能な組み合わせは拒否されます。
 * **ルールを飛ばせない検証器：**スキーマを直接解釈し、実装していないキーワードを使うスキーマを拒否します。
-* **適合ベクトル：**受理と拒否の 1225 個のペイロードをすべての実装（ここでは Python、ARMOR-SERVER では TypeScript、ファームウェアリポジトリの検査）が実行するため、ずれがあればビルドが失敗します。
+* **適合ベクトル：**受理と拒否の 1228 個のペイロードをすべての実装（ここでは Python、ARMOR-SERVER では TypeScript、ファームウェアリポジトリの検査）が実行するため、ずれがあればビルドが失敗します。
 * **生成されるクライアント：**TypeScript と Kotlin の型はスキーマから作られます（`tools/generate_types.py --check` で最新に保ちます）。
-* **HTTP コントラクト：**`openapi/armor-server.yaml` はサーバーのすべてのルート（191 パス、247 操作）、そのアクセスルール、そして各リクエスト本文・応答・エラーの名前付きスキーマを記述し、サーバーが登録するルートが記述と完全に一致すること（メソッドとパス）をテストが確認します。
+* **HTTP コントラクト：**`openapi/armor-server.yaml` はサーバーのすべてのルート（195 パス、253 操作）、そのアクセスルール、そして各リクエスト本文・応答・エラーの名前付きスキーマを記述し、サーバーが登録するルートが記述と完全に一致すること（メソッドとパス）をテストが確認します。
 * **ファームウェア基盤：**`firmware_base/` は 5 つのノードが共有する各ファイル（ネットワーク、設定とユーザー、Web パネルのサーバーとログイン、HTTPS 証明書、ログ、PIN ペアリング付き Bluetooth、署名付きアップデートの検査、リレーと Zigbee は備えるノードのみ）を 1 か所に保持し、`tools/sync_firmware_base.py` が各ノードに書き込んでコピーのずれがないか検査します（[ガイド](docs/FIRMWARE_BASE.md)、[署名付きファームウェア](docs/SIGNED_FIRMWARE.md)）。
 * **共通ランチャー：**`tools/armor_project_tool.py` はファミリーの全リポジトリに同じ `build`、`build-test`、`run` の流れを、`tools/armor_ci_validate.py` に同じ CI 検査を提供します。
 * **共有ノードベースの任意の TLS ブローカー接続:** `firmware_base` は `mqtt.tls` スイッチと `mqtt.ca_pem` テキスト(PEM 証明書 1 つ、最大 2 KB、検証済み)、その認証局だけを信頼してブローカーの名前を確認する接続、5 つのノードで共有するホストテストを含みます。初期状態ではオフです。
@@ -164,8 +164,8 @@ flowchart LR
 ### スキーマ、ベクター、OpenAPI
 
 * **JSON Schema 34 個**（`src/armor_common/schemas/`）：テレメトリ、健康状態、コマンド、ノード情報、ノード健康、ノード制御（コマンドと結果）、ノードメンテナンス、ソーラーのインバーターとバッテリー（コマンドと結果を含む）、電気（コマンドと結果）、アラーム（状態、コマンド、結果、ポリシー、ゾーンフィード）、ネットワーク（オーダー）、接続・システムイベント、レーダーイベント、サーバー警報、警戒プロファイル、デバイス状態、診断トークン、音声ターン。
-* **適合ベクター 1225 件**（`conformance/`、メッセージごとに 1 ファイル、計 34 ファイル）。このリポジトリ、ARMOR-SERVER、ファームウェアリポジトリの検査が実行します。
-* **OpenAPI** `openapi/armor-server.yaml`：191 パス、247 操作。各操作にアクセス規則と、本文・応答・エラーごとの名前付きスキーマがあります。サーバーが登録するルートが記述と完全に一致することをテストが確認します。音声ターンはバイト列で送られます（[docs/CONTRACTS.md](docs/CONTRACTS.md) を参照）。
+* **適合ベクター 1228 件**（`conformance/`、メッセージごとに 1 ファイル、計 34 ファイル）。このリポジトリ、ARMOR-SERVER、ファームウェアリポジトリの検査が実行します。
+* **OpenAPI** `openapi/armor-server.yaml`：195 パス、253 操作。各操作にアクセス規則と、本文・応答・エラーごとの名前付きスキーマがあります。サーバーが登録するルートが記述と完全に一致することをテストが確認します。音声ターンはバイト列で送られます（[docs/CONTRACTS.md](docs/CONTRACTS.md) を参照）。
 
 ### コマンドラインツール
 
@@ -206,7 +206,7 @@ flowchart LR
 
 ```powershell
 python -m pip install -e .                   # ライブラリをインストール
-python -m unittest discover -s tests         # 237 件のテスト、1225 ベクター
+python -m unittest discover -s tests         # 237 件のテスト、1228 ベクター
 python tools/generate_types.py --check       # 生成された型は最新
 python tools/generate_rest_types.py --check  # HTTP 契約の型は最新
 python tools/make_conformance.py             # ケース一覧の編集後にベクターを再生成（--check：最新か確認）
@@ -268,7 +268,7 @@ ARMOR-COMMON/
 │   ├── alarm_codes.json           アラームコードの文言
 │   └── battery_ops.json           バッテリー操作
 ├── firmware_base/                 5 つのノードが共有するファームウェア（1 か所）
-├── conformance/                   受理・拒否 1225 件
+├── conformance/                   受理・拒否 1228 件
 ├── generated/                     TypeScript と Kotlin の型（生成物、編集不可）
 ├── openapi/                       armor-server.yaml（HTTP 契約）
 ├── registry/                      repositories.json（一覧）

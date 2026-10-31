@@ -185,14 +185,14 @@
     {
      "name": "conformance/",
      "desc": {
-      "en": "1225 accepted and rejected payloads",
-      "es": "1225 mensajes válidos e inválidos",
-      "de": "1225 gültige und ungültige Nachrichten",
-      "fr": "1225 messages valides et refusés",
-      "it": "1225 messaggi validi e rifiutati",
-      "ja": "受理・拒否 1225 件",
-      "zh": "1225 条有效与无效消息",
-      "pt": "1225 mensagens válidas e recusadas"
+      "en": "1228 accepted and rejected payloads",
+      "es": "1228 mensajes válidos e inválidos",
+      "de": "1228 gültige und ungültige Nachrichten",
+      "fr": "1228 messages valides et refusés",
+      "it": "1228 messaggi validi e rifiutati",
+      "ja": "受理・拒否 1228 件",
+      "zh": "1228 条有效与无效消息",
+      "pt": "1228 mensagens válidas e recusadas"
      }
     },
     {
@@ -296,14 +296,14 @@
     {
      "name": "tests/",
      "desc": {
-      "en": "214 tests",
-      "es": "214 pruebas",
-      "de": "214 Tests",
-      "fr": "214 tests",
-      "it": "214 test",
-      "ja": "214 件のテスト",
-      "zh": "214 项测试",
-      "pt": "214 testes"
+      "en": "237 tests",
+      "es": "237 pruebas",
+      "de": "237 Tests",
+      "fr": "237 tests",
+      "it": "237 test",
+      "ja": "237 件のテスト",
+      "zh": "237 项测试",
+      "pt": "237 testes"
      }
     },
     {

@@ -107,7 +107,7 @@
       "level": "tested",
       "title": "openapi/",
       "lines": [
-        "armor-server.yaml: 191 paths,",
+        "armor-server.yaml: 195 paths,",
         "each with its access rule and",
         "a named schema per body"
       ],
