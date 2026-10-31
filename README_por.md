@@ -22,14 +22,14 @@
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
   <img src="https://img.shields.io/badge/Vectors-1270-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Tests-238%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-242%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.8.0.1-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
 ---
 
-**Verificação de honestidade - o que funciona hoje:** Os esquemas (telemetria, saúde, comando, informação do nó, inversor e bateria solares, elétrico, alarme com o seu comando e resultado, e rede), o validador Python, os 1270 vetores de conformidade, os tipos TypeScript e Kotlin gerados, o ficheiro OpenAPI do servidor (195 caminhos), a base de firmware partilhada pelos cinco nós e o lançador de projetos partilhado são reais e testados (238 testes). O ficheiro Kotlin é gerado mas **ainda não é consumido** pelo ARMOR-ANDROID-CONTROL (que mantém a sua própria leitura), e o comando `set_thresholds` leva um único campo `sensitivity` porque os parâmetros reais do radar só ficam definidos quando existir firmware.
+**Verificação de honestidade - o que funciona hoje:** Os esquemas (telemetria, saúde, comando, informação do nó, inversor e bateria solares, elétrico, alarme com o seu comando e resultado, e rede), o validador Python, os 1270 vetores de conformidade, os tipos TypeScript e Kotlin gerados, o ficheiro OpenAPI do servidor (195 caminhos), a base de firmware partilhada pelos cinco nós e o lançador de projetos partilhado são reais e testados (242 testes). O ficheiro Kotlin é gerado mas **ainda não é consumido** pelo ARMOR-ANDROID-CONTROL (que mantém a sua própria leitura), e o comando `set_thresholds` leva um único campo `sensitivity` porque os parâmetros reais do radar só ficam definidos quando existir firmware.
 
 ---
 
@@ -41,7 +41,7 @@
 | Maturidade | Estabelecido |
 | Função | Contratos partilhados, validador e base de firmware da família |
 | Tecnologia | Python 3.11+, JSON Schema, OpenAPI; base de firmware em C++ (ESP-IDF) |
-| Testes | 238 (`python -m unittest discover -s tests`), 1270 vetores de conformidade |
+| Testes | 242 (`python -m unittest discover -s tests`), 1270 vetores de conformidade |
 | Contrato | 35 JSON Schema, 196 caminhos HTTP (255 operações) |
 | Funciona em | Qualquer computador (biblioteca e ferramentas); a base de firmware corre dentro dos cinco nós |
 | Em hardware real | Só o nó de radar executou o firmware partilhado numa placa; os outros quatro não |
@@ -58,7 +58,7 @@ Cada linha é uma parte deste repositório e a luz diz até onde chega hoje. É 
 | Área | Estado | O que significa aqui |
 |---|---|---|
 | Software | 🟢 | Os esquemas, o validador de Python, os tipos gerados de TypeScript e Kotlin, o ficheiro OpenAPI do servidor e a base de firmware partilhada pelos cinco nós estão feitos. |
-| Testes | 🟢 | Passam 238 testes e 1270 vetores de conformidade; os analisadores de JSON, Bluetooth e Improv do firmware são também testados com libFuzzer. |
+| Testes | 🟢 | Passam 242 testes e 1270 vetores de conformidade; os analisadores de JSON, Bluetooth e Improv do firmware são também testados com libFuzzer. |
 | Protocolos e dados | 🟡 | Só as mensagens do nó radar são usadas todos os dias com uma placa real e o servidor; as dos outros nós são verificadas contra simulações. |
 | Integração | 🟡 | Verifica-se que a base de firmware é idêntica em cada nó; os tipos de Kotlin estão gerados, mas a app Android ainda não os usa, porque mantém a sua própria análise. |
 | Hardware | 🟠 | Só o nó radar executou este firmware partilhado numa placa; os outros quatro nós não. |
@@ -207,7 +207,7 @@ A ligação TLS do nó ao broker é uma definição do nó (não da compilação
 
 ```powershell
 python -m pip install -e .                   # instala a biblioteca
-python -m unittest discover -s tests         # 238 testes, 1270 vetores
+python -m unittest discover -s tests         # 242 testes, 1270 vetores
 python tools/generate_types.py --check       # os tipos gerados estão atualizados
 python tools/generate_rest_types.py --check  # os tipos do contrato HTTP estão atualizados
 python tools/make_conformance.py             # regenera os vetores depois de editar a lista de casos (--check: estão atualizados)
@@ -217,7 +217,7 @@ python tools/sync_firmware_base.py check     # o firmware partilhado não diverg
 ## 🧪 Testes
 
 ```powershell
-python -m unittest discover -s tests  # 238 testes
+python -m unittest discover -s tests  # 242 testes
 python -I tools/armor_ci_validate.py
 ```
 
@@ -231,7 +231,7 @@ python -I tools/armor_ci_validate.py
 | `test_release_firmware.py` | 12 | a assinatura e publicação do firmware |
 | `test_pretty_run.py`, `test_build_scripts.py` | 11 | o painel em direto dos scripts |
 | `test_generated_types.py`, `test_repository_registry.py`, `test_voice_turn.py` | 21 | os tipos gerados, a lista de repositórios e o turno de voz |
-| `test_alarm_codes.py`, `test_collect_errors.py`, `test_project_manifest_doc.py`, `test_firmware_fuzz.py`, `test_fuzz_validator.py` | 17 | palavras dos códigos de alarme, recolha de erros, guia do manifesto e banco de fuzzing |
+| `test_alarm_codes.py`, `test_alarm_facts.py`, `test_collect_errors.py`, `test_project_manifest_doc.py`, `test_firmware_fuzz.py`, `test_fuzz_validator.py` | 21 | palavras dos códigos de alarme, recolha de erros, guia do manifesto e banco de fuzzing |
 
 Os testes de anfitrião do firmware partilhado estão em `firmware_base/tests/` (C++, sem ESP-IDF) e correm nas verificações dos próprios repositórios dos nós. `python tools/sync_firmware_base.py check` precisa dos repositórios dos cinco nós ao lado deste. O GitHub Actions executa a base do A.R.M.O.R. em cada push e pull request: a validação do manifesto, da versão, do registo de alterações e da paridade dos README, e depois a compilação e os testes do próprio projeto.
 
@@ -267,6 +267,7 @@ ARMOR-COMMON/
 │   ├── voice.py                   o contrato de voz
 │   ├── schemas/                   35 JSON Schema
 │   ├── alarm_codes.json           palavras de cada alarme
+│   ├── alarm_facts.json           etiquetas dos factos de um alarme
 │   └── battery_ops.json           operações de bateria
 ├── firmware_base/                 o firmware que os cinco nós partilham, uma só vez
 ├── conformance/                   1270 mensagens válidas e recusadas
@@ -276,7 +277,7 @@ ARMOR-COMMON/
 ├── fuzz/                          alvos libFuzzer
 ├── scripts/                       lançador armor-project
 ├── tools/                         geradores, sincronia e publicação do firmware, lançador, verificações de CI
-├── tests/                         238 testes
+├── tests/                         242 testes
 ├── docs/                          contratos, firmware, fuzzing
 ├── images/                        faixa, ícone e as imagens do README
 ├── .github/                       fluxo de CI, aviso ao painel, modelos de issues e pull requests

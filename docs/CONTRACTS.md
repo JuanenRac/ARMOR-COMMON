@@ -191,6 +191,10 @@ Two reads that the wall panel makes when an alarm arrives, and the routes an adm
 
 An alarm (`alarm.raised`, `alarm.escalated`) carries a stable `code`; what a person reads for it is one table, `src/armor_common/alarm_codes.json`, with the sentence of every code in the eight languages (`en`, `es`, `de`, `fr`, `it`, `ja`, `zh`, `pt`). The server uses it for the messages it sends out (chat, push, Home Assistant) and a test compares its copy with this file; a console may keep its own text, but a code that is not in the table is a code nobody has described, and `tests/test_alarm_codes.py` keeps the table whole (every language, no empty sentence). A new code is added here first.
 
+### The labels of the facts of an alarm
+
+An alarm carries `detail`, a flat object of plain facts (`device`, `ip`, `port`, `arming_mode`, `panel_answers`...). The label of every fact a person reads is one table, `src/armor_common/alarm_facts.json`, in the eight languages, keyed by the fact without a prefix. A console shows the label in the language of the person; a fact that is not in the table is shown with its key and its value as they come, and an alarm is never hidden because a fact is unknown. `tests/test_alarm_facts.py` keeps the table whole. A new fact is added here first.
+
 ## Keeping every implementation in step
 
 1. **Python** (`armor_common`) interprets the schema files directly with a small

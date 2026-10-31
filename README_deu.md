@@ -22,14 +22,14 @@
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Sprache">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
   <img src="https://img.shields.io/badge/Vectors-1270-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Tests-238%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-242%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.8.0.1-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Reifegrad">
 </p>
 
 ---
 
-**Ehrlichkeitsprüfung - was heute läuft:** Die Schemas (Telemetrie, Zustand, Befehl, Knoteninformation, Solar-Wechselrichter und -Batterie, Elektro, Alarm mit Befehl und Ergebnis sowie Netzwerk), der Python-Validator, die 1270 Konformitätsvektoren, die erzeugten TypeScript- und Kotlin-Typen, die OpenAPI-Datei des Servers (195 Pfade), die von den fünf Knoten geteilte Firmware-Basis und der gemeinsame Projektstarter sind real und getestet (238 Tests). Die Kotlin-Datei wird erzeugt, aber **noch nicht verwendet** von ARMOR-ANDROID-CONTROL (das sein eigenes Parsen behält), und der Befehl `set_thresholds` trägt nur ein Feld `sensitivity`, weil die echten Radarparameter erst definiert sind, wenn Firmware existiert.
+**Ehrlichkeitsprüfung - was heute läuft:** Die Schemas (Telemetrie, Zustand, Befehl, Knoteninformation, Solar-Wechselrichter und -Batterie, Elektro, Alarm mit Befehl und Ergebnis sowie Netzwerk), der Python-Validator, die 1270 Konformitätsvektoren, die erzeugten TypeScript- und Kotlin-Typen, die OpenAPI-Datei des Servers (195 Pfade), die von den fünf Knoten geteilte Firmware-Basis und der gemeinsame Projektstarter sind real und getestet (242 Tests). Die Kotlin-Datei wird erzeugt, aber **noch nicht verwendet** von ARMOR-ANDROID-CONTROL (das sein eigenes Parsen behält), und der Befehl `set_thresholds` trägt nur ein Feld `sensitivity`, weil die echten Radarparameter erst definiert sind, wenn Firmware existiert.
 
 ---
 
@@ -41,7 +41,7 @@
 | Reifegrad | Etabliert |
 | Rolle | Gemeinsame Verträge, Validator und Firmware-Basis der Familie |
 | Technik | Python 3.11+, JSON Schema, OpenAPI; Firmware-Basis in C++ (ESP-IDF) |
-| Tests | 238 (`python -m unittest discover -s tests`), 1270 Konformitätsvektoren |
+| Tests | 242 (`python -m unittest discover -s tests`), 1270 Konformitätsvektoren |
 | Vertrag | 35 JSON-Schemas, 196 HTTP-Pfade (255 Operationen) |
 | Läuft auf | Jeder Computer (Bibliothek und Werkzeuge); die Firmware-Basis läuft in den fünf Knoten |
 | Auf echter Hardware | Nur der Radar-Knoten hat die gemeinsame Firmware auf einer Platine ausgeführt; die anderen vier nicht |
@@ -58,7 +58,7 @@ Jede Zeile ist ein Teil dieses Repositorys, und die Ampel sagt, wie weit er heut
 | Bereich | Stand | Was das hier bedeutet |
 |---|---|---|
 | Software | 🟢 | Die Schemas, der Python-Validator, die erzeugten TypeScript- und Kotlin-Typen, die OpenAPI-Datei des Servers und die von den fünf Knoten gemeinsam genutzte Firmware-Basis sind vorhanden. |
-| Tests | 🟢 | 238 Tests und 1270 Konformitätsvektoren bestehen; die JSON-, Bluetooth- und Improv-Parser der Firmware werden außerdem mit libFuzzer gefuzzt. |
+| Tests | 🟢 | 242 Tests und 1270 Konformitätsvektoren bestehen; die JSON-, Bluetooth- und Improv-Parser der Firmware werden außerdem mit libFuzzer gefuzzt. |
 | Protokolle und Daten | 🟡 | Nur die Nachrichten des Radar-Knotens werden täglich mit einer echten Platine und dem Server genutzt; die der anderen Knoten werden gegen Nachbildungen geprüft. |
 | Integration | 🟡 | Es wird geprüft, dass die Firmware-Basis in jedem Knoten identisch ist; die Kotlin-Typen sind erzeugt, werden von der Android-App aber noch nicht genutzt, sie behält ihr eigenes Parsing. |
 | Hardware | 🟠 | Nur der Radar-Knoten hat diese gemeinsame Firmware auf einer Platine ausgeführt; die anderen vier Knoten nicht. |
@@ -207,7 +207,7 @@ Die TLS-Verbindung des Knotens zum Broker ist eine Einstellung des Knotens (nich
 
 ```powershell
 python -m pip install -e .                   # die Bibliothek installieren
-python -m unittest discover -s tests         # 238 Tests, 1270 Vektoren
+python -m unittest discover -s tests         # 242 Tests, 1270 Vektoren
 python tools/generate_types.py --check       # die erzeugten Typen sind aktuell
 python tools/generate_rest_types.py --check  # die Typen des HTTP-Vertrags sind aktuell
 python tools/make_conformance.py             # Vektoren nach Änderung der Fallliste neu erzeugen (--check: aktuell)
@@ -217,7 +217,7 @@ python tools/sync_firmware_base.py check     # die geteilte Firmware ist nicht a
 ## 🧪 Tests
 
 ```powershell
-python -m unittest discover -s tests  # 238 Tests
+python -m unittest discover -s tests  # 242 Tests
 python -I tools/armor_ci_validate.py
 ```
 
@@ -231,7 +231,7 @@ python -I tools/armor_ci_validate.py
 | `test_release_firmware.py` | 12 | Signatur und Veröffentlichung der Firmware |
 | `test_pretty_run.py`, `test_build_scripts.py` | 11 | das Live-Panel der Skripte |
 | `test_generated_types.py`, `test_repository_registry.py`, `test_voice_turn.py` | 21 | die erzeugten Typen, die Repository-Liste und der Sprachturn |
-| `test_alarm_codes.py`, `test_collect_errors.py`, `test_project_manifest_doc.py`, `test_firmware_fuzz.py`, `test_fuzz_validator.py` | 17 | Alarmcode-Wörter, Fehlersammlung, Manifest-Leitfaden und Fuzz-Gerüst |
+| `test_alarm_codes.py`, `test_alarm_facts.py`, `test_collect_errors.py`, `test_project_manifest_doc.py`, `test_firmware_fuzz.py`, `test_fuzz_validator.py` | 21 | Alarmcode-Wörter, Fehlersammlung, Manifest-Leitfaden und Fuzz-Gerüst |
 
 Die Host-Tests der gemeinsamen Firmware liegen in `firmware_base/tests/` (C++, ohne ESP-IDF) und laufen in den Prüfungen der Knoten-Repositorys. `python tools/sync_firmware_base.py check` braucht die fünf Knoten-Repositorys neben diesem. GitHub Actions führt bei jedem Push und Pull Request die A.R.M.O.R.-Basis aus: die Prüfung von Manifest, Version, Änderungsprotokoll und README-Parität, dann den eigenen Build und die eigenen Tests des Projekts.
 
@@ -267,6 +267,7 @@ ARMOR-COMMON/
 │   ├── voice.py                   der Sprachvertrag
 │   ├── schemas/                   35 JSON-Schemas
 │   ├── alarm_codes.json           Wörter je Alarmcode
+│   ├── alarm_facts.json           Bezeichnungen der Fakten eines Alarms
 │   └── battery_ops.json           Batterieoperationen
 ├── firmware_base/                 die Firmware, die die fünf Knoten teilen, nur einmal
 ├── conformance/                   1270 gültige und ungültige Nachrichten
@@ -276,7 +277,7 @@ ARMOR-COMMON/
 ├── fuzz/                          libFuzzer-Ziele
 ├── scripts/                       armor-project-Starter
 ├── tools/                         Generatoren, Firmware-Abgleich und -Release, Starter, CI-Prüfungen
-├── tests/                         238 Tests
+├── tests/                         242 Tests
 ├── docs/                          Verträge, Firmware, Fuzzing
 ├── images/                        Banner, Symbol und die Bilder des READMEs
 ├── .github/                       CI-Workflow, Dashboard-Hinweis, Vorlagen für Issues und Pull Requests

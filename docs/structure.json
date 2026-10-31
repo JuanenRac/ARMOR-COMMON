@@ -97,6 +97,19 @@
      }
     },
     {
+     "name": "alarm_facts.json",
+     "desc": {
+      "en": "labels of the facts of an alarm",
+      "es": "etiquetas de los hechos de una alarma",
+      "de": "Bezeichnungen der Fakten eines Alarms",
+      "fr": "libellés des faits d'une alarme",
+      "it": "etichette dei fatti di un allarme",
+      "ja": "アラームの事実の表示名",
+      "zh": "报警事实的标签",
+      "pt": "etiquetas dos factos de um alarme"
+     }
+    },
+    {
      "name": "battery_ops.json",
      "desc": {
       "en": "battery operations",
