@@ -34,7 +34,7 @@ class AlarmCodes(unittest.TestCase):
     def test_the_codes_the_alarm_centre_raises_are_in_the_table(self):
         # the ones a person is told about: the device kinds, the nodes, the network, the solar gateways and the electrical nodes
         for code in ("intrusion", "node_down", "camera_down", "tamper", "low_battery", "device_offline", "duress_disarm", "solar_fault", "electrical_grid_lost",
-                     "network_new_device", "alarm_sounding", "node_wifi_jam"):
+                     "network_new_device", "alarm_sounding", "node_wifi_jam", "mode_panel_sync_failed"):
             self.assertIn(code, self.table["codes"])
 
 

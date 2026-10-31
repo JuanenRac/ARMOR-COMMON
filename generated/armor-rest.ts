@@ -108,7 +108,7 @@ export type Alarm = {
   key: string;
   source: AlarmSource;
   severity: "critical" | "high" | "warning";
-  /** A stable code the client translates (intrusion, node_down, camera_down, smoke, water_leak, door_open, tamper, low_battery, device_offline ...) */
+  /** A stable code the client translates (intrusion, node_down, camera_down, smoke, water_leak, door_open, tamper, low_battery, device_offline, mode_panel_sync_failed ...) */
   code: string;
   raised_at: string;
   acknowledged_at?: string;
@@ -1611,7 +1611,7 @@ export type PanelSummary = {
   };
 };
 
-/** What the alarm panels did about the arming mode in force, while alarm.mode_panel_sync is on. The mode of the server applies at once whatever the panels do; only an answer of a node that says accepted is a confirmation. Left out while the setting is off and after a disarm (a panel is not disarmed from the server). */
+/** What the alarm panels did about the arming mode in force, while alarm.mode_panel_sync is on. The mode of the server applies at once whatever the panels do; only an answer of a node that says accepted is a confirmation. Left out while the setting is off and after a disarm (a panel is not disarmed from the server). A status failed also raises one alarm in the alarm centre, code mode_panel_sync_failed (source type alarm, id mode_panel, severity high), which ends when a try is confirmed, a new try starts, the system is disarmed or the setting is turned off. */
 export type PanelSync = {
   mode: "away" | "home" | "night";
   /** The arming profile the mode asks the panels for: away -> away, home -> stay, night -> night */

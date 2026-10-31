@@ -64,6 +64,20 @@
    }
   },
   {
+   "name": "a panel that did not confirm the arming mode",
+   "valid": true,
+   "payload": {
+    "service": "armor-server",
+    "event": "alarm.raised",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "alarm_id": "a3",
+    "severity": "high",
+    "code": "mode_panel_sync_failed",
+    "alarm_node_id": "mode_panel"
+   }
+  },
+  {
    "name": "a sign-in from outside the house",
    "valid": true,
    "payload": {

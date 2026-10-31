@@ -334,7 +334,7 @@ paths:
         '503': { description: 'mqtt_unavailable: the broker is not connected', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/control/{mode}:
     post:
-      summary: Arm or disarm
+      summary: Arm or disarm (with the arming modes on, arm is arming the mode away, so with alarm.mode_panel_sync on it also asks the alarm panels to arm with the profile away and answers panel_sync; disarm is never sent to a panel)
       security: [{ controlBearer: [] }]
       parameters: [{ name: mode, in: path, required: true, schema: { type: string, enum: [arm, disarm] } }]
       responses:
@@ -1578,7 +1578,7 @@ paths:
         '404': { description: 'There was no sound for that origin', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/voice/command:
     post:
-      summary: A written or spoken command (as text) - the voice gateway says which of its closed commands it is (arm, disarm, status, silence, alarms, nodes, cameras, radar, solar, electrical, network, time, help, lights on, lights off) and this server carries out what was accepted, with the session of the person; arm and disarm need a second turn with the confirmation token
+      summary: A written or spoken command (as text) - the voice gateway says which of its closed commands it is (arm, disarm, status, silence, alarms, nodes, cameras, radar, solar, electrical, network, time, help, lights on, lights off) and this server carries out what was accepted, with the session of the person; arm and disarm need a second turn with the confirmation token; with the arming modes on, a voice arm is arming the mode away (the same panel sync, the same access control), and a voice disarm clears the panel report without disarming a panel
       security: [{ operator: [] }]
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostVoiceCommandRequest' } } } }
       responses:
@@ -2365,7 +2365,7 @@ components:
         key: { type: string }
         source: { $ref: '#/components/schemas/AlarmSource' }
         severity: { type: string, enum: [critical, high, warning] }
-        code: { type: string, description: 'A stable code the client translates (intrusion, node_down, camera_down, smoke, water_leak, door_open, tamper, low_battery, device_offline ...)' }
+        code: { type: string, description: 'A stable code the client translates (intrusion, node_down, camera_down, smoke, water_leak, door_open, tamper, low_battery, device_offline, mode_panel_sync_failed ...)' }
         raised_at: { type: string, format: date-time }
         acknowledged_at: { type: string, format: date-time }
         acknowledged_by: { type: string }
@@ -3538,7 +3538,7 @@ components:
     PanelSync:
       type: object
       required: [mode, profile, status, by, started_at, nodes]
-      description: 'What the alarm panels did about the arming mode in force, while alarm.mode_panel_sync is on. The mode of the server applies at once whatever the panels do; only an answer of a node that says accepted is a confirmation. Left out while the setting is off and after a disarm (a panel is not disarmed from the server).'
+      description: 'What the alarm panels did about the arming mode in force, while alarm.mode_panel_sync is on. The mode of the server applies at once whatever the panels do; only an answer of a node that says accepted is a confirmation. Left out while the setting is off and after a disarm (a panel is not disarmed from the server). A status failed also raises one alarm in the alarm centre, code mode_panel_sync_failed (source type alarm, id mode_panel, severity high), which ends when a try is confirmed, a new try starts, the system is disarmed or the setting is turned off.'
       properties:
         mode: { type: string, enum: [away, home, night] }
         profile: { type: string, description: 'The arming profile the mode asks the panels for: away -> away, home -> stay, night -> night' }

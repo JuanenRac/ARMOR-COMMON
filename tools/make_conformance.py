@@ -1223,6 +1223,7 @@ cases: dict[str, list[Any]] = {
         ("a camera that went offline", True, {"service": "armor-server", "event": "camera.offline", "at": "1970-01-01T00:00:00.000Z", "mode": "armed", "camera_id": "cam-01"}),
         ("a test", True, {"service": "armor-server", "event": "alert.test", "at": "1970-01-01T00:00:00.000Z", "mode": "disarmed"}),
         ("a silent alarm", True, {"service": "armor-server", "event": "alarm.raised", "at": "1970-01-01T00:00:00.000Z", "mode": "armed", "alarm_id": "a2", "severity": "critical", "code": "duress_disarm", "alarm_node_id": "alarm-1", "silent": True}),
+        ("a panel that did not confirm the arming mode", True, {"service": "armor-server", "event": "alarm.raised", "at": "1970-01-01T00:00:00.000Z", "mode": "armed", "alarm_id": "a3", "severity": "high", "code": "mode_panel_sync_failed", "alarm_node_id": "mode_panel"}),
         ("a sign-in from outside the house", True, {"service": "armor-server", "event": "login.remote", "at": "1970-01-01T00:00:00.000Z", "mode": "armed", "login_user": "admin", "login_from": "203.0.113.9"}),
         ("a sign-in from outside from a country never seen", True, {"service": "armor-server", "event": "login.remote", "at": "1970-01-01T00:00:00.000Z", "mode": "armed", "login_user": "admin", "login_from": "203.0.113.9", "login_country": "ES", "login_country_new": True}),
         ("a new country on an event that is not a sign-in", False, {"service": "armor-server", "event": "alert.test", "at": "1970-01-01T00:00:00.000Z", "mode": "armed", "login_country": "ES"}, True),
