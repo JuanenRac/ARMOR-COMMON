@@ -23,7 +23,7 @@
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
   <img src="https://img.shields.io/badge/Vectors-1270-00E5FF.svg" alt="Vectors">
   <img src="https://img.shields.io/badge/Tests-237%20passing-2ea44f.svg" alt="Tests">
-  <img src="https://img.shields.io/badge/Version-0.7.9-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Version-0.8.0.0-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
@@ -37,7 +37,7 @@
 
 | | |
 |---|---|
-| Version | `0.7.9` |
+| Version | `0.8.0.0` |
 | Maturity | Established |
 | Role | Shared contracts, validator and firmware base of the family |
 | Stack | Python 3.11+, JSON Schema, OpenAPI; C++ firmware base (ESP-IDF) |
