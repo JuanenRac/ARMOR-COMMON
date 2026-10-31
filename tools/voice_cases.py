@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import base64
 import json
+from typing import Any
 
 CRLF = b"\r\n"
 B = "XB"
@@ -32,7 +33,7 @@ def ct(boundary: str = B, kind: str = "form-data") -> str:
 
 
 def _case(name: str, direction: str, content_type: str, body: bytes, expect: dict, max_audio_bytes: int | None = None) -> dict:
-    case = {"name": name, "direction": direction, "content_type": content_type, "body": base64.b64encode(body).decode(), "expect": expect}
+    case: dict[str, Any] = {"name": name, "direction": direction, "content_type": content_type, "body": base64.b64encode(body).decode(), "expect": expect}
     if max_audio_bytes is not None:
         case["max_audio_bytes"] = max_audio_bytes
     return case

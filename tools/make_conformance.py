@@ -7,6 +7,7 @@ every other one. Adding a case here is how a contract gets tightened.
 """
 import json
 import sys
+from typing import Any
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -216,7 +217,7 @@ def radar_health(**changes):
 
 
 TASKS = [{"name": "radar", "stack_free": 900, "priority": 5, "state": "R"}, {"name": "node-health", "stack_free": 3000, "priority": 3, "state": "B"}]
-PACKAGE = {"detail": "package", "heap": {"internal_free": 90000, "internal_min": 70000, "internal_largest": 60000, "total_free": 5000000, "total_min": 4000000, "psram_free": 4900000},
+PACKAGE: dict[str, Any] = {"detail": "package", "heap": {"internal_free": 90000, "internal_min": 70000, "internal_largest": 60000, "total_free": 5000000, "total_min": 4000000, "psram_free": 4900000},
            "tasks": TASKS, "resets": {"reason": "panic", "uptime_s": 4242, "guard_restarts_in_hour": 1}, "boot": dict(BOOT), "memory_gate": dict(GATE),
            "versions": {"firmware": "0.7.9", "idf": "v5.5.1", "board": "s3-eth", "sensors": [{"name": "ld2450-1", "version": "V1.02.22062416"}]},
            "config": {"wifi.mode": "station", "wifi.dhcp": "true", "wifi.channel": "6", "mqtt.heartbeat_s": "30", "mqtt.uri_host": "mqtts://broker.local:8883", "language": "es"},
@@ -384,7 +385,7 @@ def connection_client(**changes):
     return base
 
 
-cases = {
+cases: dict[str, list[Any]] = {
     "telemetry": [
         ("minimal, no targets", True, telemetry(targets=[])),
         ("one target", True, telemetry()),

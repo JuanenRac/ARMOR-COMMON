@@ -33,6 +33,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 HERE = Path(__file__).resolve().parent
 BASE_DIR = HERE.parent / "firmware_base"
@@ -101,7 +102,7 @@ def load_manifest() -> dict:
 
 def do_import(root: Path) -> int:
     """Makes the base: a candidate that is identical (once the name is turned into placeholders) in two or more projects is shared by exactly those."""
-    files: dict[str, dict[str, str]] = {}
+    files: dict[str, dict[str, Any]] = {}
     for candidate in CANDIDATES:
         existing = BASE_DIR / candidate
         if existing.is_file() and "@kind@" in read_text(existing) and candidate in load_manifest()["files"]:
