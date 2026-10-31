@@ -47,7 +47,7 @@ class CollectErrorsTests(unittest.TestCase):
         walker = iter_errors({"config_hash": 1, "zone_feed": 2, "zone_feed_signature": 3}, schema)
         first = next(walker)
         self.assertIn("config_hash", str(first))
-        with self.assertRaises(Exception):
+        with self.assertRaises(Exception):  # noqa: B017 - any validation failure counts here
             validate({"config_hash": 1, "zone_feed": 2, "zone_feed_signature": 3}, schema)
 
 

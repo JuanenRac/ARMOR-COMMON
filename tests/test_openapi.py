@@ -108,7 +108,7 @@ class OpenApiTests(unittest.TestCase):
         # A message is never described as a bare object: it is a component schema (or a published contract schema), or raw bytes.
         for method, route, operation in self.operations():
             bodies = list(operation.get("requestBody", {}).get("content", {}).items())
-            for code, response in operation["responses"].items():
+            for _code, response in operation["responses"].items():
                 bodies += list(response.get("content", {}).items())
             for media, body in bodies:
                 schema = body.get("schema", {})
