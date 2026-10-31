@@ -1,5 +1,4 @@
 """Writes ARMOR-COMMON/firmware_base/core/ed25519_verify.hpp: SHA-512 and the verification of an Ed25519 signature, with the constants worked out here (not typed from memory)."""
-from math import isqrt
 from pathlib import Path
 
 P = 2**255 - 19

@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The Ed25519 generator of the firmware base has no unused import:** `firmware_base/tools/gen_ed25519.py` no longer imports `isqrt`; what it writes is the same.
 - **The type check and the lint of the Python code come out clean:** the type comments of the validators name the codes that the current checker reports, a duplicated helper of the conformance generator and an unused import are gone; the behaviour and the generated vectors are the same.
 - **The green frames of the Overview fit their text:** in the Overview cards (Hardware, Flash memory and the rest) each green frame is as wide as its content, stays on the right and grows to the left, so long texts in any of the eight languages are no longer squeezed; on a narrow screen the label goes above its frame.
 - **The lights of the Project status table are kept inside what the manifest allows:** `tools/status_lights.py` (canonical here, copied to the other repositories by `sync_ci_tools.py`) reads `maturity` and the new `evidence` field of the manifest (`host-test`, `simulator`, `bench` or `field`; `hardware_bound: false` for a repository with no hardware). `--check`, run by the validator, fails when a light is above its ceiling; `--suggest` lists what could be better; `--apply` lowers the lights in the eight READMEs and in the generator and never touches a sentence. It has 17 tests; the README states 235.
