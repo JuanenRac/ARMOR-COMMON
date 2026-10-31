@@ -1,0 +1,429 @@
+{
+ "kind": "heatmap",
+ "vectors": [
+  {
+   "name": "a map of two by two",
+   "valid": true,
+   "payload": {
+    "schema": "armor.vision.heatmap/v1",
+    "camera_id": "cam-front",
+    "cols": 2,
+    "rows": 2,
+    "window_seconds": 300.0,
+    "half_life_seconds": null,
+    "at": 4.0,
+    "accepted_positions": 3,
+    "rejected_positions": 0,
+    "total": 3.0,
+    "max": 2.0,
+    "normalization": "weight / max_weight; all zero when the maximum is zero",
+    "weights": [
+     [
+      2.0,
+      0.0
+     ],
+     [
+      1.0,
+      0.0
+     ]
+    ],
+    "normalized": [
+     [
+      1.0,
+      0.0
+     ],
+     [
+      0.5,
+      0.0
+     ]
+    ],
+    "contains_images": false
+   }
+  },
+  {
+   "name": "an empty map",
+   "valid": true,
+   "payload": {
+    "schema": "armor.vision.heatmap/v1",
+    "camera_id": "cam-front",
+    "cols": 2,
+    "rows": 2,
+    "window_seconds": 300.0,
+    "half_life_seconds": null,
+    "at": 4.0,
+    "accepted_positions": 0,
+    "rejected_positions": 0,
+    "total": 0.0,
+    "max": 0.0,
+    "normalization": "weight / max_weight; all zero when the maximum is zero",
+    "weights": [
+     [
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0
+     ]
+    ],
+    "normalized": [
+     [
+      0.0,
+      0.0
+     ],
+     [
+      0.0,
+      0.0
+     ]
+    ],
+    "contains_images": false
+   }
+  },
+  {
+   "name": "a map that remembers everything",
+   "valid": true,
+   "payload": {
+    "schema": "armor.vision.heatmap/v1",
+    "camera_id": "cam-front",
+    "cols": 2,
+    "rows": 2,
+    "window_seconds": null,
+    "half_life_seconds": null,
+    "at": 4.0,
+    "accepted_positions": 3,
+    "rejected_positions": 0,
+    "total": 3.0,
+    "max": 2.0,
+    "normalization": "weight / max_weight; all zero when the maximum is zero",
+    "weights": [
+     [
+      2.0,
+      0.0
+     ],
+     [
+      1.0,
+      0.0
+     ]
+    ],
+    "normalized": [
+     [
+      1.0,
+      0.0
+     ],
+     [
+      0.5,
+      0.0
+     ]
+    ],
+    "contains_images": false
+   }
+  },
+  {
+   "name": "a picture inside",
+   "valid": false,
+   "payload": {
+    "schema": "armor.vision.heatmap/v1",
+    "camera_id": "cam-front",
+    "cols": 2,
+    "rows": 2,
+    "window_seconds": 300.0,
+    "half_life_seconds": null,
+    "at": 4.0,
+    "accepted_positions": 3,
+    "rejected_positions": 0,
+    "total": 3.0,
+    "max": 2.0,
+    "normalization": "weight / max_weight; all zero when the maximum is zero",
+    "weights": [
+     [
+      2.0,
+      0.0
+     ],
+     [
+      1.0,
+      0.0
+     ]
+    ],
+    "normalized": [
+     [
+      1.0,
+      0.0
+     ],
+     [
+      0.5,
+      0.0
+     ]
+    ],
+    "contains_images": true
+   }
+  },
+  {
+   "name": "another schema",
+   "valid": false,
+   "payload": {
+    "schema": "armor.vision.heatmap/v2",
+    "camera_id": "cam-front",
+    "cols": 2,
+    "rows": 2,
+    "window_seconds": 300.0,
+    "half_life_seconds": null,
+    "at": 4.0,
+    "accepted_positions": 3,
+    "rejected_positions": 0,
+    "total": 3.0,
+    "max": 2.0,
+    "normalization": "weight / max_weight; all zero when the maximum is zero",
+    "weights": [
+     [
+      2.0,
+      0.0
+     ],
+     [
+      1.0,
+      0.0
+     ]
+    ],
+    "normalized": [
+     [
+      1.0,
+      0.0
+     ],
+     [
+      0.5,
+      0.0
+     ]
+    ],
+    "contains_images": false
+   }
+  },
+  {
+   "name": "a camera id with a slash",
+   "valid": false,
+   "payload": {
+    "schema": "armor.vision.heatmap/v1",
+    "camera_id": "cam/front",
+    "cols": 2,
+    "rows": 2,
+    "window_seconds": 300.0,
+    "half_life_seconds": null,
+    "at": 4.0,
+    "accepted_positions": 3,
+    "rejected_positions": 0,
+    "total": 3.0,
+    "max": 2.0,
+    "normalization": "weight / max_weight; all zero when the maximum is zero",
+    "weights": [
+     [
+      2.0,
+      0.0
+     ],
+     [
+      1.0,
+      0.0
+     ]
+    ],
+    "normalized": [
+     [
+      1.0,
+      0.0
+     ],
+     [
+      0.5,
+      0.0
+     ]
+    ],
+    "contains_images": false
+   }
+  },
+  {
+   "name": "no camera",
+   "valid": false,
+   "payload": {
+    "schema": "armor.vision.heatmap/v1",
+    "cols": 2,
+    "rows": 2,
+    "window_seconds": 300.0,
+    "half_life_seconds": null,
+    "at": 4.0,
+    "accepted_positions": 3,
+    "rejected_positions": 0,
+    "total": 3.0,
+    "max": 2.0,
+    "normalization": "weight / max_weight; all zero when the maximum is zero",
+    "weights": [
+     [
+      2.0,
+      0.0
+     ],
+     [
+      1.0,
+      0.0
+     ]
+    ],
+    "normalized": [
+     [
+      1.0,
+      0.0
+     ],
+     [
+      0.5,
+      0.0
+     ]
+    ],
+    "contains_images": false
+   }
+  },
+  {
+   "name": "zero columns",
+   "valid": false,
+   "payload": {
+    "schema": "armor.vision.heatmap/v1",
+    "camera_id": "cam-front",
+    "cols": 0,
+    "rows": 2,
+    "window_seconds": 300.0,
+    "half_life_seconds": null,
+    "at": 4.0,
+    "accepted_positions": 3,
+    "rejected_positions": 0,
+    "total": 3.0,
+    "max": 2.0,
+    "normalization": "weight / max_weight; all zero when the maximum is zero",
+    "weights": [
+     [
+      2.0,
+      0.0
+     ],
+     [
+      1.0,
+      0.0
+     ]
+    ],
+    "normalized": [
+     [
+      1.0,
+      0.0
+     ],
+     [
+      0.5,
+      0.0
+     ]
+    ],
+    "contains_images": false
+   }
+  },
+  {
+   "name": "a weight below zero",
+   "valid": false,
+   "payload": {
+    "schema": "armor.vision.heatmap/v1",
+    "camera_id": "cam-front",
+    "cols": 2,
+    "rows": 2,
+    "window_seconds": 300.0,
+    "half_life_seconds": null,
+    "at": 4.0,
+    "accepted_positions": 3,
+    "rejected_positions": 0,
+    "total": 3.0,
+    "max": 2.0,
+    "normalization": "weight / max_weight; all zero when the maximum is zero",
+    "weights": [
+     [
+      -1.0,
+      0.0
+     ],
+     [
+      1.0,
+      0.0
+     ]
+    ],
+    "normalized": [
+     [
+      1.0,
+      0.0
+     ],
+     [
+      0.5,
+      0.0
+     ]
+    ],
+    "contains_images": false
+   }
+  },
+  {
+   "name": "a normalized value above one",
+   "valid": false,
+   "payload": {
+    "schema": "armor.vision.heatmap/v1",
+    "camera_id": "cam-front",
+    "cols": 2,
+    "rows": 2,
+    "window_seconds": 300.0,
+    "half_life_seconds": null,
+    "at": 4.0,
+    "accepted_positions": 3,
+    "rejected_positions": 0,
+    "total": 3.0,
+    "max": 2.0,
+    "normalization": "weight / max_weight; all zero when the maximum is zero",
+    "weights": [
+     [
+      2.0,
+      0.0
+     ],
+     [
+      1.0,
+      0.0
+     ]
+    ],
+    "normalized": [
+     [
+      1.5,
+      0.0
+     ],
+     [
+      0.5,
+      0.0
+     ]
+    ],
+    "contains_images": false
+   }
+  },
+  {
+   "name": "weights as a flat list",
+   "valid": false,
+   "payload": {
+    "schema": "armor.vision.heatmap/v1",
+    "camera_id": "cam-front",
+    "cols": 2,
+    "rows": 2,
+    "window_seconds": 300.0,
+    "half_life_seconds": null,
+    "at": 4.0,
+    "accepted_positions": 3,
+    "rejected_positions": 0,
+    "total": 3.0,
+    "max": 2.0,
+    "normalization": "weight / max_weight; all zero when the maximum is zero",
+    "weights": [
+     2.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "normalized": [
+     [
+      1.0,
+      0.0
+     ],
+     [
+      0.5,
+      0.0
+     ]
+    ],
+    "contains_images": false
+   }
+  }
+ ]
+}

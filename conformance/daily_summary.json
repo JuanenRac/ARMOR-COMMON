@@ -1,0 +1,881 @@
+{
+ "kind": "daily_summary",
+ "vectors": [
+  {
+   "name": "a day with an intrusion",
+   "valid": true,
+   "payload": {
+    "date": "2026-01-01",
+    "language": "en",
+    "summary": {
+     "schema": "armor-daily-summary/1",
+     "totals": {
+      "events": 3,
+      "alarms": 2,
+      "serious_alarms": 1,
+      "false_alarms": 0
+     },
+     "by_type": {
+      "alarm": 2,
+      "power": 1
+     },
+     "by_zone": {
+      "-": 1,
+      "garden": 1,
+      "hall": 1
+     },
+     "by_hour": [
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "serious_alarms": [
+      {
+       "code": "intrusion",
+       "node": "radar-1",
+       "severity": "high",
+       "t_s": 3600.0,
+       "zone": "garden"
+      }
+     ]
+    },
+    "findings": [],
+    "text": "Daily summary\nEvents: 3; alarms: 2 (serious: 1, false: 0)."
+   }
+  },
+  {
+   "name": "a quiet day in Portuguese",
+   "valid": true,
+   "payload": {
+    "date": "2026-01-01",
+    "language": "pt",
+    "summary": {
+     "schema": "armor-daily-summary/1",
+     "totals": {
+      "events": 0,
+      "alarms": 0,
+      "serious_alarms": 0,
+      "false_alarms": 0
+     },
+     "by_type": {},
+     "by_zone": {},
+     "by_hour": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    "findings": [],
+    "text": "Resumo di\u00e1rio"
+   }
+  },
+  {
+   "name": "a day with a pattern and its evidence",
+   "valid": true,
+   "payload": {
+    "date": "2026-01-01",
+    "language": "en",
+    "summary": {
+     "schema": "armor-daily-summary/1",
+     "totals": {
+      "events": 3,
+      "alarms": 2,
+      "serious_alarms": 1,
+      "false_alarms": 0
+     },
+     "by_type": {
+      "alarm": 2,
+      "power": 1
+     },
+     "by_zone": {
+      "-": 1,
+      "garden": 1,
+      "hall": 1
+     },
+     "by_hour": [
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "serious_alarms": [
+      {
+       "code": "intrusion",
+       "node": "radar-1",
+       "severity": "high",
+       "t_s": 3600.0,
+       "zone": "garden"
+      }
+     ]
+    },
+    "findings": [
+     {
+      "kind": "hourly_repeat",
+      "subject": {
+       "code": "intrusion",
+       "zone": "garden"
+      },
+      "count": 3,
+      "detail": {
+       "hours": [
+        1,
+        2,
+        3
+       ],
+       "tolerance_min": 5
+      },
+      "evidence": [
+       {
+        "t_s": 3600.0,
+        "code": "intrusion",
+        "zone": "garden"
+       }
+      ]
+     }
+    ],
+    "text": "Daily summary\nEvents: 3; alarms: 2 (serious: 1, false: 0)."
+   }
+  },
+  {
+   "name": "with the note of the AI provider",
+   "valid": true,
+   "payload": {
+    "date": "2026-01-01",
+    "language": "en",
+    "summary": {
+     "schema": "armor-daily-summary/1",
+     "totals": {
+      "events": 3,
+      "alarms": 2,
+      "serious_alarms": 1,
+      "false_alarms": 0
+     },
+     "by_type": {
+      "alarm": 2,
+      "power": 1
+     },
+     "by_zone": {
+      "-": 1,
+      "garden": 1,
+      "hall": 1
+     },
+     "by_hour": [
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "serious_alarms": [
+      {
+       "code": "intrusion",
+       "node": "radar-1",
+       "severity": "high",
+       "t_s": 3600.0,
+       "zone": "garden"
+      }
+     ]
+    },
+    "findings": [],
+    "text": "Daily summary\nEvents: 3; alarms: 2 (serious: 1, false: 0).",
+    "ai_note": "Nothing unusual."
+   }
+  },
+  {
+   "name": "a language outside the eight",
+   "valid": false,
+   "payload": {
+    "date": "2026-01-01",
+    "language": "xx",
+    "summary": {
+     "schema": "armor-daily-summary/1",
+     "totals": {
+      "events": 3,
+      "alarms": 2,
+      "serious_alarms": 1,
+      "false_alarms": 0
+     },
+     "by_type": {
+      "alarm": 2,
+      "power": 1
+     },
+     "by_zone": {
+      "-": 1,
+      "garden": 1,
+      "hall": 1
+     },
+     "by_hour": [
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "serious_alarms": [
+      {
+       "code": "intrusion",
+       "node": "radar-1",
+       "severity": "high",
+       "t_s": 3600.0,
+       "zone": "garden"
+      }
+     ]
+    },
+    "findings": [],
+    "text": "Daily summary\nEvents: 3; alarms: 2 (serious: 1, false: 0)."
+   }
+  },
+  {
+   "name": "a date that is not a date",
+   "valid": false,
+   "payload": {
+    "date": "yesterday",
+    "language": "en",
+    "summary": {
+     "schema": "armor-daily-summary/1",
+     "totals": {
+      "events": 3,
+      "alarms": 2,
+      "serious_alarms": 1,
+      "false_alarms": 0
+     },
+     "by_type": {
+      "alarm": 2,
+      "power": 1
+     },
+     "by_zone": {
+      "-": 1,
+      "garden": 1,
+      "hall": 1
+     },
+     "by_hour": [
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "serious_alarms": [
+      {
+       "code": "intrusion",
+       "node": "radar-1",
+       "severity": "high",
+       "t_s": 3600.0,
+       "zone": "garden"
+      }
+     ]
+    },
+    "findings": [],
+    "text": "Daily summary\nEvents: 3; alarms: 2 (serious: 1, false: 0)."
+   }
+  },
+  {
+   "name": "hours of the day short of 24",
+   "valid": false,
+   "payload": {
+    "date": "2026-01-01",
+    "language": "en",
+    "summary": {
+     "schema": "armor-daily-summary/1",
+     "totals": {
+      "events": 0,
+      "alarms": 0,
+      "serious_alarms": 0,
+      "false_alarms": 0
+     },
+     "by_type": {},
+     "by_zone": {},
+     "by_hour": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    "findings": [],
+    "text": "Daily summary\nEvents: 3; alarms: 2 (serious: 1, false: 0)."
+   }
+  },
+  {
+   "name": "a count as text",
+   "valid": false,
+   "payload": {
+    "date": "2026-01-01",
+    "language": "en",
+    "summary": {
+     "schema": "armor-daily-summary/1",
+     "totals": {
+      "events": "3",
+      "alarms": 2,
+      "serious_alarms": 1,
+      "false_alarms": 0
+     },
+     "by_type": {},
+     "by_zone": {},
+     "by_hour": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    "findings": [],
+    "text": "Daily summary\nEvents: 3; alarms: 2 (serious: 1, false: 0)."
+   }
+  },
+  {
+   "name": "a pattern outside the list",
+   "valid": false,
+   "payload": {
+    "date": "2026-01-01",
+    "language": "en",
+    "summary": {
+     "schema": "armor-daily-summary/1",
+     "totals": {
+      "events": 3,
+      "alarms": 2,
+      "serious_alarms": 1,
+      "false_alarms": 0
+     },
+     "by_type": {
+      "alarm": 2,
+      "power": 1
+     },
+     "by_zone": {
+      "-": 1,
+      "garden": 1,
+      "hall": 1
+     },
+     "by_hour": [
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "serious_alarms": [
+      {
+       "code": "intrusion",
+       "node": "radar-1",
+       "severity": "high",
+       "t_s": 3600.0,
+       "zone": "garden"
+      }
+     ]
+    },
+    "findings": [
+     {
+      "kind": "ghost",
+      "subject": {},
+      "count": 1,
+      "detail": {},
+      "evidence": []
+     }
+    ],
+    "text": "Daily summary\nEvents: 3; alarms: 2 (serious: 1, false: 0)."
+   }
+  },
+  {
+   "name": "more than twenty events of evidence",
+   "valid": false,
+   "payload": {
+    "date": "2026-01-01",
+    "language": "en",
+    "summary": {
+     "schema": "armor-daily-summary/1",
+     "totals": {
+      "events": 3,
+      "alarms": 2,
+      "serious_alarms": 1,
+      "false_alarms": 0
+     },
+     "by_type": {
+      "alarm": 2,
+      "power": 1
+     },
+     "by_zone": {
+      "-": 1,
+      "garden": 1,
+      "hall": 1
+     },
+     "by_hour": [
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "serious_alarms": [
+      {
+       "code": "intrusion",
+       "node": "radar-1",
+       "severity": "high",
+       "t_s": 3600.0,
+       "zone": "garden"
+      }
+     ]
+    },
+    "findings": [
+     {
+      "kind": "hourly_repeat",
+      "subject": {},
+      "count": 21,
+      "detail": {},
+      "evidence": [
+       {
+        "t_s": 0.0
+       },
+       {
+        "t_s": 1.0
+       },
+       {
+        "t_s": 2.0
+       },
+       {
+        "t_s": 3.0
+       },
+       {
+        "t_s": 4.0
+       },
+       {
+        "t_s": 5.0
+       },
+       {
+        "t_s": 6.0
+       },
+       {
+        "t_s": 7.0
+       },
+       {
+        "t_s": 8.0
+       },
+       {
+        "t_s": 9.0
+       },
+       {
+        "t_s": 10.0
+       },
+       {
+        "t_s": 11.0
+       },
+       {
+        "t_s": 12.0
+       },
+       {
+        "t_s": 13.0
+       },
+       {
+        "t_s": 14.0
+       },
+       {
+        "t_s": 15.0
+       },
+       {
+        "t_s": 16.0
+       },
+       {
+        "t_s": 17.0
+       },
+       {
+        "t_s": 18.0
+       },
+       {
+        "t_s": 19.0
+       },
+       {
+        "t_s": 20.0
+       }
+      ]
+     }
+    ],
+    "text": "Daily summary\nEvents: 3; alarms: 2 (serious: 1, false: 0)."
+   }
+  },
+  {
+   "name": "a setting of the server in the report",
+   "valid": false,
+   "payload": {
+    "date": "2026-01-01",
+    "language": "en",
+    "summary": {
+     "schema": "armor-daily-summary/1",
+     "totals": {
+      "events": 3,
+      "alarms": 2,
+      "serious_alarms": 1,
+      "false_alarms": 0
+     },
+     "by_type": {
+      "alarm": 2,
+      "power": 1
+     },
+     "by_zone": {
+      "-": 1,
+      "garden": 1,
+      "hall": 1
+     },
+     "by_hour": [
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "serious_alarms": [
+      {
+       "code": "intrusion",
+       "node": "radar-1",
+       "severity": "high",
+       "t_s": 3600.0,
+       "zone": "garden"
+      }
+     ]
+    },
+    "findings": [],
+    "text": "Daily summary\nEvents: 3; alarms: 2 (serious: 1, false: 0).",
+    "config": "/etc/armor/summary.json"
+   }
+  },
+  {
+   "name": "a note over 2000 characters",
+   "valid": false,
+   "payload": {
+    "date": "2026-01-01",
+    "language": "en",
+    "summary": {
+     "schema": "armor-daily-summary/1",
+     "totals": {
+      "events": 3,
+      "alarms": 2,
+      "serious_alarms": 1,
+      "false_alarms": 0
+     },
+     "by_type": {
+      "alarm": 2,
+      "power": 1
+     },
+     "by_zone": {
+      "-": 1,
+      "garden": 1,
+      "hall": 1
+     },
+     "by_hour": [
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "serious_alarms": [
+      {
+       "code": "intrusion",
+       "node": "radar-1",
+       "severity": "high",
+       "t_s": 3600.0,
+       "zone": "garden"
+      }
+     ]
+    },
+    "findings": [],
+    "text": "Daily summary\nEvents: 3; alarms: 2 (serious: 1, false: 0).",
+    "ai_note": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn"
+   }
+  },
+  {
+   "name": "no text",
+   "valid": false,
+   "payload": {
+    "date": "2026-01-01",
+    "language": "en",
+    "summary": {
+     "schema": "armor-daily-summary/1",
+     "totals": {
+      "events": 3,
+      "alarms": 2,
+      "serious_alarms": 1,
+      "false_alarms": 0
+     },
+     "by_type": {
+      "alarm": 2,
+      "power": 1
+     },
+     "by_zone": {
+      "-": 1,
+      "garden": 1,
+      "hall": 1
+     },
+     "by_hour": [
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "serious_alarms": [
+      {
+       "code": "intrusion",
+       "node": "radar-1",
+       "severity": "high",
+       "t_s": 3600.0,
+       "zone": "garden"
+      }
+     ]
+    },
+    "findings": []
+   }
+  }
+ ]
+}

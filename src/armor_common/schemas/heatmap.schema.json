@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/heatmap-0.1.0.json",
+  "title": "A.R.M.O.R. activity heat map of a camera",
+  "description": "The JSON form of the heat map that GET /api/v1/vision/heatmap answers (administrators and operators only; off until the option vision.heatmap is turned on). It holds a count per cell of a grid laid over the scene, taken at the feet (or the centre) of each accepted detection: positions, never a picture, a box or an identity (`contains_images` is always false). `weights` are the raw sums and `normalized` is weight divided by the maximum.",
+  "type": "object",
+  "required": [
+    "schema",
+    "camera_id",
+    "cols",
+    "rows",
+    "accepted_positions",
+    "rejected_positions",
+    "total",
+    "max",
+    "weights",
+    "normalized",
+    "contains_images"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "armor.vision.heatmap/v1"
+    },
+    "camera_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{1,80}$"
+    },
+    "cols": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65536
+    },
+    "rows": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65536
+    },
+    "accepted_positions": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "rejected_positions": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "total": {
+      "type": "number",
+      "minimum": 0
+    },
+    "max": {
+      "type": "number",
+      "minimum": 0
+    },
+    "weights": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 65536,
+      "items": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 65536,
+        "items": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "normalized": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 65536,
+      "items": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 65536,
+        "items": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "contains_images": {
+      "type": "boolean",
+      "const": false
+    }
+  }
+}

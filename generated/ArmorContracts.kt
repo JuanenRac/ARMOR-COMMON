@@ -849,6 +849,135 @@ data class ConnectionClient(
     val agent: String? = null
 )
 
+data class DailySummaryBodyTotals(
+    val events: Long,
+    val alarms: Long,
+    val serious_alarms: Long,
+    val false_alarms: Long
+)
+
+data class DailySummaryBodySeriousAlarms(
+    val t_s: Double,
+    val code: String? = null,
+    val zone: String? = null,
+    val node: String? = null,
+    val sensor: String? = null,
+    val severity: String? = null,
+    val watts: Double? = null,
+    val value: Double? = null,
+    val duration_s: Double? = null,
+    val mean_w: Double? = null,
+    val limit_w: Double? = null
+)
+
+data class DailySummaryBodyNodesLinkLost(
+    val node: String,
+    val count: Long,
+    val total_s: Double
+)
+
+data class DailySummaryBodyOutlierReadings(
+    val t_s: Double,
+    val node: String,
+    val sensor: String,
+    val value: Double,
+    val median: Double,
+    val score: Double
+)
+
+data class DailySummaryBodyConsumptionPeaks(
+    val t_s: Double,
+    val code: String? = null,
+    val zone: String? = null,
+    val node: String? = null,
+    val sensor: String? = null,
+    val severity: String? = null,
+    val watts: Double? = null,
+    val value: Double? = null,
+    val duration_s: Double? = null,
+    val mean_w: Double? = null,
+    val limit_w: Double? = null
+)
+
+data class DailySummaryBodyConsumption(
+    val samples: Long,
+    val peaks: List<DailySummaryBodyConsumptionPeaks>
+)
+
+data class DailySummaryBody(
+    val schema: String = "armor-daily-summary/1",
+    val totals: DailySummaryBodyTotals,
+    val by_type: Map<String, Long>,
+    val by_zone: Map<String, Long>,
+    val by_hour: List<Long>,
+    val serious_alarms: List<DailySummaryBodySeriousAlarms>? = null,
+    val nodes_link_lost: List<DailySummaryBodyNodesLinkLost>? = null,
+    val outlier_readings: List<DailySummaryBodyOutlierReadings>? = null,
+    val consumption: DailySummaryBodyConsumption? = null
+)
+
+data class DailySummaryFindingSubject(
+    val code: String? = null,
+    val zone: String? = null,
+    val node: String? = null
+)
+
+data class DailySummaryFindingDetail(
+    val hours: List<Long>? = null,
+    val tolerance_min: Double? = null,
+    val max_gap_s: Double? = null,
+    val limit_s: Double? = null,
+    val minimum: Long? = null,
+    val window: Long? = null,
+    val sigma: Double? = null,
+    val min_ratio: Double? = null
+)
+
+data class DailySummaryFindingEvidence(
+    val t_s: Double,
+    val code: String? = null,
+    val zone: String? = null,
+    val node: String? = null,
+    val sensor: String? = null,
+    val severity: String? = null,
+    val watts: Double? = null,
+    val value: Double? = null,
+    val duration_s: Double? = null,
+    val mean_w: Double? = null,
+    val limit_w: Double? = null
+)
+
+data class DailySummaryFinding(
+    val kind: String,
+    val subject: DailySummaryFindingSubject,
+    val count: Long,
+    val detail: DailySummaryFindingDetail,
+    val evidence: List<DailySummaryFindingEvidence>
+)
+
+data class DailySummary(
+    val date: String,
+    val language: String,
+    val summary: DailySummaryBody,
+    val findings: List<DailySummaryFinding>,
+    val text: String,
+    val ai_note: String? = null
+)
+
+data class Heatmap(
+    val schema: String = "armor.vision.heatmap/v1",
+    val camera_id: String,
+    val cols: Long,
+    val rows: Long,
+    val accepted_positions: Long,
+    val rejected_positions: Long,
+    val total: Double,
+    val max: Double,
+    val weights: List<List<Double>>,
+    val normalized: List<List<Double>>,
+    val contains_images: Boolean = false
+)
+
 data class NetworkInterface(
     val name: String,
     val ip: String,

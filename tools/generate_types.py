@@ -59,6 +59,8 @@ MESSAGES = {
     "connection_event": ("ConnectionEvent", {}),
     "system_event": ("SystemEvent", {}),
     "connection_client": ("ConnectionClient", {}),
+    "daily_summary": ("DailySummary", {"summary": "DailySummaryBody", "findings": "DailySummaryFinding"}),
+    "heatmap": ("Heatmap", {}),
     "network": ("Network", {"interface": "NetworkInterface", "internet": "NetworkInternet", "probes": "NetworkProbe", "last_outage": "NetworkOutage", "devices": "NetworkDevice",
                             "ports": "NetworkPort", "events": "NetworkEvent", "scan": "NetworkScan"}),
 }
@@ -111,6 +113,9 @@ def ts_type(field: Field) -> str:
     kind = schema["type"]
     if kind == "array":
         items = schema.get("items", {}).get("type")
+        if items == "array" and not field.nested:   # a grid: a list of lists of one kind of value
+            inner = schema["items"].get("items", {}).get("type")
+            return f"{ {'string': 'string', 'integer': 'number', 'number': 'number', 'boolean': 'boolean'}.get(inner, 'unknown') }[][]"
         return f"{field.nested or {'string': 'string', 'integer': 'number', 'number': 'number', 'boolean': 'boolean'}.get(items, 'unknown')}[]"
     if kind == "object":
         values = schema.get("additionalProperties")
@@ -125,6 +130,9 @@ def kt_type(field: Field) -> str:
     kind = schema["type"]
     if kind == "array":
         items = schema.get("items", {}).get("type")
+        if items == "array" and not field.nested:   # a grid: a list of lists of one kind of value
+            inner = schema["items"].get("items", {}).get("type")
+            return f"List<List<{ {'string': 'String', 'integer': 'Long', 'number': 'Double', 'boolean': 'Boolean'}.get(inner, 'Any') }>>"
         return f"List<{field.nested or {'string': 'String', 'integer': 'Long', 'number': 'Double', 'boolean': 'Boolean'}.get(items, 'Any')}>"
     if kind == "object":
         values = schema.get("additionalProperties")

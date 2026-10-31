@@ -848,6 +848,135 @@ export type ConnectionClient = {
   agent?: string;
 };
 
+export type DailySummaryBodyTotals = {
+  events: number;
+  alarms: number;
+  serious_alarms: number;
+  false_alarms: number;
+};
+
+export type DailySummaryBodySeriousAlarms = {
+  t_s: number;
+  code?: string;
+  zone?: string;
+  node?: string;
+  sensor?: string;
+  severity?: "info" | "low" | "medium" | "high" | "critical";
+  watts?: number;
+  value?: number;
+  duration_s?: number;
+  mean_w?: number;
+  limit_w?: number;
+};
+
+export type DailySummaryBodyNodesLinkLost = {
+  node: string;
+  count: number;
+  total_s: number;
+};
+
+export type DailySummaryBodyOutlierReadings = {
+  t_s: number;
+  node: string;
+  sensor: string;
+  value: number;
+  median: number;
+  score: number;
+};
+
+export type DailySummaryBodyConsumptionPeaks = {
+  t_s: number;
+  code?: string;
+  zone?: string;
+  node?: string;
+  sensor?: string;
+  severity?: "info" | "low" | "medium" | "high" | "critical";
+  watts?: number;
+  value?: number;
+  duration_s?: number;
+  mean_w?: number;
+  limit_w?: number;
+};
+
+export type DailySummaryBodyConsumption = {
+  samples: number;
+  peaks: DailySummaryBodyConsumptionPeaks[];
+};
+
+export type DailySummaryBody = {
+  schema: "armor-daily-summary/1";
+  totals: DailySummaryBodyTotals;
+  by_type: Record<string, number>;
+  by_zone: Record<string, number>;
+  by_hour: number[];
+  serious_alarms?: DailySummaryBodySeriousAlarms[];
+  nodes_link_lost?: DailySummaryBodyNodesLinkLost[];
+  outlier_readings?: DailySummaryBodyOutlierReadings[];
+  consumption?: DailySummaryBodyConsumption;
+};
+
+export type DailySummaryFindingSubject = {
+  code?: string;
+  zone?: string;
+  node?: string;
+};
+
+export type DailySummaryFindingDetail = {
+  hours?: number[];
+  tolerance_min?: number;
+  max_gap_s?: number;
+  limit_s?: number;
+  minimum?: number;
+  window?: number;
+  sigma?: number;
+  min_ratio?: number;
+};
+
+export type DailySummaryFindingEvidence = {
+  t_s: number;
+  code?: string;
+  zone?: string;
+  node?: string;
+  sensor?: string;
+  severity?: "info" | "low" | "medium" | "high" | "critical";
+  watts?: number;
+  value?: number;
+  duration_s?: number;
+  mean_w?: number;
+  limit_w?: number;
+};
+
+export type DailySummaryFinding = {
+  kind: "hourly_repeat" | "intermittent_sensor" | "intermittent_link" | "recurrent_false_alarm" | "anomalous_consumption";
+  subject: DailySummaryFindingSubject;
+  count: number;
+  detail: DailySummaryFindingDetail;
+  evidence: DailySummaryFindingEvidence[];
+};
+
+export type DailySummary = {
+  date: string;
+  language: "en" | "es" | "de" | "fr" | "it" | "ja" | "zh" | "pt";
+  summary: DailySummaryBody;
+  findings: DailySummaryFinding[];
+  text: string;
+  ai_note?: string;
+};
+
+export type Heatmap = {
+  schema: "armor.vision.heatmap/v1";
+  camera_id: string;
+  cols: number;
+  rows: number;
+  accepted_positions: number;
+  rejected_positions: number;
+  total: number;
+  max: number;
+  weights: number[][];
+  normalized: number[][];
+  contains_images: false;
+};
+
 export type NetworkInterface = {
   name: string;
   ip: string;

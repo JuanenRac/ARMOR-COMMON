@@ -399,6 +399,21 @@ def connection_client(**changes):
     return base
 
 
+def daily_summary(**changes):
+    base = {"date": "2026-01-01", "language": "en", "summary": {"schema": "armor-daily-summary/1", "totals": {"events": 3, "alarms": 2, "serious_alarms": 1, "false_alarms": 0},
+            "by_type": {"alarm": 2, "power": 1}, "by_zone": {"-": 1, "garden": 1, "hall": 1}, "by_hour": [0, 3] + [0] * 22, "serious_alarms": [{"code": "intrusion", "node": "radar-1", "severity": "high", "t_s": 3600.0, "zone": "garden"}]},
+            "findings": [], "text": "Daily summary\nEvents: 3; alarms: 2 (serious: 1, false: 0)."}
+    base.update(changes)
+    return base
+
+
+def heatmap(**changes):
+    base = {"schema": "armor.vision.heatmap/v1", "camera_id": "cam-front", "cols": 2, "rows": 2, "window_seconds": 300.0, "half_life_seconds": None, "at": 4.0, "accepted_positions": 3, "rejected_positions": 0,
+            "total": 3.0, "max": 2.0, "normalization": "weight / max_weight; all zero when the maximum is zero", "weights": [[2.0, 0.0], [1.0, 0.0]], "normalized": [[1.0, 0.0], [0.5, 0.0]], "contains_images": False}
+    base.update(changes)
+    return base
+
+
 cases: dict[str, list[Any]] = {
     "telemetry": [
         ("minimal, no targets", True, telemetry(targets=[])),
@@ -1734,6 +1749,34 @@ cases: dict[str, list[Any]] = {
         ("the secret in the list", False, token_info(token="armor-diag-" + "A" * 43)),
         ("the hash in the list", False, token_info(hash="a" * 64)),
         ("a status outside the list", False, token_info(status="paused")),
+    ],
+    "daily_summary": [
+        ("a day with an intrusion", True, daily_summary()),
+        ("a quiet day in Portuguese", True, daily_summary(language="pt", summary={"schema": "armor-daily-summary/1", "totals": {"events": 0, "alarms": 0, "serious_alarms": 0, "false_alarms": 0}, "by_type": {}, "by_zone": {}, "by_hour": [0] * 24}, text="Resumo diário")),
+        ("a day with a pattern and its evidence", True, daily_summary(findings=[{"kind": "hourly_repeat", "subject": {"code": "intrusion", "zone": "garden"}, "count": 3, "detail": {"hours": [1, 2, 3], "tolerance_min": 5}, "evidence": [{"t_s": 3600.0, "code": "intrusion", "zone": "garden"}]}])),
+        ("with the note of the AI provider", True, daily_summary(ai_note="Nothing unusual.")),
+        ("a language outside the eight", False, daily_summary(language="xx")),
+        ("a date that is not a date", False, daily_summary(date="yesterday")),
+        ("hours of the day short of 24", False, daily_summary(summary={"schema": "armor-daily-summary/1", "totals": {"events": 0, "alarms": 0, "serious_alarms": 0, "false_alarms": 0}, "by_type": {}, "by_zone": {}, "by_hour": [0] * 23})),
+        ("a count as text", False, daily_summary(summary={"schema": "armor-daily-summary/1", "totals": {"events": "3", "alarms": 2, "serious_alarms": 1, "false_alarms": 0}, "by_type": {}, "by_zone": {}, "by_hour": [0] * 24})),
+        ("a pattern outside the list", False, daily_summary(findings=[{"kind": "ghost", "subject": {}, "count": 1, "detail": {}, "evidence": []}])),
+        ("more than twenty events of evidence", False, daily_summary(findings=[{"kind": "hourly_repeat", "subject": {}, "count": 21, "detail": {}, "evidence": [{"t_s": float(i)} for i in range(21)]}])),
+        ("a setting of the server in the report", False, daily_summary(config="/etc/armor/summary.json")),
+        ("a note over 2000 characters", False, daily_summary(ai_note="n" * 2001)),
+        ("no text", False, {k: v for k, v in daily_summary().items() if k != "text"}),
+    ],
+    "heatmap": [
+        ("a map of two by two", True, heatmap()),
+        ("an empty map", True, heatmap(accepted_positions=0, total=0.0, max=0.0, weights=[[0.0, 0.0], [0.0, 0.0]], normalized=[[0.0, 0.0], [0.0, 0.0]])),
+        ("a map that remembers everything", True, heatmap(window_seconds=None)),
+        ("a picture inside", False, heatmap(contains_images=True)),
+        ("another schema", False, heatmap(schema="armor.vision.heatmap/v2")),
+        ("a camera id with a slash", False, heatmap(camera_id="cam/front")),
+        ("no camera", False, {k: v for k, v in heatmap().items() if k != "camera_id"}),
+        ("zero columns", False, heatmap(cols=0)),
+        ("a weight below zero", False, heatmap(weights=[[-1.0, 0.0], [1.0, 0.0]])),
+        ("a normalized value above one", False, heatmap(normalized=[[1.5, 0.0], [0.5, 0.0]])),
+        ("weights as a flat list", False, heatmap(weights=[2.0, 0.0, 1.0, 0.0])),
     ],
     "command": [
         ("calibrate", True, {"node_id": "north-1", "timestamp_ms": 9, "command": "calibrate"}),

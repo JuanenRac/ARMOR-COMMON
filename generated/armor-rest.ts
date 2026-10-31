@@ -654,6 +654,96 @@ export type Count = {
   removed?: number;
 };
 
+/** One event of the day in brief: when (seconds from the start of the day) and the identifiers it has. The free text of an event is never here */
+export type DailyBrief = {
+  t_s: number;
+  code?: string;
+  zone?: string;
+  node?: string;
+  sensor?: string;
+  severity?: "info" | "low" | "medium" | "high" | "critical";
+  watts?: number;
+  value?: number;
+  duration_s?: number;
+  mean_w?: number;
+  limit_w?: number;
+};
+
+export type DailySummaryBody = {
+  schema: "armor-daily-summary/1";
+  totals: {
+    events: number;
+    alarms: number;
+    serious_alarms: number;
+    false_alarms: number;
+  };
+  /** Events by type; the counts add up to totals.events */
+  by_type: {
+    [key: string]: number;
+  };
+  /** Events by zone, "-" for the events that have none */
+  by_zone: {
+    [key: string]: number;
+  };
+  by_hour: number[];
+  /** The alarms of a serious severity or code that were not dismissed as false */
+  serious_alarms?: DailyBrief[];
+  nodes_link_lost?: {
+    node: string;
+    count: number;
+    total_s: number;
+  }[];
+  outlier_readings?: {
+    t_s: number;
+    node: string;
+    sensor: string;
+    value: number;
+    median: number;
+    score: number;
+  }[];
+  /** Also mean_w and max_w (null when there is no sample); busiest_hour of the summary is null for a day with no events */
+  consumption?: {
+    samples: number;
+    peaks: DailyBrief[];
+  };
+};
+
+export type DailySummaryFinding = {
+  kind: "hourly_repeat" | "intermittent_sensor" | "intermittent_link" | "recurrent_false_alarm" | "anomalous_consumption";
+  /** What the pattern is about: a code and a zone, a node, or a zone */
+  subject: {
+    code?: string;
+    zone?: string;
+    node?: string;
+  };
+  count: number;
+  /** The numbers that were compared */
+  detail: {
+    hours?: number[];
+    tolerance_min?: number;
+    max_gap_s?: number;
+    limit_s?: number;
+    minimum?: number;
+    window?: number;
+    sigma?: number;
+    min_ratio?: number;
+  };
+  /** The events that show the pattern, at most 20 */
+  evidence: DailyBrief[];
+};
+
+/** The summary of one day (the schema daily_summary of ARMOR-COMMON). A report for a person: it raises no alarm and authorizes nothing, and it carries no secret and no setting of the server. */
+export type DailySummaryReport = {
+  date: string;
+  language: "en" | "es" | "de" | "fr" | "it" | "ja" | "zh" | "pt";
+  summary: DailySummaryBody;
+  findings: DailySummaryFinding[];
+  /** The readable summary in the language asked for, redacted */
+  text: string;
+  /** The note of the AI provider; present only when the settings of the summary turn it on */
+  ai_note?: string;
+};
+
 export type DeleteMediaRequest = {
   kind: "snapshot" | "recording" | "all";
 };
@@ -1010,6 +1100,21 @@ export type FirmwareUpload = {
 export type HealthzStatus = {
   ok: true;
   service: "armor-server";
+};
+
+/** The JSON form of the heat map (the schema heatmap of ARMOR-COMMON): a count per cell of a grid over the scene, positions only; contains_images is always false */
+export type HeatmapReport = {
+  schema: "armor.vision.heatmap/v1";
+  camera_id: string;
+  cols: number;
+  rows: number;
+  accepted_positions: number;
+  rejected_positions: number;
+  total: number;
+  max: number;
+  weights: number[][];
+  normalized: number[][];
+  contains_images: false;
 };
 
 export type HistoryPage = {
@@ -2115,6 +2220,10 @@ export type SecuritySettings = {
   "alarm_audio.spoken"?: boolean;
   /** Administrators may upload a sound for an alarm origin and the wall panel may ask for it (off: nothing is accepted or served) */
   "alarm_audio.custom_sounds"?: boolean;
+  /** Administrators and operators may ask for the summary of a day (GET /api/v1/summary/daily; off: 404) */
+  "summary.daily"?: boolean;
+  /** Administrators and operators may ask for the activity heat map of a camera (GET /api/v1/vision/heatmap; off: 404) */
+  "vision.heatmap"?: boolean;
 };
 
 export type SecuritySettingsState = {

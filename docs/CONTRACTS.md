@@ -187,6 +187,13 @@ Two reads that the wall panel makes when an alarm arrives, and the routes an adm
 * Both reads answer raw 16 kHz 16-bit mono PCM (`audio/L16;rate=16000`) with its SHA-256 in lower-case hexadecimal in `X-Armor-Audio-Sha256` (also the ETag; `If-None-Match` gets `304`). A client checks the length (a whole number of 16-bit samples, within its own limit) and the hash before it plays anything.
 * The voice gateway says the sentence for the server: `POST /v1/speak` with `{text, language}` answers `{audio}`, base64 of the same PCM.
 
+## The summary of a day and the activity heat map
+
+Two reads for administrators and operators, each behind its own security option, both off by default (the route answers `404` as if it did not exist). A viewer, a wall panel and a service token are refused.
+
+* `GET /api/v1/summary/daily?date=&lang=` (option `summary.daily`): the events of one day (the alarms the server kept, in the time zone of the installation) turned into counts, serious alarms, patterns with the events that show them and a readable text in one of the eight languages. The body is the schema `daily_summary`. It is a report for a person: it raises no alarm and authorizes nothing, the free text of an event never reaches it, every text is redacted, and it carries no secret and no setting of the server. `422` for a date that is not a day or a language outside the eight, `503` when the summary service is not set up or its own settings file says it is off, `502` when it fails (what it said is not passed on).
+* `GET /api/v1/vision/heatmap?camera=&format=&scale=` (option `vision.heatmap`): the count per cell of a grid laid over the scene of a camera, from the detections ARMOR-VISION was given. `format` is `json` (the schema `heatmap`: positions only, `contains_images` always `false`), `png` or `svg`; `scale` is 1 to 64. `400` for any other parameter or value, `404` for a camera that is not in the configuration or a pipeline that is off in its own settings, `503` when ARMOR-VISION is not set up or has no file of detections yet.
+
 ## The words of an alarm code
 
 An alarm (`alarm.raised`, `alarm.escalated`) carries a stable `code`; what a person reads for it is one table, `src/armor_common/alarm_codes.json`, with the sentence of every code in the eight languages (`en`, `es`, `de`, `fr`, `it`, `ja`, `zh`, `pt`). The server uses it for the messages it sends out (chat, push, Home Assistant) and a test compares its copy with this file; a console may keep its own text, but a code that is not in the table is a code nobody has described, and `tests/test_alarm_codes.py` keeps the table whole (every language, no empty sentence). A new code is added here first.

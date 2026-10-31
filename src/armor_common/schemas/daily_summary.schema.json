@@ -1,0 +1,450 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/daily-summary-0.1.0.json",
+  "title": "A.R.M.O.R. daily summary",
+  "description": "The summary of the events of one day that GET /api/v1/summary/daily answers (administrators and operators only; off until the option summary.daily is turned on). It is a report for a person: it raises no alarm and authorizes nothing. It holds counts, the serious alarms, the patterns found with the events that show them, and a readable text in one of the eight languages. The free text of an event never reaches it, every text is redacted (addresses, credentials, long tokens and the names the settings list) and it carries no secret and no setting of the server.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "date",
+    "language",
+    "summary",
+    "findings",
+    "text"
+  ],
+  "properties": {
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "The calendar day, in the time zone of the installation."
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "en",
+        "es",
+        "de",
+        "fr",
+        "it",
+        "ja",
+        "zh",
+        "pt"
+      ]
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "schema",
+        "totals",
+        "by_type",
+        "by_zone",
+        "by_hour"
+      ],
+      "properties": {
+        "schema": {
+          "type": "string",
+          "const": "armor-daily-summary/1"
+        },
+        "totals": {
+          "type": "object",
+          "required": [
+            "events",
+            "alarms",
+            "serious_alarms",
+            "false_alarms"
+          ],
+          "properties": {
+            "events": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "alarms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "serious_alarms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "false_alarms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "by_type": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "description": "Events by type (alarm, node_link_lost, reading, power); the counts add up to totals.events."
+        },
+        "by_zone": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "description": "Events by zone, '-' for the events that have none."
+        },
+        "by_hour": {
+          "type": "array",
+          "minItems": 24,
+          "maxItems": 24,
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "Events in each hour of the day."
+        },
+        "serious_alarms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "t_s"
+            ],
+            "properties": {
+              "t_s": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 86400
+              },
+              "code": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+              },
+              "zone": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+              },
+              "node": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+              },
+              "sensor": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+              },
+              "severity": {
+                "type": "string",
+                "enum": [
+                  "info",
+                  "low",
+                  "medium",
+                  "high",
+                  "critical"
+                ]
+              },
+              "watts": {
+                "type": "number"
+              },
+              "value": {
+                "type": "number"
+              },
+              "duration_s": {
+                "type": "number",
+                "minimum": 0
+              },
+              "mean_w": {
+                "type": "number"
+              },
+              "limit_w": {
+                "type": "number"
+              }
+            }
+          },
+          "description": "The alarms of a serious severity or code that were not dismissed as false."
+        },
+        "nodes_link_lost": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "node",
+              "count",
+              "total_s"
+            ],
+            "properties": {
+              "node": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "total_s": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "outlier_readings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "t_s",
+              "node",
+              "sensor",
+              "value",
+              "median",
+              "score"
+            ],
+            "properties": {
+              "t_s": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 86400
+              },
+              "node": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+              },
+              "sensor": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+              },
+              "value": {
+                "type": "number"
+              },
+              "median": {
+                "type": "number"
+              },
+              "score": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "consumption": {
+          "type": "object",
+          "required": [
+            "samples",
+            "peaks"
+          ],
+          "properties": {
+            "samples": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "peaks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "t_s"
+                ],
+                "properties": {
+                  "t_s": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 86400
+                  },
+                  "code": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+                  },
+                  "zone": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+                  },
+                  "node": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+                  },
+                  "sensor": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+                  },
+                  "severity": {
+                    "type": "string",
+                    "enum": [
+                      "info",
+                      "low",
+                      "medium",
+                      "high",
+                      "critical"
+                    ]
+                  },
+                  "watts": {
+                    "type": "number"
+                  },
+                  "value": {
+                    "type": "number"
+                  },
+                  "duration_s": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "mean_w": {
+                    "type": "number"
+                  },
+                  "limit_w": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "description": "Also mean_w and max_w (null when there is no sample); busiest_hour of the summary is null for a day with no events."
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "subject",
+          "count",
+          "detail",
+          "evidence"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "hourly_repeat",
+              "intermittent_sensor",
+              "intermittent_link",
+              "recurrent_false_alarm",
+              "anomalous_consumption"
+            ]
+          },
+          "subject": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+              },
+              "zone": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+              },
+              "node": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+              }
+            },
+            "description": "What the pattern is about: a code and a zone, a node, or a zone."
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "detail": {
+            "type": "object",
+            "properties": {
+              "hours": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 23
+                }
+              },
+              "tolerance_min": {
+                "type": "number"
+              },
+              "max_gap_s": {
+                "type": "number"
+              },
+              "limit_s": {
+                "type": "number"
+              },
+              "minimum": {
+                "type": "integer"
+              },
+              "window": {
+                "type": "integer"
+              },
+              "sigma": {
+                "type": "number"
+              },
+              "min_ratio": {
+                "type": "number"
+              }
+            },
+            "description": "The numbers that were compared."
+          },
+          "evidence": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "object",
+              "required": [
+                "t_s"
+              ],
+              "properties": {
+                "t_s": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 86400
+                },
+                "code": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+                },
+                "zone": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+                },
+                "node": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+                },
+                "sensor": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+                },
+                "severity": {
+                  "type": "string",
+                  "enum": [
+                    "info",
+                    "low",
+                    "medium",
+                    "high",
+                    "critical"
+                  ]
+                },
+                "watts": {
+                  "type": "number"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "duration_s": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "mean_w": {
+                  "type": "number"
+                },
+                "limit_w": {
+                  "type": "number"
+                }
+              }
+            },
+            "description": "The events that show the pattern, at most 20."
+          }
+        }
+      }
+    },
+    "text": {
+      "type": "string",
+      "maxLength": 20000,
+      "description": "The readable summary in the language asked for, redacted."
+    },
+    "ai_note": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "The note of the AI provider; present only when the settings of the summary turn it on."
+    }
+  }
+}

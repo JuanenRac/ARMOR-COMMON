@@ -52,7 +52,7 @@ SERVER_ALERT_TOPIC = "armor/server/alert"
 _RELAY_COMMANDS = ("on", "off", "true", "false", "1", "0", "toggle")
 # The health report of a node of any family has one topic per node: armor/health/{node_id} (node -> server). It is not the presence message of a radar (armor/node/{node_id}/health).
 NODE_HEALTH_TOPIC_PREFIX = "armor/health/"
-_EXTRA_SCHEMAS = ("alarm_zone_feed", "alarm_policy", "device_state", "server_alert", "network_orders", "node_health", "arm_profile", "arming_modes", "connection_event", "system_event", "connection_client",
+_EXTRA_SCHEMAS = ("alarm_zone_feed", "alarm_policy", "device_state", "server_alert", "network_orders", "node_health", "arm_profile", "arming_modes", "connection_event", "system_event", "connection_client", "daily_summary", "heatmap",
                   "solar_battery_command", "solar_battery_result", "node_control_command", "node_control_result", "node_maintenance", "radar_event",
                   "diagnostic_token_request", "diagnostic_token_created", "diagnostic_token_info", "voice_turn_meta", "voice_turn_result")
 # The events of the perimeter engine of a radar node: armor/radar/{node_id}/events (node -> server, QoS 1, never retained).

@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The contract describes the summary of a day and the activity heat map:** `GET /api/v1/summary/daily` and `GET /api/v1/vision/heatmap` (administrators and operators only, each behind its own security option that is off by default), the options `summary.daily` and `vision.heatmap`, the schemas `daily_summary` and `heatmap` with 24 conformance vectors (the summary has no field for the free text of an event, a setting or a secret, and the map says `contains_images: false`), their generated types, and grids of numbers in the generated TypeScript and Kotlin types.
+
 - **The labels of the facts of an alarm are one table in the eight languages** (`src/armor_common/alarm_facts.json`, described in the contracts guide and kept whole by `tests/test_alarm_facts.py`), so the consoles can show what an alarm carries (which device, which panel, what each panel answered) with the same words.
 
 ## [0.8.0.1] - The server tells the panel of each node the profile of the arming mode, with an alarm when a panel does not answer, the voice and control arming as the away mode and the alarm codes in the eight languages

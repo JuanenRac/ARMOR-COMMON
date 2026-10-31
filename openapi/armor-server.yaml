@@ -1512,6 +1512,42 @@ paths:
       security: [{ operator: [] }]
       responses:
         '200': { description: '{ available }', content: { application/json: { schema: { $ref: '#/components/schemas/VoiceStatus' } } } }
+  /api/v1/summary/daily:
+    get:
+      summary: The summary of the events of one day - counts, serious alarms, patterns with their evidence and a readable text in one of the eight languages, made by ARMOR-SERVER-AI from the alarms the server kept. Administrators and operators only (a viewer, a wall panel and a service token are refused). Off (404) until the option summary.daily is turned on; it needs ARMOR_DAILY_SUMMARY_AI_DIR and ARMOR_DAILY_SUMMARY_CONFIG, otherwise 503. It raises no alarm and authorizes nothing, and it carries no secret
+      security: [{ operator: [] }]
+      parameters:
+        - { name: date, in: query, required: false, description: 'The calendar day (YYYY-MM-DD, in the time zone of the installation); today when it is left out', schema: { type: string, pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' } }
+        - { name: lang, in: query, required: false, description: 'The language of the text; the one of the summary settings when it is left out', schema: { type: string, enum: [en, es, de, fr, it, ja, zh, pt] } }
+      responses:
+        '200': { description: The summary of the day, content: { application/json: { schema: { $ref: '#/components/schemas/DailySummaryReport' } } } }
+        '401': { description: Not signed in, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'A viewer or a wall panel (this account cannot ask for it)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'The option summary.daily is off (daily_summary_disabled)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'A date that is not a day, or a language outside the eight (invalid_date, invalid_language)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '502': { description: 'The summary service refused or failed (daily_summary_failed); what it said is not passed on', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: 'The summary service is not set up, or its settings file says it is off (daily_summary_not_configured, daily_summary_off_in_settings)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/vision/heatmap:
+    get:
+      summary: The activity heat map of a camera - a count per cell of a grid laid over the scene, from the detections ARMOR-VISION was given (positions only, never a picture). Administrators and operators only (a viewer, a wall panel and a service token are refused). Off (404) until the option vision.heatmap is turned on; it needs ARMOR_VISION_DIR, ARMOR_VISION_ACTIVITY_CONFIG and ARMOR_VISION_DETECTIONS, otherwise 503
+      security: [{ operator: [] }]
+      parameters:
+        - { name: camera, in: query, required: false, description: 'The camera of the map; the only one of the configuration when it is left out', schema: { type: string, pattern: '^[A-Za-z0-9._-]{1,80}$' } }
+        - { name: format, in: query, required: false, schema: { type: string, enum: [json, png, svg], default: json } }
+        - { name: scale, in: query, required: false, description: 'Pixels per cell of the picture (png and svg)', schema: { type: integer, minimum: 1, maximum: 64, default: 16 } }
+      responses:
+        '200':
+          description: The map
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/HeatmapReport' } }
+            image/png: { schema: { type: string, format: binary } }
+            image/svg+xml: { schema: { type: string, format: binary } }
+        '400': { description: 'A parameter that is not one of the three, or a format or scale outside the lists (invalid_query)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '401': { description: Not signed in, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'A viewer or a wall panel (this account cannot ask for it)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'The option vision.heatmap is off (heatmap_disabled), the activity pipeline is off in its own settings (heatmap_pipeline_off) or the camera is not in the configuration (unknown_camera)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '502': { description: 'ARMOR-VISION failed or answered something that is not a map (heatmap_failed); what it said is not passed on', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: 'ARMOR-VISION is not set up, or the file of detections does not exist yet (heatmap_not_configured, heatmap_no_data)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/alarm-audio:
     get:
       summary: What the sound of an alarm offers on this server - whether the spoken alarm and the uploaded sounds are on (two options of the security settings, both off by default), whether a voice gateway is set up, the limits of a sound and the sounds stored
@@ -2588,6 +2624,128 @@ components:
         voice.reply_audio_max_bytes: { type: integer, minimum: 3200, maximum: 1000000, default: 200000 }
         alarm_audio.spoken: { type: boolean, default: false, description: 'The wall panel may ask for an alarm to be said out loud (off: 404)' }
         alarm_audio.custom_sounds: { type: boolean, default: false, description: 'Administrators may upload a sound for an alarm origin and the wall panel may ask for it (off: nothing is accepted or served)' }
+        summary.daily: { type: boolean, default: false, description: 'Administrators and operators may ask for the summary of a day (GET /api/v1/summary/daily; off: 404)' }
+        vision.heatmap: { type: boolean, default: false, description: 'Administrators and operators may ask for the activity heat map of a camera (GET /api/v1/vision/heatmap; off: 404)' }
+    DailySummaryReport:
+      type: object
+      description: 'The summary of one day (the schema daily_summary of ARMOR-COMMON). A report for a person: it raises no alarm and authorizes nothing, and it carries no secret and no setting of the server.'
+      required: [date, language, summary, findings, text]
+      examples: [{ date: '2000-01-01', language: en, summary: { schema: armor-daily-summary/1, totals: { events: 1, alarms: 1, serious_alarms: 0, false_alarms: 0 }, by_type: { alarm: 1 }, by_zone: { '-': 1 }, by_hour: [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }, findings: [], text: 'Daily summary' }]
+      properties:
+        date: { type: string, pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' }
+        language: { type: string, enum: [en, es, de, fr, it, ja, zh, pt] }
+        summary: { $ref: '#/components/schemas/DailySummaryBody' }
+        findings: { type: array, maxItems: 200, items: { $ref: '#/components/schemas/DailySummaryFinding' } }
+        text: { type: string, maxLength: 20000, description: 'The readable summary in the language asked for, redacted' }
+        ai_note: { type: string, maxLength: 2000, description: 'The note of the AI provider; present only when the settings of the summary turn it on' }
+    DailySummaryBody:
+      type: object
+      required: [schema, totals, by_type, by_zone, by_hour]
+      examples: [{ schema: armor-daily-summary/1, totals: { events: 0, alarms: 0, serious_alarms: 0, false_alarms: 0 }, by_type: {}, by_zone: {}, by_hour: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }]
+      properties:
+        schema: { type: string, enum: [armor-daily-summary/1] }
+        totals:
+          type: object
+          required: [events, alarms, serious_alarms, false_alarms]
+          properties:
+            events: { type: integer, minimum: 0 }
+            alarms: { type: integer, minimum: 0 }
+            serious_alarms: { type: integer, minimum: 0 }
+            false_alarms: { type: integer, minimum: 0 }
+        by_type: { type: object, additionalProperties: { type: integer }, description: 'Events by type; the counts add up to totals.events' }
+        by_zone: { type: object, additionalProperties: { type: integer }, description: 'Events by zone, "-" for the events that have none' }
+        by_hour: { type: array, minItems: 24, maxItems: 24, items: { type: integer, minimum: 0 } }
+        serious_alarms: { type: array, items: { $ref: '#/components/schemas/DailyBrief' }, description: The alarms of a serious severity or code that were not dismissed as false }
+        nodes_link_lost:
+          type: array
+          items:
+            type: object
+            required: [node, count, total_s]
+            properties:
+              node: { type: string }
+              count: { type: integer, minimum: 1 }
+              total_s: { type: number, minimum: 0 }
+        outlier_readings:
+          type: array
+          items:
+            type: object
+            required: [t_s, node, sensor, value, median, score]
+            properties:
+              t_s: { type: number, minimum: 0, maximum: 86400 }
+              node: { type: string }
+              sensor: { type: string }
+              value: { type: number }
+              median: { type: number }
+              score: { type: number }
+        consumption:
+          type: object
+          required: [samples, peaks]
+          description: 'Also mean_w and max_w (null when there is no sample); busiest_hour of the summary is null for a day with no events'
+          properties:
+            samples: { type: integer, minimum: 0 }
+            peaks: { type: array, items: { $ref: '#/components/schemas/DailyBrief' } }
+    DailyBrief:
+      type: object
+      required: [t_s]
+      examples: [{ t_s: 3600, code: intrusion, zone: garden, severity: high }]
+      description: 'One event of the day in brief: when (seconds from the start of the day) and the identifiers it has. The free text of an event is never here'
+      properties:
+        t_s: { type: number, minimum: 0, maximum: 86400 }
+        code: { type: string }
+        zone: { type: string }
+        node: { type: string }
+        sensor: { type: string }
+        severity: { type: string, enum: [info, low, medium, high, critical] }
+        watts: { type: number }
+        value: { type: number }
+        duration_s: { type: number, minimum: 0 }
+        mean_w: { type: number }
+        limit_w: { type: number }
+    DailySummaryFinding:
+      type: object
+      additionalProperties: false
+      required: [kind, subject, count, detail, evidence]
+      examples: [{ kind: intermittent_link, subject: { node: radar-1 }, count: 3, detail: { minimum: 3 }, evidence: [] }]
+      properties:
+        kind: { type: string, enum: [hourly_repeat, intermittent_sensor, intermittent_link, recurrent_false_alarm, anomalous_consumption] }
+        subject:
+          type: object
+          description: 'What the pattern is about: a code and a zone, a node, or a zone'
+          properties:
+            code: { type: string }
+            zone: { type: string }
+            node: { type: string }
+        count: { type: integer, minimum: 0 }
+        detail:
+          type: object
+          description: The numbers that were compared
+          properties:
+            hours: { type: array, items: { type: integer, minimum: 0, maximum: 23 } }
+            tolerance_min: { type: number }
+            max_gap_s: { type: number }
+            limit_s: { type: number }
+            minimum: { type: integer }
+            window: { type: integer }
+            sigma: { type: number }
+            min_ratio: { type: number }
+        evidence: { type: array, maxItems: 20, items: { $ref: '#/components/schemas/DailyBrief' }, description: 'The events that show the pattern, at most 20' }
+    HeatmapReport:
+      type: object
+      description: 'The JSON form of the heat map (the schema heatmap of ARMOR-COMMON): a count per cell of a grid over the scene, positions only; contains_images is always false'
+      required: [schema, camera_id, cols, rows, accepted_positions, rejected_positions, total, max, weights, normalized, contains_images]
+      examples: [{ schema: armor.vision.heatmap/v1, camera_id: cam-front, cols: 1, rows: 1, accepted_positions: 0, rejected_positions: 0, total: 0, max: 0, weights: [[0]], normalized: [[0]], contains_images: false }]
+      properties:
+        schema: { type: string, enum: [armor.vision.heatmap/v1] }
+        camera_id: { type: string, pattern: '^[A-Za-z0-9._-]{1,80}$' }
+        cols: { type: integer, minimum: 1, maximum: 65536 }
+        rows: { type: integer, minimum: 1, maximum: 65536 }
+        accepted_positions: { type: integer, minimum: 0 }
+        rejected_positions: { type: integer, minimum: 0 }
+        total: { type: number, minimum: 0 }
+        max: { type: number, minimum: 0 }
+        weights: { type: array, items: { type: array, items: { type: number, minimum: 0 } } }
+        normalized: { type: array, items: { type: array, items: { type: number, minimum: 0, maximum: 1 } } }
+        contains_images: { type: boolean, enum: [false] }
     AlarmAudioSource: { type: string, enum: [device, solar, electrical, network, alarm, other], description: 'The origin of an alarm, as the wall panel names it (the source_type of the alarm; anything else is other)' }
     AlarmAudioSound:
       type: object
