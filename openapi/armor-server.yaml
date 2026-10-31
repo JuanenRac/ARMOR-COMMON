@@ -453,8 +453,9 @@ paths:
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostModeRequest' } } } }
       responses:
         '200': { description: The new state, content: { application/json: { schema: { $ref: '#/components/schemas/SystemState' } } } }
-        '400': { description: Unknown mode, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
-        '403': { description: 'The PIN is not right (code wrong_pin), or the user has none and the server requires one (pin_not_set)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '400': { description: 'Unknown mode (invalid_mode), or home or night while the arming modes are off (modes_disabled)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'The PIN is not right (code wrong_pin), or the user has none and the server requires one (pin_not_set). With the arming modes on, a change to a mode that defends LESS than the current one needs the PIN like a disarm (unless alarm.mode_downgrade_pin is not_required)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'The mode has no zones or sensors assigned, so it would defend nothing (no_zones_assigned); send confirm_unassigned: true to arm it anyway', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '429': { description: 'Too many wrong PINs: locked for a minute, then five, then fifteen (code pin_locked, retry_after_s)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/devices:
     get:
@@ -992,6 +993,21 @@ paths:
         '400': { description: 'invalid_profiles: the list does not follow the contract', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '403': { description: Not an administrator, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '409': { description: 'conflict: the profiles changed since they were read; { current }', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/alarm/modes:
+    get:
+      summary: 'The arming modes (away, home, night): whether they are on, the mode in force, the ones that can be asked for, the ones that defend nothing yet, how each mode is defined and the timetable, with the revision of the definitions'
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The arming modes, content: { application/json: { schema: { $ref: '#/components/schemas/ArmingModesState' } } } }
+    put:
+      summary: 'Replace the definitions and the timetable as a whole (an administrator only; allowed while the modes are still off, to prepare them). `revision` is the one the editor read; another change in between is a 409 with the current ones. Editing arms nothing and changes nothing in the mode that is in force.'
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PutAlarmModesRequest' } } } }
+      responses:
+        '200': { description: 'Saved; the arming modes as they stand now', content: { application/json: { schema: { $ref: '#/components/schemas/ArmingModesState' } } } }
+        '400': { description: 'invalid_modes: the document does not follow the contract', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: Not an administrator, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'conflict: the definitions changed since they were read; { current }', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/alarm/commands:
     get:
       summary: Whether the server may arm, disarm and silence alarm nodes (off unless ARMOR_ALARM_COMMANDS=1), the commands still waiting for a node's answer, and what became of the latest ones ({ enabled, pending, recent })
@@ -2292,6 +2308,7 @@ components:
       required: [mode, revision, nodes, updated_at]
       properties:
         mode: { type: string, enum: [armed, disarmed] }
+        arming_mode: { type: string, enum: [disarmed, away, home, night], description: 'The arming mode in force; present only while the arming modes are turned on (alarm.arming_modes), so a client that knows none ignores it and reads mode' }
         revision: { type: integer }
         updated_at: { type: string, format: date-time }
         nodes:
@@ -2550,6 +2567,10 @@ components:
       properties:
         alarm.disarm_pin: { type: string, enum: [never, if_set, always], default: if_set }
         voice.silence_confirmation: { type: string, enum: ['off', pin, double_turn], default: 'off' }
+        alarm.arming_modes: { type: boolean, default: false, description: 'The arming modes home and night besides away (off: the system only arms and disarms)' }
+        alarm.mode_downgrade_pin: { type: string, enum: [required, not_required], default: required, description: 'Going to a mode that defends LESS than the current one asks for the PIN of a disarm (required) or not' }
+        alarm.mode_schedule: { type: boolean, default: false, description: 'The timetable of the arming modes changes the mode by itself (it needs alarm.arming_modes)' }
+        alarm.mode_schedule_lowers: { type: boolean, default: false, description: 'The timetable may go to a mode that defends less than the current one (off: it only keeps or raises the defence, and never disarms)' }
         alarm.config_hash: { type: boolean, default: true }
         server.zone_feed: { type: boolean, default: true }
         server.zone_feed_signature: { type: boolean, default: true }
@@ -3512,6 +3533,24 @@ components:
       properties:
         registered: { type: boolean }
         devices: { type: integer }
+    ArmingModesState:
+      type: object
+      required: [enabled, current, available, unassigned, downgrade_pin_required, schedule_enabled, schedule_may_lower, max_schedule, revision, updated_at, updated_by, modes, schedule]
+      description: The arming modes and their state
+      properties:
+        enabled: { type: boolean, description: The setting alarm.arming_modes }
+        current: { type: string, enum: [disarmed, away, home, night] }
+        available: { type: array, items: { type: string, enum: [disarmed, away, home, night] }, description: 'What POST /api/v1/mode accepts besides the legacy armed: disarmed and away while the modes are off' }
+        unassigned: { type: array, items: { type: string, enum: [home, night] }, description: The modes that defend nothing at this moment (asking for one is refused unless it is confirmed) }
+        downgrade_pin_required: { type: boolean, description: The setting alarm.mode_downgrade_pin is required }
+        schedule_enabled: { type: boolean }
+        schedule_may_lower: { type: boolean }
+        max_schedule: { type: integer }
+        revision: { type: integer }
+        updated_at: { type: string, format: date-time }
+        updated_by: { type: string }
+        modes: { $ref: '../src/armor_common/schemas/arming_modes.schema.json#/properties/modes' }
+        schedule: { type: array, items: { $ref: '../src/armor_common/schemas/arming_modes.schema.json#/properties/schedule/items' } }
     ArmProfiles:
       type: object
       required: [revision, updated_at, updated_by, profiles, max]
@@ -4555,7 +4594,8 @@ components:
     PutUsersIdPinRequest: { type: object, required: [pin], properties: { pin: { type: string, pattern: '^[0-9]{4,10}$' }, duress_pin: { type: string, pattern: '^[0-9]{4,10}$' } } }
     PutAccountPinRequest: { type: object, required: [currentPassword], properties: { currentPassword: { type: string }, pin: { type: string }, duress_pin: { type: string }, clear: { type: boolean } } }
     PutPreferencesRequest: { type: object, properties: { language: { type: string }, theme: { type: string }, weatherPlace: { type: [object, 'null'] } } }
-    PostModeRequest: { type: object, required: [mode], properties: { mode: { type: string, enum: [armed, disarmed] }, pin: { type: string, pattern: '^[0-9]{4,10}$' } } }
+    PostModeRequest: { type: object, required: [mode], properties: { mode: { type: string, enum: [armed, disarmed, away, home, night], description: 'armed is away. home and night exist only while alarm.arming_modes is on (else 400 modes_disabled)' }, pin: { type: string, pattern: '^[0-9]{4,10}$' }, confirm_unassigned: { type: boolean, description: 'Arm a mode that defends nothing (no zones or sensors assigned) anyway; without it the change is refused with 409 no_zones_assigned' } } }
+    PutAlarmModesRequest: { type: object, required: [modes], properties: { revision: { type: integer }, modes: { $ref: '../src/armor_common/schemas/arming_modes.schema.json#/properties/modes' }, schedule: { type: array, maxItems: 16, items: { $ref: '../src/armor_common/schemas/arming_modes.schema.json#/properties/schedule/items' } } } }
     PostDevicesStateRequest: { type: object, required: [device_id, state], properties: { device_id: { type: string }, state: { $ref: '#/components/schemas/DeviceState' } } }
     PostDevicesIdCommandRequest: { type: object, required: [command], properties: { command: { type: string, enum: [on, off, toggle] } } }
     PostDevicesIdStateRequest: { type: object, required: [state], properties: { state: { $ref: '#/components/schemas/DeviceState' } } }

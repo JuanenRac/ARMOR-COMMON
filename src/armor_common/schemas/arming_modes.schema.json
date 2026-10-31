@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/arming-modes-0.1.0.json",
+  "title": "A.R.M.O.R. arming modes",
+  "description": "How the server arms the house: away (everything defended: the armed of always), home and night (only the zones and sensors the owner marked for each), each with its own exit and entry delay, and an optional timetable that changes the mode by itself. The server keeps the document (GET/PUT /api/v1/alarm/modes) and applies it; no node reads it, and the arm command to an alarm node does not change. All of it is off unless an administrator turns the setting alarm.arming_modes on; off, the system only arms and disarms.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "modes"
+  ],
+  "properties": {
+    "modes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "away",
+        "home",
+        "night"
+      ],
+      "properties": {
+        "away": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "entry": {
+              "type": "array",
+              "maxItems": 64,
+                      "items": {
+                "type": "string",
+                "pattern": "^(zone|device|node|camera):\\S(.{0,62}\\S)?$"
+              },
+              "description": "The sensors of this mode that wait for the entry delay before they sound (a door by which the owner comes in). Any other defended sensor sounds at once. A reference here that the mode does not defend does nothing."
+            },
+            "exit_delay_s": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 300,
+              "description": "Seconds after arming (or changing to this mode) during which what the mode newly defends is not yet guarded; what is still wrong when it ends sounds then. Absent: 0."
+            },
+            "entry_delay_s": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 300,
+              "description": "Seconds an entry sensor waits before it sounds; the disarm in time stops it. Absent: 0."
+            }
+          },
+          "description": "Away: everything is defended, the way the system has always armed. It has no defends list; only its delays."
+        },
+        "home": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "defends": {
+              "type": "array",
+              "maxItems": 64,
+                      "items": {
+                "type": "string",
+                "pattern": "^(zone|device|node|camera):\\S(.{0,62}\\S)?$"
+              },
+              "description": "What this mode defends: zone:<location> is every device whose location is that text (case does not matter), device:<id>, node:<id> and camera:<id> are one thing each. Empty or absent: the mode defends nothing (home and night start like that), and the server refuses to arm it unless the caller confirms."
+            },
+            "entry": {
+              "type": "array",
+              "maxItems": 64,
+                      "items": {
+                "type": "string",
+                "pattern": "^(zone|device|node|camera):\\S(.{0,62}\\S)?$"
+              },
+              "description": "The sensors of this mode that wait for the entry delay before they sound (a door by which the owner comes in). Any other defended sensor sounds at once. A reference here that the mode does not defend does nothing."
+            },
+            "exit_delay_s": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 300,
+              "description": "Seconds after arming (or changing to this mode) during which what the mode newly defends is not yet guarded; what is still wrong when it ends sounds then. Absent: 0."
+            },
+            "entry_delay_s": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 300,
+              "description": "Seconds an entry sensor waits before it sounds; the disarm in time stops it. Absent: 0."
+            }
+          },
+          "description": "Home: only what it defends. It starts with nothing assigned."
+        },
+        "night": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "defends": {
+              "type": "array",
+              "maxItems": 64,
+                      "items": {
+                "type": "string",
+                "pattern": "^(zone|device|node|camera):\\S(.{0,62}\\S)?$"
+              },
+              "description": "What this mode defends: zone:<location> is every device whose location is that text (case does not matter), device:<id>, node:<id> and camera:<id> are one thing each. Empty or absent: the mode defends nothing (home and night start like that), and the server refuses to arm it unless the caller confirms."
+            },
+            "entry": {
+              "type": "array",
+              "maxItems": 64,
+                      "items": {
+                "type": "string",
+                "pattern": "^(zone|device|node|camera):\\S(.{0,62}\\S)?$"
+              },
+              "description": "The sensors of this mode that wait for the entry delay before they sound (a door by which the owner comes in). Any other defended sensor sounds at once. A reference here that the mode does not defend does nothing."
+            },
+            "exit_delay_s": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 300,
+              "description": "Seconds after arming (or changing to this mode) during which what the mode newly defends is not yet guarded; what is still wrong when it ends sounds then. Absent: 0."
+            },
+            "entry_delay_s": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 300,
+              "description": "Seconds an entry sensor waits before it sounds; the disarm in time stops it. Absent: 0."
+            }
+          },
+          "description": "Night: only what it defends. It starts with nothing assigned."
+        }
+      },
+      "description": "The three modes. Smoke, gas, flood, panic and tamper never depend on the mode."
+    },
+    "schedule": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "mode",
+          "days",
+          "at"
+        ],
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "away",
+              "home",
+              "night"
+            ],
+            "description": "The mode to change to. A timetable never disarms."
+          },
+          "days": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 7,
+                  "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 7
+            },
+            "description": "1 is Monday, 7 is Sunday."
+          },
+          "at": {
+            "type": "string",
+            "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+            "description": "The time of day, HH:MM, in the time zone of the server (ARMOR_TZ)."
+          }
+        }
+      },
+      "description": "The automatic changes of mode. They run only while the setting alarm.mode_schedule is on; a change to a mode that defends less than the current one is skipped unless alarm.mode_schedule_lowers is on, and a mode with nothing assigned is never armed by it."
+    }
+  }
+}

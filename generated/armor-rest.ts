@@ -239,6 +239,27 @@ export type ArmProfiles = {
   max: number;
 };
 
+/** The arming modes and their state */
+export type ArmingModesState = {
+  /** The setting alarm.arming_modes */
+  enabled: boolean;
+  current: "disarmed" | "away" | "home" | "night";
+  /** What POST /api/v1/mode accepts besides the legacy armed: disarmed and away while the modes are off */
+  available: ("disarmed" | "away" | "home" | "night")[];
+  /** The modes that defend nothing at this moment (asking for one is refused unless it is confirmed) */
+  unassigned: ("home" | "night")[];
+  /** The setting alarm.mode_downgrade_pin is required */
+  downgrade_pin_required: boolean;
+  schedule_enabled: boolean;
+  schedule_may_lower: boolean;
+  max_schedule: number;
+  revision: number;
+  updated_at: string;
+  updated_by: string;
+  modes: Contracts.ArmingModesModes;
+  schedule: Contracts.ArmingModesSchedule[];
+};
+
 /** One thing that changed. The fields besides id, at and type depend on the type (alert, node, camera, mode, device or alarm); the ones every client reads are named here. */
 export type ArmorEvent = {
   id: number;
@@ -1734,8 +1755,11 @@ export type PostElectricalSwitchRequest = {
 };
 
 export type PostModeRequest = {
-  mode: "armed" | "disarmed";
+  /** armed is away. home and night exist only while alarm.arming_modes is on (else 400 modes_disabled) */
+  mode: "armed" | "disarmed" | "away" | "home" | "night";
   pin?: string;
+  /** Arm a mode that defends nothing (no zones or sensors assigned) anyway; without it the change is refused with 409 no_zones_assigned */
+  confirm_unassigned?: boolean;
 };
 
 export type PostPushRegisterRequest = {
@@ -1875,6 +1899,12 @@ export type PutAlarmDesignRequest = {
   alarm_design: {
     [key: string]: unknown;
   };
+};
+
+export type PutAlarmModesRequest = {
+  revision?: number;
+  modes: Contracts.ArmingModesModes;
+  schedule?: Contracts.ArmingModesSchedule[];
 };
 
 export type PutAlarmProfilesRequest = {
@@ -2033,6 +2063,14 @@ export type Rules = {
 export type SecuritySettings = {
   "alarm.disarm_pin"?: "never" | "if_set" | "always";
   "voice.silence_confirmation"?: "off" | "pin" | "double_turn";
+  /** The arming modes home and night besides away (off: the system only arms and disarms) */
+  "alarm.arming_modes"?: boolean;
+  /** Going to a mode that defends LESS than the current one asks for the PIN of a disarm (required) or not */
+  "alarm.mode_downgrade_pin"?: "required" | "not_required";
+  /** The timetable of the arming modes changes the mode by itself (it needs alarm.arming_modes) */
+  "alarm.mode_schedule"?: boolean;
+  /** The timetable may go to a mode that defends less than the current one (off: it only keeps or raises the defence, and never disarms) */
+  "alarm.mode_schedule_lowers"?: boolean;
   "alarm.config_hash"?: boolean;
   "server.zone_feed"?: boolean;
   "server.zone_feed_signature"?: boolean;
@@ -2371,6 +2409,8 @@ export type SystemMetrics = {
 
 export type SystemState = {
   mode: "armed" | "disarmed";
+  /** The arming mode in force; present only while the arming modes are turned on (alarm.arming_modes), so a client that knows none ignores it and reads mode */
+  arming_mode?: "disarmed" | "away" | "home" | "night";
   revision: number;
   updated_at: string;
   nodes: {

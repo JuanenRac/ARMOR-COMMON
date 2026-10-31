@@ -646,6 +646,43 @@ export type AlarmResult = {
   phase: "disarmed" | "exit_delay" | "armed" | "entry_delay" | "alarm";
 };
 
+export type ArmingModesModesAway = {
+  entry?: string[];
+  exit_delay_s?: number;
+  entry_delay_s?: number;
+};
+
+export type ArmingModesModesHome = {
+  defends?: string[];
+  entry?: string[];
+  exit_delay_s?: number;
+  entry_delay_s?: number;
+};
+
+export type ArmingModesModesNight = {
+  defends?: string[];
+  entry?: string[];
+  exit_delay_s?: number;
+  entry_delay_s?: number;
+};
+
+export type ArmingModesModes = {
+  away: ArmingModesModesAway;
+  home: ArmingModesModesHome;
+  night: ArmingModesModesNight;
+};
+
+export type ArmingModesSchedule = {
+  mode: "away" | "home" | "night";
+  days: number[];
+  at: string;
+};
+
+export type ArmingModes = {
+  modes: ArmingModesModes;
+  schedule?: ArmingModesSchedule[];
+};
+
 export type AlarmZoneFeed = {
   zone: string;
   state: "normal" | "triggered" | "tamper";

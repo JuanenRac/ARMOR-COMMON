@@ -50,6 +50,7 @@ MESSAGES = {
     "alarm": ("Alarm", {"zones": "AlarmZone", "events": "AlarmEvent"}),
     "alarm_command": ("AlarmCommand", {"profile": "ArmProfile", "zones": "ArmProfileZone"}),
     "alarm_result": ("AlarmResult", {}),
+    "arming_modes": ("ArmingModes", {}),
     "alarm_zone_feed": ("AlarmZoneFeed", {}),
     "alarm_policy": ("AlarmPolicy", {}),
     "node_health": ("NodeHealth", {}),

@@ -263,6 +263,20 @@ def token_info(**changes):
     return base
 
 
+def modes_doc(**changes):
+    base = {"modes": {"away": {"exit_delay_s": 30}, "home": {"defends": ["zone:Hall", "zone:Kitchen", "node:garden"], "entry": ["device:front-door"], "entry_delay_s": 20},
+                      "night": {"defends": ["zone:Hall", "zone:Kitchen", "zone:Living", "node:garden", "camera:porch"], "exit_delay_s": 10, "entry_delay_s": 45}},
+            "schedule": [{"mode": "night", "days": [1, 2, 3, 4, 5, 6, 7], "at": "23:00"}, {"mode": "home", "days": [6, 7], "at": "08:30"}]}
+    base.update(changes)
+    return base
+
+
+def modes_with(mode, **changes):
+    document = modes_doc()
+    document["modes"][mode] = changes
+    return document
+
+
 def profile(**changes):
     base = {"id": "night", "name": "Night", "base": "stay", "entry_delay_s": 45, "siren": True, "notify": "urgent",
             "zones": [{"id": "hall-motion", "armed": True}, {"id": "front-door", "delay": "entry"}, {"id": "garage", "armed": False}]}
@@ -1123,6 +1137,50 @@ cases: dict[str, list[Any]] = {
         ("a PIN rule in capitals", False, alarm_policy(disarm_pin="NEVER")),
         ("a PIN rule that is a flag", False, alarm_policy(disarm_pin=True)),
         ("not an object", False, [True]),
+    ],
+    "arming_modes": [
+        ("the three modes with a timetable", True, modes_doc()),
+        ("home and night with nothing assigned, as they start", True, {"modes": {"away": {}, "home": {}, "night": {}}}),
+        ("the same with an empty timetable", True, {"modes": {"away": {}, "home": {}, "night": {}}, "schedule": []}),
+        ("every kind of reference", True, modes_with("home", defends=["zone:Hall", "device:front-door", "node:garden", "camera:porch"])),
+        ("a zone with a space and capitals", True, modes_with("home", defends=["zone:Living room"])),
+        ("sixty-four references", True, modes_with("night", defends=[f"device:d{i}" for i in range(64)])),
+        ("a reference of sixty-four characters after the kind", True, modes_with("home", defends=["device:" + "a" * 64])),
+        ("the longest delays", True, modes_with("home", exit_delay_s=300, entry_delay_s=300)),
+        ("no delays", True, modes_with("home", exit_delay_s=0, entry_delay_s=0)),
+        ("sixteen entries in the timetable", True, modes_doc(schedule=[{"mode": "home", "days": [1], "at": f"{h:02d}:00"} for h in range(16)])),
+        ("midnight and one minute to", True, modes_doc(schedule=[{"mode": "away", "days": [1], "at": "00:00"}, {"mode": "home", "days": [1], "at": "23:59"}])),
+        ("the same minute on different days", True, modes_doc(schedule=[{"mode": "away", "days": [1], "at": "08:00"}, {"mode": "home", "days": [2], "at": "08:00"}])),
+        ("no modes", False, {}),
+        ("a mode missing", False, {"modes": {"away": {}, "home": {}}}),
+        ("a mode outside the list", False, {"modes": {"away": {}, "home": {}, "night": {}, "holiday": {}}}),
+        ("an unknown field in the document", False, modes_doc(pin="1234")),
+        ("an unknown field in a mode", False, modes_with("home", siren=False)),
+        ("away with a list of what it defends", False, modes_with("away", defends=["zone:Hall"])),
+        ("defends as a text", False, modes_with("home", defends="zone:Hall")),
+        ("a reference of a kind outside the list", False, modes_with("home", defends=["room:Hall"])),
+        ("a reference with no name", False, modes_with("home", defends=["zone:"])),
+        ("a reference with a blank name", False, modes_with("home", defends=["zone: "])),
+        ("a reference of sixty-five characters after the kind", False, modes_with("home", defends=["device:" + "a" * 65])),
+        ("a reference named twice", False, modes_with("home", defends=["zone:Hall", "zone:Hall"]), True),
+        ("sixty-five references", False, modes_with("night", defends=[f"device:d{i}" for i in range(65)])),
+        ("an entry list with a bad reference", False, modes_with("home", entry=["door"])),
+        ("an exit delay of 301 seconds", False, modes_with("home", exit_delay_s=301)),
+        ("a negative entry delay", False, modes_with("home", entry_delay_s=-1)),
+        ("a fractional delay", False, modes_with("home", exit_delay_s=1.5)),
+        ("a delay as a text", False, modes_with("home", exit_delay_s="30")),
+        ("a timetable that disarms", False, modes_doc(schedule=[{"mode": "disarmed", "days": [1], "at": "08:00"}])),
+        ("a timetable entry without a time", False, modes_doc(schedule=[{"mode": "home", "days": [1]}])),
+        ("a time of 24:00", False, modes_doc(schedule=[{"mode": "home", "days": [1], "at": "24:00"}])),
+        ("a time without the leading zero", False, modes_doc(schedule=[{"mode": "home", "days": [1], "at": "8:00"}])),
+        ("a time with seconds", False, modes_doc(schedule=[{"mode": "home", "days": [1], "at": "08:00:00"}])),
+        ("day zero", False, modes_doc(schedule=[{"mode": "home", "days": [0], "at": "08:00"}])),
+        ("day eight", False, modes_doc(schedule=[{"mode": "home", "days": [8], "at": "08:00"}])),
+        ("no days", False, modes_doc(schedule=[{"mode": "home", "days": [], "at": "08:00"}])),
+        ("a day named twice", False, modes_doc(schedule=[{"mode": "home", "days": [1, 1], "at": "08:00"}]), True),
+        ("seventeen entries in the timetable", False, modes_doc(schedule=[{"mode": "home", "days": [1], "at": f"{h:02d}:{m:02d}"} for h, m in [(h, 0) for h in range(17)]])),
+        ("an unknown field in an entry", False, modes_doc(schedule=[{"mode": "home", "days": [1], "at": "08:00", "pin": "1"}])),
+        ("two entries at the same minute of the same day", False, modes_doc(schedule=[{"mode": "away", "days": [1, 2], "at": "08:00"}, {"mode": "home", "days": [2, 3], "at": "08:00"}]), True),
     ],
     "voice_turn_meta": [
         ("the defaults of a panel", True, voice_meta()),

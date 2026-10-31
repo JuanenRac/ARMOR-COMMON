@@ -52,7 +52,7 @@ SERVER_ALERT_TOPIC = "armor/server/alert"
 _RELAY_COMMANDS = ("on", "off", "true", "false", "1", "0", "toggle")
 # The health report of a node of any family has one topic per node: armor/health/{node_id} (node -> server). It is not the presence message of a radar (armor/node/{node_id}/health).
 NODE_HEALTH_TOPIC_PREFIX = "armor/health/"
-_EXTRA_SCHEMAS = ("alarm_zone_feed", "alarm_policy", "device_state", "server_alert", "network_orders", "node_health", "arm_profile", "connection_event", "system_event", "connection_client",
+_EXTRA_SCHEMAS = ("alarm_zone_feed", "alarm_policy", "device_state", "server_alert", "network_orders", "node_health", "arm_profile", "arming_modes", "connection_event", "system_event", "connection_client",
                   "solar_battery_command", "solar_battery_result", "node_control_command", "node_control_result", "node_maintenance", "radar_event",
                   "diagnostic_token_request", "diagnostic_token_created", "diagnostic_token_info", "voice_turn_meta", "voice_turn_result")
 # The events of the perimeter engine of a radar node: armor/radar/{node_id}/events (node -> server, QoS 1, never retained).
@@ -589,6 +589,34 @@ def validate_arm_profile(profile: Mapping[str, object]) -> None:
         for item in zones:
             if isinstance(item, Mapping) and item.get("armed") is False and "delay" in item:
                 raise ContractError("a zone that is left out has no delay")
+
+
+def validate_arming_modes(document: Mapping[str, object]) -> None:
+    """Validate the arming modes of the server: the schema, that a reference and a day are named once, and that no two entries of the timetable change the mode at the same minute of the same day."""
+    if not isinstance(document, Mapping):
+        raise ContractError("the arming modes must be an object")
+    validate_payload("arming_modes", document)
+    modes = document.get("modes")
+    if isinstance(modes, Mapping):
+        for definition in modes.values():
+            if not isinstance(definition, Mapping):
+                continue
+            for field in ("defends", "entry"):
+                items = definition.get(field)
+                if isinstance(items, list) and len(items) != len(set(items)):
+                    raise ContractError(f"a reference is named once in {field}")
+    schedule = document.get("schedule")
+    if isinstance(schedule, list):
+        taken: set[tuple[object, object]] = set()
+        for entry in schedule:
+            if not isinstance(entry, Mapping) or not isinstance(entry.get("days"), list):
+                continue
+            if len(entry["days"]) != len(set(entry["days"])):
+                raise ContractError("a day is named once in an entry of the timetable")
+            for day in entry["days"]:
+                if (day, entry.get("at")) in taken:
+                    raise ContractError("two entries of the timetable change the mode at the same time")
+                taken.add((day, entry.get("at")))
 
 
 def validate_alarm_command(topic: str, payload: Mapping[str, object]) -> None:

@@ -33,6 +33,8 @@ CONTRACTS = ROOT / "generated" / "armor-contracts.ts"
 # The parts of a message that have a type of their own in generated/armor-contracts.ts, by the end of the reference that points at them.
 NESTED = {
     "arm_profile.schema.json": "ArmProfile",
+    "arming_modes.schema.json#/properties/modes": "ArmingModesModes",
+    "arming_modes.schema.json#/properties/schedule/items": "ArmingModesSchedule",
     "node_control_result.schema.json#/properties/diagnostics/properties/package": "NodeControlResultDiagnosticsPackage",
     "node_health.schema.json#/properties/boot": "NodeHealthBoot",
     "network.schema.json#/properties/interface": "NetworkInterface",

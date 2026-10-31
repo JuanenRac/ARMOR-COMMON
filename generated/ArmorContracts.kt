@@ -647,6 +647,43 @@ data class AlarmResult(
     val phase: String
 )
 
+data class ArmingModesModesAway(
+    val entry: List<String>? = null,
+    val exit_delay_s: Long? = null,
+    val entry_delay_s: Long? = null
+)
+
+data class ArmingModesModesHome(
+    val defends: List<String>? = null,
+    val entry: List<String>? = null,
+    val exit_delay_s: Long? = null,
+    val entry_delay_s: Long? = null
+)
+
+data class ArmingModesModesNight(
+    val defends: List<String>? = null,
+    val entry: List<String>? = null,
+    val exit_delay_s: Long? = null,
+    val entry_delay_s: Long? = null
+)
+
+data class ArmingModesModes(
+    val away: ArmingModesModesAway,
+    val home: ArmingModesModesHome,
+    val night: ArmingModesModesNight
+)
+
+data class ArmingModesSchedule(
+    val mode: String,
+    val days: List<Long>,
+    val at: String
+)
+
+data class ArmingModes(
+    val modes: ArmingModesModes,
+    val schedule: List<ArmingModesSchedule>? = null
+)
+
 data class AlarmZoneFeed(
     val zone: String,
     val state: String,
