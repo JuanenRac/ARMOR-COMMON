@@ -366,7 +366,7 @@ TOOL_DIRS = ("tools", "scripts")   # the Python that is not the product but keep
 
 def _pyproject_flag(text: str, key: str) -> bool:
     """True when `[tool.armor]` in pyproject.toml sets `key = false`."""
-    return bool(re.search(rf"^\[tool\.armor\][^\[]*?^{key}\s*=\s*false", text, re.MULTILINE | re.DOTALL))
+    return bool(re.search(rf"^\[tool\.armor\][^\[]*?^{key}\s*=\s*false\b", text, re.MULTILINE | re.DOTALL))
 
 
 def tool_dirs(project: Path) -> list[str]:
@@ -425,8 +425,8 @@ def lint(project: Path, manifest: dict[str, object]) -> None:
     if _typed_source(project, text):
         command(project, [sys.executable, "-m", "mypy"])
     if _typed_tools(project, text):
-        # the tools are checked on their own, with the same settings in every repository, whatever the repository's configuration says about src/
-        command(project, [sys.executable, "-m", "mypy", "--config-file=", "--python-version", "3.11", "--ignore-missing-imports", *tool_dirs(project)])
+        # the tools are checked on their own, with the same settings in every repository (Linux, where CI runs, so a Windows checkout sees what CI sees), whatever the repository's configuration says about src/
+        command(project, [sys.executable, "-m", "mypy", "--config-file=", "--python-version", "3.11", "--platform", "linux", "--ignore-missing-imports", *tool_dirs(project)])
     report("ARMOR_LINT=PASS")
 
 
