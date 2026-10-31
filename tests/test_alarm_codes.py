@@ -1,6 +1,5 @@
 """The table of alarm codes: every code has its words in the eight languages, and the codes the contract names are all there."""
 import json
-import re
 import unittest
 from pathlib import Path
 

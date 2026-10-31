@@ -486,7 +486,7 @@ def _check_package(package: Mapping[str, object]) -> None:
     if heap["internal_min"] > heap["internal_free"] or heap["internal_largest"] > heap["internal_free"] or heap["total_min"] > heap["total_free"]:  # type: ignore[index,operator]
         raise ContractError("the least memory and the biggest block are never more than what is free now")
     core = package["coredump"]
-    if ("size" in core or "summary" in core) and core.get("present") is not True:  # type: ignore[operator,union-attr]
+    if ("size" in core or "summary" in core) and core.get("present") is not True:  # type: ignore[operator,union-attr,attr-defined]
         raise ContractError("a core dump size and summary go with a core dump that is present")
     _check_boot(package.get("boot"))
 
@@ -499,7 +499,7 @@ def _check_boot(boot: object) -> None:
         raise ContractError("heap_internal_free and heap_internal_largest come together")
     if has and boot["heap_internal_largest"] > boot["heap_internal_free"]:  # type: ignore[index,operator]
         raise ContractError("the biggest internal block is never more than the internal memory free")
-    if boot.get("cause") == "panic" and boot.get("guard") is True:  # type: ignore[union-attr]
+    if boot.get("cause") == "panic" and boot.get("guard") is True:  # type: ignore[union-attr,attr-defined]
         raise ContractError("a panic is not a restart of the guard")
 
 
@@ -603,7 +603,7 @@ def validate_alarm_command(topic: str, payload: Mapping[str, object]) -> None:
         if payload.get("action") != "arm":
             raise ContractError("a profile goes on an arm and on nothing else")
         validate_arm_profile(profile)   # type: ignore[arg-type]
-        if profile.get("base") != payload.get("mode"):   # type: ignore[union-attr]
+        if profile.get("base") != payload.get("mode"):   # type: ignore[union-attr,attr-defined]
             raise ContractError("the base of the profile is the mode of the arm")
 
 
@@ -712,7 +712,7 @@ def validate_diagnostic_token_request(payload: Mapping[str, object]) -> None:
         raise ContractError("payload must be an object")
     validate_payload("diagnostic_token_request", payload)
     nodes = payload["nodes"]
-    if len(set(nodes)) != len(nodes):  # type: ignore[arg-type]
+    if len(set(nodes)) != len(nodes):  # type: ignore[arg-type,call-overload]
         raise ContractError("a node is named once")
 
 
@@ -721,7 +721,7 @@ def validate_diagnostic_token_created(payload: Mapping[str, object]) -> None:
     if not isinstance(payload, Mapping):
         raise ContractError("payload must be an object")
     validate_payload("diagnostic_token_created", payload)
-    if len(set(payload["nodes"])) != len(payload["nodes"]):  # type: ignore[arg-type]
+    if len(set(payload["nodes"])) != len(payload["nodes"]):  # type: ignore[arg-type,call-overload]
         raise ContractError("a node is named once")
     if not str(payload["created_at"]) < str(payload["expires_at"]):
         raise ContractError("the token expires after it was created")
@@ -766,7 +766,7 @@ def validate_network_message(topic: str, payload: Mapping[str, object]) -> None:
             watched = ipaddress.ip_network(interface["cidr"], strict=False)
         except ValueError:
             raise ContractError("interface.cidr is not a network") from None
-        if not any(watched.subnet_of(private) for private in _PRIVATE_RANGES):
+        if not any(watched.subnet_of(private) for private in _PRIVATE_RANGES):  # type: ignore[arg-type]
             raise ContractError("the network a node watches is a private range (10/8, 172.16/12 or 192.168/16)")
     devices = payload.get("devices")
     if isinstance(devices, list):
@@ -890,7 +890,7 @@ def validate_network_orders(payload: Mapping[str, object]) -> None:
     if not isinstance(payload, Mapping):
         raise ContractError("payload must be an object")
     validate_payload("network_orders", payload)
-    for order in payload.get("commands", []):
+    for order in payload.get("commands", []):  # type: ignore[attr-defined]
         if order.get("type") in ("ping", "wake", "ports", "http", "inspect") and not {"device_id", "ip"} <= set(order):
             raise ContractError("an order about a device names the device and its address")
         if order.get("type") == "scan_now" and ({"device_id", "ip", "mac", "port"} & set(order)):
@@ -901,6 +901,6 @@ def validate_network_orders(payload: Mapping[str, object]) -> None:
             raise ContractError("only a look at a web page or an inspection names a port")
         if "auth_sealed" in order and order.get("type") != "inspect":
             raise ContractError("a sealed login goes only with an inspection")
-    ids = [order.get("id") for order in payload.get("commands", [])]
+    ids = [order.get("id") for order in payload.get("commands", [])]  # type: ignore[attr-defined]
     if len(ids) != len(set(ids)):
         raise ContractError("an order id must appear once")

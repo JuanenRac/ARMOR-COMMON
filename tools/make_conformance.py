@@ -366,10 +366,6 @@ def battery(**changes):
     return base
 
 
-def without(payload, key):
-    return {name: value for name, value in payload.items() if name != key}
-
-
 def connection_event(**changes):
     base = {"id": 7, "at": "2026-01-01T10:00:00.000Z", "type": "connection", "action": "login", "client_kind": "studio", "client_id": "0123456789abcdef", "user": "ana", "origin": "local", "two_factor": False}
     base.update(changes)
