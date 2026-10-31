@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The entry delay of an arming mode also holds back a node and a camera listed in `entry`, and the limits of the two reports are settings:** the descriptions of `entry` and `entry_delay_s` in `arming_modes.schema.json` and the contracts guide now say that a node (its intrusion and its silence) or a camera (its silence) waits like a device; `SecuritySettings` has `reports.timeout_s` (5 to 120, default 20), `reports.queue_max` (1 to 10, default 3) and `reports.requests_per_minute` (1 to 300, default 30), the values the report routes always used.
+
 - **The contract describes the summary of a day and the activity heat map:** `GET /api/v1/summary/daily` and `GET /api/v1/vision/heatmap` (administrators and operators only, each behind its own security option that is off by default), the options `summary.daily` and `vision.heatmap`, the schemas `daily_summary` and `heatmap` with 24 conformance vectors (the summary has no field for the free text of an event, a setting or a secret, and the map says `contains_images: false`), their generated types, and grids of numbers in the generated TypeScript and Kotlin types.
 
 - **The labels of the facts of an alarm are one table in the eight languages** (`src/armor_common/alarm_facts.json`, described in the contracts guide and kept whole by `tests/test_alarm_facts.py`), so the consoles can show what an alarm carries (which device, which panel, what each panel answered) with the same words.

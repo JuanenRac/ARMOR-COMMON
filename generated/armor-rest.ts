@@ -2224,6 +2224,12 @@ export type SecuritySettings = {
   "summary.daily"?: boolean;
   /** Administrators and operators may ask for the activity heat map of a camera (GET /api/v1/vision/heatmap; off: 404) */
   "vision.heatmap"?: boolean;
+  /** The most seconds one summary of a day or heat map may run (tuning; it is not a protection) */
+  "reports.timeout_s"?: number;
+  /** How many reports may wait for their turn before the answer is 503 report_busy */
+  "reports.queue_max"?: number;
+  /** How many requests a minute the two report routes answer, together */
+  "reports.requests_per_minute"?: number;
 };
 
 export type SecuritySettingsState = {

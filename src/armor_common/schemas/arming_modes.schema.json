@@ -29,7 +29,7 @@
                 "type": "string",
                 "pattern": "^(zone|device|node|camera):\\S(.{0,62}\\S)?$"
               },
-              "description": "The sensors of this mode that wait for the entry delay before they sound (a door by which the owner comes in). Any other defended sensor sounds at once. A reference here that the mode does not defend does nothing."
+              "description": "The sensors of this mode that wait for the entry delay before they sound (a door by which the owner comes in); a node (a radar: its intrusion and its silence) or a camera (its silence) listed here waits too. Any other defended thing sounds at once. A reference here that the mode does not defend does nothing."
             },
             "exit_delay_s": {
               "type": "integer",
@@ -41,7 +41,7 @@
               "type": "integer",
               "minimum": 0,
               "maximum": 300,
-              "description": "Seconds an entry sensor waits before it sounds; the disarm in time stops it. Absent: 0."
+              "description": "Seconds an entry sensor, node or camera waits before it sounds; the disarm in time stops it. Absent: 0."
             }
           },
           "description": "Away: everything is defended, the way the system has always armed. It has no defends list; only its delays."
@@ -66,7 +66,7 @@
                 "type": "string",
                 "pattern": "^(zone|device|node|camera):\\S(.{0,62}\\S)?$"
               },
-              "description": "The sensors of this mode that wait for the entry delay before they sound (a door by which the owner comes in). Any other defended sensor sounds at once. A reference here that the mode does not defend does nothing."
+              "description": "The sensors of this mode that wait for the entry delay before they sound (a door by which the owner comes in); a node (a radar: its intrusion and its silence) or a camera (its silence) listed here waits too. Any other defended thing sounds at once. A reference here that the mode does not defend does nothing."
             },
             "exit_delay_s": {
               "type": "integer",
@@ -78,7 +78,7 @@
               "type": "integer",
               "minimum": 0,
               "maximum": 300,
-              "description": "Seconds an entry sensor waits before it sounds; the disarm in time stops it. Absent: 0."
+              "description": "Seconds an entry sensor, node or camera waits before it sounds; the disarm in time stops it. Absent: 0."
             }
           },
           "description": "Home: only what it defends. It starts with nothing assigned."
@@ -103,7 +103,7 @@
                 "type": "string",
                 "pattern": "^(zone|device|node|camera):\\S(.{0,62}\\S)?$"
               },
-              "description": "The sensors of this mode that wait for the entry delay before they sound (a door by which the owner comes in). Any other defended sensor sounds at once. A reference here that the mode does not defend does nothing."
+              "description": "The sensors of this mode that wait for the entry delay before they sound (a door by which the owner comes in); a node (a radar: its intrusion and its silence) or a camera (its silence) listed here waits too. Any other defended thing sounds at once. A reference here that the mode does not defend does nothing."
             },
             "exit_delay_s": {
               "type": "integer",
@@ -115,7 +115,7 @@
               "type": "integer",
               "minimum": 0,
               "maximum": 300,
-              "description": "Seconds an entry sensor waits before it sounds; the disarm in time stops it. Absent: 0."
+              "description": "Seconds an entry sensor, node or camera waits before it sounds; the disarm in time stops it. Absent: 0."
             }
           },
           "description": "Night: only what it defends. It starts with nothing assigned."

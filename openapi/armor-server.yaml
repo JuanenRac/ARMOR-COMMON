@@ -2626,6 +2626,9 @@ components:
         alarm_audio.custom_sounds: { type: boolean, default: false, description: 'Administrators may upload a sound for an alarm origin and the wall panel may ask for it (off: nothing is accepted or served)' }
         summary.daily: { type: boolean, default: false, description: 'Administrators and operators may ask for the summary of a day (GET /api/v1/summary/daily; off: 404)' }
         vision.heatmap: { type: boolean, default: false, description: 'Administrators and operators may ask for the activity heat map of a camera (GET /api/v1/vision/heatmap; off: 404)' }
+        reports.timeout_s: { type: integer, minimum: 5, maximum: 120, default: 20, description: 'The most seconds one summary of a day or heat map may run (tuning; it is not a protection)' }
+        reports.queue_max: { type: integer, minimum: 1, maximum: 10, default: 3, description: 'How many reports may wait for their turn before the answer is 503 report_busy' }
+        reports.requests_per_minute: { type: integer, minimum: 1, maximum: 300, default: 30, description: 'How many requests a minute the two report routes answer, together' }
     DailySummaryReport:
       type: object
       description: 'The summary of one day (the schema daily_summary of ARMOR-COMMON). A report for a person: it raises no alarm and authorizes nothing, and it carries no secret and no setting of the server.'
