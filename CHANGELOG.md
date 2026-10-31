@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.8.0.1] - The server tells the panel of each node the profile of the arming mode, with an alarm when a panel does not answer, the voice and control arming as the away mode and the alarm codes in the eight languages
+
 - **A panel that does not confirm the arming mode is an alarm:** the code `mode_panel_sync_failed` (severity `high`, source `alarm` / `mode_panel`) with its words in the eight languages in `alarm_codes.json`, described next to `panel_sync` in the guide and the OpenAPI file; arming by the control API and by voice is arming the mode `away` while the modes are on.
 - **The contract describes the panel sync of the arming modes:** the setting `alarm.mode_panel_sync` (off by default), the object `panel_sync` in the system state and in `GET /api/v1/alarm/modes` (`PanelSync`: the mode, the profile it asks for, the status `none`, `pending`, `confirmed` or `failed` and one entry per panel with its reason), `panel_sync_enabled` in the modes state, and the guide says how a mode and a profile join (away arms the profile away, home arms stay, night arms night); the generated types and a test of the schema are updated.
 
