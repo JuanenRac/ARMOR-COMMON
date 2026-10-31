@@ -250,6 +250,9 @@ export type ArmingModesState = {
   unassigned: ("home" | "night")[];
   /** The setting alarm.mode_downgrade_pin is required */
   downgrade_pin_required: boolean;
+  /** The setting alarm.mode_panel_sync together with alarm.arming_modes */
+  panel_sync_enabled: boolean;
+  panel_sync?: PanelSync;
   schedule_enabled: boolean;
   schedule_may_lower: boolean;
   max_schedule: number;
@@ -1608,6 +1611,27 @@ export type PanelSummary = {
   };
 };
 
+/** What the alarm panels did about the arming mode in force, while alarm.mode_panel_sync is on. The mode of the server applies at once whatever the panels do; only an answer of a node that says accepted is a confirmation. Left out while the setting is off and after a disarm (a panel is not disarmed from the server). */
+export type PanelSync = {
+  mode: "away" | "home" | "night";
+  /** The arming profile the mode asks the panels for: away -> away, home -> stay, night -> night */
+  profile: string;
+  /** none: no alarm panel is known. pending: asked, at least one answer is missing. confirmed: every panel answered accepted. failed: a panel refused, was silent or could not be asked; the reason is in nodes */
+  status: "none" | "pending" | "confirmed" | "failed";
+  /** Who chose the mode (a user name, or schedule) */
+  by: string;
+  started_at: string;
+  /** Left out while the status is pending */
+  settled_at?: string;
+  nodes: {
+    node_id: string;
+    /** refused: the node answered no (reason is its refusal). timeout: no answer in time. unavailable: the command was not sent (reason is the code: commands_disabled, node_unavailable, node_commands_off, profiles_unsupported, unknown_profile, busy, mqtt_unavailable) */
+    status: "pending" | "confirmed" | "refused" | "timeout" | "unavailable";
+    command_id?: string;
+    reason?: string;
+  }[];
+};
+
 /** Text for a person to read, as the log of a node is */
 export type PlainText = string;
 
@@ -2071,6 +2095,8 @@ export type SecuritySettings = {
   "alarm.mode_schedule"?: boolean;
   /** The timetable may go to a mode that defends less than the current one (off: it only keeps or raises the defence, and never disarms) */
   "alarm.mode_schedule_lowers"?: boolean;
+  /** Choosing away, home or night also arms the alarm panels with the profile that goes with it: away arms the profile away, home arms stay and night arms night (off: the modes decide only what the server defends; it needs alarm.arming_modes and, to reach a panel, ARMOR_ALARM_COMMANDS=1) */
+  "alarm.mode_panel_sync"?: boolean;
   "alarm.config_hash"?: boolean;
   "server.zone_feed"?: boolean;
   "server.zone_feed_signature"?: boolean;
@@ -2411,6 +2437,7 @@ export type SystemState = {
   mode: "armed" | "disarmed";
   /** The arming mode in force; present only while the arming modes are turned on (alarm.arming_modes), so a client that knows none ignores it and reads mode */
   arming_mode?: "disarmed" | "away" | "home" | "night";
+  panel_sync?: PanelSync;
   revision: number;
   updated_at: string;
   nodes: {

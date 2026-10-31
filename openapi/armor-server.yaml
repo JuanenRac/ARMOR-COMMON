@@ -448,7 +448,7 @@ paths:
         '401': { description: Not signed in, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
   /api/v1/mode:
     post:
-      summary: Arm or disarm the system from Studio (an operator); the answer is the new state of the perimeter. Disarming needs the PIN of the signed-in user when the user has one (always with ARMOR_DISARM_PIN=required); the duress PIN disarms and raises a critical alarm in silence.
+      summary: Arm or disarm the system from Studio (an operator); the answer is the new state of the perimeter (with the arming modes and alarm.mode_panel_sync on it also carries panel_sync, the report of the alarm panels that were asked to arm with the profile of the mode; a panel that does not confirm never makes the request fail). Disarming needs the PIN of the signed-in user when the user has one (always with ARMOR_DISARM_PIN=required); the duress PIN disarms and raises a critical alarm in silence.
       security: [{ operator: [] }]
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostModeRequest' } } } }
       responses:
@@ -2309,6 +2309,7 @@ components:
       properties:
         mode: { type: string, enum: [armed, disarmed] }
         arming_mode: { type: string, enum: [disarmed, away, home, night], description: 'The arming mode in force; present only while the arming modes are turned on (alarm.arming_modes), so a client that knows none ignores it and reads mode' }
+        panel_sync: { $ref: '#/components/schemas/PanelSync' }
         revision: { type: integer }
         updated_at: { type: string, format: date-time }
         nodes:
@@ -2571,6 +2572,7 @@ components:
         alarm.mode_downgrade_pin: { type: string, enum: [required, not_required], default: required, description: 'Going to a mode that defends LESS than the current one asks for the PIN of a disarm (required) or not' }
         alarm.mode_schedule: { type: boolean, default: false, description: 'The timetable of the arming modes changes the mode by itself (it needs alarm.arming_modes)' }
         alarm.mode_schedule_lowers: { type: boolean, default: false, description: 'The timetable may go to a mode that defends less than the current one (off: it only keeps or raises the defence, and never disarms)' }
+        alarm.mode_panel_sync: { type: boolean, default: false, description: 'Choosing away, home or night also arms the alarm panels with the profile that goes with it: away arms the profile away, home arms stay and night arms night (off: the modes decide only what the server defends; it needs alarm.arming_modes and, to reach a panel, ARMOR_ALARM_COMMANDS=1)' }
         alarm.config_hash: { type: boolean, default: true }
         server.zone_feed: { type: boolean, default: true }
         server.zone_feed_signature: { type: boolean, default: true }
@@ -3533,9 +3535,30 @@ components:
       properties:
         registered: { type: boolean }
         devices: { type: integer }
+    PanelSync:
+      type: object
+      required: [mode, profile, status, by, started_at, nodes]
+      description: 'What the alarm panels did about the arming mode in force, while alarm.mode_panel_sync is on. The mode of the server applies at once whatever the panels do; only an answer of a node that says accepted is a confirmation. Left out while the setting is off and after a disarm (a panel is not disarmed from the server).'
+      properties:
+        mode: { type: string, enum: [away, home, night] }
+        profile: { type: string, description: 'The arming profile the mode asks the panels for: away -> away, home -> stay, night -> night' }
+        status: { type: string, enum: [none, pending, confirmed, failed], description: 'none: no alarm panel is known. pending: asked, at least one answer is missing. confirmed: every panel answered accepted. failed: a panel refused, was silent or could not be asked; the reason is in nodes' }
+        by: { type: string, description: 'Who chose the mode (a user name, or schedule)' }
+        started_at: { type: string, format: date-time }
+        settled_at: { type: string, format: date-time, description: Left out while the status is pending }
+        nodes:
+          type: array
+          items:
+            type: object
+            required: [node_id, status]
+            properties:
+              node_id: { type: string }
+              status: { type: string, enum: [pending, confirmed, refused, timeout, unavailable], description: 'refused: the node answered no (reason is its refusal). timeout: no answer in time. unavailable: the command was not sent (reason is the code: commands_disabled, node_unavailable, node_commands_off, profiles_unsupported, unknown_profile, busy, mqtt_unavailable)' }
+              command_id: { type: string }
+              reason: { type: string }
     ArmingModesState:
       type: object
-      required: [enabled, current, available, unassigned, downgrade_pin_required, schedule_enabled, schedule_may_lower, max_schedule, revision, updated_at, updated_by, modes, schedule]
+      required: [enabled, current, available, unassigned, downgrade_pin_required, panel_sync_enabled, schedule_enabled, schedule_may_lower, max_schedule, revision, updated_at, updated_by, modes, schedule]
       description: The arming modes and their state
       properties:
         enabled: { type: boolean, description: The setting alarm.arming_modes }
@@ -3543,6 +3566,8 @@ components:
         available: { type: array, items: { type: string, enum: [disarmed, away, home, night] }, description: 'What POST /api/v1/mode accepts besides the legacy armed: disarmed and away while the modes are off' }
         unassigned: { type: array, items: { type: string, enum: [home, night] }, description: The modes that defend nothing at this moment (asking for one is refused unless it is confirmed) }
         downgrade_pin_required: { type: boolean, description: The setting alarm.mode_downgrade_pin is required }
+        panel_sync_enabled: { type: boolean, description: The setting alarm.mode_panel_sync together with alarm.arming_modes }
+        panel_sync: { $ref: '#/components/schemas/PanelSync' }
         schedule_enabled: { type: boolean }
         schedule_may_lower: { type: boolean }
         max_schedule: { type: integer }

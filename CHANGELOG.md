@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The contract describes the panel sync of the arming modes:** the setting `alarm.mode_panel_sync` (off by default), the object `panel_sync` in the system state and in `GET /api/v1/alarm/modes` (`PanelSync`: the mode, the profile it asks for, the status `none`, `pending`, `confirmed` or `failed` and one entry per panel with its reason), `panel_sync_enabled` in the modes state, and the guide says how a mode and a profile join (away arms the profile away, home arms stay, night arms night); the generated types and a test of the schema are updated.
+
 ## [0.8.0.0] - The contract describes the arming modes (away, home, night), the shared workflow lints and type-checks and the documentation covers the manifest evidence
 
 - **The contract describes the arming modes (away, home, night):** the schema `arming_modes.schema.json` with its shared vectors (`conformance/arming_modes.json`, 42 of them) and `validate_arming_modes`, the routes `GET` and `PUT /api/v1/alarm/modes`, the modes `away`, `home` and `night` and `confirm_unassigned` in `POST /api/v1/mode`, `arming_mode` in the system state, the answers `modes_disabled` and `no_zones_assigned`, and the four settings `alarm.arming_modes`, `alarm.mode_downgrade_pin`, `alarm.mode_schedule` and `alarm.mode_schedule_lowers` (all off or conservative by default: the system only arms and disarms until an administrator turns the modes on). The generated types are regenerated; `docs/CONTRACTS.md` has the model.

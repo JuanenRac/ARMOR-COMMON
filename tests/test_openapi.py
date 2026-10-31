@@ -160,6 +160,30 @@ class OpenApiTests(unittest.TestCase):
         self.assertEqual(sorted(registered - documented), [], "routes the server registers that the contract does not describe (method and path)")
         self.assertEqual(sorted(documented - registered), [], "operations the contract describes that the server does not register")
 
+    def test_the_panel_sync_of_the_arming_modes_is_described_and_off_by_default(self):
+        """Choosing a mode also arms the alarm panels with a profile, behind a setting that is off, and a client can read what became of it (a panel that did not confirm is not shown as confirmed)."""
+        schemas = self.document["components"]["schemas"]
+        setting = schemas["SecuritySettings"]["properties"]["alarm.mode_panel_sync"]
+        self.assertEqual((setting["type"], setting["default"]), ("boolean", False))
+        sync = schemas["PanelSync"]
+        self.assertEqual(sync["properties"]["status"]["enum"], ["none", "pending", "confirmed", "failed"])
+        self.assertEqual(sync["properties"]["mode"]["enum"], ["away", "home", "night"])
+        self.assertEqual(sync["properties"]["nodes"]["items"]["properties"]["status"]["enum"], ["pending", "confirmed", "refused", "timeout", "unavailable"])
+        # it is optional where it appears: a client that knows nothing of it reads the same state as before
+        self.assertEqual(schemas["SystemState"]["properties"]["panel_sync"], {"$ref": "#/components/schemas/PanelSync"})
+        self.assertNotIn("panel_sync", schemas["SystemState"]["required"])
+        self.assertEqual(schemas["ArmingModesState"]["properties"]["panel_sync"], {"$ref": "#/components/schemas/PanelSync"})
+        self.assertNotIn("panel_sync", schemas["ArmingModesState"]["required"])
+        self.assertIn("panel_sync_enabled", schemas["ArmingModesState"]["required"])
+        if jsonschema is None:
+            return
+        validator = jsonschema.Draft202012Validator(sync)
+        good = {"mode": "home", "profile": "stay", "status": "failed", "by": "ana", "started_at": "2026-03-04T10:00:00Z", "settled_at": "2026-03-04T10:00:05Z",
+                "nodes": [{"node_id": "alarm-1", "status": "timeout", "reason": "timeout", "command_id": "00000000000000aa"}, {"node_id": "alarm-2", "status": "unavailable", "reason": "node_commands_off"}]}
+        self.assertEqual(list(validator.iter_errors(good)), [])
+        for bad in ({**good, "status": "ok"}, {**good, "mode": "disarmed"}, {k: v for k, v in good.items() if k == "nodes"}, {**good, "nodes": [{"node_id": "x", "status": "armed"}]}):
+            self.assertNotEqual(list(validator.iter_errors(bad)), [])
+
 
 if __name__ == "__main__":
     unittest.main()
