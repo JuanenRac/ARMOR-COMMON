@@ -3763,6 +3763,7 @@ components:
         updated_by: { type: string }
         modes: { $ref: '../src/armor_common/schemas/arming_modes.schema.json#/properties/modes' }
         schedule: { type: array, items: { $ref: '../src/armor_common/schemas/arming_modes.schema.json#/properties/schedule/items' } }
+        panel_map: { $ref: '../src/armor_common/schemas/arming_modes.schema.json#/properties/panel_map' }
     ArmProfiles:
       type: object
       required: [revision, updated_at, updated_by, profiles, max]
@@ -4807,7 +4808,7 @@ components:
     PutAccountPinRequest: { type: object, required: [currentPassword], properties: { currentPassword: { type: string }, pin: { type: string }, duress_pin: { type: string }, clear: { type: boolean } } }
     PutPreferencesRequest: { type: object, properties: { language: { type: string }, theme: { type: string }, weatherPlace: { type: [object, 'null'] } } }
     PostModeRequest: { type: object, required: [mode], properties: { mode: { type: string, enum: [armed, disarmed, away, home, night], description: 'armed is away. home and night exist only while alarm.arming_modes is on (else 400 modes_disabled)' }, pin: { type: string, pattern: '^[0-9]{4,10}$' }, confirm_unassigned: { type: boolean, description: 'Arm a mode that defends nothing (no zones or sensors assigned) anyway; without it the change is refused with 409 no_zones_assigned' } } }
-    PutAlarmModesRequest: { type: object, required: [modes], properties: { revision: { type: integer }, modes: { $ref: '../src/armor_common/schemas/arming_modes.schema.json#/properties/modes' }, schedule: { type: array, maxItems: 16, items: { $ref: '../src/armor_common/schemas/arming_modes.schema.json#/properties/schedule/items' } } } }
+    PutAlarmModesRequest: { type: object, required: [modes], properties: { revision: { type: integer }, modes: { $ref: '../src/armor_common/schemas/arming_modes.schema.json#/properties/modes' }, schedule: { type: array, maxItems: 16, items: { $ref: '../src/armor_common/schemas/arming_modes.schema.json#/properties/schedule/items' } } , panel_map: { $ref: '../src/armor_common/schemas/arming_modes.schema.json#/properties/panel_map' } } }
     PostDevicesStateRequest: { type: object, required: [device_id, state], properties: { device_id: { type: string }, state: { $ref: '#/components/schemas/DeviceState' } } }
     PostDevicesIdCommandRequest: { type: object, required: [command], properties: { command: { type: string, enum: [on, off, toggle] } } }
     PostDevicesIdStateRequest: { type: object, required: [state], properties: { state: { $ref: '#/components/schemas/DeviceState' } } }

@@ -265,6 +265,7 @@ export type ArmingModesState = {
   updated_by: string;
   modes: Contracts.ArmingModesModes;
   schedule: Contracts.ArmingModesSchedule[];
+  panel_map?: unknown;
 };
 
 /** One thing that changed. The fields besides id, at and type depend on the type (alert, node, camera, mode, device or alarm); the ones every client reads are named here. */
@@ -2044,6 +2045,7 @@ export type PutAlarmModesRequest = {
   revision?: number;
   modes: Contracts.ArmingModesModes;
   schedule?: Contracts.ArmingModesSchedule[];
+  panel_map?: unknown;
 };
 
 export type PutAlarmProfilesRequest = {

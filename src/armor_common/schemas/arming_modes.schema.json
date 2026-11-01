@@ -25,7 +25,7 @@
             "entry": {
               "type": "array",
               "maxItems": 64,
-                      "items": {
+              "items": {
                 "type": "string",
                 "pattern": "^(zone|device|node|camera):\\S(.{0,62}\\S)?$"
               },
@@ -53,7 +53,7 @@
             "defends": {
               "type": "array",
               "maxItems": 64,
-                      "items": {
+              "items": {
                 "type": "string",
                 "pattern": "^(zone|device|node|camera):\\S(.{0,62}\\S)?$"
               },
@@ -62,7 +62,7 @@
             "entry": {
               "type": "array",
               "maxItems": 64,
-                      "items": {
+              "items": {
                 "type": "string",
                 "pattern": "^(zone|device|node|camera):\\S(.{0,62}\\S)?$"
               },
@@ -90,7 +90,7 @@
             "defends": {
               "type": "array",
               "maxItems": 64,
-                      "items": {
+              "items": {
                 "type": "string",
                 "pattern": "^(zone|device|node|camera):\\S(.{0,62}\\S)?$"
               },
@@ -99,7 +99,7 @@
             "entry": {
               "type": "array",
               "maxItems": 64,
-                      "items": {
+              "items": {
                 "type": "string",
                 "pattern": "^(zone|device|node|camera):\\S(.{0,62}\\S)?$"
               },
@@ -148,7 +148,7 @@
             "type": "array",
             "minItems": 1,
             "maxItems": 7,
-                  "items": {
+            "items": {
               "type": "integer",
               "minimum": 1,
               "maximum": 7
@@ -163,6 +163,44 @@
         }
       },
       "description": "The automatic changes of mode. They run only while the setting alarm.mode_schedule is on; a change to a mode that defends less than the current one is skipped unless alarm.mode_schedule_lowers is on, and a mode with nothing assigned is never armed by it."
+    },
+    "panel_map": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "How the modes reach the alarm panels (only while the setting alarm.mode_panel_sync is on). `profiles` says which profile each mode arms on a panel (absent: away arms away, home arms stay, night arms night); `only` lists the panels that are asked (absent: every known panel; a list, even an empty one, is exactly those, and a panel it names that the server does not know is a failed panel).",
+      "properties": {
+        "profiles": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "The id of the profile each mode arms; a mode that is not here keeps its own.",
+          "properties": {
+            "away": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9_-]{0,15}$",
+              "description": "The id of an arming profile (see arm_profile)."
+            },
+            "home": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9_-]{0,15}$",
+              "description": "The id of an arming profile (see arm_profile)."
+            },
+            "night": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9_-]{0,15}$",
+              "description": "The id of an arming profile (see arm_profile)."
+            }
+          }
+        },
+        "only": {
+          "type": "array",
+          "maxItems": 32,
+          "description": "The ids of the alarm panels that are asked.",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"
+          }
+        }
+      }
     }
   }
 }

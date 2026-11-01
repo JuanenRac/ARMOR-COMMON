@@ -679,9 +679,21 @@ data class ArmingModesSchedule(
     val at: String
 )
 
+data class ArmingModesPanelMapProfiles(
+    val away: String? = null,
+    val home: String? = null,
+    val night: String? = null
+)
+
+data class ArmingModesPanelMap(
+    val profiles: ArmingModesPanelMapProfiles? = null,
+    val only: List<String>? = null
+)
+
 data class ArmingModes(
     val modes: ArmingModesModes,
-    val schedule: List<ArmingModesSchedule>? = null
+    val schedule: List<ArmingModesSchedule>? = null,
+    val panel_map: ArmingModesPanelMap? = null
 )
 
 data class AlarmZoneFeed(

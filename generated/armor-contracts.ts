@@ -678,9 +678,21 @@ export type ArmingModesSchedule = {
   at: string;
 };
 
+export type ArmingModesPanelMapProfiles = {
+  away?: string;
+  home?: string;
+  night?: string;
+};
+
+export type ArmingModesPanelMap = {
+  profiles?: ArmingModesPanelMapProfiles;
+  only?: string[];
+};
+
 export type ArmingModes = {
   modes: ArmingModesModes;
   schedule?: ArmingModesSchedule[];
+  panel_map?: ArmingModesPanelMap;
 };
 
 export type AlarmZoneFeed = {

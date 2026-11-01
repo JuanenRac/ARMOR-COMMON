@@ -605,6 +605,9 @@ def validate_arming_modes(document: Mapping[str, object]) -> None:
                 items = definition.get(field)
                 if isinstance(items, list) and len(items) != len(set(items)):
                     raise ContractError(f"a reference is named once in {field}")
+    panel_map = document.get("panel_map")
+    if isinstance(panel_map, Mapping) and isinstance(panel_map.get("only"), list) and len(panel_map["only"]) != len(set(panel_map["only"])):
+        raise ContractError("a panel is named once in panel_map.only")
     schedule = document.get("schedule")
     if isinstance(schedule, list):
         taken: set[tuple[object, object]] = set()

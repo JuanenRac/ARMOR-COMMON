@@ -690,6 +690,708 @@
    }
   },
   {
+   "name": "the mapping and the list of panels",
+   "valid": true,
+   "payload": {
+    "modes": {
+     "away": {
+      "exit_delay_s": 30
+     },
+     "home": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "node:garden"
+      ],
+      "entry": [
+       "device:front-door"
+      ],
+      "entry_delay_s": 20
+     },
+     "night": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "zone:Living",
+       "node:garden",
+       "camera:porch"
+      ],
+      "exit_delay_s": 10,
+      "entry_delay_s": 45
+     }
+    },
+    "schedule": [
+     {
+      "mode": "night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "at": "23:00"
+     },
+     {
+      "mode": "home",
+      "days": [
+       6,
+       7
+      ],
+      "at": "08:30"
+     }
+    ],
+    "panel_map": {
+     "profiles": {
+      "home": "away",
+      "night": "stay"
+     },
+     "only": [
+      "alarm-1",
+      "alarm-2"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a list that asks no panel",
+   "valid": true,
+   "payload": {
+    "modes": {
+     "away": {
+      "exit_delay_s": 30
+     },
+     "home": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "node:garden"
+      ],
+      "entry": [
+       "device:front-door"
+      ],
+      "entry_delay_s": 20
+     },
+     "night": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "zone:Living",
+       "node:garden",
+       "camera:porch"
+      ],
+      "exit_delay_s": 10,
+      "entry_delay_s": 45
+     }
+    },
+    "schedule": [
+     {
+      "mode": "night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "at": "23:00"
+     },
+     {
+      "mode": "home",
+      "days": [
+       6,
+       7
+      ],
+      "at": "08:30"
+     }
+    ],
+    "panel_map": {
+     "only": []
+    }
+   }
+  },
+  {
+   "name": "an empty panel_sync",
+   "valid": true,
+   "payload": {
+    "modes": {
+     "away": {
+      "exit_delay_s": 30
+     },
+     "home": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "node:garden"
+      ],
+      "entry": [
+       "device:front-door"
+      ],
+      "entry_delay_s": 20
+     },
+     "night": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "zone:Living",
+       "node:garden",
+       "camera:porch"
+      ],
+      "exit_delay_s": 10,
+      "entry_delay_s": 45
+     }
+    },
+    "schedule": [
+     {
+      "mode": "night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "at": "23:00"
+     },
+     {
+      "mode": "home",
+      "days": [
+       6,
+       7
+      ],
+      "at": "08:30"
+     }
+    ],
+    "panel_map": {}
+   }
+  },
+  {
+   "name": "a mapping with a profile of the owner",
+   "valid": true,
+   "payload": {
+    "modes": {
+     "away": {
+      "exit_delay_s": 30
+     },
+     "home": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "node:garden"
+      ],
+      "entry": [
+       "device:front-door"
+      ],
+      "entry_delay_s": 20
+     },
+     "night": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "zone:Living",
+       "node:garden",
+       "camera:porch"
+      ],
+      "exit_delay_s": 10,
+      "entry_delay_s": 45
+     }
+    },
+    "schedule": [
+     {
+      "mode": "night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "at": "23:00"
+     },
+     {
+      "mode": "home",
+      "days": [
+       6,
+       7
+      ],
+      "at": "08:30"
+     }
+    ],
+    "panel_map": {
+     "profiles": {
+      "night": "sleep"
+     }
+    }
+   }
+  },
+  {
+   "name": "a mode outside the list in the mapping",
+   "valid": false,
+   "payload": {
+    "modes": {
+     "away": {
+      "exit_delay_s": 30
+     },
+     "home": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "node:garden"
+      ],
+      "entry": [
+       "device:front-door"
+      ],
+      "entry_delay_s": 20
+     },
+     "night": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "zone:Living",
+       "node:garden",
+       "camera:porch"
+      ],
+      "exit_delay_s": 10,
+      "entry_delay_s": 45
+     }
+    },
+    "schedule": [
+     {
+      "mode": "night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "at": "23:00"
+     },
+     {
+      "mode": "home",
+      "days": [
+       6,
+       7
+      ],
+      "at": "08:30"
+     }
+    ],
+    "panel_map": {
+     "profiles": {
+      "holiday": "away"
+     }
+    }
+   }
+  },
+  {
+   "name": "a profile id in capitals",
+   "valid": false,
+   "payload": {
+    "modes": {
+     "away": {
+      "exit_delay_s": 30
+     },
+     "home": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "node:garden"
+      ],
+      "entry": [
+       "device:front-door"
+      ],
+      "entry_delay_s": 20
+     },
+     "night": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "zone:Living",
+       "node:garden",
+       "camera:porch"
+      ],
+      "exit_delay_s": 10,
+      "entry_delay_s": 45
+     }
+    },
+    "schedule": [
+     {
+      "mode": "night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "at": "23:00"
+     },
+     {
+      "mode": "home",
+      "days": [
+       6,
+       7
+      ],
+      "at": "08:30"
+     }
+    ],
+    "panel_map": {
+     "profiles": {
+      "home": "Away"
+     }
+    }
+   }
+  },
+  {
+   "name": "a profile id of seventeen characters",
+   "valid": false,
+   "payload": {
+    "modes": {
+     "away": {
+      "exit_delay_s": 30
+     },
+     "home": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "node:garden"
+      ],
+      "entry": [
+       "device:front-door"
+      ],
+      "entry_delay_s": 20
+     },
+     "night": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "zone:Living",
+       "node:garden",
+       "camera:porch"
+      ],
+      "exit_delay_s": 10,
+      "entry_delay_s": 45
+     }
+    },
+    "schedule": [
+     {
+      "mode": "night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "at": "23:00"
+     },
+     {
+      "mode": "home",
+      "days": [
+       6,
+       7
+      ],
+      "at": "08:30"
+     }
+    ],
+    "panel_map": {
+     "profiles": {
+      "home": "aaaaaaaaaaaaaaaaa"
+     }
+    }
+   }
+  },
+  {
+   "name": "a panel with a space",
+   "valid": false,
+   "payload": {
+    "modes": {
+     "away": {
+      "exit_delay_s": 30
+     },
+     "home": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "node:garden"
+      ],
+      "entry": [
+       "device:front-door"
+      ],
+      "entry_delay_s": 20
+     },
+     "night": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "zone:Living",
+       "node:garden",
+       "camera:porch"
+      ],
+      "exit_delay_s": 10,
+      "entry_delay_s": 45
+     }
+    },
+    "schedule": [
+     {
+      "mode": "night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "at": "23:00"
+     },
+     {
+      "mode": "home",
+      "days": [
+       6,
+       7
+      ],
+      "at": "08:30"
+     }
+    ],
+    "panel_map": {
+     "only": [
+      "alarm 1"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a panel named twice",
+   "valid": false,
+   "payload": {
+    "modes": {
+     "away": {
+      "exit_delay_s": 30
+     },
+     "home": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "node:garden"
+      ],
+      "entry": [
+       "device:front-door"
+      ],
+      "entry_delay_s": 20
+     },
+     "night": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "zone:Living",
+       "node:garden",
+       "camera:porch"
+      ],
+      "exit_delay_s": 10,
+      "entry_delay_s": 45
+     }
+    },
+    "schedule": [
+     {
+      "mode": "night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "at": "23:00"
+     },
+     {
+      "mode": "home",
+      "days": [
+       6,
+       7
+      ],
+      "at": "08:30"
+     }
+    ],
+    "panel_map": {
+     "only": [
+      "alarm-1",
+      "alarm-1"
+     ]
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "thirty-three panels",
+   "valid": false,
+   "payload": {
+    "modes": {
+     "away": {
+      "exit_delay_s": 30
+     },
+     "home": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "node:garden"
+      ],
+      "entry": [
+       "device:front-door"
+      ],
+      "entry_delay_s": 20
+     },
+     "night": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "zone:Living",
+       "node:garden",
+       "camera:porch"
+      ],
+      "exit_delay_s": 10,
+      "entry_delay_s": 45
+     }
+    },
+    "schedule": [
+     {
+      "mode": "night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "at": "23:00"
+     },
+     {
+      "mode": "home",
+      "days": [
+       6,
+       7
+      ],
+      "at": "08:30"
+     }
+    ],
+    "panel_map": {
+     "only": [
+      "alarm-0",
+      "alarm-1",
+      "alarm-2",
+      "alarm-3",
+      "alarm-4",
+      "alarm-5",
+      "alarm-6",
+      "alarm-7",
+      "alarm-8",
+      "alarm-9",
+      "alarm-10",
+      "alarm-11",
+      "alarm-12",
+      "alarm-13",
+      "alarm-14",
+      "alarm-15",
+      "alarm-16",
+      "alarm-17",
+      "alarm-18",
+      "alarm-19",
+      "alarm-20",
+      "alarm-21",
+      "alarm-22",
+      "alarm-23",
+      "alarm-24",
+      "alarm-25",
+      "alarm-26",
+      "alarm-27",
+      "alarm-28",
+      "alarm-29",
+      "alarm-30",
+      "alarm-31",
+      "alarm-32"
+     ]
+    }
+   }
+  },
+  {
+   "name": "an unknown field in panel_sync",
+   "valid": false,
+   "payload": {
+    "modes": {
+     "away": {
+      "exit_delay_s": 30
+     },
+     "home": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "node:garden"
+      ],
+      "entry": [
+       "device:front-door"
+      ],
+      "entry_delay_s": 20
+     },
+     "night": {
+      "defends": [
+       "zone:Hall",
+       "zone:Kitchen",
+       "zone:Living",
+       "node:garden",
+       "camera:porch"
+      ],
+      "exit_delay_s": 10,
+      "entry_delay_s": 45
+     }
+    },
+    "schedule": [
+     {
+      "mode": "night",
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "at": "23:00"
+     },
+     {
+      "mode": "home",
+      "days": [
+       6,
+       7
+      ],
+      "at": "08:30"
+     }
+    ],
+    "panel_map": {
+     "pin": "1"
+    }
+   }
+  },
+  {
    "name": "no modes",
    "valid": false,
    "payload": {}
