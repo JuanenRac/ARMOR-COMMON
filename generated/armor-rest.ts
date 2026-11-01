@@ -121,6 +121,10 @@ export type Alarm = {
   /** A duress disarm; only an administrator sees it */
   silent?: true;
   acknowledged_unverified?: true;
+  /** A person said it was a false alarm (true) or that it was not (false); absent: nobody said, and the summary of a day infers it from the disarm that ended an intrusion alarm */
+  false_alarm?: boolean;
+  /** Who said so (an account name) */
+  false_alarm_by?: string;
 };
 
 export type AlarmAudioRemoved = {
@@ -1067,6 +1071,12 @@ export type EvidenceVerdict = {
   /** The file in the library still has the digest the proof states */
   matches: boolean;
   issued_at?: string;
+};
+
+/** Says an alarm was a false alarm (true, the default), was not (false), or takes the mark back (null) */
+export type FalseAlarmRequest = {
+  /** true (the default), false, or null to take the mark back */
+  false_alarm?: boolean | null;
 };
 
 export type FirmwareProbe = {
@@ -2226,6 +2236,8 @@ export type SecuritySettings = {
   "vision.heatmap"?: boolean;
   /** Where the live ARMOR-VISION service listens: an http or https origin such as http://127.0.0.1:8765, with no sign-in, path or query in it. Empty: not set up (the heat map answers 503). The heat map is asked of that service, which keeps the activity engine in memory */
   "vision.service_url"?: string;
+  /** Whether the server holds a token for the live vision service (ARMOR_VISION_SERVICE_TOKEN or ARMOR_VISION_SERVICE_TOKEN_FILE). Read only: the token itself is never sent, shown or stored here */
+  "vision.service_token_set"?: boolean;
   /** The live service may be on another machine (off: only a loopback address, 127.x, ::1 or localhost, is used and any other answers 503; turning it on is a loss) */
   "vision.service_remote"?: boolean;
   /** The days the daily log keeps (the readings of the sensors and the power of the house the summary of a day uses; tuning, not a protection) */

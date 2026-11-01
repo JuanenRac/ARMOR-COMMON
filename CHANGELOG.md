@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The shared alarm table also holds the help of each alarm code, and the vision service can have a token:** `alarm_facts.json` gains `help` (what an alarm code means and what to check, in the eight languages) next to the labels of the facts, kept whole by `tests/test_alarm_facts.py`; `SecuritySettings` gains the read-only `vision.service_token_set`.
+
+- **An alarm can be marked as a false alarm by a person:** `POST /api/v1/alarms/{id}/false-alarm` (administrators and operators, audited) with `false_alarm` true, false or null; the `Alarm` carries `false_alarm` and `false_alarm_by`, and the summary of a day counts the mark before it infers anything from a disarm.
+
 ## [0.8.0.2] - The contract describes the summary of a day and the activity heat map, the settings of both and the labels of the facts of an alarm for the mobile clients
 
 - **The summary of a day has more sources, with four tuning settings:** `SecuritySettings` gains `summary.log_days`, `summary.reading_every_s`, `summary.power_every_s` and `summary.false_alarm_s`; the guide says the summary now also covers lost links, false alarms, the readings of the sensors and the power of the house, with only plain facts reaching it.

@@ -546,6 +546,17 @@ paths:
       responses:
         '200': { description: The alarm, content: { application/json: { schema: { $ref: '#/components/schemas/Alarm' } } } }
         '404': { description: Unknown alarm, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+  /api/v1/alarms/{id}/false-alarm:
+    post:
+      summary: Mark an alarm as a false alarm, say it was not one, or take the mark back (administrators and operators; audited; the summary of a day counts it)
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: false, content: { application/json: { schema: { $ref: '#/components/schemas/FalseAlarmRequest' } } } }
+      responses:
+        '200': { description: The alarm with its mark, content: { application/json: { schema: { $ref: '#/components/schemas/Alarm' } } } }
+        '400': { description: 'false_alarm is not true, false or null', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: A viewer or a wall panel's account, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: Unknown alarm, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
   /api/v1/alarms/{id}:
     delete:
       summary: Take one alarm off the list (open or closed); its cause raises it again only when it happens again
@@ -2409,6 +2420,8 @@ components:
         detail: { type: object, additionalProperties: { type: [string, number, boolean] }, description: Plain facts a person needs to act on it }
         silent: { type: boolean, enum: [true], description: A duress disarm; only an administrator sees it }
         acknowledged_unverified: { type: boolean, enum: [true] }
+        false_alarm: { type: boolean, description: 'A person said it was a false alarm (true) or that it was not (false); absent: nobody said, and the summary of a day infers it from the disarm that ended an intrusion alarm' }
+        false_alarm_by: { type: string, maxLength: 60, description: 'Who said so (an account name)' }
     AlarmSource:
       type: object
       required: [type, id]
@@ -2597,6 +2610,12 @@ components:
         features: { type: array, items: { type: string, enum: [security_settings, zone_feed_key, rtsp_tunnel, alarm_audio] }, description: The parts of this server that exist in this version }
         security:
           allOf: [{ $ref: '#/components/schemas/SecuritySettings' }, { type: object, properties: { locked: { type: array, items: { type: string }, description: The options the environment of the server fixes } } }]
+    FalseAlarmRequest:
+      type: object
+      additionalProperties: false
+      description: Says an alarm was a false alarm (true, the default), was not (false), or takes the mark back (null)
+      properties:
+        false_alarm: { type: [boolean, 'null'], description: 'true (the default), false, or null to take the mark back' }
     SecuritySettings:
       type: object
       additionalProperties: false
@@ -2627,6 +2646,7 @@ components:
         summary.daily: { type: boolean, default: false, description: 'Administrators and operators may ask for the summary of a day (GET /api/v1/summary/daily; off: 404)' }
         vision.heatmap: { type: boolean, default: false, description: 'Administrators and operators may ask for the activity heat map of a camera (GET /api/v1/vision/heatmap; off: 404)' }
         vision.service_url: { type: string, maxLength: 100, default: '', description: 'Where the live ARMOR-VISION service listens: an http or https origin such as http://127.0.0.1:8765, with no sign-in, path or query in it. Empty: not set up (the heat map answers 503). The heat map is asked of that service, which keeps the activity engine in memory' }
+        vision.service_token_set: { type: boolean, default: false, readOnly: true, description: 'Whether the server holds a token for the live vision service (ARMOR_VISION_SERVICE_TOKEN or ARMOR_VISION_SERVICE_TOKEN_FILE). Read only: the token itself is never sent, shown or stored here' }
         vision.service_remote: { type: boolean, default: false, description: 'The live service may be on another machine (off: only a loopback address, 127.x, ::1 or localhost, is used and any other answers 503; turning it on is a loss)' }
         summary.log_days: { type: integer, minimum: 1, maximum: 90, default: 14, description: 'The days the daily log keeps (the readings of the sensors and the power of the house the summary of a day uses; tuning, not a protection)' }
         summary.reading_every_s: { type: integer, minimum: 10, maximum: 3600, default: 300, description: 'The most often a reading of one sensor is logged, in seconds' }

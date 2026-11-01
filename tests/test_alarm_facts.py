@@ -28,6 +28,22 @@ class AlarmFacts(unittest.TestCase):
         for key in ("arming_mode", "panel_profile", "panels", "panel_answers", "by", "what_happened", "device", "ip", "mac", "port"):
             self.assertIn(key, self.table["facts"])
 
+    def test_every_help_text_is_in_every_language_and_names_a_code(self):
+        helps = self.table["help"]
+        self.assertGreaterEqual(len(helps), 11)
+        for code, words in helps.items():
+            with self.subTest(code):
+                self.assertRegex(code, r"^[a-z][a-z0-9_]{0,47}$")
+                self.assertEqual(sorted(words), sorted(LANGUAGES))
+                for language, text in words.items():
+                    self.assertTrue(text.strip(), language)
+                    self.assertLessEqual(len(text), 600, language)
+
+    def test_portuguese_help_is_the_european_one(self):
+        words = " ".join(row["pt"] for row in self.table["help"].values()).lower()
+        for brazilian in ("arquivo", "tela", "celular", "usuário", "você"):
+            self.assertNotIn(brazilian, words)
+
     def test_portuguese_is_the_european_one(self):
         words = " ".join(row["pt"] for row in self.table["facts"].values()).lower()
         for brazilian in ("arquivo", "tela", "celular", "usuário"):
