@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The summary of a day has more sources, with four tuning settings:** `SecuritySettings` gains `summary.log_days`, `summary.reading_every_s`, `summary.power_every_s` and `summary.false_alarm_s`; the guide says the summary now also covers lost links, false alarms, the readings of the sensors and the power of the house, with only plain facts reaching it.
+
+- **The heat map is asked of a live ARMOR-VISION service:** the contract of `GET /api/v1/vision/heatmap` keeps its shape; its `503` now means the live service is not set up or is not this machine while the new setting `vision.service_remote` (`false` by default) is off, and a service that cannot be reached is a `502`. `SecuritySettings` gains `vision.service_url` (the address of the service, empty when not set up) and `vision.service_remote`.
+
 - **The entry delay of an arming mode also holds back a node and a camera listed in `entry`, and the limits of the two reports are settings:** the descriptions of `entry` and `entry_delay_s` in `arming_modes.schema.json` and the contracts guide now say that a node (its intrusion and its silence) or a camera (its silence) waits like a device; `SecuritySettings` has `reports.timeout_s` (5 to 120, default 20), `reports.queue_max` (1 to 10, default 3) and `reports.requests_per_minute` (1 to 300, default 30), the values the report routes always used.
 
 - **The contract describes the summary of a day and the activity heat map:** `GET /api/v1/summary/daily` and `GET /api/v1/vision/heatmap` (administrators and operators only, each behind its own security option that is off by default), the options `summary.daily` and `vision.heatmap`, the schemas `daily_summary` and `heatmap` with 24 conformance vectors (the summary has no field for the free text of an event, a setting or a secret, and the map says `contains_images: false`), their generated types, and grids of numbers in the generated TypeScript and Kotlin types.

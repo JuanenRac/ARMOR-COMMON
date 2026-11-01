@@ -2224,6 +2224,18 @@ export type SecuritySettings = {
   "summary.daily"?: boolean;
   /** Administrators and operators may ask for the activity heat map of a camera (GET /api/v1/vision/heatmap; off: 404) */
   "vision.heatmap"?: boolean;
+  /** Where the live ARMOR-VISION service listens: an http or https origin such as http://127.0.0.1:8765, with no sign-in, path or query in it. Empty: not set up (the heat map answers 503). The heat map is asked of that service, which keeps the activity engine in memory */
+  "vision.service_url"?: string;
+  /** The live service may be on another machine (off: only a loopback address, 127.x, ::1 or localhost, is used and any other answers 503; turning it on is a loss) */
+  "vision.service_remote"?: boolean;
+  /** The days the daily log keeps (the readings of the sensors and the power of the house the summary of a day uses; tuning, not a protection) */
+  "summary.log_days"?: number;
+  /** The most often a reading of one sensor is logged, in seconds */
+  "summary.reading_every_s"?: number;
+  /** The most often the power of the house is logged, in seconds */
+  "summary.power_every_s"?: number;
+  /** An intrusion alarm that a disarm ends within this many seconds counts as a false alarm in the summary of a day (0: none is inferred) */
+  "summary.false_alarm_s"?: number;
   /** The most seconds one summary of a day or heat map may run (tuning; it is not a protection) */
   "reports.timeout_s"?: number;
   /** How many reports may wait for their turn before the answer is 503 report_busy */

@@ -1546,8 +1546,8 @@ paths:
         '401': { description: Not signed in, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '403': { description: 'A viewer or a wall panel (this account cannot ask for it)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '404': { description: 'The option vision.heatmap is off (heatmap_disabled), the activity pipeline is off in its own settings (heatmap_pipeline_off) or the camera is not in the configuration (unknown_camera)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
-        '502': { description: 'ARMOR-VISION failed or answered something that is not a map (heatmap_failed); what it said is not passed on', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
-        '503': { description: 'ARMOR-VISION is not set up, or the file of detections does not exist yet (heatmap_not_configured, heatmap_no_data)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '502': { description: 'The live service of ARMOR-VISION cannot be reached, failed or answered something that is not a map (heatmap_failed); what it said is not passed on', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: 'The live service of ARMOR-VISION is not set up, its address is not this machine while vision.service_remote is off, or it is not a valid address (heatmap_not_configured; heatmap_no_data is no longer sent)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/alarm-audio:
     get:
       summary: What the sound of an alarm offers on this server - whether the spoken alarm and the uploaded sounds are on (two options of the security settings, both off by default), whether a voice gateway is set up, the limits of a sound and the sounds stored
@@ -2626,6 +2626,12 @@ components:
         alarm_audio.custom_sounds: { type: boolean, default: false, description: 'Administrators may upload a sound for an alarm origin and the wall panel may ask for it (off: nothing is accepted or served)' }
         summary.daily: { type: boolean, default: false, description: 'Administrators and operators may ask for the summary of a day (GET /api/v1/summary/daily; off: 404)' }
         vision.heatmap: { type: boolean, default: false, description: 'Administrators and operators may ask for the activity heat map of a camera (GET /api/v1/vision/heatmap; off: 404)' }
+        vision.service_url: { type: string, maxLength: 100, default: '', description: 'Where the live ARMOR-VISION service listens: an http or https origin such as http://127.0.0.1:8765, with no sign-in, path or query in it. Empty: not set up (the heat map answers 503). The heat map is asked of that service, which keeps the activity engine in memory' }
+        vision.service_remote: { type: boolean, default: false, description: 'The live service may be on another machine (off: only a loopback address, 127.x, ::1 or localhost, is used and any other answers 503; turning it on is a loss)' }
+        summary.log_days: { type: integer, minimum: 1, maximum: 90, default: 14, description: 'The days the daily log keeps (the readings of the sensors and the power of the house the summary of a day uses; tuning, not a protection)' }
+        summary.reading_every_s: { type: integer, minimum: 10, maximum: 3600, default: 300, description: 'The most often a reading of one sensor is logged, in seconds' }
+        summary.power_every_s: { type: integer, minimum: 5, maximum: 3600, default: 60, description: 'The most often the power of the house is logged, in seconds' }
+        summary.false_alarm_s: { type: integer, minimum: 0, maximum: 600, default: 60, description: 'An intrusion alarm that a disarm ends within this many seconds counts as a false alarm in the summary of a day (0: none is inferred)' }
         reports.timeout_s: { type: integer, minimum: 5, maximum: 120, default: 20, description: 'The most seconds one summary of a day or heat map may run (tuning; it is not a protection)' }
         reports.queue_max: { type: integer, minimum: 1, maximum: 10, default: 3, description: 'How many reports may wait for their turn before the answer is 503 report_busy' }
         reports.requests_per_minute: { type: integer, minimum: 1, maximum: 300, default: 30, description: 'How many requests a minute the two report routes answer, together' }
