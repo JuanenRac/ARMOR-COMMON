@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The shared alarm table holds the help of every alarm code** (59 codes, in the eight languages, European Portuguese; two lines: what it means and what to check), not only the eleven solar ones. A test requires a help text for every code of `alarm_codes.json` and the same two-line shape in every language, and that the alarms that threaten life say to get safe first.
+
 ## [0.8.0.3] - The modes of arming carry the map of profiles and panels of each mode, the false-alarm mark of an alarm, the token of the live vision service and the help of the alarm codes in the table every client shares
 
 - **The arming modes say how they reach the alarm panels:** `arming_modes.schema.json` gains the optional `panel_map` (`profiles`: the profile each mode arms, `only`: the panels that are asked), with conformance vectors; defaults are the mapping and the panels it always had.
