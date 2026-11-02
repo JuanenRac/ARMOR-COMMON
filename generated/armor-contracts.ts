@@ -1111,6 +1111,50 @@ export type Network = {
   results?: NetworkResults[];
 };
 
+export type DeviceState = {
+  on: boolean;
+};
+
+export type NetworkOrdersCommands = {
+  id: string;
+  type: "scan_now" | "ping" | "traceroute" | "wake" | "ports" | "http" | "inspect";
+  device_id?: string;
+  ip?: string;
+  mac?: string;
+  port?: number;
+  auth_sealed?: string;
+};
+
+export type NetworkOrders = {
+  accepted: true;
+  commands: NetworkOrdersCommands[];
+};
+
+export type ServerAlert = {
+  service: "armor-server";
+  event: "alert.raised" | "alert.cleared" | "node.offline" | "node.stale" | "camera.offline" | "alarm.raised" | "alarm.escalated" | "automation.notify" | "login.remote" | "alert.test";
+  at: string;
+  mode: "armed" | "disarmed";
+  node_id?: string;
+  camera_id?: string;
+  targets?: number;
+  minutes?: number;
+  alarm_id?: string;
+  severity?: "critical" | "high" | "warning";
+  code?: string;
+  device_id?: string;
+  solar_id?: string;
+  electrical_id?: string;
+  alarm_node_id?: string;
+  network_id?: string;
+  silent?: true;
+  automation?: string;
+  login_user?: string;
+  login_from?: string;
+  login_country?: string;
+  login_country_new?: true;
+};
+
 export const MAX_TARGETS = 15;
 export const MAX_LUX = 200000;
 export const NODE_ID_PATTERN = /^[a-z0-9][a-z0-9_-]{0,63}$/;

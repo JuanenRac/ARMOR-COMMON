@@ -35,6 +35,41 @@ class GeneratedTypesTests(unittest.TestCase):
         self.assertNotIn("List<Any>", KOTLIN)
 
 
+class EverySchemaHasTypesTests(unittest.TestCase):
+    """A schema file added to the folder gets its types without anyone editing the generator, and the C++ constants say what the schemas say."""
+
+    def test_every_schema_file_has_a_type_in_both_languages(self):
+        import sys
+        sys.path.insert(0, str(ROOT / "tools"))
+        import generate_types
+        names = {path.name[: -len(".schema.json")] for path in generate_types.SCHEMAS.glob("*.schema.json")}
+        self.assertEqual(names, set(generate_types.discover()) | generate_types.EMBEDDED)
+        for key, (name, _declared) in generate_types.discover().items():
+            self.assertIn(f"export type {name} = {{", TYPESCRIPT, key)
+            self.assertIn(f"data class {name}(", KOTLIN, key)
+        for embedded in generate_types.EMBEDDED:   # written inside the message that holds it, under the name declared there
+            self.assertIn(generate_types.MESSAGES["alarm_command"][1]["profile"], TYPESCRIPT)
+
+    def test_the_generated_files_have_balanced_braces(self):
+        self.assertEqual(TYPESCRIPT.count("{"), TYPESCRIPT.count("}"))
+        self.assertEqual(KOTLIN.count("("), KOTLIN.count(")"))
+
+    def test_the_cpp_constants_follow_the_schemas_and_the_shared_firmware(self):
+        import json
+        header = (ROOT / "generated" / "armor_contracts.hpp").read_text(encoding="utf-8")
+        schemas = ROOT / "src" / "armor_common" / "schemas"
+        telemetry = json.loads((schemas / "telemetry.schema.json").read_text(encoding="utf-8"))["properties"]
+        command = json.loads((schemas / "command.schema.json").read_text(encoding="utf-8"))["properties"]
+        self.assertIn(f'R"({telemetry["node_id"]["pattern"]})"', header)
+        self.assertIn(f"kMaxTargets = {telemetry['targets']['maxItems']};", header)
+        self.assertIn(f"kSensitivityMax = {command['sensitivity']['maximum']};", header)
+        for value in command["command"]["enum"]:
+            self.assertIn(f'"{value}"', header)
+        node_id = (ROOT / "firmware_base" / "core" / "node_id.hpp").read_text(encoding="utf-8")
+        self.assertIn(telemetry["node_id"]["pattern"], node_id)   # the rule the firmware writes by hand says the same as the schema
+        self.assertIn("kMaxNodeIdLength = 64;", node_id)
+
+
 try:
     import yaml   # noqa: F401 - the generator of the types of the HTTP contract reads the OpenAPI document with it
 except ImportError:      # a machine without the contract tests skips this class

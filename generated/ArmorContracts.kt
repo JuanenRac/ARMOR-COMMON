@@ -1112,6 +1112,50 @@ data class Network(
     val results: List<NetworkResults>? = null
 )
 
+data class DeviceState(
+    val on: Boolean
+)
+
+data class NetworkOrdersCommands(
+    val id: String,
+    val type: String,
+    val device_id: String? = null,
+    val ip: String? = null,
+    val mac: String? = null,
+    val port: Long? = null,
+    val auth_sealed: String? = null
+)
+
+data class NetworkOrders(
+    val accepted: Boolean = true,
+    val commands: List<NetworkOrdersCommands>
+)
+
+data class ServerAlert(
+    val service: String = "armor-server",
+    val event: String,
+    val at: String,
+    val mode: String,
+    val node_id: String? = null,
+    val camera_id: String? = null,
+    val targets: Long? = null,
+    val minutes: Long? = null,
+    val alarm_id: String? = null,
+    val severity: String? = null,
+    val code: String? = null,
+    val device_id: String? = null,
+    val solar_id: String? = null,
+    val electrical_id: String? = null,
+    val alarm_node_id: String? = null,
+    val network_id: String? = null,
+    val silent: Boolean? = null,
+    val automation: String? = null,
+    val login_user: String? = null,
+    val login_from: String? = null,
+    val login_country: String? = null,
+    val login_country_new: Boolean? = null
+)
+
 object ContractLimits {
     const val MAX_TARGETS = 15
     const val MAX_LUX = 200000.0

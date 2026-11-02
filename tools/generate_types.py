@@ -64,6 +64,8 @@ MESSAGES = {
     "network": ("Network", {"interface": "NetworkInterface", "internet": "NetworkInternet", "probes": "NetworkProbe", "last_outage": "NetworkOutage", "devices": "NetworkDevice",
                             "ports": "NetworkPort", "events": "NetworkEvent", "scan": "NetworkScan"}),
 }
+# Types whose schema is not a message of its own: they are written inside the message that holds them (``arm_profile`` is the ``profile`` of ``alarm_command``).
+EMBEDDED = {"arm_profile"}
 HEADER = "Generated from the A.R.M.O.R. JSON Schemas by tools/generate_types.py. Do not edit."
 
 
@@ -162,10 +164,21 @@ def nested_types(schema: dict, nested: dict[str, str], emitted: set[str]):
         yield type_name, item
 
 
+def discover() -> dict[str, tuple[str, dict[str, str]]]:
+    """Every schema of the folder: the ones named in MESSAGES with the nested names declared there, then each other one (not EMBEDDED) with a name made from its file name; the nested
+    objects of those get their names from `complete`. A new schema file therefore gets its types without anyone editing this file."""
+    found = dict(MESSAGES)
+    for path in sorted(SCHEMAS.glob("*.schema.json")):
+        key = path.name[: -len(".schema.json")]
+        if key not in found and key not in EMBEDDED:
+            found[key] = (pascal(key), {})
+    return found
+
+
 def render_typescript(docs: dict[str, dict]) -> str:
     out = [f"/** {HEADER} */", ""]
     emitted: set[str] = set()
-    for key, (name, declared) in MESSAGES.items():
+    for key, (name, declared) in discover().items():
         schema = docs[key]
         nested = complete(schema, declared, name)
         for type_name, item in nested_types(schema, nested, emitted):
@@ -189,7 +202,7 @@ def render_typescript(docs: dict[str, dict]) -> str:
 def render_kotlin(docs: dict[str, dict]) -> str:
     out = ["// " + HEADER, "package es.electrohobby3d.armor.contracts", ""]
     emitted: set[str] = set()
-    for key, (name, declared) in MESSAGES.items():
+    for key, (name, declared) in discover().items():
         schema = docs[key]
         nested = complete(schema, declared, name)
         for type_name, item in nested_types(schema, nested, emitted):
@@ -210,9 +223,37 @@ def render_kotlin(docs: dict[str, dict]) -> str:
     return "\n".join(out)
 
 
+def render_cpp(docs: dict[str, dict]) -> str:
+    """The limits and the fixed lists of the contract as C++ constants, so a node does not copy them by hand (``tests/test_generated_types.py`` keeps the shared firmware equal to them)."""
+    limits = docs["telemetry"]["properties"]
+    node_id = limits["node_id"]
+    command = docs["command"]["properties"]
+    commands = ", ".join(f'"{value}"' for value in command["command"]["enum"])
+    sensitivity = command["sensitivity"]
+    return "\n".join([
+        f"// {HEADER}",
+        "#pragma once",
+        "#include <array>",
+        "#include <cstddef>",
+        "#include <string_view>",
+        "",
+        "namespace armor::contract {",
+        "",
+        f"inline constexpr std::string_view kNodeIdPattern = R\"({node_id['pattern']})\";",
+        f"inline constexpr std::size_t kMaxTargets = {limits['targets']['maxItems']};",
+        f"inline constexpr double kMaxLux = {float(limits['lux']['maximum'])!r};",
+        f"inline constexpr int kSensitivityMin = {sensitivity['minimum']};",
+        f"inline constexpr int kSensitivityMax = {sensitivity['maximum']};",
+        f"inline constexpr std::array<std::string_view, {len(command['command']['enum'])}> kCommands = {{{commands}}};",
+        "",
+        "}  // namespace armor::contract",
+        "",
+    ])
+
+
 def outputs() -> dict[Path, str]:
-    docs = {key: json.loads((SCHEMAS / f"{key}.schema.json").read_text(encoding="utf-8")) for key in MESSAGES}
-    return {OUT / "armor-contracts.ts": render_typescript(docs), OUT / "ArmorContracts.kt": render_kotlin(docs)}
+    docs = {key: json.loads((SCHEMAS / f"{key}.schema.json").read_text(encoding="utf-8")) for key in discover()}
+    return {OUT / "armor-contracts.ts": render_typescript(docs), OUT / "ArmorContracts.kt": render_kotlin(docs), OUT / "armor_contracts.hpp": render_cpp(docs)}
 
 
 def main() -> int:

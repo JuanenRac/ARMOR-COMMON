@@ -11,6 +11,7 @@ from armor_common.schema import SchemaError, UnsupportedSchema, check_schema, va
 CONFORMANCE = Path(__file__).resolve().parent.parent / "conformance"
 # The kinds whose messages also have a rule a schema cannot state (a token where none belongs, a switch named twice): the check of the whole message.
 MESSAGE_RULES = {
+    "command": lambda payload: validate_topic_and_payload(f"armor/node/{payload['node_id']}/command", payload),
     "electrical": lambda payload: validate_electrical_message(f"armor/electrical/{payload['node_id']}/state", payload),
     "electrical_command": lambda payload: validate_electrical_command(f"armor/electrical/{payload['node_id']}/command", payload),
     "electrical_result": lambda payload: validate_electrical_result(f"armor/electrical/{payload['node_id']}/result", payload),
@@ -138,6 +139,14 @@ class TopicTests(unittest.TestCase):
     def test_rejects_topic_node_mismatch(self):
         with self.assertRaises(ContractError):
             validate_topic_and_payload("armor/node/north-1/health", {"node_id": "south-1", "online": True, "timestamp_ms": 1})
+
+    def test_a_sensitivity_belongs_only_to_set_thresholds(self):
+        base = {"node_id": "n1", "timestamp_ms": 1}
+        validate_topic_and_payload("armor/node/n1/command", {**base, "command": "set_thresholds", "sensitivity": 3})
+        validate_topic_and_payload("armor/node/n1/command", {**base, "command": "set_thresholds"})
+        for command in ("restart", "calibrate"):
+            with self.assertRaises(ContractError):
+                validate_topic_and_payload("armor/node/n1/command", {**base, "command": command, "sensitivity": 3})
 
     def test_commands_are_an_allow_list(self):
         validate_topic_and_payload("armor/node/n1/command", {"node_id": "n1", "timestamp_ms": 1, "command": "restart"})

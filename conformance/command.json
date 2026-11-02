@@ -68,6 +68,37 @@
    }
   },
   {
+   "name": "sensitivity on a restart",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 9,
+    "command": "restart",
+    "sensitivity": 5
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "sensitivity on a calibration",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 9,
+    "command": "calibrate",
+    "sensitivity": 1
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "thresholds without a sensitivity",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 9,
+    "command": "set_thresholds"
+   }
+  },
+  {
    "name": "missing command",
    "valid": false,
    "payload": {

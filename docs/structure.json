@@ -211,24 +211,24 @@
     {
      "name": "generated/",
      "desc": {
-      "en": "TypeScript and Kotlin types",
-      "es": "tipos TypeScript y Kotlin",
-      "de": "TypeScript- und Kotlin-Typen",
-      "fr": "types TypeScript et Kotlin",
-      "it": "tipi TypeScript e Kotlin",
-      "ja": "TypeScript と Kotlin の型",
-      "zh": "TypeScript 和 Kotlin 类型",
-      "pt": "tipos TypeScript e Kotlin"
+      "en": "TypeScript, Kotlin and C++ types",
+      "es": "tipos TypeScript, Kotlin y C++",
+      "de": "TypeScript-, Kotlin- und C++-Typen",
+      "fr": "types TypeScript, Kotlin et C++",
+      "it": "tipi TypeScript, Kotlin e C++",
+      "ja": "TypeScript・Kotlin・C++ の型",
+      "zh": "TypeScript、Kotlin 和 C++ 类型",
+      "pt": "tipos TypeScript, Kotlin e C++"
      },
      "tree_desc": {
-      "en": "TypeScript and Kotlin types (generated, do not edit)",
-      "es": "tipos TypeScript y Kotlin (generados, no editar)",
-      "de": "TypeScript- und Kotlin-Typen (erzeugt, nicht bearbeiten)",
-      "fr": "types TypeScript et Kotlin (générés, ne pas modifier)",
-      "it": "tipi TypeScript e Kotlin (generati, non modificare)",
-      "ja": "TypeScript と Kotlin の型（生成物、編集不可）",
-      "zh": "TypeScript 和 Kotlin 类型（自动生成，勿编辑）",
-      "pt": "tipos TypeScript e Kotlin (gerados, não editar)"
+      "en": "TypeScript, Kotlin and C++ types (generated, do not edit)",
+      "es": "tipos TypeScript, Kotlin y C++ (generados, no editar)",
+      "de": "TypeScript-, Kotlin- und C++-Typen (erzeugt, nicht bearbeiten)",
+      "fr": "types TypeScript, Kotlin et C++ (générés, ne pas modifier)",
+      "it": "tipi TypeScript, Kotlin e C++ (generati, non modificare)",
+      "ja": "TypeScript・Kotlin・C++ の型（生成物、編集不可）",
+      "zh": "TypeScript、Kotlin 和 C++ 类型（自动生成，勿编辑）",
+      "pt": "tipos TypeScript, Kotlin e C++ (gerados, não editar)"
      }
     },
     {

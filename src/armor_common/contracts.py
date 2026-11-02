@@ -129,6 +129,8 @@ def validate_topic_and_payload(topic: str, payload: Mapping[str, object]) -> Non
     if payload.get("node_id") != node_id:
         raise ContractError("payload node_id must match the topic")
     validate_payload(kind, payload)
+    if kind == "command" and "sensitivity" in payload and payload["command"] != "set_thresholds":
+        raise ContractError("sensitivity belongs only to the command set_thresholds")
 
 
 def parse_solar_topic(topic: str) -> tuple[str, str]:
