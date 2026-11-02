@@ -1173,7 +1173,7 @@ paths:
       summary: The numbers of the server (machine, nodes, active alarms, messages taken and refused per topic) in the Prometheus text form, with no name, address or message text in it; off until the setting metrics.prometheus is on and only for the token ARMOR_METRICS_TOKEN
       security: [{ metricsBearer: [] }]
       responses:
-        '200': { description: The metrics in the Prometheus text exposition format, content: { text/plain: { schema: { type: string } } } }
+        '200': { description: The metrics in the Prometheus text exposition format, content: { text/plain: { schema: { $ref: '#/components/schemas/PrometheusText' } } } }
         '401': { description: Missing or wrong token, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '404': { description: The setting is off or the server holds no metrics token, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/preflight:
@@ -2069,7 +2069,7 @@ paths:
         - { name: from, in: query, required: true, schema: { type: string, format: date-time } }
         - { name: to, in: query, required: true, schema: { type: string, format: date-time } }
       responses:
-        '200': { description: The signed document, sent as a download, content: { application/json: { schema: { $ref: '#/components/schemas/IncidentExport' } } } }
+        '200': { description: 'The signed document, sent as a download', content: { application/json: { schema: { $ref: '#/components/schemas/IncidentExport' } } } }
         '400': { description: The window is not two times in order of at most seven days, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/admin/incident/verify:
     post:
@@ -4696,6 +4696,9 @@ components:
       required: [sha256]
       properties:
         sha256: { type: string, pattern: '^[0-9a-f]{64}$' }
+    PrometheusText:
+      type: string
+      description: The Prometheus text exposition format (lines of # HELP, # TYPE and name{labels} value)
     IncidentExport:
       type: object
       required: [version, issued_at, issuer, window, events, audit, files, truncated, audit_complete, signature]
@@ -4710,8 +4713,8 @@ components:
           properties:
             from: { type: string, format: date-time }
             to: { type: string, format: date-time }
-        events: { type: array, items: { type: object, additionalProperties: true }, description: The events of the history inside the window, oldest first (at most 5000) }
-        audit: { type: array, items: { type: object, additionalProperties: true }, description: The lines of the audit trail inside the window, oldest first (at most 5000) }
+        events: { type: array, items: { type: object, additionalProperties: true }, description: 'The events of the history inside the window, oldest first (at most 5000)' }
+        audit: { type: array, items: { type: object, additionalProperties: true }, description: 'The lines of the audit trail inside the window, oldest first (at most 5000)' }
         files:
           type: array
           description: The evidence files made inside the window (at most 200); a file bigger than 512 MB is listed without its digest

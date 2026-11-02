@@ -1189,11 +1189,11 @@ export type IncidentExport = {
     from: string;
     to: string;
   };
-  /** The events of the history inside the window */
+  /** The events of the history inside the window, oldest first (at most 5000) */
   events: {
     [key: string]: unknown;
   }[];
-  /** The lines of the audit trail inside the window */
+  /** The lines of the audit trail inside the window, oldest first (at most 5000) */
   audit: {
     [key: string]: unknown;
   }[];
@@ -2033,6 +2033,9 @@ export type PreviewTicket = {
   path: string;
   expiresAt: string;
 };
+
+/** The Prometheus text exposition format (lines of */
+export type PrometheusText = string;
 
 export type PtzCommand = {
   command: "left" | "right" | "up" | "down" | "zoomIn" | "zoomOut" | "stop";
