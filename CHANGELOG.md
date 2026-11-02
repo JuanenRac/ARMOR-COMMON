@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The OpenAPI file describes the incident record** (`GET /api/v1/admin/incident` and `POST /api/v1/admin/incident/verify`, with the schemas `IncidentExport` and `IncidentVerdict`); the generated REST types follow.
 - **The OpenAPI file describes `GET /metrics`** (the Prometheus text page, with its own bearer scheme), the two new settings `metrics.prometheus` and `heartbeat.enabled` (both off by default), the `dry_run` of the installation import and the `dry_run` mark of its report; the generated REST types follow.
 - **The state of an alarm node can carry the wiring of its siren:** `alarm.schema.json` gains the optional `siren_loop` (`unknown`, `ok`, `open`, `short`, `unreadable`) and `siren_fault`, sent together and only by a node that supervises its siren; `validate_alarm_message` requires the pair and that the fault is true exactly for `open`, `short` and `unreadable`; twelve conformance vectors; the generated types follow.
 - **The firmware the nodes share can tell which board an image was built for** (`core/image_board.hpp` and its tests, with the two settings `security.ota_check_board` and `security.ota_require_board_mark` in `core/node_settings.hpp`, for the electrical and alarm nodes); the shared copy of `tools/check_sdkconfig.py` is brought to what the nodes hold, so the check of the shared files passes again.

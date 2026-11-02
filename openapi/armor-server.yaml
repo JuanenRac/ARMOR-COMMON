@@ -2061,6 +2061,23 @@ paths:
       responses:
         '200': { description: '{ version, issued_at, issuer, file, custody, signature }', content: { application/json: { schema: { $ref: '#/components/schemas/EvidenceProof' } } } }
         '404': { description: Not found, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+  /api/v1/admin/incident:
+    get:
+      summary: The record of one incident as a single signed document - the events of the history, the lines of the audit trail and the evidence files (name, size, time and SHA-256, never the picture) of a window of time of at most seven days (an administrator)
+      security: [{ admin: [] }]
+      parameters:
+        - { name: from, in: query, required: true, schema: { type: string, format: date-time } }
+        - { name: to, in: query, required: true, schema: { type: string, format: date-time } }
+      responses:
+        '200': { description: The signed document, sent as a download, content: { application/json: { schema: { $ref: '#/components/schemas/IncidentExport' } } } }
+        '400': { description: The window is not two times in order of at most seven days, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/admin/incident/verify:
+    post:
+      summary: Whether an incident document is exactly what this server signed and whether its files still have the digests it lists (an administrator)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/IncidentExport' } } } }
+      responses:
+        '200': { description: '{ "genuine": boolean, "files_match": boolean, "issued_at"? }', content: { application/json: { schema: { $ref: '#/components/schemas/IncidentVerdict' } } } }
   /api/v1/media/proof/verify:
     post:
       summary: Whether a proof of custody is exactly what this server signed and whether the file still has the digest it names
@@ -4679,6 +4696,57 @@ components:
       required: [sha256]
       properties:
         sha256: { type: string, pattern: '^[0-9a-f]{64}$' }
+    IncidentExport:
+      type: object
+      required: [version, issued_at, issuer, window, events, audit, files, truncated, audit_complete, signature]
+      description: The record of one incident, signed by the server
+      properties:
+        version: { type: integer, enum: [1] }
+        issued_at: { type: string, format: date-time }
+        issuer: { type: string, enum: [armor-server] }
+        window:
+          type: object
+          required: [from, to]
+          properties:
+            from: { type: string, format: date-time }
+            to: { type: string, format: date-time }
+        events: { type: array, items: { type: object, additionalProperties: true }, description: The events of the history inside the window, oldest first (at most 5000) }
+        audit: { type: array, items: { type: object, additionalProperties: true }, description: The lines of the audit trail inside the window, oldest first (at most 5000) }
+        files:
+          type: array
+          description: The evidence files made inside the window (at most 200); a file bigger than 512 MB is listed without its digest
+          items:
+            type: object
+            required: [camera, kind, name, bytes, created_at, sha256, protected]
+            properties:
+              camera: { type: string }
+              kind: { type: string }
+              name: { type: string }
+              bytes: { type: integer }
+              created_at: { type: string, format: date-time }
+              sha256: { type: [string, 'null'] }
+              protected: { type: boolean }
+        truncated:
+          type: object
+          required: [events, audit, files]
+          properties:
+            events: { type: boolean }
+            audit: { type: boolean }
+            files: { type: boolean }
+        audit_complete: { type: boolean, description: Whether the audit trail still reaches back to the start of the window }
+        signature:
+          type: object
+          required: [algorithm, value]
+          properties:
+            algorithm: { type: string, enum: [HMAC-SHA256] }
+            value: { type: string }
+    IncidentVerdict:
+      type: object
+      required: [genuine, files_match]
+      properties:
+        genuine: { type: boolean }
+        files_match: { type: boolean }
+        issued_at: { type: string, format: date-time }
     EvidenceProof:
       type: object
       required: [version, issued_at, issuer, file, custody, signature]

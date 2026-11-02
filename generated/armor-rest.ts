@@ -1180,6 +1180,52 @@ export type IgnoreZonesInput = {
   zones: IgnoreZone[];
 };
 
+/** The record of one incident, signed by the server */
+export type IncidentExport = {
+  version: 1;
+  issued_at: string;
+  issuer: "armor-server";
+  window: {
+    from: string;
+    to: string;
+  };
+  /** The events of the history inside the window */
+  events: {
+    [key: string]: unknown;
+  }[];
+  /** The lines of the audit trail inside the window */
+  audit: {
+    [key: string]: unknown;
+  }[];
+  /** The evidence files made inside the window (at most 200); a file bigger than 512 MB is listed without its digest */
+  files: {
+    camera: string;
+    kind: string;
+    name: string;
+    bytes: number;
+    created_at: string;
+    sha256: string | null;
+    protected: boolean;
+  }[];
+  truncated: {
+    events: boolean;
+    audit: boolean;
+    files: boolean;
+  };
+  /** Whether the audit trail still reaches back to the start of the window */
+  audit_complete: boolean;
+  signature: {
+    algorithm: "HMAC-SHA256";
+    value: string;
+  };
+};
+
+export type IncidentVerdict = {
+  genuine: boolean;
+  files_match: boolean;
+  issued_at?: string;
+};
+
 export type IngestLog = {
   topics: {
     topic: string;
