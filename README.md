@@ -21,7 +21,7 @@
   <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-1295-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Vectors-1318-00E5FF.svg" alt="Vectors">
   <img src="https://img.shields.io/badge/Tests-247%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.8.0.4-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
@@ -29,7 +29,7 @@
 
 ---
 
-**Honesty check - what runs today:** The schemas (telemetry, health, command, node information, solar inverter and battery, electrical, alarm with its command and result, and network), the Python validator, the 1295 conformance vectors, the generated TypeScript and Kotlin types, the OpenAPI file of the server (198 paths), the firmware base shared by the five nodes and the shared project launcher are real and tested (247 tests). The Kotlin file is generated but **not yet consumed** by ARMOR-ANDROID-CONTROL (which keeps its own parsing), and the `set_thresholds` command carries a single `sensitivity` field because the real radar parameters are not defined until firmware exists.
+**Honesty check - what runs today:** The schemas (telemetry, health, command, node information, solar inverter and battery, electrical, alarm with its command and result, and network), the Python validator, the 1318 conformance vectors, the generated TypeScript and Kotlin types, the OpenAPI file of the server (198 paths), the firmware base shared by the five nodes and the shared project launcher are real and tested (247 tests). The Kotlin file is generated but **not yet consumed** by ARMOR-ANDROID-CONTROL (which keeps its own parsing), and the `set_thresholds` command carries a single `sensitivity` field because the real radar parameters are not defined until firmware exists.
 
 ---
 
@@ -41,7 +41,7 @@
 | Maturity | Established |
 | Role | Shared contracts, validator and firmware base of the family |
 | Stack | Python 3.11+, JSON Schema, OpenAPI; C++ firmware base (ESP-IDF) |
-| Tests | 247 (`python -m unittest discover -s tests`), 1295 conformance vectors |
+| Tests | 247 (`python -m unittest discover -s tests`), 1318 conformance vectors |
 | Contract | 37 JSON Schemas, 198 HTTP paths (257 operations) |
 | Runs on | Any computer (library and tools); the firmware base runs inside the five nodes |
 | On real hardware | Only the radar node has run the shared firmware on a board; the other four have not |
@@ -58,7 +58,7 @@ Each line is one part of this repository and the light says how far it is today.
 | Area | State | What it means here |
 |---|---|---|
 | Software | 🟢 | The schemas, the Python validator, the generated TypeScript and Kotlin types, the OpenAPI file of the server and the firmware base shared by the five nodes are in place. |
-| Tests | 🟢 | 247 tests and 1295 conformance vectors pass; the JSON, Bluetooth and Improv parsers of the firmware are also fuzzed with libFuzzer. |
+| Tests | 🟢 | 247 tests and 1318 conformance vectors pass; the JSON, Bluetooth and Improv parsers of the firmware are also fuzzed with libFuzzer. |
 | Protocols and data | 🟡 | Only the radar node's messages are used every day with a real board and the server; those of the other nodes are checked against stand-ins. |
 | Integration | 🟡 | The firmware base is checked to be identical in every node; the Kotlin types are generated but not yet used by the Android app, which keeps its own parsing. |
 | Hardware | 🟠 | Only the radar node has run this shared firmware on a board; the other four nodes have not. |
@@ -71,7 +71,7 @@ Each line is one part of this repository and the light says how far it is today.
 
 * **One source of truth:** JSON Schemas in `src/armor_common/schemas/` for telemetry, health, command, node information, the two solar messages (inverter, battery with cells and capacities), the electrical messages (readings, command, result), the alarm messages (state, command, result) and the network message. Unknown fields and impossible combinations are refused.
 * **A validator that cannot skip a rule:** it interprets the schema directly and refuses a schema that uses a keyword it does not implement.
-* **Conformance vectors:** 1295 accepted and rejected payloads run by every implementation (Python here, TypeScript in ARMOR-SERVER, the checks of the firmware repositories), so drift fails a build.
+* **Conformance vectors:** 1318 accepted and rejected payloads run by every implementation (Python here, TypeScript in ARMOR-SERVER, the checks of the firmware repositories), so drift fails a build.
 * **Generated clients:** TypeScript and Kotlin types come from the schemas (`tools/generate_types.py --check` keeps them current).
 * **HTTP contract:** `openapi/armor-server.yaml` describes every server route (198 paths, 257 operations), its access rule, and a named schema for every request body, answer and error, and a test checks that the routes the server registers are exactly the ones it describes (method and path).
 * **Firmware base:** `firmware_base/` keeps each file the five nodes share (network, settings and users, web panel server and login, HTTPS certificate, log, Bluetooth with PIN pairing, signed-update check; relays and Zigbee for the nodes that have them) once; `tools/sync_firmware_base.py` writes it into every node and checks that no copy drifted ([the guide](docs/FIRMWARE_BASE.md), [signed firmware](docs/SIGNED_FIRMWARE.md)).
@@ -165,7 +165,7 @@ flowchart LR
 ### Schemas, vectors and OpenAPI
 
 * **37 JSON Schemas** in `src/armor_common/schemas/`: telemetry, health, command, node information, node health, node control (command and result), node maintenance, solar inverter and battery (with their commands and results), electrical (with command and result), alarm (state, command, result, policy and zone feed), network (with its orders), connection and system events, radar events, server alert, arming profile, arming modes, device state, diagnostic tokens, and the voice turn.
-* **1295 conformance vectors** in `conformance/` (37 files, one per message), run by this repository, by ARMOR-SERVER and by the checks of the firmware repositories.
+* **1318 conformance vectors** in `conformance/` (37 files, one per message), run by this repository, by ARMOR-SERVER and by the checks of the firmware repositories.
 * **OpenAPI** `openapi/armor-server.yaml`: 198 paths and 257 operations, each with its access rule and a named schema for every body, answer and error. A test checks that the routes the server registers are exactly the ones described. The voice turn travels as bytes (see [docs/CONTRACTS.md](docs/CONTRACTS.md)).
 
 ### Command-line tools
@@ -207,7 +207,7 @@ The node's own TLS link to the broker is a setting of the node (not of the build
 
 ```powershell
 python -m pip install -e .                   # install the library
-python -m unittest discover -s tests         # 247 tests, 1295 conformance vectors
+python -m unittest discover -s tests         # 247 tests, 1318 conformance vectors
 python tools/generate_types.py --check       # the generated types are current
 python tools/generate_rest_types.py --check  # the types of the HTTP contract are current
 python tools/make_conformance.py             # regenerate the vectors after editing the case list (--check: they are current)
@@ -270,7 +270,7 @@ ARMOR-COMMON/
 │   ├── alarm_facts.json           labels of the facts of an alarm
 │   └── battery_ops.json           battery operations
 ├── firmware_base/                 the firmware that the five nodes share, once
-├── conformance/                   1295 accepted and rejected payloads
+├── conformance/                   1318 accepted and rejected payloads
 ├── generated/                     TypeScript and Kotlin types (generated, do not edit)
 ├── openapi/                       armor-server.yaml, HTTP contract
 ├── registry/                      repositories.json, the family list

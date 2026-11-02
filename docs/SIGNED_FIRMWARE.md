@@ -10,7 +10,7 @@ Without the third step, whoever could change what a release holds on GitHub (a s
 
 ## What is not covered
 
-- The upload of a firmware file by an administrator in the panel is **not** checked: it is the administrator's own act, and it is the way out when something has to change (a lost key, a board with no Internet route).
+- The upload of a firmware file by an administrator in the panel is **not** checked for a signature: it is the administrator's own act, and it is the way out when something has to change (a lost key, a board with no Internet route). It is still checked for what it is made for: the project name inside the image and, on the electrical and the alarm node, the board. Both boards (Wi-Fi and Ethernet) run the same project, so the name cannot tell them apart; every image carries a small mark with the board it was built for (`firmware_base/core/image_board.hpp`), the node reads it while the image arrives and, before anything is installed, refuses an image of the other board (422 `wrong_board`) and, unless `security.ota_require_board_mark` is off, an image with no mark (422 `no_board_mark`). The whole check is the setting `security.ota_check_board` (on by default). A file that someone made on purpose, with the other board's mark cut out, is the administrator's act like any other upload.
 - A node that is running a firmware from before this check does not verify anything the first time: the first signed release is installed by trust in the hash alone. From then on the node enforces the signature.
 - The key protects the releases, not the boards: somebody with a cable and physical access can flash anything.
 

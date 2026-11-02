@@ -605,6 +605,8 @@ export type Alarm = {
   events: AlarmEvent[];
   arm_profiles?: boolean;
   profile?: string;
+  siren_loop?: "unknown" | "ok" | "open" | "short" | "unreadable";
+  siren_fault?: boolean;
 };
 
 export type ArmProfileZone = {

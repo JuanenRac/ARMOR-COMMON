@@ -164,6 +164,21 @@
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9_-]{0,15}$",
       "description": "The id of the arming profile the panel is armed (or arming) with; absent when it was armed without one or is not armed."
+    },
+    "siren_loop": {
+      "type": "string",
+      "enum": [
+        "unknown",
+        "ok",
+        "open",
+        "short",
+        "unreadable"
+      ],
+      "description": "The state of the siren's wiring, present only on a node that supervises it (a return line read through the installer's resistors): ok the siren is there, open the wire is cut or the siren is gone, short the wire is shorted, unreadable the node cannot read the return line (the siren is not supervised), unknown until the first reading has held. Always sent together with siren_fault."
+    },
+    "siren_fault": {
+      "type": "boolean",
+      "description": "true when the siren's wiring is in fault (siren_loop is open, short or unreadable): the siren may not sound when the alarm needs it. Present only together with siren_loop."
     }
   }
 }

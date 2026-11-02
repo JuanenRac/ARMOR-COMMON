@@ -105,6 +105,11 @@ struct NodeSettings {
   // Keep the secrets this node stores (the passwords of its networks and users, tokens, keys, PINs) sealed in its flash (core/secret_seal.hpp). Off, as the node always was: they are readable text. Turning it on needs no
   // eFuse and does not encrypt the flash, so it does not protect against someone who reads the whole chip; the panel says so.
   bool seal_secrets = false;
+  // What an upload of a firmware image does about the board the image was built for (core/image_board.hpp). Both boards run the same project, so an image for the other one is
+  // accepted by the project name alone; on the Ethernet board it would leave the node off the cable for good. On by default: an image that names another board is refused. The second one
+  // also refuses an image that carries no mark at all (an old image); turn it off to go back to a version that predates the marks.
+  bool ota_check_board = true;
+  bool ota_require_board_mark = true;
 };
 
 inline const char* to_text(WifiSecurity v) {
@@ -302,7 +307,11 @@ inline void node_read(const json::Value& document, NodeSettings& s, Problems& pr
     read_int(*system, "auto_restart_hours", s.auto_restart_hours, 0, 48, "system.auto_restart_hours", problems);
     read_int(*system, "login_limit_per_minute", s.login_limit_per_minute, 0, 120, "system.login_limit_per_minute", problems);
   }
-  if (const json::Value* security = document.get("security"); security != nullptr && security->is_object()) read_bool(*security, "seal_secrets", s.seal_secrets, "security.seal_secrets", problems);
+  if (const json::Value* security = document.get("security"); security != nullptr && security->is_object()) {
+    read_bool(*security, "seal_secrets", s.seal_secrets, "security.seal_secrets", problems);
+    read_bool(*security, "ota_check_board", s.ota_check_board, "security.ota_check_board", problems);
+    read_bool(*security, "ota_require_board_mark", s.ota_require_board_mark, "security.ota_require_board_mark", problems);
+  }
 }
 
 // ---- checking -------------------------------------------------------------------------------------------------------------------
@@ -411,7 +420,7 @@ inline void node_write_tail(json::Writer& w, const NodeSettings& s) {
   w.key("ui").begin_object().field("language", s.language).end_object();
   w.key("time").begin_object().field("ntp_enabled", s.time.ntp_enabled).field("ntp", s.time.ntp).field("zone", s.time.zone).end_object();
   w.key("system").begin_object().field("auto_restart_hours", s.auto_restart_hours).field("login_limit_per_minute", s.login_limit_per_minute).end_object();
-  w.key("security").begin_object().field("seal_secrets", s.seal_secrets).end_object();
+  w.key("security").begin_object().field("seal_secrets", s.seal_secrets).field("ota_check_board", s.ota_check_board).field("ota_require_board_mark", s.ota_require_board_mark).end_object();
 }
 
 }  // namespace armor::config

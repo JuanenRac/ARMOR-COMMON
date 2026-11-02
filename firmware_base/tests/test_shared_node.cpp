@@ -423,9 +423,17 @@ static void test_node_read_rules() {
   // sealing the stored secrets is a setting, off until it says otherwise, and it is written back
   CHECK(!s.seal_secrets);
   p = read(s, "{\"security\":{\"seal_secrets\":\"yes\"}}"); CHECK(has(p, "security.seal_secrets", "invalid") && !s.seal_secrets);
-  p = read(s, "{\"security\":{\"seal_secrets\":true}}"); CHECK(p.empty() && s.seal_secrets && tail_text(s).find("\"security\":{\"seal_secrets\":true}") != std::string::npos);
+  p = read(s, "{\"security\":{\"seal_secrets\":true}}"); CHECK(p.empty() && s.seal_secrets && tail_text(s).find("\"security\":{\"seal_secrets\":true,") != std::string::npos);
   p = read(s, "{\"system\":{\"auto_restart_hours\":0}}"); CHECK(p.empty() && s.seal_secrets);   // a document without it keeps it
   p = read(s, "{\"security\":{\"seal_secrets\":false}}"); CHECK(p.empty() && !s.seal_secrets && tail_text(s).find("\"seal_secrets\":false") != std::string::npos);
+  // the board check of a firmware upload: both on until the settings say otherwise, each read and written on its own
+  CHECK(s.ota_check_board && s.ota_require_board_mark);
+  p = read(s, "{\"security\":{\"ota_check_board\":1}}"); CHECK(has(p, "security.ota_check_board", "invalid") && s.ota_check_board);
+  p = read(s, "{\"security\":{\"ota_require_board_mark\":\"no\"}}"); CHECK(has(p, "security.ota_require_board_mark", "invalid") && s.ota_require_board_mark);
+  p = read(s, "{\"security\":{\"ota_require_board_mark\":false}}"); CHECK(p.empty() && s.ota_check_board && !s.ota_require_board_mark && tail_text(s).find("\"ota_require_board_mark\":false") != std::string::npos);
+  p = read(s, "{\"system\":{\"auto_restart_hours\":0}}"); CHECK(p.empty() && !s.ota_require_board_mark);   // a document without it keeps it
+  p = read(s, "{\"security\":{\"ota_check_board\":false,\"ota_require_board_mark\":true}}"); CHECK(p.empty() && !s.ota_check_board && s.ota_require_board_mark && tail_text(s).find("\"ota_check_board\":false,\"ota_require_board_mark\":true") != std::string::npos);
+  p = read(s, "{\"security\":{\"ota_check_board\":true}}"); CHECK(p.empty() && s.ota_check_board);
   // the older place of the time server
   s.auto_restart_hours = 0;
   p = read(s, "{\"mqtt\":{\"ntp\":\"old.example\"}}"); CHECK(p.empty() && s.time.ntp == "old.example");

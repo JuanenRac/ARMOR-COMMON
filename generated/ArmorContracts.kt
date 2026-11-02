@@ -605,7 +605,9 @@ data class Alarm(
     val open_zones: List<String>,
     val events: List<AlarmEvent>,
     val arm_profiles: Boolean? = null,
-    val profile: String? = null
+    val profile: String? = null,
+    val siren_loop: String? = null,
+    val siren_fault: Boolean? = null
 )
 
 data class ArmProfileZone(

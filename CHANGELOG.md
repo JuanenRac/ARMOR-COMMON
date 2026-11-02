@@ -4,6 +4,9 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The state of an alarm node can carry the wiring of its siren:** `alarm.schema.json` gains the optional `siren_loop` (`unknown`, `ok`, `open`, `short`, `unreadable`) and `siren_fault`, sent together and only by a node that supervises its siren; `validate_alarm_message` requires the pair and that the fault is true exactly for `open`, `short` and `unreadable`; twelve conformance vectors; the generated types follow.
+- **The firmware the nodes share can tell which board an image was built for** (`core/image_board.hpp` and its tests, with the two settings `security.ota_check_board` and `security.ota_require_board_mark` in `core/node_settings.hpp`, for the electrical and alarm nodes); the shared copy of `tools/check_sdkconfig.py` is brought to what the nodes hold, so the check of the shared files passes again.
+
 ## [0.8.0.4] - The help text of every alarm code lives in the table every client shares
 
 - **The shared alarm table holds the help of every alarm code** (59 codes, in the eight languages, European Portuguese; two lines: what it means and what to check), not only the eleven solar ones. A test requires a help text for every code of `alarm_codes.json` and the same two-line shape in every language, and that the alarms that threaten life say to get safe first.

@@ -810,6 +810,18 @@
         "ARMOR-NODE-HMI": "main/secret_vault.cpp",
         "ARMOR-NODE-ALARM": "main/secret_vault.cpp"
       }
+    },
+    "core/image_board.hpp": {
+      "targets": {
+        "ARMOR-NODE-ALARM": "core/image_board.hpp",
+        "ARMOR-NODE-ELECTRICAL": "core/image_board.hpp"
+      }
+    },
+    "tests/test_image_board.cpp": {
+      "targets": {
+        "ARMOR-NODE-ALARM": "tests/test_image_board.cpp",
+        "ARMOR-NODE-ELECTRICAL": "tests/test_image_board.cpp"
+      }
     }
   }
 }

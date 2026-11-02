@@ -547,7 +547,7 @@ def _alarm_checked(topic: str, leaf: str, kind: str, payload: Mapping[str, objec
 
 def validate_alarm_message(topic: str, payload: Mapping[str, object]) -> None:
     """Validate an alarm state: the topic, the schema, that the node matches, and the rules that join fields: a zone is named once, an open zone is a zone of the message,
-    the phase and the mode agree (a disarmed panel has the mode disarmed, an armed one does not; only the alarm phase may carry both), a siren means an alarm, and an event about a zone names a zone of the message."""
+    the phase and the mode agree (a disarmed panel has the mode disarmed, an armed one does not; only the alarm phase may carry both), a siren means an alarm, the wiring of the siren is told as a state and a fault that agree, and an event about a zone names a zone of the message."""
     _alarm_checked(topic, "state", "alarm", payload)
     zones = payload.get("zones")
     ids = [item.get("id") for item in zones if isinstance(item, Mapping)] if isinstance(zones, list) else []
@@ -569,6 +569,11 @@ def validate_alarm_message(topic: str, payload: Mapping[str, object]) -> None:
         raise ContractError("the siren sounds only in the alarm phase")
     if "profile" in payload and payload.get("mode") == "disarmed":
         raise ContractError("a panel that is not armed has no arming profile")
+    # the siren's wiring: the state and the fault are sent together, and the fault is exactly the states that leave the siren unsupervised or cut
+    if ("siren_loop" in payload) != ("siren_fault" in payload):
+        raise ContractError("siren_loop and siren_fault are sent together")
+    if "siren_loop" in payload and payload.get("siren_fault") != (payload.get("siren_loop") in ("open", "short", "unreadable")):
+        raise ContractError("siren_fault is true exactly when siren_loop is open, short or unreadable")
     events = payload.get("events")
     if isinstance(events, list):
         for item in events:

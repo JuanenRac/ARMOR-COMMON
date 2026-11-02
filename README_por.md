@@ -21,7 +21,7 @@
   <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-1295-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Vectors-1318-00E5FF.svg" alt="Vectors">
   <img src="https://img.shields.io/badge/Tests-247%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.8.0.4-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
@@ -29,7 +29,7 @@
 
 ---
 
-**Verificação de honestidade - o que funciona hoje:** Os esquemas (telemetria, saúde, comando, informação do nó, inversor e bateria solares, elétrico, alarme com o seu comando e resultado, e rede), o validador Python, os 1295 vetores de conformidade, os tipos TypeScript e Kotlin gerados, o ficheiro OpenAPI do servidor (198 caminhos), a base de firmware partilhada pelos cinco nós e o lançador de projetos partilhado são reais e testados (247 testes). O ficheiro Kotlin é gerado mas **ainda não é consumido** pelo ARMOR-ANDROID-CONTROL (que mantém a sua própria leitura), e o comando `set_thresholds` leva um único campo `sensitivity` porque os parâmetros reais do radar só ficam definidos quando existir firmware.
+**Verificação de honestidade - o que funciona hoje:** Os esquemas (telemetria, saúde, comando, informação do nó, inversor e bateria solares, elétrico, alarme com o seu comando e resultado, e rede), o validador Python, os 1318 vetores de conformidade, os tipos TypeScript e Kotlin gerados, o ficheiro OpenAPI do servidor (198 caminhos), a base de firmware partilhada pelos cinco nós e o lançador de projetos partilhado são reais e testados (247 testes). O ficheiro Kotlin é gerado mas **ainda não é consumido** pelo ARMOR-ANDROID-CONTROL (que mantém a sua própria leitura), e o comando `set_thresholds` leva um único campo `sensitivity` porque os parâmetros reais do radar só ficam definidos quando existir firmware.
 
 ---
 
@@ -41,7 +41,7 @@
 | Maturidade | Estabelecido |
 | Função | Contratos partilhados, validador e base de firmware da família |
 | Tecnologia | Python 3.11+, JSON Schema, OpenAPI; base de firmware em C++ (ESP-IDF) |
-| Testes | 247 (`python -m unittest discover -s tests`), 1295 vetores de conformidade |
+| Testes | 247 (`python -m unittest discover -s tests`), 1318 vetores de conformidade |
 | Contrato | 37 JSON Schema, 198 caminhos HTTP (257 operações) |
 | Funciona em | Qualquer computador (biblioteca e ferramentas); a base de firmware corre dentro dos cinco nós |
 | Em hardware real | Só o nó de radar executou o firmware partilhado numa placa; os outros quatro não |
@@ -58,7 +58,7 @@ Cada linha é uma parte deste repositório e a luz diz até onde chega hoje. É 
 | Área | Estado | O que significa aqui |
 |---|---|---|
 | Software | 🟢 | Os esquemas, o validador de Python, os tipos gerados de TypeScript e Kotlin, o ficheiro OpenAPI do servidor e a base de firmware partilhada pelos cinco nós estão feitos. |
-| Testes | 🟢 | Passam 247 testes e 1295 vetores de conformidade; os analisadores de JSON, Bluetooth e Improv do firmware são também testados com libFuzzer. |
+| Testes | 🟢 | Passam 247 testes e 1318 vetores de conformidade; os analisadores de JSON, Bluetooth e Improv do firmware são também testados com libFuzzer. |
 | Protocolos e dados | 🟡 | Só as mensagens do nó radar são usadas todos os dias com uma placa real e o servidor; as dos outros nós são verificadas contra simulações. |
 | Integração | 🟡 | Verifica-se que a base de firmware é idêntica em cada nó; os tipos de Kotlin estão gerados, mas a app Android ainda não os usa, porque mantém a sua própria análise. |
 | Hardware | 🟠 | Só o nó radar executou este firmware partilhado numa placa; os outros quatro nós não. |
@@ -71,7 +71,7 @@ O **ARMOR-COMMON** é dono do que significa cada mensagem do A.R.M.O.R. Os nós 
 
 * **Uma única fonte de verdade:** esquemas JSON em `src/armor_common/schemas/` para telemetria, saúde, comando, informação do nó, as duas mensagens solares (inversor, bateria com células e capacidades), as mensagens elétricas (leituras, comando, resultado), as mensagens de alarme (estado, comando, resultado) e a mensagem de rede. Campos desconhecidos e combinações impossíveis são recusados.
 * **Um validador que não pode saltar uma regra:** interpreta o esquema diretamente e recusa um esquema que use uma palavra-chave que não implementa.
-* **Vetores de conformidade:** 1295 cargas aceites e recusadas executadas por cada implementação (Python aqui, TypeScript no ARMOR-SERVER, as verificações dos repositórios de firmware), de modo que um desvio faz falhar uma compilação.
+* **Vetores de conformidade:** 1318 cargas aceites e recusadas executadas por cada implementação (Python aqui, TypeScript no ARMOR-SERVER, as verificações dos repositórios de firmware), de modo que um desvio faz falhar uma compilação.
 * **Clientes gerados:** os tipos TypeScript e Kotlin saem dos esquemas (`tools/generate_types.py --check` mantém-nos atuais).
 * **Contrato HTTP:** `openapi/armor-server.yaml` descreve cada rota do servidor (198 caminhos, 257 operações), a sua regra de acesso e um esquema com nome para cada corpo de pedido, resposta e erro, e um teste verifica que as rotas que o servidor regista são exatamente as que descreve (método e caminho).
 * **Base de firmware:** `firmware_base/` guarda uma só vez cada ficheiro que os cinco nós partilham (rede, definições e utilizadores, servidor do painel web e login, certificado HTTPS, registo, Bluetooth com emparelhamento por PIN, verificação de atualizações assinadas; relés e Zigbee nos nós que os têm); `tools/sync_firmware_base.py` escreve-o em cada nó e verifica que nenhuma cópia se desviou ([o guia](docs/FIRMWARE_BASE.md), [firmware assinado](docs/SIGNED_FIRMWARE.md)).
@@ -165,7 +165,7 @@ flowchart LR
 ### Esquemas, vetores e OpenAPI
 
 * **37 JSON Schema** em `src/armor_common/schemas/`: telemetria, saúde, ordem, informação do nó, saúde do nó, controlo do nó (ordem e resultado), manutenção do nó, inversor e bateria solares (com as suas ordens e resultados), elétrico (com ordem e resultado), alarme (estado, ordem, resultado, política e zonas), rede (com as suas ordens), eventos de ligação e do sistema, eventos de radar, alerta do servidor, perfil de armamento, modos de armamento, estado do dispositivo, tokens de diagnóstico e o turno de voz.
-* **1295 vetores de conformidade** em `conformance/` (37 ficheiros, um por mensagem), executados por este repositório, pelo ARMOR-SERVER e pelas verificações dos repositórios de firmware.
+* **1318 vetores de conformidade** em `conformance/` (37 ficheiros, um por mensagem), executados por este repositório, pelo ARMOR-SERVER e pelas verificações dos repositórios de firmware.
 * **OpenAPI** `openapi/armor-server.yaml`: 198 caminhos e 257 operações, cada uma com a sua regra de acesso e um esquema com nome para cada corpo, resposta e erro. Um teste verifica que as rotas que o servidor regista são exatamente as descritas. O turno de voz viaja como bytes (ver [docs/CONTRACTS.md](docs/CONTRACTS.md)).
 
 ### Ferramentas de linha de comandos
@@ -207,7 +207,7 @@ A ligação TLS do nó ao broker é uma definição do nó (não da compilação
 
 ```powershell
 python -m pip install -e .                   # instala a biblioteca
-python -m unittest discover -s tests         # 247 testes, 1295 vetores
+python -m unittest discover -s tests         # 247 testes, 1318 vetores
 python tools/generate_types.py --check       # os tipos gerados estão atualizados
 python tools/generate_rest_types.py --check  # os tipos do contrato HTTP estão atualizados
 python tools/make_conformance.py             # regenera os vetores depois de editar a lista de casos (--check: estão atualizados)
@@ -270,7 +270,7 @@ ARMOR-COMMON/
 │   ├── alarm_facts.json           etiquetas dos factos de um alarme
 │   └── battery_ops.json           operações de bateria
 ├── firmware_base/                 o firmware que os cinco nós partilham, uma só vez
-├── conformance/                   1295 mensagens válidas e recusadas
+├── conformance/                   1318 mensagens válidas e recusadas
 ├── generated/                     tipos TypeScript e Kotlin (gerados, não editar)
 ├── openapi/                       armor-server.yaml, contrato HTTP
 ├── registry/                      repositories.json, lista da família
