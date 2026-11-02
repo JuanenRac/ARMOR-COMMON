@@ -10,6 +10,7 @@ data class RadarTrack(
 )
 
 data class Telemetry(
+    val kind: String? = null,
     val node_id: String,
     val timestamp_ms: Long,
     val lux: Double,
@@ -24,6 +25,7 @@ data class Health(
 )
 
 data class Command(
+    val kind: String? = null,
     val node_id: String,
     val timestamp_ms: Long,
     val command: String,
@@ -31,6 +33,7 @@ data class Command(
 )
 
 data class Info(
+    val kind: String? = null,
     val node_id: String,
     val timestamp_ms: Long,
     val name: String,

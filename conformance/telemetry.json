@@ -12,6 +12,44 @@
    }
   },
   {
+   "name": "a message that also says its kind",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ],
+    "kind": "telemetry"
+   }
+  },
+  {
+   "name": "a message that says another kind",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "lux": 250.5,
+    "targets": [
+     {
+      "sensor_id": 1,
+      "track_id": 1,
+      "x_mm": 1200.5,
+      "y_mm": -300,
+      "speed_mm_s": 0
+     }
+    ],
+    "kind": "info"
+   }
+  },
+  {
    "name": "one target",
    "valid": true,
    "payload": {

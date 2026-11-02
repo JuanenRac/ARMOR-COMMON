@@ -11,6 +11,26 @@
    }
   },
   {
+   "name": "a command that also says its kind",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 9,
+    "command": "calibrate",
+    "kind": "command"
+   }
+  },
+  {
+   "name": "a command that says another kind",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 9,
+    "command": "calibrate",
+    "kind": "telemetry"
+   }
+  },
+  {
    "name": "restart",
    "valid": true,
    "payload": {

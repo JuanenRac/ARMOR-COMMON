@@ -8,7 +8,7 @@ nothing may ignore one.
 
 The nodes that read solar inverters and batteries publish on their own topic family, `armor/solar/{node_id}/{device}/state`, with the message's own
 `kind` (`inverter` or `battery`) inside the payload (see *Solar messages* below). The nodes that measure the house's electrical network publish `armor/electrical/{node_id}/state` (see *Electrical messages*); a node that has switches also reads `armor/electrical/{node_id}/command` and answers on `armor/electrical/{node_id}/result` (see *Switches*). The radar family is
-`armor/node/{node_id}/{kind}` where `kind` is `telemetry`, `health`, `info` or `command`.
+`armor/node/{node_id}/{kind}` where `kind` is `telemetry`, `health`, `info` or `command`. `telemetry`, `info` and `command` may also carry `kind` with that same value in the payload, so a reader can pick the schema from the payload alone; a message without it stays valid and a different value is refused. (`health` keeps its own `kind`, the sort of node.)
 Topic names are lower-case and part of the compatibility contract. A producer
 keeps its `node_id` identical in the topic and in the JSON body; consumers reject
 a mismatch.

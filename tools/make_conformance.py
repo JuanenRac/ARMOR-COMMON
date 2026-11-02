@@ -419,6 +419,8 @@ def heatmap(**changes):
 cases: dict[str, list[Any]] = {
     "telemetry": [
         ("minimal, no targets", True, telemetry(targets=[])),
+        ("a message that also says its kind", True, telemetry(kind="telemetry")),
+        ("a message that says another kind", False, telemetry(kind="info")),
         ("one target", True, telemetry()),
         ("fifteen targets, the limit", True, telemetry(targets=[dict(track, track_id=i + 1, sensor_id=(i % 3) + 1) for i in range(15)])),
         ("zero lux", True, telemetry(lux=0)),
@@ -468,6 +470,8 @@ cases: dict[str, list[Any]] = {
     ],
     "info": [
         ("a node on the LAN", True, info()),
+        ("a message that also says its kind", True, info(kind="info")),
+        ("a message that says another kind", False, info(kind="command")),
         ("port at the top of the range", True, info(port=65535)),
         ("name of 48 characters", True, info(name="n" * 48)),
         ("name with accents", True, info(name="Perímetro norte")),
@@ -1812,6 +1816,8 @@ cases: dict[str, list[Any]] = {
     ],
     "command": [
         ("calibrate", True, {"node_id": "north-1", "timestamp_ms": 9, "command": "calibrate"}),
+        ("a command that also says its kind", True, {"node_id": "north-1", "timestamp_ms": 9, "command": "calibrate", "kind": "command"}),
+        ("a command that says another kind", False, {"node_id": "north-1", "timestamp_ms": 9, "command": "calibrate", "kind": "telemetry"}),
         ("restart", True, {"node_id": "north-1", "timestamp_ms": 9, "command": "restart"}),
         ("thresholds with a sensitivity", True, {"node_id": "north-1", "timestamp_ms": 9, "command": "set_thresholds", "sensitivity": 7}),
         ("command outside the allow-list", False, {"node_id": "north-1", "timestamp_ms": 9, "command": "format_flash"}),

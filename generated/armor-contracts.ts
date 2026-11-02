@@ -9,6 +9,7 @@ export type RadarTrack = {
 };
 
 export type Telemetry = {
+  kind?: "telemetry";
   node_id: string;
   timestamp_ms: number;
   lux: number;
@@ -23,6 +24,7 @@ export type Health = {
 };
 
 export type Command = {
+  kind?: "command";
   node_id: string;
   timestamp_ms: number;
   command: "calibrate" | "set_thresholds" | "restart";
@@ -30,6 +32,7 @@ export type Command = {
 };
 
 export type Info = {
+  kind?: "info";
   node_id: string;
   timestamp_ms: number;
   name: string;

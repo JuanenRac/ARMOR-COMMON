@@ -148,6 +148,15 @@ class TopicTests(unittest.TestCase):
             with self.assertRaises(ContractError):
                 validate_topic_and_payload("armor/node/n1/command", {**base, "command": command, "sensitivity": 3})
 
+    def test_a_node_message_may_say_its_own_kind(self):
+        telemetry = {"node_id": "n1", "timestamp_ms": 1, "lux": 3, "targets": []}
+        info = {"node_id": "n1", "timestamp_ms": 1, "name": "n", "firmware": "0.8.0.1", "ip": "192.168.1.5", "port": 80}
+        for kind, base in (("telemetry", telemetry), ("info", info), ("command", {"node_id": "n1", "timestamp_ms": 1, "command": "restart"})):
+            validate_topic_and_payload(f"armor/node/n1/{kind}", base)
+            validate_topic_and_payload(f"armor/node/n1/{kind}", {**base, "kind": kind})
+            with self.assertRaises(ContractError):
+                validate_topic_and_payload(f"armor/node/n1/{kind}", {**base, "kind": "health"})
+
     def test_commands_are_an_allow_list(self):
         validate_topic_and_payload("armor/node/n1/command", {"node_id": "n1", "timestamp_ms": 1, "command": "restart"})
         with self.assertRaises(ContractError):
