@@ -29,7 +29,7 @@
 
 ---
 
-**Vérification d'honnêteté - ce qui fonctionne aujourd'hui :** Les schémas (télémétrie, santé, commande, information du nœud, onduleur et batterie solaires, électrique, alarme avec sa commande et son résultat, et réseau), le validateur Python, les 1318 vecteurs de conformité, les types TypeScript et Kotlin générés, le fichier OpenAPI du serveur (198 chemins), la base firmware partagée par les cinq nœuds et le lanceur de projet partagé sont réels et testés (247 tests). Le fichier Kotlin est généré mais **pas encore consommé** par ARMOR-ANDROID-CONTROL (qui garde sa propre lecture), et la commande `set_thresholds` porte un seul champ `sensitivity` car les vrais paramètres du radar ne sont définis que lorsque le firmware existe.
+**Vérification d'honnêteté - ce qui fonctionne aujourd'hui :** Les schémas (télémétrie, santé, commande, information du nœud, onduleur et batterie solaires, électrique, alarme avec sa commande et son résultat, et réseau), le validateur Python, les 1318 vecteurs de conformité, les types TypeScript et Kotlin générés, le fichier OpenAPI du serveur (200 chemins), la base firmware partagée par les cinq nœuds et le lanceur de projet partagé sont réels et testés (247 tests). Le fichier Kotlin est généré mais **pas encore consommé** par ARMOR-ANDROID-CONTROL (qui garde sa propre lecture), et la commande `set_thresholds` porte un seul champ `sensitivity` car les vrais paramètres du radar ne sont définis que lorsque le firmware existe.
 
 ---
 
@@ -42,7 +42,7 @@
 | Rôle | Contrats partagés, validateur et base de firmware de la famille |
 | Technologie | Python 3.11+, JSON Schema, OpenAPI ; base de firmware C++ (ESP-IDF) |
 | Tests | 247 (`python -m unittest discover -s tests`), 1318 vecteurs de conformité |
-| Contrat | 37 JSON Schema, 198 chemins HTTP (257 opérations) |
+| Contrat | 37 JSON Schema, 200 chemins HTTP (259 opérations) |
 | Fonctionne sur | Tout ordinateur (bibliothèque et outils) ; la base de firmware tourne dans les cinq nœuds |
 | Sur matériel réel | Seul le nœud radar a exécuté le firmware partagé sur une carte ; les quatre autres non |
 | Licence | GPL-3.0-or-later |
@@ -73,7 +73,7 @@ Chaque ligne est une partie de ce dépôt et le feu dit où elle en est aujourd'
 * **Un validateur qui ne peut sauter aucune règle :** il interprète le schéma directement et refuse un schéma qui utilise un mot-clé qu'il n'implémente pas.
 * **Vecteurs de conformité :** 1318 charges acceptées et refusées exécutées par chaque implémentation (Python ici, TypeScript dans ARMOR-SERVER, les vérifications des dépôts firmware), si bien qu'une dérive fait échouer une compilation.
 * **Clients générés :** les types TypeScript et Kotlin viennent des schémas (`tools/generate_types.py --check` les tient à jour).
-* **Contrat HTTP :** `openapi/armor-server.yaml` décrit chaque route du serveur (198 chemins, 257 opérations), sa règle d'accès et un schéma nommé pour chaque corps de requête, réponse et erreur, et un test vérifie que les routes enregistrées par le serveur sont exactement celles qu'il décrit (méthode et chemin).
+* **Contrat HTTP :** `openapi/armor-server.yaml` décrit chaque route du serveur (200 chemins, 259 opérations), sa règle d'accès et un schéma nommé pour chaque corps de requête, réponse et erreur, et un test vérifie que les routes enregistrées par le serveur sont exactement celles qu'il décrit (méthode et chemin).
 * **Base firmware :** `firmware_base/` garde une seule fois chaque fichier que partagent les cinq nœuds (réseau, réglages et utilisateurs, serveur du panneau web et connexion, certificat HTTPS, journal, Bluetooth avec appairage par PIN, contrôle des mises à jour signées ; relais et Zigbee pour les nœuds qui en ont) ; `tools/sync_firmware_base.py` l'écrit dans chaque nœud et vérifie qu'aucune copie n'a dérivé ([le guide](docs/FIRMWARE_BASE.md), [firmware signé](docs/SIGNED_FIRMWARE.md)).
 * **Lanceur partagé :** `tools/armor_project_tool.py` donne à chaque dépôt de la famille le même flux `build`, `build-test` et `run`, et `tools/armor_ci_validate.py` les mêmes contrôles de CI.
 * **Liaison TLS facultative avec le broker dans la base commune des nœuds :** `firmware_base` porte l'interrupteur `mqtt.tls` et le texte `mqtt.ca_pem` (un certificat PEM, 2 Ko au plus, validé), la connexion qui ne fait confiance qu'à cette autorité et vérifie le nom du broker, et les tests sur ordinateur communs aux cinq nœuds ; désactivée par défaut.
@@ -166,7 +166,7 @@ flowchart LR
 
 * **37 JSON Schema** dans `src/armor_common/schemas/` : télémétrie, santé, commande, informations du nœud, santé du nœud, contrôle du nœud (commande et résultat), maintenance du nœud, onduleur et batterie solaires (avec leurs commandes et résultats), électrique (avec commande et résultat), alarme (état, commande, résultat, politique et zones), réseau (avec ses ordres), événements de connexion et système, événements radar, alerte du serveur, profil d'armement, modes d'armement, état d'appareil, jetons de diagnostic et le tour de parole.
 * **1318 vecteurs de conformité** dans `conformance/` (37 fichiers, un par message), exécutés par ce dépôt, par ARMOR-SERVER et par les vérifications des dépôts de firmware.
-* **OpenAPI** `openapi/armor-server.yaml` : 198 chemins et 257 opérations, chacun avec sa règle d'accès et un schéma nommé pour chaque corps, réponse et erreur. Un test vérifie que les routes enregistrées par le serveur sont exactement celles décrites. Le tour de parole voyage en octets (voir [docs/CONTRACTS.md](docs/CONTRACTS.md)).
+* **OpenAPI** `openapi/armor-server.yaml` : 200 chemins et 259 opérations, chacun avec sa règle d'accès et un schéma nommé pour chaque corps, réponse et erreur. Un test vérifie que les routes enregistrées par le serveur sont exactement celles décrites. Le tour de parole voyage en octets (voir [docs/CONTRACTS.md](docs/CONTRACTS.md)).
 
 ### Outils en ligne de commande
 

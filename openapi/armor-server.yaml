@@ -1168,6 +1168,14 @@ paths:
       security: [{ operator: [] }]
       responses:
         '200': { description: The latest sample and its history, content: { application/json: { schema: { $ref: '#/components/schemas/SystemMetrics' } } } }
+  /metrics:
+    get:
+      summary: The numbers of the server (machine, nodes, active alarms, messages taken and refused per topic) in the Prometheus text form, with no name, address or message text in it; off until the setting metrics.prometheus is on and only for the token ARMOR_METRICS_TOKEN
+      security: [{ metricsBearer: [] }]
+      responses:
+        '200': { description: The metrics in the Prometheus text exposition format, content: { text/plain: { schema: { type: string } } } }
+        '401': { description: Missing or wrong token, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: The setting is off or the server holds no metrics token, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/preflight:
     get:
       summary: The check before arming - nodes that do not answer, silent panels, open zones, cameras that are down, open doors and windows and alarms nobody has seen - each finding blocking or only a warning; read only
@@ -2170,6 +2178,7 @@ components:
     ingestBearer: { type: http, scheme: bearer, description: ARMOR_INGEST_TOKEN }
     controlBearer: { type: http, scheme: bearer, description: ARMOR_CONTROL_TOKEN }
     operatorBearer: { type: http, scheme: bearer, description: ARMOR_OPERATOR_TOKEN }
+    metricsBearer: { type: http, scheme: bearer, description: 'ARMOR_METRICS_TOKEN - opens only GET /metrics' }
     aiBearer: { type: http, scheme: bearer, description: 'ARMOR_AI_TOKEN - the observation service, which opens only the /api/v1/ai routes' }
     operator: { type: apiKey, in: cookie, name: armor_studio_session, description: 'Studio session, operator session or operator bearer token' }
     diagnosticBearer: { type: http, scheme: bearer, description: 'A read-only diagnostic token (armor-diag-...) issued by an administrator with POST /api/v1/diagnostics/tokens; it opens only the four GET routes under /api/v1/diagnostics/nodes, for the nodes it names' }
@@ -2633,6 +2642,8 @@ components:
         server.zone_feed_signature: { type: boolean, default: true }
         media.rtsp_proxy: { type: boolean, default: true }
         network.login_secure_only: { type: boolean, default: false }
+        metrics.prometheus: { type: boolean, default: false, description: 'GET /metrics answers the numbers of the server in the Prometheus text form to the bearer token ARMOR_METRICS_TOKEN (off: 404)' }
+        heartbeat.enabled: { type: boolean, default: false, description: 'The server asks the address ARMOR_HEARTBEAT_URL every ARMOR_HEARTBEAT_INTERVAL_S seconds, so a service outside the house can tell the owner when the pings stop' }
         login.country_alert: { type: boolean, default: true }
         electrical.set_aside_old_readings: { type: boolean, default: true, description: 'A channel of an electrical node whose own reading is old is left out of the grid figure and the graphs and marked as having no data' }
         voice.multipart_turn: { type: boolean, default: true }
@@ -4273,6 +4284,7 @@ components:
         skipped: { type: object, additionalProperties: { type: string }, description: 'For each part that was left out: why' }
         failed: { type: object, additionalProperties: { type: string }, description: 'For each part that did not check out: the reason (nothing of it was applied)' }
         cameras_need_credentials: { type: array, items: { type: string } }
+        dry_run: { type: boolean, description: 'true when the request asked for a dry run: the lines say what would be done, and nothing was changed' }
     FirmwareUpload:
       type: object
       required: [id, name, bytes, sha256]
@@ -4829,7 +4841,7 @@ components:
     PostAdminMqttAccountsRequest: { type: object, required: [role, name], properties: { role: { type: string, enum: [node, solar-node, electrical-node, network-node, consumer, device, bridge] }, name: { type: string } } }
     PostAdminNodesProvisionRequest: { type: object, required: [node_id, address, broker_host], properties: { node_id: { type: string }, address: { type: string }, panel_user: { type: string }, panel_password: { type: string }, broker_host: { type: string }, broker_port: { type: integer } } }
     PostAdminNodesSettingsRequest: { type: object, required: [node_id, address, panel_user, panel_password], properties: { node_id: { type: string }, address: { type: string }, panel_user: { type: string }, panel_password: { type: string }, login_limit_per_minute: { type: integer, minimum: 0, maximum: 120, description: 'Wrong passwords per minute the node lets through before it locks sign-in (0 for no limit); left out, the node is only read' } } }
-    PostAdminInstallationRequest: { type: object, required: [bundle], properties: { bundle: { type: object }, parts: { type: array, items: { type: string, enum: [cameras, site, electrical, network, rules, automations, devices, solar_devices, energy_alarms, users] } } } }
+    PostAdminInstallationRequest: { type: object, required: [bundle], properties: { bundle: { type: object }, dry_run: { type: boolean, description: 'true: answer what the import would do and change nothing' }, parts: { type: array, items: { type: string, enum: [cameras, site, electrical, network, rules, automations, devices, solar_devices, energy_alarms, users] } } } }
     PostAdminFirmwareProbeRequest: { type: object, required: [addresses], properties: { addresses: { type: array, items: { type: string } } } }
     PostAdminFirmwareJobsRequest: { type: object, required: [kind, source, targets, panel_user, panel_password], properties: { kind: { type: string, enum: [radar, solar, electrical, alarm, hmi] }, source: { type: string, enum: [github, upload] }, upload_id: { type: string }, targets: { type: array, items: { type: object, required: [address], properties: { address: { type: string }, node_id: { type: string } } } }, panel_user: { type: string }, panel_password: { type: string } } }
     PostAdminNotificationsTestRequest: { type: object, properties: { channel: { type: string, enum: [webhook, mqtt, telegram, homeassistant] } } }

@@ -29,7 +29,7 @@
 
 ---
 
-**Honesty check - what runs today:** The schemas (telemetry, health, command, node information, solar inverter and battery, electrical, alarm with its command and result, and network), the Python validator, the 1318 conformance vectors, the generated TypeScript and Kotlin types, the OpenAPI file of the server (198 paths), the firmware base shared by the five nodes and the shared project launcher are real and tested (247 tests). The Kotlin file is generated but **not yet consumed** by ARMOR-ANDROID-CONTROL (which keeps its own parsing), and the `set_thresholds` command carries a single `sensitivity` field because the real radar parameters are not defined until firmware exists.
+**Honesty check - what runs today:** The schemas (telemetry, health, command, node information, solar inverter and battery, electrical, alarm with its command and result, and network), the Python validator, the 1318 conformance vectors, the generated TypeScript and Kotlin types, the OpenAPI file of the server (200 paths), the firmware base shared by the five nodes and the shared project launcher are real and tested (247 tests). The Kotlin file is generated but **not yet consumed** by ARMOR-ANDROID-CONTROL (which keeps its own parsing), and the `set_thresholds` command carries a single `sensitivity` field because the real radar parameters are not defined until firmware exists.
 
 ---
 
@@ -42,7 +42,7 @@
 | Role | Shared contracts, validator and firmware base of the family |
 | Stack | Python 3.11+, JSON Schema, OpenAPI; C++ firmware base (ESP-IDF) |
 | Tests | 247 (`python -m unittest discover -s tests`), 1318 conformance vectors |
-| Contract | 37 JSON Schemas, 198 HTTP paths (257 operations) |
+| Contract | 37 JSON Schemas, 200 HTTP paths (259 operations) |
 | Runs on | Any computer (library and tools); the firmware base runs inside the five nodes |
 | On real hardware | Only the radar node has run the shared firmware on a board; the other four have not |
 | License | GPL-3.0-or-later |
@@ -73,7 +73,7 @@ Each line is one part of this repository and the light says how far it is today.
 * **A validator that cannot skip a rule:** it interprets the schema directly and refuses a schema that uses a keyword it does not implement.
 * **Conformance vectors:** 1318 accepted and rejected payloads run by every implementation (Python here, TypeScript in ARMOR-SERVER, the checks of the firmware repositories), so drift fails a build.
 * **Generated clients:** TypeScript and Kotlin types come from the schemas (`tools/generate_types.py --check` keeps them current).
-* **HTTP contract:** `openapi/armor-server.yaml` describes every server route (198 paths, 257 operations), its access rule, and a named schema for every request body, answer and error, and a test checks that the routes the server registers are exactly the ones it describes (method and path).
+* **HTTP contract:** `openapi/armor-server.yaml` describes every server route (200 paths, 259 operations), its access rule, and a named schema for every request body, answer and error, and a test checks that the routes the server registers are exactly the ones it describes (method and path).
 * **Firmware base:** `firmware_base/` keeps each file the five nodes share (network, settings and users, web panel server and login, HTTPS certificate, log, Bluetooth with PIN pairing, signed-update check; relays and Zigbee for the nodes that have them) once; `tools/sync_firmware_base.py` writes it into every node and checks that no copy drifted ([the guide](docs/FIRMWARE_BASE.md), [signed firmware](docs/SIGNED_FIRMWARE.md)).
 * **Shared launcher:** `tools/armor_project_tool.py` gives every repository of the family the same `build`, `build-test` and `run` workflow, and `tools/armor_ci_validate.py` the same CI checks.
 * **Optional TLS link to the broker in the shared node base:** `firmware_base` carries the `mqtt.tls` switch and the `mqtt.ca_pem` text (one PEM certificate, at most 2 KB, validated), the connection that trusts that authority only and checks the broker's name, and the host tests shared by the five nodes; off by default.
@@ -166,7 +166,7 @@ flowchart LR
 
 * **37 JSON Schemas** in `src/armor_common/schemas/`: telemetry, health, command, node information, node health, node control (command and result), node maintenance, solar inverter and battery (with their commands and results), electrical (with command and result), alarm (state, command, result, policy and zone feed), network (with its orders), connection and system events, radar events, server alert, arming profile, arming modes, device state, diagnostic tokens, and the voice turn.
 * **1318 conformance vectors** in `conformance/` (37 files, one per message), run by this repository, by ARMOR-SERVER and by the checks of the firmware repositories.
-* **OpenAPI** `openapi/armor-server.yaml`: 198 paths and 257 operations, each with its access rule and a named schema for every body, answer and error. A test checks that the routes the server registers are exactly the ones described. The voice turn travels as bytes (see [docs/CONTRACTS.md](docs/CONTRACTS.md)).
+* **OpenAPI** `openapi/armor-server.yaml`: 200 paths and 259 operations, each with its access rule and a named schema for every body, answer and error. A test checks that the routes the server registers are exactly the ones described. The voice turn travels as bytes (see [docs/CONTRACTS.md](docs/CONTRACTS.md)).
 
 ### Command-line tools
 
