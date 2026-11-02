@@ -607,7 +607,9 @@ data class Alarm(
     val arm_profiles: Boolean? = null,
     val profile: String? = null,
     val siren_loop: String? = null,
-    val siren_fault: Boolean? = null
+    val siren_fault: Boolean? = null,
+    val seq: Long? = null,
+    val sig: String? = null
 )
 
 data class ArmProfileZone(

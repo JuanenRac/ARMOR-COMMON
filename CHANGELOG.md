@@ -4,6 +4,9 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The state of an alarm node can be signed:** `alarm.schema.json` gains the optional `seq` and `sig` (HMAC-SHA256 with the key of the installation over `armor-alarm-state|node_id|timestamp_ms|phase|mode|siren|locked_out|commands_enabled|open_zones|zones|seq`), `validate_alarm_message` requires the pair together, `alarm_state_canonical` and `alarm_state_signature` compute the bytes and the value, seven conformance vectors and `conformance/signatures/alarm_state.json` (the key, the canonical text and the signature of five states and four altered copies) are shared with the readers, and the guide describes the format.
+- **The OpenAPI file describes the setting `server.alarm_state_signature`** (off by default): the server publishes a signed copy of each alarm state it hears; the generated types follow.
+
 ## [0.8.0.5] - A route for the Prometheus numbers, the dead-man ping, the incident record and the dry run of an installation import, with named schemas and the counts of routes and operations brought up to date
 
 - **The OpenAPI file describes the incident record** (`GET /api/v1/admin/incident` and `POST /api/v1/admin/incident/verify`, with the schemas `IncidentExport` and `IncidentVerdict`); the generated REST types follow.

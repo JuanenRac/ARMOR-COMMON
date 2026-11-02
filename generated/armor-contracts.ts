@@ -607,6 +607,8 @@ export type Alarm = {
   profile?: string;
   siren_loop?: "unknown" | "ok" | "open" | "short" | "unreadable";
   siren_fault?: boolean;
+  seq?: number;
+  sig?: string;
 };
 
 export type ArmProfileZone = {

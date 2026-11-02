@@ -579,6 +579,41 @@ def validate_alarm_message(topic: str, payload: Mapping[str, object]) -> None:
         for item in events:
             if isinstance(item, Mapping) and "zone" in item and item["zone"] not in ids:
                 raise ContractError("an event about a zone names a zone of the message")
+    if ("seq" in payload) != ("sig" in payload):
+        raise ContractError("seq and sig come together")
+
+
+def alarm_state_canonical(payload: Mapping[str, object]) -> bytes:
+    """The bytes an alarm state is signed over: ``armor-alarm-state|node_id|timestamp_ms|phase|mode|siren|locked_out|commands_enabled|open_zones|zones|seq``.
+
+    The flags are ``1`` or ``0``, ``open_zones`` is the list joined by commas, ``zones`` is every zone as ``id:state:bypassed`` (bypassed as ``1`` or ``0``) joined by commas,
+    both in the order of the message, and an empty list is an empty field. ``sig`` is not part of it.
+    """
+    validate_alarm_message(f"armor/alarm/{payload.get('node_id')}/state", payload)
+    if "seq" not in payload:
+        raise ContractError("the message is not signed")
+    zones = payload["zones"]
+    open_zones = payload["open_zones"]
+    assert isinstance(zones, list) and isinstance(open_zones, list)
+
+    def flag(name: str) -> str:
+        return "1" if payload[name] else "0"
+    zone_text = ",".join(f"{z['id']}:{z['state']}:{'1' if z['bypassed'] else '0'}" for z in zones)
+    text = "|".join(("armor-alarm-state", str(payload["node_id"]), str(payload["timestamp_ms"]), str(payload["phase"]), str(payload["mode"]), flag("siren"), flag("locked_out"),
+                     flag("commands_enabled"), ",".join(str(z) for z in open_zones), zone_text, str(payload["seq"])))
+    return text.encode("utf-8")
+
+
+def alarm_state_signature(key_hex: str, payload: Mapping[str, object]) -> str:
+    """The ``sig`` of a signed alarm state: HMAC-SHA256 in hex, with the key of the installation (64 hex characters), over ``alarm_state_canonical``.
+
+    ``payload`` carries ``seq`` (and may carry a ``sig`` of any value, which is ignored). A reader also requires ``seq`` to be above the last one it accepted.
+    """
+    import hashlib
+    import hmac
+    if not isinstance(key_hex, str) or len(key_hex) != 64 or any(c not in "0123456789abcdef" for c in key_hex):
+        raise ContractError("the key is 64 hex characters")
+    return hmac.new(bytes.fromhex(key_hex), alarm_state_canonical(payload), hashlib.sha256).hexdigest()
 
 
 def validate_arm_profile(profile: Mapping[str, object]) -> None:

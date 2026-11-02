@@ -2,7 +2,7 @@ import json
 import unittest
 from pathlib import Path
 
-from armor_common import ContractError, validate_radar_event, validate_diagnostic_token_request, validate_diagnostic_token_created, validate_diagnostic_token_info, decode, encode, validate_arm_profile, validate_arming_modes, validate_node_health, validate_alarm_command, validate_alarm_message, validate_alarm_result, validate_alarm_zone_feed, validate_alarm_policy, zone_feed_signature, validate_device_message, validate_network_orders, validate_server_alert, validate_electrical_command, validate_electrical_message, validate_electrical_result, validate_network_message, validate_node_control_command, validate_node_control_result, validate_node_maintenance, validate_solar_battery_command, validate_solar_battery_result, validate_solar_message, validate_topic_and_payload
+from armor_common import ContractError, validate_radar_event, validate_diagnostic_token_request, validate_diagnostic_token_created, validate_diagnostic_token_info, decode, encode, validate_arm_profile, validate_arming_modes, validate_node_health, validate_alarm_command, validate_alarm_message, validate_alarm_result, validate_alarm_zone_feed, validate_alarm_policy, zone_feed_signature, alarm_state_canonical, alarm_state_signature, validate_device_message, validate_network_orders, validate_server_alert, validate_electrical_command, validate_electrical_message, validate_electrical_result, validate_network_message, validate_node_control_command, validate_node_control_result, validate_node_maintenance, validate_solar_battery_command, validate_solar_battery_result, validate_solar_message, validate_topic_and_payload
 from armor_common.contracts import battery_catalog, battery_expert_line, parse_battery_topic, validate_battery_params
 from armor_common.contracts import parse_control_topic
 from armor_common.contracts import load_schema, parse_alarm_topic, parse_device_topic, parse_electrical_topic, parse_network_topic, parse_solar_topic, parse_topic, validate_payload
@@ -416,6 +416,27 @@ class TopicsWithoutAJsonObjectTests(unittest.TestCase):
             zone_feed_signature("short", "alarm-1", {**message, "sig": "0" * 64})
         with self.assertRaises(ContractError):
             validate_alarm_zone_feed("armor/alarm/alarm-1/zigbee", {**message})
+
+    def test_an_alarm_state_can_be_signed_and_the_shared_vectors_hold_the_same_bytes(self):
+        document = json.loads((CONFORMANCE / "signatures" / "alarm_state.json").read_text(encoding="utf-8"))
+        key = document["key"]
+        for case in document["cases"]:
+            with self.subTest(case=case["name"]):
+                message = case["message"]
+                self.assertEqual(alarm_state_canonical({**message, "sig": "0" * 64}).decode("utf-8"), case["canonical"])
+                self.assertEqual(alarm_state_signature(key, {**message, "sig": "0" * 64}), case["sig"])
+                validate_alarm_message(f"armor/alarm/{message['node_id']}/state", {**message, "sig": case["sig"]})
+        for case in document["tampered"]:
+            with self.subTest(tampered=case["name"]):
+                self.assertNotEqual(alarm_state_signature(key, {**case["message"], "sig": case["sig"]}), case["sig"])
+        signed = {**document["cases"][0]["message"], "sig": document["cases"][0]["sig"]}
+        self.assertNotEqual(alarm_state_signature("ff" * 32, signed), signed["sig"], "the key is part of it")
+        with self.assertRaises(ContractError):
+            alarm_state_signature(key, {k: v for k, v in signed.items() if k not in ("seq", "sig")})
+        with self.assertRaises(ContractError):
+            alarm_state_signature("short", signed)
+        with self.assertRaises(ContractError):
+            validate_alarm_message("armor/alarm/alarm-1/state", {k: v for k, v in signed.items() if k != "seq"})
 
     def test_the_policy_belongs_to_the_policy_topic_of_a_panel(self):
         validate_alarm_policy("armor/alarm/alarm-1/policy", {"config_hash": True, "zone_feed": True, "zone_feed_signature": False})

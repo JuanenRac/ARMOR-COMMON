@@ -5,6 +5,8 @@ Every implementation of the contracts (Python here, TypeScript in ARMOR-SERVER,
 Kotlin in ARMOR-ANDROID-CONTROL) must accept every ``valid`` vector and reject
 every other one. Adding a case here is how a contract gets tightened.
 """
+import hashlib
+import hmac
 import json
 import sys
 from typing import Any
@@ -898,6 +900,13 @@ cases: dict[str, list[Any]] = {
         ("an alarm whose siren was silenced with the PIN", True, alarm(phase="alarm", mode="away", siren=False, events=[{"ago_s": 9, "kind": "alarm", "zone": "window"}, {"ago_s": 2, "kind": "siren_silenced"}])),
         ("a locked-out panel", True, alarm(locked_out=True, events=[{"ago_s": 1, "kind": "locked_out"}])),
         ("a node that takes no commands", True, alarm(commands_enabled=False)),
+        ("a signed state", True, alarm(seq=1790000000000, sig="a" * 64)),
+        ("a signature without its sequence", False, alarm(sig="a" * 64), True),
+        ("a sequence without its signature", False, alarm(seq=5), True),
+        ("a signature in capitals", False, alarm(seq=1, sig="A" * 64)),
+        ("a signature of 63 characters", False, alarm(seq=1, sig="a" * 63)),
+        ("a negative sequence", False, alarm(seq=-1, sig="a" * 64)),
+        ("a sequence that is a text", False, alarm(seq="1", sig="a" * 64)),
         ("a zone that is bypassed", True, alarm(zones=[{"id": "window", "kind": "instant", "state": "triggered", "bypassed": True}], open_zones=[])),
         ("a tamper", True, zone(state="tamper")),
         ("a zone that cannot be read", True, zone(state="trouble")),
@@ -1814,6 +1823,43 @@ cases: dict[str, list[Any]] = {
     ],
 }
 
+# The bytes a signed alarm state is signed over, for the readers that verify it in another language (docs/CONTRACTS.md, "The signed state of an alarm").
+SIGNING_KEY = "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
+
+
+def _canonical(message: dict) -> str:
+    def flag(name: str) -> str:
+        return "1" if message[name] else "0"
+    zones = ",".join(f"{z['id']}:{z['state']}:{'1' if z['bypassed'] else '0'}" for z in message["zones"])
+    return "|".join(("armor-alarm-state", message["node_id"], str(message["timestamp_ms"]), message["phase"], message["mode"], flag("siren"), flag("locked_out"), flag("commands_enabled"),
+                     ",".join(message["open_zones"]), zones, str(message["seq"])))
+
+
+def signing_cases() -> str:
+    cases = []
+    samples = [
+        ("an armed panel", alarm(seq=1790000000000)),
+        ("a disarmed panel with no zones", alarm(phase="disarmed", mode="disarmed", zones=[], open_zones=[], events=[], seq=1790000000001)),
+        ("a sounding alarm with an open zone", alarm(phase="alarm", siren=True, zones=[{"id": "window", "kind": "instant", "state": "triggered", "bypassed": False}], open_zones=["window"],
+                                                        events=[{"ago_s": 3, "kind": "alarm", "zone": "window"}], seq=1790000000002)),
+        ("a zone that is left out", alarm(zones=[{"id": "front-door", "kind": "entry", "state": "tamper", "bypassed": True}], open_zones=[], seq=1790000000003)),
+        ("a locked-out panel that takes no commands", alarm(locked_out=True, commands_enabled=False, seq=0)),
+    ]
+    for name, message in samples:
+        canonical = _canonical(message)
+        sig = hmac.new(bytes.fromhex(SIGNING_KEY), canonical.encode("utf-8"), hashlib.sha256).hexdigest()
+        cases.append({"name": name, "node_id": message["node_id"], "message": message, "canonical": canonical, "sig": sig})
+    base = cases[0]
+    tampered = [("the phase changed after signing", dict(base["message"], phase="disarmed", mode="disarmed")),
+                ("the siren flag changed after signing", dict(base["message"], siren=True, phase="alarm")),
+                ("a zone state changed after signing", dict(base["message"], zones=[dict(base["message"]["zones"][0], state="triggered"), base["message"]["zones"][1]])),
+                ("the sequence changed after signing", dict(base["message"], seq=base["message"]["seq"] + 1))]
+    doc = {"description": "Signed alarm states (docs/CONTRACTS.md, the signed state of an alarm): the key, the bytes that are signed (canonical, UTF-8), and the HMAC-SHA256 in hex of them. 'tampered' messages carry the sig of the first case and must not verify. Written by tools/make_conformance.py.",
+           "key": SIGNING_KEY, "cases": cases,
+           "tampered": [{"name": name, "message": message, "sig": base["sig"]} for name, message in tampered]}
+    return json.dumps(doc, indent=1) + "\n"
+
+
 CHECK = "--check" in sys.argv[1:]
 stale: list[str] = []
 if not CHECK:
@@ -1839,6 +1885,15 @@ else:
     voice_path.parent.mkdir(exist_ok=True)
     voice_path.write_text(voice_text, encoding="utf-8", newline="\n")
     print("voice/turn_multipart", len(voice_cases.cases()), "cases")
+sign_path = ROOT / "signatures" / "alarm_state.json"
+sign_text = signing_cases()
+if CHECK:
+    if not sign_path.is_file() or sign_path.read_text(encoding="utf-8").replace("\r\n", "\n") != sign_text:
+        stale.append("signatures/alarm_state.json")
+else:
+    sign_path.parent.mkdir(exist_ok=True)
+    sign_path.write_text(sign_text, encoding="utf-8", newline="\n")
+    print("signatures/alarm_state", len(json.loads(sign_text)["cases"]), "cases")
 if CHECK:
     if stale:
         print("CONFORMANCE=FAIL these files are not what tools/make_conformance.py writes (run it): " + ", ".join(stale))
