@@ -4,6 +4,9 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The type generator reads every schema of the folder:** a new `*.schema.json` gets its TypeScript and Kotlin types without editing the generator (the three that were missing, `device_state`, `network_orders` and `server_alert`, are now generated), and a test requires a type in both languages for every schema file.
+- **The limits of the contract are also generated as C++ constants** (`generated/armor_contracts.hpp`: the node id pattern, the most targets, the largest lux, the range of `sensitivity` and the list of commands), kept current by `tools/generate_types.py --check`, and a test requires the node id rule of the shared firmware to say what the schema says.
+- **`sensitivity` belongs only to the command `set_thresholds`:** `validate_topic_and_payload` refuses it on any other command, with three new conformance vectors.
 - **The state of an alarm node can be signed:** `alarm.schema.json` gains the optional `seq` and `sig` (HMAC-SHA256 with the key of the installation over `armor-alarm-state|node_id|timestamp_ms|phase|mode|siren|locked_out|commands_enabled|open_zones|zones|seq`), `validate_alarm_message` requires the pair together, `alarm_state_canonical` and `alarm_state_signature` compute the bytes and the value, seven conformance vectors and `conformance/signatures/alarm_state.json` (the key, the canonical text and the signature of five states and four altered copies) are shared with the readers, and the guide describes the format.
 - **The OpenAPI file describes the setting `server.alarm_state_signature`** (off by default): the server publishes a signed copy of each alarm state it hears; the generated types follow.
 
