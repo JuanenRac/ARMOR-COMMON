@@ -47,8 +47,7 @@ class EverySchemaHasTypesTests(unittest.TestCase):
         for key, (name, _declared) in generate_types.discover().items():
             self.assertIn(f"export type {name} = {{", TYPESCRIPT, key)
             self.assertIn(f"data class {name}(", KOTLIN, key)
-        for embedded in generate_types.EMBEDDED:   # written inside the message that holds it, under the name declared there
-            self.assertIn(generate_types.MESSAGES["alarm_command"][1]["profile"], TYPESCRIPT)
+        self.assertIn(generate_types.MESSAGES["alarm_command"][1]["profile"], TYPESCRIPT)   # an embedded schema is written inside the message that holds it
 
     def test_the_generated_files_have_balanced_braces(self):
         self.assertEqual(TYPESCRIPT.count("{"), TYPESCRIPT.count("}"))
