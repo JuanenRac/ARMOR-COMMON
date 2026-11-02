@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.8.0.5] - A route for the Prometheus numbers, the dead-man ping, the incident record and the dry run of an installation import, with named schemas and the counts of routes and operations brought up to date
+
 - **The OpenAPI file describes the incident record** (`GET /api/v1/admin/incident` and `POST /api/v1/admin/incident/verify`, with the schemas `IncidentExport` and `IncidentVerdict`); the generated REST types follow.
 - **The OpenAPI file describes `GET /metrics`** (the Prometheus text page, with its own bearer scheme), the two new settings `metrics.prometheus` and `heartbeat.enabled` (both off by default), the `dry_run` of the installation import and the `dry_run` mark of its report; the generated REST types follow.
 - **The state of an alarm node can carry the wiring of its siren:** `alarm.schema.json` gains the optional `siren_loop` (`unknown`, `ok`, `open`, `short`, `unreadable`) and `siren_fault`, sent together and only by a node that supervises its siren; `validate_alarm_message` requires the pair and that the fault is true exactly for `open`, `short` and `unreadable`; twelve conformance vectors; the generated types follow.
