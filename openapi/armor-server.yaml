@@ -2674,6 +2674,7 @@ components:
         alarm.mode_schedule_lowers: { type: boolean, default: false, description: 'The timetable may go to a mode that defends less than the current one (off: it only keeps or raises the defence, and never disarms)' }
         alarm.mode_panel_sync: { type: boolean, default: false, description: 'Choosing away, home or night also arms the alarm panels with the profile that goes with it: away arms the profile away, home arms stay and night arms night (off: the modes decide only what the server defends; it needs alarm.arming_modes and, to reach a panel, ARMOR_ALARM_COMMANDS=1)' }
         alarm.config_hash: { type: boolean, default: true }
+        alarm.siren_fault_notice: { type: boolean, default: true, description: 'A warning in the alarm centre (code alarm_siren_fault) while an alarm panel reports that the wiring of its siren is open, shorted or unreadable (off: the report is kept but nothing is raised)' }
         server.zone_feed: { type: boolean, default: true }
         server.zone_feed_signature: { type: boolean, default: true }
         server.alarm_state_signature: { type: boolean, default: false, description: 'The server also publishes each alarm state it hears, signed with the key of the installation, on armor/alarm/{node_id}/state (off: it publishes nothing there; on: every one it publishes is signed)' }

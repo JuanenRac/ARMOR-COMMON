@@ -2281,6 +2281,8 @@ export type SecuritySettings = {
   /** Choosing away, home or night also arms the alarm panels with the profile that goes with it: away arms the profile away, home arms stay and night arms night (off: the modes decide only what the server defends; it needs alarm.arming_modes and, to reach a panel, ARMOR_ALARM_COMMANDS=1) */
   "alarm.mode_panel_sync"?: boolean;
   "alarm.config_hash"?: boolean;
+  /** A warning in the alarm centre (code alarm_siren_fault) while an alarm panel reports that the wiring of its siren is open, shorted or unreadable (off: the report is kept but nothing is raised) */
+  "alarm.siren_fault_notice"?: boolean;
   "server.zone_feed"?: boolean;
   "server.zone_feed_signature"?: boolean;
   /** The server also publishes each alarm state it hears, signed with the key of the installation, on armor/alarm/{node_id}/state (off: it publishes nothing there; on: every one it publishes is signed) */
