@@ -1649,6 +1649,15 @@ paths:
         '200': { description: '{ accepted, executed, intent, outcome, speech, confirmation_token?, reason?, result? } - outcome is accepted, confirmation-needed, confirmation-refused or not-understood', content: { application/json: { schema: { $ref: '#/components/schemas/VoiceCommandResult' } } } }
         '422': { description: 'No text, too long, or not a supported language', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '503': { description: 'No voice gateway is set up, or it does not answer', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/voice/panic-check:
+    post:
+      summary: The voice gateway shows the text it has just transcribed, before interpreting it, so that the server can look for the silent panic phrase of any user (only while the option voice.panic_phrase is on; a match raises the silent duress alarm once per voice.panic_cooldown_s of that user). The answer is always the same and never says whether the text matched. Only the operator token of the gateway is accepted, not a signed-in session (rate limited)
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostVoicePanicCheckRequest' } } } }
+      responses:
+        '200': { description: '{ ok: true } whether or not the text matched', content: { application/json: { schema: { $ref: '#/components/schemas/VoicePanicCheckReply' } } } }
+        '403': { description: 'A signed-in session was used instead of the token of the gateway (code gateway_only)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'No text, or longer than 240 characters', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/voice/turn:
     post:
       summary: One spoken turn from the wall panel - the audio goes to the voice gateway on this machine and its answer comes back as it is; authenticated with the voice token, not with a session
@@ -4936,6 +4945,8 @@ components:
     PostAdminConsoleRunRequest: { type: object, required: [command], properties: { command: { type: string }, cwd: { type: string }, timeout_s: { type: integer } } }
     PostAiObservationsRequest: { type: object, required: [camera_id, severity, reasons, profile, motion, radar_tracks], properties: { camera_id: { type: string }, severity: { type: string, enum: [review, high] }, reasons: { type: array, items: { type: string } }, profile: { type: string, enum: [daylight, low-light] }, motion: { type: number }, radar_tracks: { type: integer } } }
     PostVoiceCommandRequest: { type: object, required: [text], properties: { text: { type: string, maxLength: 200 }, language: { type: string, enum: [en, es, de, fr, it, ja, zh, pt] }, confirmation: { type: string }, silence_pin: { type: string, maxLength: 32, description: 'The PIN that silencing by voice asks for in the pin mode; it is not the PIN of the signed-in user' } } }
+    PostVoicePanicCheckRequest: { type: object, required: [text], properties: { text: { type: string, maxLength: 240 }, language: { type: string, enum: [en, es, de, fr, it, ja, zh, pt] } } }
+    VoicePanicCheckReply: { type: object, required: [ok], properties: { ok: { type: boolean, enum: [true] } } }
     PostStudioSessionTotpRequest: { type: object, required: [challenge, code], properties: { challenge: { type: string }, code: { type: string } } }
     PostStudioElevateRequest: { type: object, properties: { password: { type: string }, code: { type: string } } }
     DeleteStudioTotpRequest: { type: object, required: [password], properties: { password: { type: string } } }

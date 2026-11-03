@@ -2001,6 +2001,11 @@ export type PostVoiceCommandRequest = {
   silence_pin?: string;
 };
 
+export type PostVoicePanicCheckRequest = {
+  text: string;
+  language?: "en" | "es" | "de" | "fr" | "it" | "ja" | "zh" | "pt";
+};
+
 export type Preferences = {
   language?: string;
   theme?: string;
@@ -2758,6 +2763,10 @@ export type VoiceCommandResult = {
   result?: {
     [key: string]: unknown;
   };
+};
+
+export type VoicePanicCheckReply = {
+  ok: true;
 };
 
 export type VoiceStatus = {
