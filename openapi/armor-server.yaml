@@ -1442,6 +1442,28 @@ paths:
       responses:
         '202': { description: Rebooting, content: { application/json: { schema: { $ref: '#/components/schemas/AgentReply' } } } }
         '503': { description: The maintenance helper is not installed or not answering, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/admin/system/auto-updates:
+    get:
+      summary: The automatic security updates of the operating system - the switch, the policy of the reboot and its window, what was applied and how the check after it went (an administrator)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: The state, content: { application/json: { schema: { $ref: '#/components/schemas/AutoUpdates' } } } }
+        '503': { description: The maintenance helper is not installed or not answering, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+    put:
+      summary: Change the automatic security updates - only the keys sent change (on by default; the machine reboots by itself only inside the window and only when nothing is armed) (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/AutoUpdatesChange' } } } }
+      responses:
+        '200': { description: The state after the change, content: { application/json: { schema: { $ref: '#/components/schemas/AutoUpdates' } } } }
+        '422': { description: A value that is not valid or a key that does not exist, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: The maintenance helper is not installed or not answering, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/maintenance/armed:
+    get:
+      security: []
+      summary: Whether anything is armed (the system mode or a panel that is not disarmed) - asked by the maintenance helper, with its own token in X-Armor-Maint-Token, before it reboots the machine after a security update
+      responses:
+        '200': { description: The answer, content: { application/json: { schema: { $ref: '#/components/schemas/MaintenanceArmed' } } } }
+        '401': { description: Not the token of the maintenance helper, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/admin/nodes/{id}/token:
     get:
       summary: The token of one node - HMAC of the shared ingest token with the node id, good only for that node - to provision a board (an administrator; written in the audit trail)
@@ -4941,6 +4963,12 @@ components:
     PostAdminFirmwareJobsRequest: { type: object, required: [kind, source, targets, panel_user, panel_password], properties: { kind: { type: string, enum: [radar, solar, electrical, alarm, hmi] }, source: { type: string, enum: [github, upload] }, upload_id: { type: string }, targets: { type: array, items: { type: object, required: [address], properties: { address: { type: string }, node_id: { type: string } } } }, panel_user: { type: string }, panel_password: { type: string } } }
     PostAdminNotificationsTestRequest: { type: object, properties: { channel: { type: string, enum: [webhook, mqtt, telegram, homeassistant] } } }
     PostAdminUpdatesRequest: { type: object, properties: { components: { type: array, items: { type: string } }, force: { type: boolean } } }
+    AutoUpdatesSettings: { type: object, required: [enabled, reboot, window_start, window_end], properties: { enabled: { type: boolean }, reboot: { type: string, enum: [never, disarmed] }, window_start: { type: string, pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$' }, window_end: { type: string, pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$' } } }
+    AutoUpdatesChange: { type: object, additionalProperties: false, properties: { enabled: { type: boolean }, reboot: { type: string, enum: [never, disarmed] }, window_start: { type: string, pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$' }, window_end: { type: string, pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$' } } }
+    AutoUpdatesRun: { type: object, required: [at, packages, state], properties: { at: { type: string }, packages: { type: array, items: { type: string } }, state: { type: string, enum: [started, installed, failed] } } }
+    AutoUpdatesHealth: { type: object, properties: { checked: { type: integer }, ok: { type: boolean }, restarted: { type: array, items: { type: string } }, down: { type: array, items: { type: string } } } }
+    AutoUpdates: { type: object, required: [settings, package, applied, reboot_required, reboot_note, last_reboot, health, conf_written], properties: { settings: { $ref: '#/components/schemas/AutoUpdatesSettings' }, package: { type: boolean, description: 'unattended-upgrades is installed' }, applied: { type: array, items: { $ref: '#/components/schemas/AutoUpdatesRun' } }, reboot_required: { type: boolean }, reboot_note: { type: string, description: 'why the machine has not rebooted yet - armed, armed_unknown, outside_window, policy_never, busy, rebooting or empty' }, last_reboot: { type: integer }, health: { $ref: '#/components/schemas/AutoUpdatesHealth' }, conf_written: { type: boolean } } }
+    MaintenanceArmed: { type: object, required: [armed], properties: { armed: { type: boolean } } }
     PostAdminSystemUpgradeRequest: { type: object, properties: { mode: { type: string, enum: [upgrade, full, repair] } } }
     PostAdminConsoleUnlockRequest: { type: object, required: [password], properties: { password: { type: string } } }
     PostAdminConsoleRunRequest: { type: object, required: [command], properties: { command: { type: string }, cwd: { type: string }, timeout_s: { type: integer } } }

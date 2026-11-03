@@ -300,6 +300,46 @@ export type AuditEntries = {
   }[];
 };
 
+export type AutoUpdates = {
+  settings: AutoUpdatesSettings;
+  /** unattended-upgrades is installed */
+  package: boolean;
+  applied: AutoUpdatesRun[];
+  reboot_required: boolean;
+  /** why the machine has not rebooted yet - armed, armed_unknown, outside_window, policy_never, busy, rebooting or empty */
+  reboot_note: string;
+  last_reboot: number;
+  health: AutoUpdatesHealth;
+  conf_written: boolean;
+};
+
+export type AutoUpdatesChange = {
+  enabled?: boolean;
+  reboot?: "never" | "disarmed";
+  window_start?: string;
+  window_end?: string;
+};
+
+export type AutoUpdatesHealth = {
+  checked?: number;
+  ok?: boolean;
+  restarted?: string[];
+  down?: string[];
+};
+
+export type AutoUpdatesRun = {
+  at: string;
+  packages: string[];
+  state: "started" | "installed" | "failed";
+};
+
+export type AutoUpdatesSettings = {
+  enabled: boolean;
+  reboot: "never" | "disarmed";
+  window_start: string;
+  window_end: string;
+};
+
 export type Automation = {
   id: string;
   name: string;
@@ -1277,6 +1317,10 @@ export type Job = {
 
 export type JobStarted = {
   id: string;
+};
+
+export type MaintenanceArmed = {
+  armed: boolean;
 };
 
 export type MediaDigest = {
