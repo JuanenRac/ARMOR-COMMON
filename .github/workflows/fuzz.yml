@@ -16,12 +16,14 @@ jobs:
     name: libFuzzer on the JSON parser, the Bluetooth framing and the Improv parser
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
       - name: Fuzz for 30 seconds per target
         run: bash fuzz/run_fuzz.sh 30
       - name: Keep what a failing input looks like
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: fuzz-artifacts
           path: fuzz/artifacts/
