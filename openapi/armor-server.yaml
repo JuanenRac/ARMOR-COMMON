@@ -919,6 +919,23 @@ paths:
         '200': { description: The zones as kept, content: { application/json: { schema: { $ref: '#/components/schemas/IgnoreZones' } } } }
         '400': { description: 'A zone is not a rectangle inside the picture, or there are too many', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '404': { description: Unknown camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+  /api/v1/cameras/{id}/count-lines:
+    get:
+      summary: 'The counting lines drawn on the camera''s picture ({ camera_id, lines: [{ id, a: [x, y], b: [x, y], labels? }] }, fractions of the picture from the top left); the observation service counts a crossing of each in both directions'
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: The lines, content: { application/json: { schema: { $ref: '#/components/schemas/CountLines' } } } }
+        '404': { description: Unknown camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+    put:
+      summary: Replace them (an administrator only; at most 16 lines, each with two different points inside the picture and a name that is not repeated). Nothing is drawn on the video; only the crossings are counted
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CountLinesInput' } } } }
+      responses:
+        '200': { description: The lines as kept, content: { application/json: { schema: { $ref: '#/components/schemas/CountLines' } } } }
+        '400': { description: 'A line is not two different points inside the picture, a name is repeated or there are too many', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: Unknown camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
   /api/v1/capture-settings:
     get:
       summary: 'What the server takes by itself when a camera sees something while the perimeter is armed ({ settings: { enabled, photo, photo_count, photo_interval_s, video, video_seconds, cooldown_s }, recent: the latest captures })'
@@ -3739,6 +3756,28 @@ components:
       properties:
         camera_id: { type: string }
         zones: { type: array, maxItems: 16, items: { $ref: '#/components/schemas/IgnoreZone' } }
+    CountLine:
+      type: object
+      additionalProperties: false
+      required: [id, a, b]
+      description: 'A counting line: its two ends as [x, y] in fractions of the picture from the top left, and optionally the labels it counts (all when absent)'
+      properties:
+        id: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,31}$' }
+        a: { type: array, minItems: 2, maxItems: 2, items: { type: number, minimum: 0, maximum: 1 } }
+        b: { type: array, minItems: 2, maxItems: 2, items: { type: number, minimum: 0, maximum: 1 } }
+        labels: { type: array, maxItems: 8, items: { type: string, pattern: '^[a-z][a-z0-9_-]{0,31}$' } }
+    CountLinesInput:
+      type: object
+      additionalProperties: false
+      required: [lines]
+      properties:
+        lines: { type: array, maxItems: 16, items: { $ref: '#/components/schemas/CountLine' } }
+    CountLines:
+      type: object
+      required: [camera_id, lines]
+      properties:
+        camera_id: { type: string }
+        lines: { type: array, maxItems: 16, items: { $ref: '#/components/schemas/CountLine' } }
     CaptureSettings:
       type: object
       examples: [{"enabled": true, "photo": true, "photo_count": 1, "photo_interval_s": 2, "video": true, "video_seconds": 15, "cooldown_s": 30}]

@@ -699,6 +699,23 @@ export type Count = {
   removed?: number;
 };
 
+/** A counting line: its two ends as [x, y] in fractions of the picture from the top left, and optionally the labels it counts (all when absent) */
+export type CountLine = {
+  id: string;
+  a: number[];
+  b: number[];
+  labels?: string[];
+};
+
+export type CountLines = {
+  camera_id: string;
+  lines: CountLine[];
+};
+
+export type CountLinesInput = {
+  lines: CountLine[];
+};
+
 /** One event of the day in brief: when (seconds from the start of the day) and the identifiers it has. The free text of an event is never here */
 export type DailyBrief = {
   t_s: number;
