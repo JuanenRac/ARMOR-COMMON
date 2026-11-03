@@ -88,7 +88,7 @@ ARMOR-COMMON はファミリーに同じ言葉を話させるものです。ノ�
 
 | 連携先 | 方法 | 目的 |
 |---|---|---|
-| ARMOR-SERVER | ベクターを実行し、OpenAPI の全ルートを実装 | ベクター、OpenAPI |
+| ARMOR-SERVER | ベクターを実行し、OpenAPI の全ルートを実装。独自の TypeScript 契約を持ち、生成された TypeScript は使わない | ベクター、OpenAPI |
 | ARMOR-STUDIO | 生成された型のコピーを保持し、ずれるとテストが失敗 | 生成された TypeScript |
 | ARMOR-ANDROID-CONTROL | 独自の解析を持ち、Kotlin の型は生成のみで未使用 | 生成された Kotlin |
 | ARMOR-NODE-RADAR, SOLAR, ELECTRICAL, ALARM, HMI | `tools/sync_firmware_base.py` で firmware_base を受け取る | コピーされるファームウェア |

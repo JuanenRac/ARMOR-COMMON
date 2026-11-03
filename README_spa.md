@@ -88,7 +88,7 @@ ARMOR-COMMON es lo que mantiene a la familia hablando el mismo idioma. Cada mens
 
 | Habla con | Cómo | Para qué |
 |---|---|---|
-| ARMOR-SERVER | ejecuta los vectores; implementa cada ruta de OpenAPI | vectores, OpenAPI |
+| ARMOR-SERVER | ejecuta los vectores; implementa cada ruta de OpenAPI; mantiene sus propios contratos TypeScript y no consume el TypeScript generado | vectores, OpenAPI |
 | ARMOR-STUDIO | guarda una copia de los tipos generados; una prueba falla si se desvía | TypeScript generado |
 | ARMOR-ANDROID-CONTROL | tiene su propio análisis; los tipos Kotlin se generan pero no se usan | Kotlin generado |
 | ARMOR-NODE-RADAR, SOLAR, ELECTRICAL, ALARM, HMI | reciben firmware_base con `tools/sync_firmware_base.py` | firmware copiado |

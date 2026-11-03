@@ -88,7 +88,7 @@ ARMOR-COMMON 让整个家族说同一种语言。节点与 [ARMOR-SERVER](https:
 
 | 对话对象 | 方式 | 用途 |
 |---|---|---|
-| ARMOR-SERVER | 运行向量；实现每条 OpenAPI 路由 | 向量、OpenAPI |
+| ARMOR-SERVER | 运行向量；实现每条 OpenAPI 路由；自有 TypeScript 契约，不使用生成的 TypeScript | 向量、OpenAPI |
 | ARMOR-STUDIO | 保留生成类型的副本；偏离时测试失败 | 生成的 TypeScript |
 | ARMOR-ANDROID-CONTROL | 有自己的解析；Kotlin 类型已生成但未使用 | 生成的 Kotlin |
 | ARMOR-NODE-RADAR, SOLAR, ELECTRICAL, ALARM, HMI | 通过 `tools/sync_firmware_base.py` 接收 firmware_base | 复制的固件 |
