@@ -1,0 +1,58 @@
+# =============================================================================
+# A.R.M.O.R. - reverse dependencies of the contracts
+# Copyright (C) 2026 JuanenRac (Electro Hobby 3D)
+# GPL-3.0-or-later - see LICENSE
+# =============================================================================
+# Run by hand before a version of the contracts is published: it checks out every repository that consumes them next to this one and runs the checks of each against
+# this checkout, so a change that breaks a reader is found here and not in the next push of the reader. Nothing is published or pushed.
+name: Reverse dependencies
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  consumers:
+    name: ${{ matrix.repository }} against this checkout
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        repository:
+          - ARMOR-NODE-RADAR
+          - ARMOR-NODE-SOLAR
+          - ARMOR-NODE-ELECTRICAL
+          - ARMOR-NODE-ALARM
+          - ARMOR-NODE-HMI
+          - ARMOR-NETWORK
+          - ARMOR-SIMULATOR
+          - ARMOR-HARDWARE
+          - ARMOR-DEVOPS
+          - ARMOR-UPDATER
+          - ARMOR-DOCS
+    steps:
+      - name: Check out the contracts
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: ARMOR-COMMON
+          persist-credentials: false
+
+      - name: Check out the consumer
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: JuanenRac/${{ matrix.repository }}
+          path: ${{ matrix.repository }}
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.11"
+
+      - name: Run the checks of the consumer
+        working-directory: ${{ matrix.repository }}
+        env:
+          ARMOR_REQUIRE_SIBLINGS: "1"
+        run: python tools/armor_ci_validate.py
