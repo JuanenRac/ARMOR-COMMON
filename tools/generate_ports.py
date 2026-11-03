@@ -53,7 +53,7 @@ def main() -> int:
     for name, text in render(data).items():
         target = OUT / name
         if args.check:
-            if not target.exists() or target.read_bytes() != text.encode("utf-8"):
+            if not target.exists() or target.read_bytes().replace(b"\r\n", b"\n") != text.encode("utf-8"):
                 stale.append(name)
         else:
             target.write_bytes(text.encode("utf-8"))
