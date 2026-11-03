@@ -78,6 +78,20 @@
    }
   },
   {
+   "name": "a siren whose wiring is open",
+   "valid": true,
+   "payload": {
+    "service": "armor-server",
+    "event": "alarm.raised",
+    "at": "1970-01-01T00:00:00.000Z",
+    "mode": "armed",
+    "alarm_id": "a4",
+    "severity": "warning",
+    "code": "alarm_siren_fault",
+    "alarm_node_id": "alarm-1"
+   }
+  },
+  {
    "name": "a sign-in from outside the house",
    "valid": true,
    "payload": {
