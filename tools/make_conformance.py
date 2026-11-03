@@ -363,6 +363,12 @@ def dev(**changes):
     return network(devices=[net_device(**changes)])
 
 
+def ai_observation(**changes):
+    base = {"camera_id": "front-door", "severity": "review", "reasons": ["movement near the door"], "profile": "daylight", "motion": 0.62, "radar_tracks": 1}
+    base.update(changes)
+    return base
+
+
 def without(payload, key):
     return {name: value for name, value in payload.items() if name != key}
 
@@ -727,6 +733,9 @@ cases: dict[str, list[Any]] = {
         ("a token of 33 characters", False, command(action="close_a", token="a" * 33)),
         ("a token with capitals", False, command(action="close_a", token="AB12CD34EF56AB12")),
         ("a command id of seven characters", False, command(command_id="c0ffee0")),
+        ("a command id of seventeen hexadecimal digits", False, command(command_id="c0ffee01234567890")),
+        ("a command id of sixteen letters and digits that are not hexadecimal", False, command(command_id="c0ffeezz12345678")),
+        ("a command id of eight characters, as the first draft allowed", False, command(command_id="c0ffee01")),
         ("a command id with a dash", False, command(command_id="c0ffee01-2345")),
         ("no command id", False, {k: v for k, v in command().items() if k != "command_id"}),
         ("no switch", False, {k: v for k, v in command().items() if k != "switch"}),
@@ -761,6 +770,7 @@ cases: dict[str, list[Any]] = {
         ("no refusal", False, {k: v for k, v in result().items() if k != "refusal"}),
         ("no accepted", False, {k: v for k, v in result().items() if k != "accepted"}),
         ("a command id of seven characters", False, result(command_id="c0ffee0")),
+        ("a command id of eight characters, as the first draft allowed", False, result(command_id="c0ffee01")),
         ("a token with capitals", False, result(action="arm", token="AB12CD34EF56AB12")),
         ("the kind of a command", False, result(kind="electrical_command")),
         ("a node id with a space", False, result(node_id="my node")),
@@ -791,6 +801,8 @@ cases: dict[str, list[Any]] = {
         ("port 11", False, bat_command(port=11)),
         ("port as a string", False, bat_command(port="2")),
         ("a command id of seven characters", False, bat_command(command_id="b0b0b0b")),
+        ("a command id of eight characters, as the first draft allowed", False, bat_command(command_id="b0b0b0b0")),
+        ("a command id with capitals", False, bat_command(command_id="B0B0B0B012345678")),
         ("a token with capitals", False, dict(bat_execute(), token="0123456789ABCDEF0123456789ABCDEF")),
         ("a token of 31 characters", False, dict(bat_execute(), token="0123456789abcdef0123456789abcde")),
         ("a serial with a space", False, bat_command(serial="PPTBH0220 409223")),
@@ -1248,6 +1260,28 @@ cases: dict[str, list[Any]] = {
         ("an unknown field", False, voice_meta(token="x")),
         ("not an object", False, ["es"]),
     ],
+    "ai_observation": [
+        ("a movement to review", True, ai_observation()),
+        ("an intrusion in low light with the share of the picture", True, ai_observation(severity="high", profile="low-light", motion_ratio=0.18, radar_tracks=3)),
+        ("no reasons", True, ai_observation(reasons=[])),
+        ("the lowest and highest values", True, ai_observation(motion=0, motion_ratio=1, radar_tracks=1000)),
+        ("a camera id of two characters", False, ai_observation(camera_id="ab")),
+        ("a camera id with a space", False, ai_observation(camera_id="front door")),
+        ("a severity that does not exist", False, ai_observation(severity="low")),
+        ("six reasons", False, ai_observation(reasons=["x"] * 6)),
+        ("a reason of 201 characters", False, ai_observation(reasons=["x" * 201])),
+        ("a reason that is not a text", False, ai_observation(reasons=[3])),
+        ("a profile that does not exist", False, ai_observation(profile="night")),
+        ("motion above one", False, ai_observation(motion=1.01)),
+        ("motion below zero", False, ai_observation(motion=-0.1)),
+        ("a motion that is a text", False, ai_observation(motion="0.6")),
+        ("a share of the picture above one", False, ai_observation(motion_ratio=1.5)),
+        ("a fraction of a radar track", False, ai_observation(radar_tracks=1.5)),
+        ("more than a thousand radar tracks", False, ai_observation(radar_tracks=1001)),
+        ("a missing camera", False, without(ai_observation(), "camera_id")),
+        ("an unknown field", False, ai_observation(picture="AAAA")),
+        ("not an object", False, ["front-door"]),
+    ],
     "voice_turn_result": [
         ("what was heard and the reply", True, voice_result()),
         ("with the audio in base64", True, voice_result(audio="AAAA")),
@@ -1596,6 +1630,8 @@ cases: dict[str, list[Any]] = {
         ("an empty requester", False, control_arm(requested_by="")),
         ("uppercase node id", False, control_arm(node_id="Radar-1")),
         ("a command id that is too short", False, control_arm(command_id="abc")),
+        ("a command id of eight characters, as the first draft allowed", False, control_arm(command_id="d0d0d0d0")),
+        ("a command id that is not hexadecimal", False, control_arm(command_id="d0d0d0d0zzzzzzzz")),
         ("another kind", False, control_arm(kind="electrical_command")),
         ("the kind of the first draft", False, control_arm(kind="node_restart_command")),
         ("unknown field", False, control_arm(force=True)),

@@ -1115,6 +1115,16 @@ data class Network(
     val results: List<NetworkResults>? = null
 )
 
+data class AiObservation(
+    val camera_id: String,
+    val severity: String,
+    val reasons: List<String>,
+    val profile: String,
+    val motion: Double,
+    val motion_ratio: Double? = null,
+    val radar_tracks: Long
+)
+
 data class DeviceState(
     val on: Boolean
 )

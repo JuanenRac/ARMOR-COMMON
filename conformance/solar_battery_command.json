@@ -446,6 +446,42 @@
    }
   },
   {
+   "name": "a command id of eight characters, as the first draft allowed",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "b0b0b0b0",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
+   "name": "a command id with capitals",
+   "valid": false,
+   "payload": {
+    "kind": "solar_battery_command",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "command_id": "B0B0B0B012345678",
+    "port": 2,
+    "action": "arm",
+    "op": "output_set",
+    "params": {
+     "output": "cfet",
+     "state": "off"
+    },
+    "serial": "PPTBH02200409223"
+   }
+  },
+  {
    "name": "a token with capitals",
    "valid": false,
    "payload": {

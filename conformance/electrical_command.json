@@ -205,6 +205,42 @@
    }
   },
   {
+   "name": "a command id of seventeen hexadecimal digits",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee01234567890",
+    "switch": "transfer",
+    "action": "arm"
+   }
+  },
+  {
+   "name": "a command id of sixteen letters and digits that are not hexadecimal",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffeezz12345678",
+    "switch": "transfer",
+    "action": "arm"
+   }
+  },
+  {
+   "name": "a command id of eight characters, as the first draft allowed",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_command",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7000,
+    "command_id": "c0ffee01",
+    "switch": "transfer",
+    "action": "arm"
+   }
+  },
+  {
    "name": "a command id with a dash",
    "valid": false,
    "payload": {

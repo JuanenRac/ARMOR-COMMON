@@ -23,6 +23,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 OPENAPI = ROOT / "openapi" / "armor-server.yaml"
 OUT = ROOT / "generated" / "armor-rest.ts"
+OUT_CPP = ROOT / "generated" / "armor_error_codes.hpp"
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from generate_types import MESSAGES  # noqa: E402
 
@@ -173,19 +174,35 @@ def render(document: dict | None = None) -> str:
     return f"// {HEADER}\n{imports}" + "\n".join(body)
 
 
+def render_cpp() -> str:
+    """The stable refusal codes of the HTTP contract as C++ constants (``ApiErrorCode`` and ``PinErrorCode``), so a firmware does not keep its own copy of the words."""
+    document = yaml.load(OPENAPI.read_text(encoding="utf-8"), Loader=Loader)
+    schemas = document["components"]["schemas"]
+    lines = [f"// {HEADER}", "#pragma once", "#include <array>", "#include <string_view>", "", "namespace armor::contract {", ""]
+    for key, name in (("ApiErrorCode", "kApiErrorCodes"), ("PinErrorCode", "kPinErrorCodes")):
+        values = schemas[key]["enum"]
+        body = ", ".join(f'"{value}"' for value in values)
+        lines.append(f"inline constexpr std::array<std::string_view, {len(values)}> {name} = {{{body}}};")
+    lines += ["", "}  // namespace armor::contract", ""]
+    return "\n".join(lines)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     text = render()
+    cpp = render_cpp()
     current = OUT.read_text(encoding="utf-8").replace("\r\n", "\n") if OUT.is_file() else None
+    current_cpp = OUT_CPP.read_text(encoding="utf-8").replace("\r\n", "\n") if OUT_CPP.is_file() else None
     if args.check:
-        if current != text:
-            print("generated/armor-rest.ts is out of date: run python tools/generate_rest_types.py", file=sys.stderr)
+        if current != text or current_cpp != cpp:
+            print("generated/armor-rest.ts or generated/armor_error_codes.hpp is out of date: run python tools/generate_rest_types.py", file=sys.stderr)
             return 1
         print("rest types current")
         return 0
     OUT.write_text(text, encoding="utf-8", newline="\n")
+    OUT_CPP.write_text(cpp, encoding="utf-8", newline="\n")
     print("rest types written")
     return 0
 

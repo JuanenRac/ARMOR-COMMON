@@ -28,7 +28,7 @@
     },
     "command_id": {
       "type": "string",
-      "pattern": "^[a-z0-9]{8,32}$",
+      "pattern": "^[0-9a-f]{16}$",
       "description": "Chosen by the server; the node repeats it in its result."
     },
     "switch": {

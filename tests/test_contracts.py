@@ -38,6 +38,7 @@ MESSAGE_RULES = {
     "arming_modes": validate_arming_modes,
     "voice_turn_meta": lambda payload: validate_payload("voice_turn_meta", payload),
     "voice_turn_result": lambda payload: validate_payload("voice_turn_result", payload),
+    "ai_observation": lambda payload: validate_payload("ai_observation", payload),
 }
 
 

@@ -307,7 +307,7 @@ paths:
     get:
       summary: One order as it stands now, with what each node did (an administrator); never a token
       security: [{ admin: [] }]
-      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9]{8,32}$' } }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[0-9a-f]{16}$' } }]
       responses:
         '200': { description: The operation, content: { application/json: { schema: { $ref: '#/components/schemas/NodeControlOperation' } } } }
         '404': { description: 'Unknown operation', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
@@ -545,8 +545,8 @@ paths:
       requestBody: { required: false, content: { application/json: { schema: { $ref: '#/components/schemas/PostAlarmsAcknowledgeRequest' } } } }
       responses:
         '200': { description: '{ acknowledged }', content: { application/json: { schema: { $ref: '#/components/schemas/Count' } } } }
-        '403': { description: The PIN of the panel is not right, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
-        '429': { description: Too many wrong PINs, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: The PIN of the panel is not right (code wrong_pin) or its user has none (pin_not_set), content: { application/json: { schema: { $ref: '#/components/schemas/PinRefusal' } } } }
+        '429': { description: Too many wrong PINs (code pin_locked), content: { application/json: { schema: { $ref: '#/components/schemas/PinRefusal' } } } }
   /api/v1/alarms/{id}/acknowledge:
     post:
       summary: Acknowledge one alarm (not open to a wall panel's account)
@@ -848,7 +848,7 @@ paths:
     get:
       summary: One battery operation as it stands now (an administrator); never a token
       security: [{ admin: [] }]
-      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9]{8,32}$' } }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[0-9a-f]{16}$' } }]
       responses:
         '200': { description: The operation, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryOperation' } } } }
         '404': { description: 'Unknown operation', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
@@ -858,7 +858,7 @@ paths:
         Step two (an administrator who proved themselves again a moment ago): the operation must be armed and not expired (two minutes), and the typed serial number is asked for again. The
         server sends `execute` with the node's one-time token; the node writes, reads back and answers. 202 means sent; only the operation's outcome says whether it worked.
       security: [{ admin: [] }]
-      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9]{8,32}$' } }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[0-9a-f]{16}$' } }]
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryExecuteRequest' } } } }
       responses:
         '202': { description: Sent, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryOperation' } } } }
@@ -872,7 +872,7 @@ paths:
     post:
       summary: Ask for an operation to stop (an administrator). It is honoured between two steps and never in the middle of a sequence that must not be cut (EEPROM, serial number, firmware); an armed operation that was not executed is simply withdrawn
       security: [{ admin: [] }]
-      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9]{8,32}$' } }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[0-9a-f]{16}$' } }]
       responses:
         '202': { description: Sent or withdrawn, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryOperation' } } } }
         '404': { description: 'Unknown operation', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
@@ -881,7 +881,7 @@ paths:
     post:
       summary: Arm the operation that puts back what an earlier operation changed, from what was read before it (only for the operations whose previous state can be read back, such as switching an output); an administrator who proved themselves again
       security: [{ admin: [] }]
-      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[a-z0-9]{8,32}$' } }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[0-9a-f]{16}$' } }]
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryExecuteRequest' } } } }
       responses:
         '202': { description: 'The new operation, arming', content: { application/json: { schema: { $ref: '#/components/schemas/BatteryOperation' } } } }
@@ -2485,8 +2485,24 @@ components:
       description: The body of a refused request. Some routes answer a refusal with the bare status text instead (text/plain), which each such response also lists.
       properties:
         error: { type: string, description: 'What was wrong, in words' }
-        code: { type: string, description: A stable code when the route has one (for example not_found) }
+        code: { anyOf: [{ $ref: '#/components/schemas/ApiErrorCode' }, { type: string }], description: 'A stable code when the route has one (for example not_found). The codes that a client acts on are listed in ApiErrorCode, and the ones about a PIN in PinErrorCode; read the code, never the words of "error".' }
         reason: { type: string }
+    ApiErrorCode:
+      type: string
+      description: The stable codes of a refusal (the `code` of ApiError) that a client branches on. One list for every client; the panel of the wall (firmware) carries the PIN ones as constants and a test compares them with this list. A route may answer another code; a client treats an unknown one as a plain failure.
+      enum: [invalid_request, not_found, conflict, rate_limited, forbidden, unauthorized, out_of_scope, remote_policy, wrong_password, totp_locked, totp_setup_required, elevation_required, admin_required, bad_code, bad_proof, wrong_pin, pin_locked, pin_not_set, pin_required, confirmation_required, node_offline, unknown_node, unknown_operation, no_image_for_board, no_image_in_release, wrong_board, wrong_node_kind]
+    PinErrorCode:
+      type: string
+      description: The refusals that are about the PIN of the person at a panel (a subset of ApiErrorCode). 403 for a wrong PIN or a user with no PIN, 429 while the PIN is locked after too many tries.
+      enum: [wrong_pin, pin_locked, pin_not_set]
+    PinRefusal:
+      type: object
+      required: [error, code]
+      description: The body of a refusal that is about the PIN. The panel reads the `code` (a PinErrorCode), never the words of `error`.
+      properties:
+        error: { type: string }
+        code: { $ref: '#/components/schemas/PinErrorCode' }
+        retry_after_s: { type: integer, minimum: 0, description: Seconds until the PIN may be tried again (with pin_locked) }
     Alarm:
       type: object
       required: [id, key, source, severity, code, raised_at]

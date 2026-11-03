@@ -229,10 +229,13 @@ export type AlarmSource = {
 export type ApiError = {
   /** What was wrong, in words */
   error: string;
-  /** A stable code when the route has one (for example not_found) */
-  code?: string;
+  /** A stable code when the route has one (for example not_found). The codes that a client acts on are listed in ApiErrorCode, and the ones about a PIN in PinErrorCode; read the code, never the words of "error". */
+  code?: ApiErrorCode | string;
   reason?: string;
 };
+
+/** The stable codes of a refusal (the `code` of ApiError) that a client branches on. One list for every client; the panel of the wall (firmware) carries the PIN ones as constants and a test compares them with this list. A route may answer another code; a client treats an unknown one as a plain failure. */
+export type ApiErrorCode = "invalid_request" | "not_found" | "conflict" | "rate_limited" | "forbidden" | "unauthorized" | "out_of_scope" | "remote_policy" | "wrong_password" | "totp_locked" | "totp_setup_required" | "elevation_required" | "admin_required" | "bad_code" | "bad_proof" | "wrong_pin" | "pin_locked" | "pin_not_set" | "pin_required" | "confirmation_required" | "node_offline" | "unknown_node" | "unknown_operation" | "no_image_for_board" | "no_image_in_release" | "wrong_board" | "wrong_node_kind";
 
 /** The arming profiles and the number of them that may be kept */
 export type ArmProfiles = {
@@ -1855,6 +1858,17 @@ export type PanelSync = {
     command_id?: string;
     reason?: string;
   }[];
+};
+
+/** The refusals that are about the PIN of the person at a panel (a subset of ApiErrorCode). 403 for a wrong PIN or a user with no PIN, 429 while the PIN is locked after too many tries. */
+export type PinErrorCode = "wrong_pin" | "pin_locked" | "pin_not_set";
+
+/** The body of a refusal that is about the PIN. The panel reads the `code` (a PinErrorCode), never the words of `error`. */
+export type PinRefusal = {
+  error: string;
+  code: PinErrorCode;
+  /** Seconds until the PIN may be tried again (with pin_locked) */
+  retry_after_s?: number;
 };
 
 /** Text for a person to read, as the log of a node is */

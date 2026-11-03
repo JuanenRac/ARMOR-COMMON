@@ -1,0 +1,284 @@
+{
+ "kind": "ai_observation",
+ "vectors": [
+  {
+   "name": "a movement to review",
+   "valid": true,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1
+   }
+  },
+  {
+   "name": "an intrusion in low light with the share of the picture",
+   "valid": true,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "high",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "low-light",
+    "motion": 0.62,
+    "radar_tracks": 3,
+    "motion_ratio": 0.18
+   }
+  },
+  {
+   "name": "no reasons",
+   "valid": true,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1
+   }
+  },
+  {
+   "name": "the lowest and highest values",
+   "valid": true,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0,
+    "radar_tracks": 1000,
+    "motion_ratio": 1
+   }
+  },
+  {
+   "name": "a camera id of two characters",
+   "valid": false,
+   "payload": {
+    "camera_id": "ab",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1
+   }
+  },
+  {
+   "name": "a camera id with a space",
+   "valid": false,
+   "payload": {
+    "camera_id": "front door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1
+   }
+  },
+  {
+   "name": "a severity that does not exist",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "low",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1
+   }
+  },
+  {
+   "name": "six reasons",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "x",
+     "x",
+     "x",
+     "x",
+     "x",
+     "x"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1
+   }
+  },
+  {
+   "name": "a reason of 201 characters",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1
+   }
+  },
+  {
+   "name": "a reason that is not a text",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     3
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1
+   }
+  },
+  {
+   "name": "a profile that does not exist",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "night",
+    "motion": 0.62,
+    "radar_tracks": 1
+   }
+  },
+  {
+   "name": "motion above one",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 1.01,
+    "radar_tracks": 1
+   }
+  },
+  {
+   "name": "motion below zero",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": -0.1,
+    "radar_tracks": 1
+   }
+  },
+  {
+   "name": "a motion that is a text",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": "0.6",
+    "radar_tracks": 1
+   }
+  },
+  {
+   "name": "a share of the picture above one",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1,
+    "motion_ratio": 1.5
+   }
+  },
+  {
+   "name": "a fraction of a radar track",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1.5
+   }
+  },
+  {
+   "name": "more than a thousand radar tracks",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1001
+   }
+  },
+  {
+   "name": "a missing camera",
+   "valid": false,
+   "payload": {
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1
+   }
+  },
+  {
+   "name": "an unknown field",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1,
+    "picture": "AAAA"
+   }
+  },
+  {
+   "name": "not an object",
+   "valid": false,
+   "payload": [
+    "front-door"
+   ]
+  }
+ ]
+}

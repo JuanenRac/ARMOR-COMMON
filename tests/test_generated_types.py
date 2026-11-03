@@ -97,6 +97,19 @@ class RestTypesTests(unittest.TestCase):
     def test_a_property_called_on_keeps_its_name(self):
         self.assertRegex(self.rest, r"\bon\??: ")
 
+    def test_the_refusal_codes_are_one_list_for_the_clients_and_the_firmware(self):
+        import generate_rest_types
+        document = yaml.load(generate_rest_types.OPENAPI.read_text(encoding="utf-8"), Loader=generate_rest_types.Loader)
+        schemas = document["components"]["schemas"]
+        everything, pin = schemas["ApiErrorCode"]["enum"], schemas["PinErrorCode"]["enum"]
+        self.assertEqual(len(everything), len(set(everything)))
+        self.assertTrue(set(pin) <= set(everything), "every PIN code is also a code of the contract")
+        self.assertEqual(pin, ["wrong_pin", "pin_locked", "pin_not_set"])
+        header = (ROOT / "generated" / "armor_error_codes.hpp").read_text(encoding="utf-8").replace("\r\n", "\n")
+        self.assertEqual(header, generate_rest_types.render_cpp(), "run python tools/generate_rest_types.py")
+        for value in everything:
+            self.assertIn(f'"{value}"', header)
+
 
 if __name__ == "__main__":
     unittest.main()

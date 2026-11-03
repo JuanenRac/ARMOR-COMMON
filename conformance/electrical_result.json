@@ -315,6 +315,20 @@
    }
   },
   {
+   "name": "a command id of eight characters, as the first draft allowed",
+   "valid": false,
+   "payload": {
+    "kind": "electrical_result",
+    "node_id": "electrical-1",
+    "timestamp_ms": 7100,
+    "command_id": "c0ffee01",
+    "switch": "transfer",
+    "action": "open",
+    "accepted": true,
+    "refusal": "none"
+   }
+  },
+  {
    "name": "a token with capitals",
    "valid": false,
    "payload": {

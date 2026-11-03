@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/ai-observation-0.1.0.json",
+  "title": "A.R.M.O.R. observation of a camera, as the observation service reports it to the server",
+  "description": "The body of POST /api/v1/ai/observations: what a service that watches a camera saw. `severity` says whether a person should look (`review`) or the service is sure enough to treat it as an intrusion (`high`); `reasons` are short sentences (at most five) for the person who reads the alarm; `profile` is the light the picture was taken in; `motion` is how sure the service is that something moved (0 to 1) and `motion_ratio`, when it is said, the share of the picture that changed (0 to 1); `radar_tracks` is how many radar targets were being followed at that moment. It carries no picture. The server raises an alarm only while the system is armed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "camera_id",
+    "severity",
+    "reasons",
+    "profile",
+    "motion",
+    "radar_tracks"
+  ],
+  "properties": {
+    "camera_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{3,80}$"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "review",
+        "high"
+      ]
+    },
+    "reasons": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "string",
+        "maxLength": 200
+      }
+    },
+    "profile": {
+      "type": "string",
+      "enum": [
+        "daylight",
+        "low-light"
+      ]
+    },
+    "motion": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "motion_ratio": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "radar_tracks": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000
+    }
+  }
+}

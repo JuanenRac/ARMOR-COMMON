@@ -126,7 +126,7 @@ class OpenApiTests(unittest.TestCase):
             for code, response in operation["responses"].items():
                 if code[0] in "45":
                     schema = response["content"]["application/json"]["schema"]
-                    self.assertEqual(schema, {"$ref": "#/components/schemas/ApiError"}, f"{method.upper()} {route} {code}")
+                    self.assertIn(schema, ({"$ref": "#/components/schemas/ApiError"}, {"$ref": "#/components/schemas/PinRefusal"}), f"{method.upper()} {route} {code}")   # PinRefusal is an ApiError whose code is one of the PIN codes
 
     def test_every_operation_names_who_may_call_it(self):
         schemes = self.document["components"]["securitySchemes"]

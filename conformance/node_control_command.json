@@ -1188,6 +1188,34 @@
    }
   },
   {
+   "name": "a command id of eight characters, as the first draft allowed",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d0",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
+   "name": "a command id that is not hexadecimal",
+   "valid": false,
+   "payload": {
+    "kind": "node_control_command",
+    "node_id": "radar-1",
+    "timestamp_ms": 9000,
+    "command_id": "d0d0d0d0zzzzzzzz",
+    "action": "arm",
+    "operation": "restart",
+    "mode": "now",
+    "requested_by": "ana"
+   }
+  },
+  {
    "name": "another kind",
    "valid": false,
    "payload": {

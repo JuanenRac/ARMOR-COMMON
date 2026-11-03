@@ -1114,6 +1114,16 @@ export type Network = {
   results?: NetworkResults[];
 };
 
+export type AiObservation = {
+  camera_id: string;
+  severity: "review" | "high";
+  reasons: string[];
+  profile: "daylight" | "low-light";
+  motion: number;
+  motion_ratio?: number;
+  radar_tracks: number;
+};
+
 export type DeviceState = {
   on: boolean;
 };

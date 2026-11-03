@@ -30,7 +30,7 @@
     },
     "command_id": {
       "type": "string",
-      "pattern": "^[a-z0-9]{8,32}$",
+      "pattern": "^[0-9a-f]{16}$",
       "description": "The command_id of the command answered."
     },
     "switch": {
