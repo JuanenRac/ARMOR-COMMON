@@ -28,7 +28,7 @@ def decode(line: str) -> tuple[str, dict[str, Any]]:
     """Decode and validate one untrusted JSONL envelope."""
     try:
         envelope = json.loads(line, object_pairs_hook=_no_duplicate_names)
-    except json.JSONDecodeError as error:
+    except (json.JSONDecodeError, RecursionError) as error:   # a document nested thousands of levels deep must not escape as another kind of error
         raise ValueError("envelope is not valid JSON") from error
     if not isinstance(envelope, dict) or set(envelope) != {"topic", "payload"}:
         raise ValueError("envelope must contain only topic and payload")
