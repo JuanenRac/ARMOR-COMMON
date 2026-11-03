@@ -2054,6 +2054,8 @@ export type PublicUser = {
   updatedAt: string;
   hasPin: boolean;
   hasDuress: boolean;
+  /** a silent panic phrase is set (the phrase is never shown) */
+  hasPanicPhrase?: boolean;
 };
 
 export type PushRegistered = {
@@ -2064,6 +2066,12 @@ export type PushRegistered = {
 export type PushStatus = {
   enabled: boolean;
   devices: number;
+};
+
+export type PutAccountPanicPhraseRequest = {
+  currentPassword: string;
+  phrase?: string;
+  clear?: boolean;
 };
 
 export type PutAccountPinRequest = {
@@ -2282,6 +2290,8 @@ export type SecuritySettings = {
   /** A channel of an electrical node whose own reading is old is left out of the grid figure and the graphs and marked as having no data */
   "electrical.set_aside_old_readings"?: boolean;
   "voice.multipart_turn"?: boolean;
+  "voice.panic_phrase"?: boolean;
+  "voice.panic_cooldown_s"?: number;
   "panel.live_events"?: boolean;
   "client.device_lock"?: "user" | "sensitive" | "always";
   "nodes.nvs_encryption"?: "off" | "secrets";

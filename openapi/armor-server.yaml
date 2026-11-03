@@ -421,6 +421,15 @@ paths:
         '200': { description: 'Your user, with hasPin and hasDuress', content: { application/json: { schema: { $ref: '#/components/schemas/PublicUser' } } } }
         '400': { description: Invalid PIN, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '403': { description: The current password is not right, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/account/panic-phrase:
+    put:
+      summary: Set or clear your own silent panic phrase after confirming the current password (rate limited); it only acts while the option voice.panic_phrase is on
+      security: [{ studio: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PutAccountPanicPhraseRequest' } } } }
+      responses:
+        '200': { description: 'Your user, with hasPanicPhrase', content: { application/json: { schema: { $ref: '#/components/schemas/PublicUser' } } } }
+        '400': { description: 'The phrase is not acceptable (code phrase_too_short, phrase_too_long, phrase_too_common, phrase_is_example or invalid_phrase)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: The current password is not right, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/account:
     patch:
       summary: Change your own user name and password; the current password is required (rate limited)
@@ -2590,6 +2599,7 @@ components:
         updatedAt: { type: string, format: date-time }
         hasPin: { type: boolean }
         hasDuress: { type: boolean }
+        hasPanicPhrase: { type: boolean, description: 'a silent panic phrase is set (the phrase is never shown)' }
     UserList:
       type: object
       required: [users, minPasswordLength]
@@ -2665,6 +2675,8 @@ components:
         login.country_alert: { type: boolean, default: true }
         electrical.set_aside_old_readings: { type: boolean, default: true, description: 'A channel of an electrical node whose own reading is old is left out of the grid figure and the graphs and marked as having no data' }
         voice.multipart_turn: { type: boolean, default: true }
+        voice.panic_phrase: { type: boolean, default: false }
+        voice.panic_cooldown_s: { type: integer, minimum: 10, maximum: 3600, default: 60 }
         panel.live_events: { type: boolean, default: true }
         client.device_lock: { type: string, enum: [user, sensitive, always], default: user }
         nodes.nvs_encryption: { type: string, enum: ['off', secrets], default: 'off' }
@@ -4890,6 +4902,7 @@ components:
     PostSolarDevicesRequest: { type: object, required: [kind, name, node_id], properties: { kind: { type: string, enum: [inverter, battery] }, name: { type: string, maxLength: 60 }, node_id: { type: string }, device: { type: string, description: Taken from the name when omitted }, model: { type: string }, connection: { type: string, enum: [rs232, rs485, usb, can, wifi, other] }, notes: { type: string, maxLength: 200 } } }
     PutUsersIdPinRequest: { type: object, required: [pin], properties: { pin: { type: string, pattern: '^[0-9]{4,10}$' }, duress_pin: { type: string, pattern: '^[0-9]{4,10}$' } } }
     PutAccountPinRequest: { type: object, required: [currentPassword], properties: { currentPassword: { type: string }, pin: { type: string }, duress_pin: { type: string }, clear: { type: boolean } } }
+    PutAccountPanicPhraseRequest: { type: object, required: [currentPassword], properties: { currentPassword: { type: string }, phrase: { type: string }, clear: { type: boolean } } }
     PutPreferencesRequest: { type: object, properties: { language: { type: string }, theme: { type: string }, weatherPlace: { type: [object, 'null'] } } }
     PostModeRequest: { type: object, required: [mode], properties: { mode: { type: string, enum: [armed, disarmed, away, home, night], description: 'armed is away. home and night exist only while alarm.arming_modes is on (else 400 modes_disabled)' }, pin: { type: string, pattern: '^[0-9]{4,10}$' }, confirm_unassigned: { type: boolean, description: 'Arm a mode that defends nothing (no zones or sensors assigned) anyway; without it the change is refused with 409 no_zones_assigned' } } }
     PutAlarmModesRequest: { type: object, required: [modes], properties: { revision: { type: integer }, modes: { $ref: '../src/armor_common/schemas/arming_modes.schema.json#/properties/modes' }, schedule: { type: array, maxItems: 16, items: { $ref: '../src/armor_common/schemas/arming_modes.schema.json#/properties/schedule/items' } } , panel_map: { $ref: '../src/armor_common/schemas/arming_modes.schema.json#/properties/panel_map' } } }
