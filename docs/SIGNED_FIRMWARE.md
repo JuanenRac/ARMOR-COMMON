@@ -17,12 +17,12 @@ Without the third step, whoever could change what a release holds on GitHub (a s
 ## The key
 
 - The private key is `~/.armor/firmware_ed25519.pem` on the maintainer's computer (PKCS #8, mode 0600). **It must be backed up** somewhere safe and offline: if it is lost, no new release can be installed by the nodes' GitHub updater until a firmware that holds a new public key has been installed by the manual upload or by cable.
-- It is never copied into a repository, a CI secret or a release. `release.py` refuses to publish if the key it holds is not the one the firmware trusts.
+- It is never copied into a repository, a CI secret or a release. `tools/release_firmware.py` refuses to publish if the key it holds is not the one the firmware trusts.
 - The public key is in `firmware_base/core/fw_trust.hpp` (and so in the five projects' copies, kept identical by `tools/sync_firmware_base.py check`).
 
 ## Publishing a release
 
-`python release.py KIND VERSION` (the maintainer's tool) builds the assets of every board and, for each application image, writes `<image>.sha256` and `<image>.sig` (`node ~/.armor/sign.mjs --digest <sha256>`). Nothing else signs; the CI never has the key.
+`python tools/release_firmware.py ARMOR-NODE-<KIND>` (in this repository, without the key) takes the images the node project has built and, for each board, writes the application image as `armor_<kind>-<board>.bin` with its `.sha256`, `.sig` and `.sig2`, signing through `tools/firmware_sign.mjs` with the key kept outside the repository. Nothing else signs; the CI never has the key.
 
 ## Changing the key
 

@@ -977,3 +977,45 @@ def validate_network_orders(payload: Mapping[str, object]) -> None:
     ids = [order.get("id") for order in payload.get("commands", [])]  # type: ignore[attr-defined]
     if len(ids) != len(set(ids)):
         raise ContractError("an order id must appear once")
+
+
+def validate_message(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate any message of the family: the topic chooses which of the validators above reads it (the one place that knows the families, so no consumer repeats the routing)."""
+    if not isinstance(topic, str):
+        raise ContractError("topic must be a string")
+    parts = topic.split("/")
+    if len(parts) < 3 or parts[0] != "armor":
+        raise ContractError("topic must start with armor/")
+    family = parts[1]
+    leaf = parts[-1]
+    if family == "node":
+        validate_topic_and_payload(topic, payload)
+    elif family == "solar":
+        if len(parts) == 5 and parts[3] == "maintenance":
+            (validate_solar_battery_command if leaf == "command" else validate_solar_battery_result)(topic, payload)
+        else:
+            validate_solar_message(topic, payload)
+    elif family == "electrical":
+        {"command": validate_electrical_command, "result": validate_electrical_result}.get(leaf, validate_electrical_message)(topic, payload)
+    elif family == "alarm":
+        validators = {"state": validate_alarm_message, "command": validate_alarm_command, "result": validate_alarm_result, "zigbee": validate_alarm_zone_feed, "policy": validate_alarm_policy}
+        if leaf not in validators or len(parts) != 4:
+            raise ContractError("unsupported alarm topic")
+        validators[leaf](topic, payload)
+    elif family == "network":
+        validate_network_message(topic, payload)
+    elif family == "health":
+        validate_node_health(topic, payload)
+    elif family == "radar":
+        validate_radar_event(topic, payload)
+    elif family == "control":
+        validators = {"command": validate_node_control_command, "result": validate_node_control_result, "maintenance": validate_node_maintenance}
+        if leaf not in validators:
+            raise ContractError("unsupported control topic")
+        validators[leaf](topic, payload)
+    elif family == "device":
+        validate_device_message(topic, payload)
+    elif family == "server":
+        validate_server_alert(topic, payload)
+    else:
+        raise ContractError(f"unknown topic family {family!r}")

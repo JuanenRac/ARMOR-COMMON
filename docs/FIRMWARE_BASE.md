@@ -1,6 +1,6 @@
 # The firmware the node projects share
 
-ARMOR-NODE-RADAR, ARMOR-NODE-SOLAR and ARMOR-NODE-ELECTRICAL grew from one base: the network (Ethernet and Wi-Fi), the settings and users kept in flash, the web panel's server and its
+ARMOR-NODE-RADAR, ARMOR-NODE-SOLAR, ARMOR-NODE-ELECTRICAL, ARMOR-NODE-ALARM and ARMOR-NODE-HMI grew from one base: the network (Ethernet and Wi-Fi), the settings and users kept in flash, the web panel's server and its
 login, the certificate of the HTTPS panel, the log, the source of randomness, the Bluetooth channel, the small JSON reader, the panel's page and its build. A fix made in
 one project used to have to be made in the other two by hand, and the copies drifted.
 
@@ -20,7 +20,7 @@ python tools/sync_firmware_base.py import    # (re)make the base from the projec
 ## How to change a shared file
 
 1. Edit it in `firmware_base/` (write the project's name as `@PROJECT@`, `@project-@`, `@project_@` or `@kind@`: see the top of the tool).
-2. Run `sync`: the file is written into ARMOR-NODE-RADAR, ARMOR-NODE-SOLAR and ARMOR-NODE-ELECTRICAL (or the two or one that use it), each with its own name, keeping the line endings of the
+2. Run `sync`: the file is written into each of the five node projects (or the ones that use it), each with its own name, keeping the line endings of the
    checkout.
 3. Build and test each project as usual.
 
@@ -46,7 +46,7 @@ of this repository tries the script against a stand-in broker.
 
 * The base is only as good as the projects' tests: a change to a shared file is tested by each project's host tests and built in each project's container, as any change.
 * The tool never builds anything and never touches a file that is not in the base.
-* The three projects have to be checked out next to ARMOR-COMMON (they are, for every other check of the family).
+* The five projects have to be checked out next to ARMOR-COMMON (they are, for every other check of the family).
 
 ## Files that are not shared with every node
 
