@@ -2,12 +2,12 @@
   "schema_version": "1.0",
   "about": "The version of ARMOR-COMMON (the contracts) each repository was last checked against by the reverse-dependency run. Updated by tools/contract_pins.py after a green run; a pin above the version of this repository is refused.",
   "consumers": {
-    "ARMOR-NODE-RADAR": "0.8.0.6",
-    "ARMOR-NODE-SOLAR": "0.8.0.6",
-    "ARMOR-NODE-ELECTRICAL": "0.8.0.6",
-    "ARMOR-NODE-ALARM": "0.8.0.6",
-    "ARMOR-NODE-HMI": "0.8.0.6",
-    "ARMOR-NETWORK": "0.8.0.6",
+    "ARMOR-NODE-RADAR": "0.8.0.7",
+    "ARMOR-NODE-SOLAR": "0.8.0.7",
+    "ARMOR-NODE-ELECTRICAL": "0.8.0.7",
+    "ARMOR-NODE-ALARM": "0.8.0.7",
+    "ARMOR-NODE-HMI": "0.8.0.7",
+    "ARMOR-NETWORK": "0.8.0.7",
     "ARMOR-SERVER": "0.8.0.6",
     "ARMOR-STUDIO": "0.8.0.6",
     "ARMOR-ANDROID-CONTROL": "0.8.0.6",
@@ -15,10 +15,10 @@
     "ARMOR-SERVER-AI": "0.8.0.6",
     "ARMOR-VISION": "0.8.0.6",
     "ARMOR-VOICE-AI": "0.8.0.6",
-    "ARMOR-HARDWARE": "0.8.0.6",
-    "ARMOR-DEVOPS": "0.8.0.6",
-    "ARMOR-SIMULATOR": "0.8.0.6",
-    "ARMOR-UPDATER": "0.8.0.6",
-    "ARMOR-DOCS": "0.8.0.6"
+    "ARMOR-HARDWARE": "0.8.0.7",
+    "ARMOR-DEVOPS": "0.8.0.7",
+    "ARMOR-SIMULATOR": "0.8.0.7",
+    "ARMOR-UPDATER": "0.8.0.7",
+    "ARMOR-DOCS": "0.8.0.7"
   }
 }
