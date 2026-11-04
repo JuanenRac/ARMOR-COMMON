@@ -4,6 +4,9 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **A node and the server say which contracts they were checked against:** the information message of a node takes an optional `contract` (a version of this repository, three or four numbers; the schema moves to 0.3.0 and the conformance vectors cover the good and bad shapes), `/api/v1/info` and the panel of each node in the system state carry the same field, and the generated types follow. The number is the pin of the reverse-dependency run; `tests/test_contract_declared.py` compares the constant of the server (`src/contract_version.ts`) and of every node (`main/contract_version.hpp`) with `registry/contract_pins.json`.
+- **The contract pins of the eleven consumers of the reverse-dependency run are at the current version** after the first green run of that workflow.
+
 ## [0.8.0.7] - The figures of the README are current: the conformance vectors, the JSON Schemas, the HTTP paths and operations, the files of conformance/ and the tests now say what the repository holds. (and 16 more changes)
 
 - **The figures of the README are current:** the conformance vectors, the JSON Schemas, the HTTP paths and operations, the files of `conformance/` and the tests now say what the repository holds.

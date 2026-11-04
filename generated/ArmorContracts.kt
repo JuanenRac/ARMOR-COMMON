@@ -39,7 +39,8 @@ data class Info(
     val name: String,
     val firmware: String,
     val ip: String,
-    val port: Long
+    val port: Long,
+    val contract: String? = null
 )
 
 data class SolarInverterUnits(

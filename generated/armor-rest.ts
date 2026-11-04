@@ -2441,6 +2441,8 @@ export type ServerInfo = {
   version?: string;
   /** Only for a signed-in client */
   uptime_s?: number;
+  /** The version of the contracts (ARMOR-COMMON) this server was checked against; only for a signed-in client */
+  contract?: string;
   /** Only for an operator */
   mode?: "armed" | "disarmed";
   /** Only for an operator */
@@ -2767,6 +2769,8 @@ export type SystemState = {
         firmware: string;
         ip: string;
         port: number;
+        /** The version of the contracts the node says its firmware was checked against; absent for a node that does not say it */
+        contract?: string;
       } | null;
       /** The targets of the node's latest report, in the radar's own frame; empty until it reports and after a restart. `counted` is false inside an ignore zone. */
       targets?: {

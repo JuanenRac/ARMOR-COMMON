@@ -500,6 +500,13 @@ cases: dict[str, list[Any]] = {
         ("string port", False, info(port="80")),
         ("missing address", False, without(info(), "ip")),
         ("unknown field", False, info(mac="34:85:18:00:00:01")),
+        ("the contracts it was checked against, three parts", True, info(contract="0.8.0")),
+        ("the contracts it was checked against, four parts", True, info(contract="0.8.0.7")),
+        ("contracts with a v", False, info(contract="v0.8.0.7")),
+        ("contracts with two parts", False, info(contract="0.8")),
+        ("contracts with a line feed at the end", False, info(contract="0.8.0.7\n")),
+        ("contracts as a number", False, info(contract=8)),
+        ("contracts empty", False, info(contract="")),
     ],
     "solar_inverter": [
         ("a typical reading", True, inverter()),

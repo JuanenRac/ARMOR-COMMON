@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://armor.local/schemas/info-0.2.0.json",
+  "$id": "https://armor.local/schemas/info-0.3.0.json",
   "title": "A.R.M.O.R. field-node information",
   "description": "What a node says about itself so that a console can offer its web panel: its name, the firmware it runs, and where it can be reached. Sent when the node connects to the broker and now and then afterwards.",
   "type": "object",
@@ -13,6 +13,7 @@
     "name": { "type": "string", "minLength": 1, "maxLength": 48, "description": "The name the operator gave the node." },
     "firmware": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+)?$", "description": "Three numbers, or four from 0.8.0 on." },
     "ip": { "type": "string", "pattern": "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(\\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}$", "description": "The IPv4 address of the node, four decimal parts without leading zeros." },
-    "port": { "type": "integer", "minimum": 1, "maximum": 65535, "description": "The port of the node's web panel." }
+    "port": { "type": "integer", "minimum": 1, "maximum": 65535, "description": "The port of the node's web panel." },
+    "contract": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+)?$", "description": "Optional: the version of the contracts (ARMOR-COMMON) this firmware was checked against. A node that does not say it is an older one; a console warns when it differs from the one of the server." }
   }
 }

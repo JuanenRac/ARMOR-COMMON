@@ -39,6 +39,7 @@ export type Info = {
   firmware: string;
   ip: string;
   port: number;
+  contract?: string;
 };
 
 export type SolarInverterUnits = {

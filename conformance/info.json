@@ -302,6 +302,97 @@
     "port": 80,
     "mac": "34:85:18:00:00:01"
    }
+  },
+  {
+   "name": "the contracts it was checked against, three parts",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": 80,
+    "contract": "0.8.0"
+   }
+  },
+  {
+   "name": "the contracts it was checked against, four parts",
+   "valid": true,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": 80,
+    "contract": "0.8.0.7"
+   }
+  },
+  {
+   "name": "contracts with a v",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": 80,
+    "contract": "v0.8.0.7"
+   }
+  },
+  {
+   "name": "contracts with two parts",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": 80,
+    "contract": "0.8"
+   }
+  },
+  {
+   "name": "contracts with a line feed at the end",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": 80,
+    "contract": "0.8.0.7\n"
+   }
+  },
+  {
+   "name": "contracts as a number",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": 80,
+    "contract": 8
+   }
+  },
+  {
+   "name": "contracts empty",
+   "valid": false,
+   "payload": {
+    "node_id": "north-1",
+    "timestamp_ms": 1000,
+    "name": "North gate",
+    "firmware": "0.2.3",
+    "ip": "192.168.0.181",
+    "port": 80,
+    "contract": ""
+   }
   }
  ]
 }

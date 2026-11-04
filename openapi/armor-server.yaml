@@ -2504,6 +2504,7 @@ components:
                   firmware: { type: string }
                   ip: { type: string }
                   port: { type: integer }
+                  contract: { type: string, pattern: '^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$', description: 'The version of the contracts the node says its firmware was checked against; absent for a node that does not say it' }
               targets:
                 type: array
                 maxItems: 15
@@ -2630,6 +2631,7 @@ components:
         service: { type: string, enum: [armor-server] }
         version: { type: string, description: Only for a signed-in client }
         uptime_s: { type: integer, description: Only for a signed-in client }
+        contract: { type: string, pattern: '^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$', description: 'The version of the contracts (ARMOR-COMMON) this server was checked against; only for a signed-in client' }
         mode: { type: string, enum: [armed, disarmed], description: Only for an operator }
         live_video: { type: boolean, description: Only for an operator }
         mqtt: { type: boolean, description: Only for an operator }
