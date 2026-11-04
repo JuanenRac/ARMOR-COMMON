@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.8.0.7] - The figures of the README are current: the conformance vectors, the JSON Schemas, the HTTP paths and operations, the files of conformance/ and the tests now say what the repository holds. (and 16 more changes)
+
 - **The figures of the README are current:** the conformance vectors, the JSON Schemas, the HTTP paths and operations, the files of `conformance/` and the tests now say what the repository holds.
 - **The contract describes the trusted phones:** `/api/v1/devices/trust` (list, register), `/api/v1/devices/trust/{id}` (end), `/api/v1/devices/trust/challenge` and `/api/v1/devices/trust/session` (renew a session by signing a one-time challenge) with the schemas `TrustedDevice`, `TrustedDeviceList`, `TrustedChallenge` and the three request bodies, and the options `client.trusted_devices` (off by default) and `client.trusted_session_h` (1 to 720 hours, 72) in the security settings.
 - **Each consumer has a pin of the contracts and a manual reverse-dependency run:** `registry/contract_pins.json` records the version of the contracts every repository was last checked against, `tools/contract_pins.py` checks it (`--check`, never above the current version), moves a pin (`--set`) and lists the consumers that are behind (`--behind`), and the workflow `reverse-deps.yml` (started by hand) runs the checks of eleven consumers against the checkout of the contracts before a version is published. The tests of the pin are in `tests/test_contract_pins.py`.
