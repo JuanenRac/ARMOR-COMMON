@@ -1764,6 +1764,47 @@ paths:
       summary: End every session of the person except this one
       responses:
         '204': { description: 'Ended' }
+  /api/v1/devices/trust:
+    get:
+      security: [{ studio: [] }]
+      summary: The trusted phones of the signed-in person (an administrator may add ?all=1 for every person's); enabled says whether client.trusted_devices is on
+      parameters: [{ name: all, in: query, required: false, schema: { type: string, enum: ['1'] } }]
+      responses:
+        '200': { description: '{ enabled, devices: [{ id, user_id, name, created_at, last_used_at, username }] }', content: { application/json: { schema: { $ref: '#/components/schemas/TrustedDeviceList' } } } }
+    post:
+      security: [{ studio: [] }]
+      summary: Register the phone of the signed-in person as a trusted device with the public half of a key pair that never leaves it (ECDSA P-256, DER SubjectPublicKeyInfo in base64); after proving oneself again when outside the house
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostDevicesTrustRequest' } } } }
+      responses:
+        '201': { description: 'Registered (the same key again gives the same phone)', content: { application/json: { schema: { $ref: '#/components/schemas/TrustedDevice' } } } }
+        '400': { description: 'The name or the key is not accepted (code invalid_name or invalid_key)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'client.trusted_devices is off (code trusted_devices_off)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'Five phones already (code too_many_devices)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/devices/trust/{id}:
+    delete:
+      security: [{ studio: [] }]
+      summary: End a trusted phone - its owner, or an administrator - so it can no longer renew a session
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '204': { description: 'Ended' }
+        '404': { description: 'No such trusted phone', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/devices/trust/challenge:
+    post:
+      security: []
+      summary: A one-time value, good for one minute, for a trusted phone to sign (needs no session; limited by address)
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostDevicesTrustChallengeRequest' } } } }
+      responses:
+        '200': { description: '{ challenge, expires_in_s }', content: { application/json: { schema: { $ref: '#/components/schemas/TrustedChallenge' } } } }
+        '404': { description: 'client.trusted_devices is off, or no such phone (code trusted_devices_off or unknown_device)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/devices/trust/session:
+    post:
+      security: []
+      summary: Open a session of client.trusted_session_h hours when the signature (ECDSA with SHA-256, DER, base64) over armor-device-trust-v1|id|challenge is right; the challenge is used up whatever the answer
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostDevicesTrustSessionRequest' } } } }
+      responses:
+        '201': { description: 'Signed in: { expiresAt, user }', content: { application/json: { schema: { $ref: '#/components/schemas/StudioSessionOpened' } } } }
+        '401': { description: 'The phone could not prove itself (code bad_proof)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'client.trusted_devices is off (code trusted_devices_off)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/studio/elevate:
     post:
       security: [{ studio: [] }]
@@ -2719,7 +2760,7 @@ components:
     SecuritySettings:
       type: object
       additionalProperties: false
-      description: 'The security options an administrator sets in Studio. The default of each is the way the server always behaved. nodes.nvs_encryption secrets = the alarm nodes keep the secrets they store (passwords, token, keys) encrypted in their flash (told in the policy message; off by default; no eFuse is burned). alarm.disarm_pin never = no PIN is asked to disarm or silence a siren (the duress PIN is untouched), if_set = asked of a user who has one, always = asked of everybody and a user without one cannot disarm (ARMOR_DISARM_PIN=required fixes it to always and wins over the setting). voice.silence_confirmation is sent to the voice service with every turn (header X-Armor-Policy). alarm.config_hash, server.zone_feed, server.zone_feed_signature and alarm.disarm_pin (left out of the message while it is if_set) reach the panels as the policy message (armor/alarm/{node_id}/policy). server.alarm_state_signature on makes the server publish a signed copy of every alarm state it hears (seq and sig of alarm.schema.json) for readers that must know who sent a state, such as the safety zones of a HYDRA-UMC cell; the key is a file of the server, never shown or stored here. media.rtsp_proxy off puts the camera login in the command line of FFmpeg, visible to every user of the machine. voice.multipart_turn on lets the wall panel send a spoken turn as multipart/form-data with the audio as raw bytes (off: only the older raw request is taken and a multipart one is answered 415). network.login_secure_only on keeps the login stored for a device of the network from a node whose request did not come over TLS or from the machine of the server (off by default: any request of the node). panel.live_events on lets the wall panel listen to the WebSocket /api/v1/panel/events instead of asking the summary every few seconds (off: the panels on it are closed with 4403 and ask as before). client.device_lock is what the phone app asks of its user with the lock of the phone (fingerprint, face or the phone PIN): user = the switches of the app decide, sensitive = also before arming, disarming and unlocking, always = also to open the app; it can only raise what the person chose, and a phone without any lock is never shut out. voice.turn_max_bytes and voice.reply_audio_max_bytes are the most audio of a spoken turn and the most spoken answer handed back in the binary form, in bytes (the environment of the server is where they start)'
+      description: 'The security options an administrator sets in Studio. The default of each is the way the server always behaved. nodes.nvs_encryption secrets = the alarm nodes keep the secrets they store (passwords, token, keys) encrypted in their flash (told in the policy message; off by default; no eFuse is burned). alarm.disarm_pin never = no PIN is asked to disarm or silence a siren (the duress PIN is untouched), if_set = asked of a user who has one, always = asked of everybody and a user without one cannot disarm (ARMOR_DISARM_PIN=required fixes it to always and wins over the setting). voice.silence_confirmation is sent to the voice service with every turn (header X-Armor-Policy). alarm.config_hash, server.zone_feed, server.zone_feed_signature and alarm.disarm_pin (left out of the message while it is if_set) reach the panels as the policy message (armor/alarm/{node_id}/policy). server.alarm_state_signature on makes the server publish a signed copy of every alarm state it hears (seq and sig of alarm.schema.json) for readers that must know who sent a state, such as the safety zones of a HYDRA-UMC cell; the key is a file of the server, never shown or stored here. media.rtsp_proxy off puts the camera login in the command line of FFmpeg, visible to every user of the machine. voice.multipart_turn on lets the wall panel send a spoken turn as multipart/form-data with the audio as raw bytes (off: only the older raw request is taken and a multipart one is answered 415). network.login_secure_only on keeps the login stored for a device of the network from a node whose request did not come over TLS or from the machine of the server (off by default: any request of the node). panel.live_events on lets the wall panel listen to the WebSocket /api/v1/panel/events instead of asking the summary every few seconds (off: the panels on it are closed with 4403 and ask as before). client.device_lock is what the phone app asks of its user with the lock of the phone (fingerprint, face or the phone PIN): user = the switches of the app decide, sensitive = also before arming, disarming and unlocking, always = also to open the app; it can only raise what the person chose, and a phone without any lock is never shut out. client.trusted_devices on lets a phone register a key pair that stays in it (POST /api/v1/devices/trust) and renew its session by signing a challenge, for client.trusted_session_h hours (1 to 720, default 72), instead of typing the password and the code again; off (the default) answers 404 on those routes. voice.turn_max_bytes and voice.reply_audio_max_bytes are the most audio of a spoken turn and the most spoken answer handed back in the binary form, in bytes (the environment of the server is where they start)'
       properties:
         alarm.disarm_pin: { type: string, enum: [never, if_set, always], default: if_set }
         voice.silence_confirmation: { type: string, enum: ['off', pin, double_turn], default: 'off' }
@@ -2744,6 +2785,8 @@ components:
         voice.panic_cooldown_s: { type: integer, minimum: 10, maximum: 3600, default: 60 }
         panel.live_events: { type: boolean, default: true }
         client.device_lock: { type: string, enum: [user, sensitive, always], default: user }
+        client.trusted_devices: { type: boolean, default: false }
+        client.trusted_session_h: { type: integer, minimum: 1, maximum: 720, default: 72 }
         nodes.nvs_encryption: { type: string, enum: ['off', secrets], default: 'off' }
         voice.turn_max_bytes: { type: integer, minimum: 3200, maximum: 1920000, default: 480000 }
         voice.reply_audio_max_bytes: { type: integer, minimum: 3200, maximum: 1000000, default: 200000 }
@@ -5032,6 +5075,12 @@ components:
     PostVoicePanicCheckRequest: { type: object, required: [text], properties: { text: { type: string, maxLength: 240 }, language: { type: string, enum: [en, es, de, fr, it, ja, zh, pt] } } }
     VoicePanicCheckReply: { type: object, required: [ok], properties: { ok: { type: boolean, enum: [true] } } }
     PostStudioSessionTotpRequest: { type: object, required: [challenge, code], properties: { challenge: { type: string }, code: { type: string } } }
+    PostDevicesTrustRequest: { type: object, required: [name, public_key], properties: { name: { type: string, maxLength: 60 }, public_key: { type: string, description: 'ECDSA P-256 public key, DER SubjectPublicKeyInfo, base64' } } }
+    PostDevicesTrustChallengeRequest: { type: object, required: [id], properties: { id: { type: string } } }
+    PostDevicesTrustSessionRequest: { type: object, required: [id, challenge, signature], properties: { id: { type: string }, challenge: { type: string }, signature: { type: string, description: 'ECDSA with SHA-256, DER, base64' } } }
+    TrustedDevice: { type: object, required: [id, user_id, name, created_at, last_used_at], properties: { id: { type: string }, user_id: { type: string }, name: { type: string }, created_at: { type: string, format: date-time }, last_used_at: { type: [string, 'null'], format: date-time }, username: { type: string } } }
+    TrustedDeviceList: { type: object, required: [enabled, devices], properties: { enabled: { type: boolean }, devices: { type: array, items: { $ref: '#/components/schemas/TrustedDevice' } } } }
+    TrustedChallenge: { type: object, required: [challenge, expires_in_s], properties: { challenge: { type: string }, expires_in_s: { type: integer } } }
     PostStudioElevateRequest: { type: object, properties: { password: { type: string }, code: { type: string } } }
     DeleteStudioTotpRequest: { type: object, required: [password], properties: { password: { type: string } } }
     PostStudioTotpSetupRequest: { type: object, required: [password], properties: { password: { type: string } } }
