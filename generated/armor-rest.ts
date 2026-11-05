@@ -28,6 +28,8 @@ export type AdminAvailability = {
   reason?: string;
   hint?: string;
   console?: boolean;
+  /** Whether the admin agent has the authenticator set up, whose one-time code (header X-Armor-Maint-Totp) it then asks for to save the broker rules and to change the two switches of the broker rules; left out by an older agent */
+  approval?: "totp" | "not_enrolled";
 };
 
 export type AdminFile = {

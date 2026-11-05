@@ -1326,8 +1326,7 @@ paths:
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostAdminMqttRelaysKindRequest' } } } }
       responses:
         '200': { description: '{ ok, relay, node, state } and the state of both switches', content: { application/json: { schema: { $ref: '#/components/schemas/AdminRelayChanged' } } } }
-        '401': { description: The agent wants the one-time code (totp_required) or it is not good (totp_invalid), content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
-        '403': { description: The setting admin.acl_relays is off (acl_relays_disabled) or the agent has no authenticator set up (totp_not_enrolled), content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'The setting admin.acl_relays is off (acl_relays_disabled), the agent has no authenticator set up (totp_not_enrolled), or it wants the one-time code (totp_required) or the code is not good (totp_invalid)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '404': { description: Not one of the two switches, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '422': { description: 'A confirmation is missing or does not match (confirmation_required, confirmation_mismatch), or the state or the node is not valid', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/admin/nodes/provision:
@@ -4338,6 +4337,7 @@ components:
         reason: { type: string }
         hint: { type: string }
         console: { type: boolean }
+        approval: { type: string, enum: [totp, not_enrolled], description: 'Whether the admin agent has the authenticator set up, whose one-time code (header X-Armor-Maint-Totp) it then asks for to save the broker rules and to change the two switches of the broker rules; left out by an older agent' }
     AdminServices:
       type: object
       required: [services]
