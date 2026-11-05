@@ -21,15 +21,15 @@
   <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 ou ultérieure">
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Langage">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Vectors-1380-00E5FF.svg" alt="Vectors">
+  <img src="https://img.shields.io/badge/Vectors-1387-00E5FF.svg" alt="Vectors">
   <img src="https://img.shields.io/badge/Tests-307%20passing-2ea44f.svg" alt="Tests">
-  <img src="https://img.shields.io/badge/Version-0.8.0.7-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Version-0.8.0.8-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturité">
 </p>
 
 ---
 
-**Vérification d'honnêteté - ce qui fonctionne aujourd'hui :** Les schémas (télémétrie, santé, commande, information du nœud, onduleur et batterie solaires, électrique, alarme avec sa commande et son résultat, et réseau), le validateur Python, les 1380 vecteurs de conformité, les types TypeScript et Kotlin générés, le fichier OpenAPI du serveur (213 chemins), la base firmware partagée par les cinq nœuds et le lanceur de projet partagé sont réels et testés (307 tests). Le fichier Kotlin est généré mais **pas encore consommé** par ARMOR-ANDROID-CONTROL (qui garde sa propre lecture), et la commande `set_thresholds` porte un seul champ `sensitivity` car les vrais paramètres du radar ne sont définis que lorsque le firmware existe.
+**Vérification d'honnêteté - ce qui fonctionne aujourd'hui :** Les schémas (télémétrie, santé, commande, information du nœud, onduleur et batterie solaires, électrique, alarme avec sa commande et son résultat, et réseau), le validateur Python, les 1387 vecteurs de conformité, les types TypeScript et Kotlin générés, le fichier OpenAPI du serveur (213 chemins), la base firmware partagée par les cinq nœuds et le lanceur de projet partagé sont réels et testés (307 tests). Le fichier Kotlin est généré mais **pas encore consommé** par ARMOR-ANDROID-CONTROL (qui garde sa propre lecture), et la commande `set_thresholds` porte un seul champ `sensitivity` car les vrais paramètres du radar ne sont définis que lorsque le firmware existe.
 
 ---
 
@@ -37,11 +37,11 @@
 
 | | |
 |---|---|
-| Version | `0.8.0.7` |
+| Version | `0.8.0.8` |
 | Maturité | Établi |
 | Rôle | Contrats partagés, validateur et base de firmware de la famille |
 | Technologie | Python 3.11+, JSON Schema, OpenAPI ; base de firmware C++ (ESP-IDF) |
-| Tests | 307 (`python -m unittest discover -s tests`), 1380 vecteurs de conformité |
+| Tests | 307 (`python -m unittest discover -s tests`), 1387 vecteurs de conformité |
 | Contrat | 38 JSON Schema, 213 chemins HTTP (275 opérations) |
 | Fonctionne sur | Tout ordinateur (bibliothèque et outils) ; la base de firmware tourne dans les cinq nœuds |
 | Sur matériel réel | Seul le nœud radar a exécuté le firmware partagé sur une carte ; les quatre autres non |
@@ -58,7 +58,7 @@ Chaque ligne est une partie de ce dépôt et le feu dit où elle en est aujourd'
 | Domaine | État | Ce que cela veut dire ici |
 |---|---|---|
 | Logiciel | 🟢 | Les schémas, le validateur Python, les types TypeScript et Kotlin générés, le fichier OpenAPI du serveur et la base de firmware partagée par les cinq nœuds sont en place. |
-| Tests | 🟢 | 307 tests et 1380 vecteurs de conformité réussissent ; les analyseurs JSON, Bluetooth et Improv du firmware sont aussi soumis à du fuzzing avec libFuzzer. |
+| Tests | 🟢 | 307 tests et 1387 vecteurs de conformité réussissent ; les analyseurs JSON, Bluetooth et Improv du firmware sont aussi soumis à du fuzzing avec libFuzzer. |
 | Protocoles et données | 🟡 | Seuls les messages du nœud radar sont utilisés chaque jour avec une vraie carte et le serveur ; ceux des autres nœuds sont vérifiés par rapport à des simulations. |
 | Intégration | 🟡 | On vérifie que la base de firmware est identique dans chaque nœud ; les types Kotlin sont générés mais l'application Android ne les utilise pas encore, elle garde son propre analyseur. |
 | Matériel | 🟠 | Seul le nœud radar a exécuté ce firmware partagé sur une carte ; les quatre autres nœuds ne l'ont pas fait. |
@@ -71,7 +71,7 @@ Chaque ligne est une partie de ce dépôt et le feu dit où elle en est aujourd'
 
 * **Une seule source de vérité :** schémas JSON dans `src/armor_common/schemas/` pour la télémétrie, la santé, la commande, l'information du nœud, les deux messages solaires (onduleur, batterie avec cellules et capacités), les messages électriques (mesures, commande, résultat), les messages d'alarme (état, commande, résultat) et le message réseau. Les champs inconnus et les combinaisons impossibles sont refusés.
 * **Un validateur qui ne peut sauter aucune règle :** il interprète le schéma directement et refuse un schéma qui utilise un mot-clé qu'il n'implémente pas.
-* **Vecteurs de conformité :** 1380 charges acceptées et refusées exécutées par chaque implémentation (Python ici, TypeScript dans ARMOR-SERVER, les vérifications des dépôts firmware), si bien qu'une dérive fait échouer une compilation.
+* **Vecteurs de conformité :** 1387 charges acceptées et refusées exécutées par chaque implémentation (Python ici, TypeScript dans ARMOR-SERVER, les vérifications des dépôts firmware), si bien qu'une dérive fait échouer une compilation.
 * **Clients générés :** les types TypeScript et Kotlin et les constantes C++ (`generated/armor_contracts.hpp`) viennent des schémas (`tools/generate_types.py --check` les tient à jour).
 * **Contrat HTTP :** `openapi/armor-server.yaml` décrit chaque route du serveur (213 chemins, 275 opérations), sa règle d'accès et un schéma nommé pour chaque corps de requête, réponse et erreur, et un test vérifie que les routes enregistrées par le serveur sont exactement celles qu'il décrit (méthode et chemin).
 * **Base firmware :** `firmware_base/` garde une seule fois chaque fichier que partagent les cinq nœuds (réseau, réglages et utilisateurs, serveur du panneau web et connexion, certificat HTTPS, journal, Bluetooth avec appairage par PIN, contrôle des mises à jour signées ; relais et Zigbee pour les nœuds qui en ont) ; `tools/sync_firmware_base.py` l'écrit dans chaque nœud et vérifie qu'aucune copie n'a dérivé ([le guide](docs/FIRMWARE_BASE.md), [firmware signé](docs/SIGNED_FIRMWARE.md)).
@@ -165,7 +165,7 @@ flowchart LR
 ### Schémas, vecteurs et OpenAPI
 
 * **38 JSON Schema** dans `src/armor_common/schemas/` : télémétrie, santé, commande, informations du nœud, santé du nœud, contrôle du nœud (commande et résultat), maintenance du nœud, onduleur et batterie solaires (avec leurs commandes et résultats), électrique (avec commande et résultat), alarme (état, commande, résultat, politique et zones), réseau (avec ses ordres), événements de connexion et système, événements radar, alerte du serveur, profil d'armement, modes d'armement, état d'appareil, jetons de diagnostic et le tour de parole.
-* **1380 vecteurs de conformité** dans `conformance/` (38 fichiers, un par message), exécutés par ce dépôt, par ARMOR-SERVER et par les vérifications des dépôts de firmware.
+* **1387 vecteurs de conformité** dans `conformance/` (38 fichiers, un par message), exécutés par ce dépôt, par ARMOR-SERVER et par les vérifications des dépôts de firmware.
 * **OpenAPI** `openapi/armor-server.yaml` : 213 chemins et 275 opérations, chacun avec sa règle d'accès et un schéma nommé pour chaque corps, réponse et erreur. Un test vérifie que les routes enregistrées par le serveur sont exactement celles décrites. Le tour de parole voyage en octets (voir [docs/CONTRACTS.md](docs/CONTRACTS.md)).
 
 ### Outils en ligne de commande
@@ -207,7 +207,7 @@ La liaison TLS du nœud avec le broker est un réglage du nœud (pas du build) :
 
 ```powershell
 python -m pip install -e .                   # installe la bibliothèque
-python -m unittest discover -s tests         # 307 tests, 1380 vecteurs
+python -m unittest discover -s tests         # 307 tests, 1387 vecteurs
 python tools/generate_types.py --check       # les types générés sont à jour
 python tools/generate_rest_types.py --check  # les types du contrat HTTP sont à jour
 python tools/make_conformance.py             # régénère les vecteurs après modification de la liste de cas (--check : à jour)
@@ -270,7 +270,7 @@ ARMOR-COMMON/
 │   ├── alarm_facts.json           libellés des faits d'une alarme
 │   └── battery_ops.json           opérations de batterie
 ├── firmware_base/                 le firmware que les cinq nœuds partagent, une seule fois
-├── conformance/                   1380 messages valides et refusés
+├── conformance/                   1387 messages valides et refusés
 ├── generated/                     types TypeScript et Kotlin (générés, ne pas modifier)
 ├── openapi/                       armor-server.yaml, contrat HTTP
 ├── registry/                      repositories.json, liste de la famille
