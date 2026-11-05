@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **One movement model for the observation services:** `src/armor_common/motion_core.py` decides movement per pixel after the change of the whole picture is taken away, cuts the picture into a grid only to say where, and gives the regions as rectangles `{x, y, w, h}`; `tools/sync_motion_core.py` copies it into ARMOR-SERVER-AI and ARMOR-VISION and `check` fails when a copy differs. The observation of a camera takes an optional `regions` (at most 16 rectangles, the schema moves to 0.2.0, ten new conformance vectors, generated types and the HTTP description follow).
 - **A node and the server say which contracts they were checked against:** the information message of a node takes an optional `contract` (a version of this repository, three or four numbers; the schema moves to 0.3.0 and the conformance vectors cover the good and bad shapes), `/api/v1/info` and the panel of each node in the system state carry the same field, and the generated types follow. The number is the pin of the reverse-dependency run; `tests/test_contract_declared.py` compares the constant of the server (`src/contract_version.ts`) and of every node (`main/contract_version.hpp`) with `registry/contract_pins.json`.
 - **The contract pins of the eleven consumers of the reverse-dependency run are at the current version** after the first green run of that workflow.
 

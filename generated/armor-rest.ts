@@ -1977,6 +1977,14 @@ export type PostAiObservationsRequest = {
   reasons: string[];
   profile: "daylight" | "low-light";
   motion: number;
+  motion_ratio?: number;
+  /** Rectangles where it moved, in fractions of the picture, the largest first */
+  regions?: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  }[];
   radar_tracks: number;
 };
 

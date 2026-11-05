@@ -274,6 +274,403 @@
    }
   },
   {
+   "name": "the regions where it moved",
+   "valid": true,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1,
+    "regions": [
+     {
+      "x": 0.25,
+      "y": 0.1111,
+      "w": 0.1875,
+      "h": 0.2222
+     }
+    ]
+   }
+  },
+  {
+   "name": "no regions",
+   "valid": true,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1,
+    "regions": []
+   }
+  },
+  {
+   "name": "sixteen regions",
+   "valid": true,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1,
+    "regions": [
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     }
+    ]
+   }
+  },
+  {
+   "name": "seventeen regions",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1,
+    "regions": [
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     },
+     {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     }
+    ]
+   }
+  },
+  {
+   "name": "a region without a height",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1,
+    "regions": [
+     {
+      "x": 0,
+      "y": 0,
+      "w": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "name": "a region with a corner outside the picture",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1,
+    "regions": [
+     {
+      "x": 1.2,
+      "y": 0,
+      "w": 0.5,
+      "h": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "name": "a region with no width",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1,
+    "regions": [
+     {
+      "x": 0.5,
+      "y": 0,
+      "w": 0,
+      "h": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "name": "a region with a number as a text",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1,
+    "regions": [
+     {
+      "x": "0.5",
+      "y": 0,
+      "w": 0.2,
+      "h": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "name": "a region with an unknown field",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1,
+    "regions": [
+     {
+      "x": 0,
+      "y": 0,
+      "w": 0.2,
+      "h": 0.5,
+      "label": "person"
+     }
+    ]
+   }
+  },
+  {
+   "name": "regions that are not a list",
+   "valid": false,
+   "payload": {
+    "camera_id": "front-door",
+    "severity": "review",
+    "reasons": [
+     "movement near the door"
+    ],
+    "profile": "daylight",
+    "motion": 0.62,
+    "radar_tracks": 1,
+    "regions": {
+     "x": 0,
+     "y": 0,
+     "w": 0.2,
+     "h": 0.5
+    }
+   }
+  },
+  {
    "name": "not an object",
    "valid": false,
    "payload": [

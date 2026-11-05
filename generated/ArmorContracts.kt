@@ -1116,6 +1116,13 @@ data class Network(
     val results: List<NetworkResults>? = null
 )
 
+data class AiObservationRegions(
+    val x: Double,
+    val y: Double,
+    val w: Double,
+    val h: Double
+)
+
 data class AiObservation(
     val camera_id: String,
     val severity: String,
@@ -1123,6 +1130,7 @@ data class AiObservation(
     val profile: String,
     val motion: Double,
     val motion_ratio: Double? = null,
+    val regions: List<AiObservationRegions>? = null,
     val radar_tracks: Long
 )
 

@@ -1115,6 +1115,13 @@ export type Network = {
   results?: NetworkResults[];
 };
 
+export type AiObservationRegions = {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
+
 export type AiObservation = {
   camera_id: string;
   severity: "review" | "high";
@@ -1122,6 +1129,7 @@ export type AiObservation = {
   profile: "daylight" | "low-light";
   motion: number;
   motion_ratio?: number;
+  regions?: AiObservationRegions[];
   radar_tracks: number;
 };
 

@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://armor.local/schemas/ai-observation-0.1.0.json",
+  "$id": "https://armor.local/schemas/ai-observation-0.2.0.json",
   "title": "A.R.M.O.R. observation of a camera, as the observation service reports it to the server",
-  "description": "The body of POST /api/v1/ai/observations: what a service that watches a camera saw. `severity` says whether a person should look (`review`) or the service is sure enough to treat it as an intrusion (`high`); `reasons` are short sentences (at most five) for the person who reads the alarm; `profile` is the light the picture was taken in; `motion` is how sure the service is that something moved (0 to 1) and `motion_ratio`, when it is said, the share of the picture that changed (0 to 1); `radar_tracks` is how many radar targets were being followed at that moment. It carries no picture. The server raises an alarm only while the system is armed.",
+  "description": "The body of POST /api/v1/ai/observations: what a service that watches a camera saw. `severity` says whether a person should look (`review`) or the service is sure enough to treat it as an intrusion (`high`); `reasons` are short sentences (at most five) for the person who reads the alarm; `profile` is the light the picture was taken in; `motion` is how sure the service is that something moved (0 to 1) and `motion_ratio`, when it is said, the share of the picture that changed (0 to 1); `regions`, when it is said, are the rectangles where it moved, in fractions of the picture (`x` and `y` the top left corner, `w` and `h` the size; at most 16, the largest first); `radar_tracks` is how many radar targets were being followed at that moment. It carries no picture. The server raises an alarm only while the system is armed.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -49,6 +49,21 @@
       "type": "number",
       "minimum": 0,
       "maximum": 1
+    },
+    "regions": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["x", "y", "w", "h"],
+        "properties": {
+          "x": { "type": "number", "minimum": 0, "maximum": 1 },
+          "y": { "type": "number", "minimum": 0, "maximum": 1 },
+          "w": { "type": "number", "minimum": 0.0001, "maximum": 1 },
+          "h": { "type": "number", "minimum": 0.0001, "maximum": 1 }
+        }
+      }
     },
     "radar_tracks": {
       "type": "integer",
