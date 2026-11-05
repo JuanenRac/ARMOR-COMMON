@@ -32,6 +32,13 @@ jobs:
           - ARMOR-DEVOPS
           - ARMOR-UPDATER
           - ARMOR-DOCS
+          - ARMOR-SERVER
+          - ARMOR-STUDIO
+          - ARMOR-ANDROID-CONTROL
+          - ARMOR-IOS-CONTROL
+          - ARMOR-SERVER-AI
+          - ARMOR-VISION
+          - ARMOR-VOICE-AI
     steps:
       - name: Check out the contracts
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -44,6 +51,14 @@ jobs:
         with:
           repository: JuanenRac/${{ matrix.repository }}
           path: ${{ matrix.repository }}
+          persist-credentials: false
+
+      - name: Check out the simulator, which the server compares itself with
+        if: ${{ matrix.repository == 'ARMOR-SERVER' }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: JuanenRac/ARMOR-SIMULATOR
+          path: ARMOR-SIMULATOR
           persist-credentials: false
 
       - name: Set up Python
