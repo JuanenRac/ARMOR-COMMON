@@ -776,6 +776,7 @@ export type NodeHealth = {
   timestamp_ms: number;
   family: "radar" | "solar" | "electrical" | "alarm" | "hmi";
   firmware: string;
+  contract?: string;
   board?: string;
   uptime_s: number;
   reset_reason: "power_on" | "external" | "software" | "panic" | "int_wdt" | "task_wdt" | "other_wdt" | "deep_sleep" | "brownout" | "sdio" | "usb" | "jtag" | "efuse" | "power_glitch" | "cpu_lockup" | "unknown";

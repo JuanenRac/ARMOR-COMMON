@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://armor.local/schemas/node-health-0.1.0.json",
+  "$id": "https://armor.local/schemas/node-health-0.2.0.json",
   "title": "A.R.M.O.R. health report of one node",
   "description": "How one node of any family (radar, solar, electrical, alarm, hmi) is doing, in the same words for all of them: how long it has been up and why it last restarted, how much memory it has, the link it reaches the network by, how often it lost the broker and the last thing it complained of. Published to armor/health/{node_id} every minute or so (never retained). It is not the presence message of a radar (health.schema.json, armor/node/{node_id}/health): that one says only whether the node is there. After a dirty start it also says why the last run ended (boot), always how the memory gate and the core dump stand, and a radar node adds its sensors and the facts of its perimeter engine. After a dirty start it also says why the last run ended (boot), always how the memory gate and the core dump stand, and a radar node adds its sensors and the facts of its perimeter engine. A report is information: it carries no command and nothing is decided by it on the node.",
   "type": "object",
@@ -47,6 +47,11 @@
       "type": "string",
       "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+)?$",
       "description": "The firmware version, three parts or four from 0.8.0."
+    },
+    "contract": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+)?$",
+      "description": "Optional: the version of the contracts (ARMOR-COMMON) this firmware was checked against, as the information message of a radar or a wall panel says it. A node that does not say it is an older one; a console warns when it differs from the one of the server."
     },
     "board": {
       "type": "string",

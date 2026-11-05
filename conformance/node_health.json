@@ -124,6 +124,153 @@
    }
   },
   {
+   "name": "the contracts it was checked against, four parts",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "contract": "0.8.0.7"
+   }
+  },
+  {
+   "name": "the contracts it was checked against, three parts",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "solar-1",
+    "timestamp_ms": 9000,
+    "family": "solar",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "contract": "0.8.0"
+   }
+  },
+  {
+   "name": "contracts with a v",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "contract": "v0.8.0.7"
+   }
+  },
+  {
+   "name": "contracts with two parts",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "contract": "0.8"
+   }
+  },
+  {
+   "name": "contracts with a line feed at the end",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "contract": "0.8.0.7\n"
+   }
+  },
+  {
+   "name": "contracts as a number",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "contract": 8
+   }
+  },
+  {
+   "name": "contracts empty",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "contract": ""
+   }
+  },
+  {
    "name": "the minimum a node must say",
    "valid": true,
    "payload": {

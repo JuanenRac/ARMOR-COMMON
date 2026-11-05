@@ -777,6 +777,7 @@ data class NodeHealth(
     val timestamp_ms: Long,
     val family: String,
     val firmware: String,
+    val contract: String? = null,
     val board: String? = null,
     val uptime_s: Long,
     val reset_reason: String,
