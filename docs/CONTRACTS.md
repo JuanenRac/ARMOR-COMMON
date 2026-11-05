@@ -176,6 +176,10 @@ Framing is the usual one (RFC 7578, with the strictness a small chip needs): the
 
 A wall panel can listen to `/api/v1/panel/events`, a WebSocket of the server, instead of asking `GET /api/v1/panel/summary` every few seconds. It is admitted with the session of a panel, operator or administrator account and only while the security option `panel.live_events` is on (`true` by default). The server sends text frames and nothing else; the client sends nothing (anything it sends closes the socket with 1003):
 
+The two switches of the broker rules that no install turns on (the writing to the batteries of one solar node, and the signed copy of the alarm states) can be asked for from Studio, never by default. `GET /api/v1/admin/mqtt/relays` says which are on and `POST /api/v1/admin/mqtt/relays/{kind}` (`battery-write` or `alarm-state-relay`) opens or closes one. Both answer `403 acl_relays_disabled` until an administrator turns the security option `admin.acl_relays` on (`false` by default). A change needs the body `{ state, confirm: true, confirm_text }` (`confirm_text` is the node id, or `alarm-state-relay`, typed again: `422 confirmation_required`, `422 confirmation_mismatch`) and the six-digit code of the administrator's authenticator in the header `X-Armor-Maint-Totp`, which the server only hands on and the admin agent checks (`401 totp_required`, `401 totp_invalid`, `403 totp_not_enrolled`); the code is never kept or logged. The same header is handed on when the broker rules file is saved (`PUT /api/v1/admin/files/{id}`) and the agent has an authenticator set up.
+
+The text of an environment file that the admin agent returns never holds a secret (`masked: true`): the rules and the vectors that hide a secret and give it back when the file is saved are `src/armor_common/env_masking.json`, which the agent and the server follow.
+
 ```
 {"type":"summary","heartbeat_ms":5000,"summary":{ ...the document of GET /api/v1/panel/summary... }}
 ```

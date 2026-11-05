@@ -62,6 +62,31 @@ export type AdminFiles = {
   }[];
 };
 
+export type AdminRelayChanged = {
+  ok: boolean;
+  relay: "battery-write" | "alarm-state-relay";
+  /** The solar node of battery-write; empty for the other switch */
+  node?: string;
+  state: "on" | "off";
+  installed?: boolean;
+  battery_write?: string[];
+  alarm_state_relay?: boolean;
+  approval?: "totp" | "not_enrolled";
+};
+
+export type AdminRelays = {
+  /** The setting admin.acl_relays; when it is off nothing else is given */
+  enabled: boolean;
+  /** Whether the broker rules are there */
+  installed?: boolean;
+  /** The solar nodes whose batteries the server may send writing orders to */
+  battery_write?: string[];
+  /** Whether the server may publish the signed copy of the alarm states */
+  alarm_state_relay?: boolean;
+  /** totp when the authenticator is set up on the machine (needed to change a switch) */
+  approval?: "totp" | "not_enrolled";
+};
+
 export type AdminServices = {
   services: {
     id: string;
@@ -1914,6 +1939,16 @@ export type PostAdminMqttAccountsRequest = {
   name: string;
 };
 
+export type PostAdminMqttRelaysKindRequest = {
+  /** The solar node (battery-write only) */
+  node?: string;
+  state: "on" | "off";
+  /** Must be true: the first confirmation */
+  confirm: boolean;
+  /** The second confirmation: the node id for battery-write, alarm-state-relay for the other, typed again */
+  confirm_text: string;
+};
+
 export type PostAdminNodePanelsIdFingerprintRequest = {
   trust?: boolean;
 };
@@ -2399,6 +2434,8 @@ export type SecuritySettings = {
   "voice.multipart_turn"?: boolean;
   "voice.panic_phrase"?: boolean;
   "voice.panic_cooldown_s"?: number;
+  /** Studio may ask the admin agent to open or close the two switches of the broker rules that no install turns on (off - the routes answer 403 - each change also needs two confirmations and the one-time code of the authenticator) */
+  "admin.acl_relays"?: boolean;
   "panel.live_events"?: boolean;
   "client.device_lock"?: "user" | "sensitive" | "always";
   "client.trusted_devices"?: boolean;
