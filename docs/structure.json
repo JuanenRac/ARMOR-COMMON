@@ -121,6 +121,32 @@
       "zh": "电池操作",
       "pt": "operações de bateria"
      }
+    },
+    {
+     "name": "env_masking.json",
+     "desc": {
+      "en": "rules and vectors that hide secrets of an env file",
+      "es": "reglas y vectores que ocultan los secretos de un fichero env",
+      "de": "Regeln und Vektoren, die Geheimnisse einer env-Datei verbergen",
+      "fr": "règles et vecteurs qui masquent les secrets d'un fichier env",
+      "it": "regole e vettori che nascondono i segreti di un file env",
+      "ja": "envファイルの秘密を隠すルールとベクター",
+      "zh": "隐藏env文件机密的规则与向量",
+      "pt": "regras e vetores que ocultam os segredos de um ficheiro env"
+     }
+    },
+    {
+     "name": "env_masking.py",
+     "desc": {
+      "en": "reference of those rules",
+      "es": "referencia de esas reglas",
+      "de": "Referenz dieser Regeln",
+      "fr": "référence de ces règles",
+      "it": "riferimento di quelle regole",
+      "ja": "そのルールのリファレンス",
+      "zh": "这些规则的参考实现",
+      "pt": "referência dessas regras"
+     }
     }
    ]
   },
