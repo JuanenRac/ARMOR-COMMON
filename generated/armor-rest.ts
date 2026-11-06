@@ -1395,6 +1395,11 @@ export type JobStarted = {
   id: string;
 };
 
+export type LineCount = {
+  to_left: number;
+  to_right: number;
+};
+
 export type MaintenanceArmed = {
   armed: boolean;
 };
@@ -2947,6 +2952,15 @@ export type UserList = {
     current: boolean;
   })[];
   minPasswordLength: number;
+};
+
+export type VisionCounts = {
+  /** Camera id -> line id -> the crossings counted so far */
+  cameras: {
+    [key: string]: {
+      [key: string]: LineCount;
+    };
+  };
 };
 
 export type VoiceCommandResult = {

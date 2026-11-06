@@ -1655,6 +1655,18 @@ paths:
         '404': { description: 'The option vision.heatmap is off (heatmap_disabled), the activity pipeline is off in its own settings (heatmap_pipeline_off) or the camera is not in the configuration (unknown_camera)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '502': { description: 'The live service of ARMOR-VISION cannot be reached, failed or answered something that is not a map (heatmap_failed); what it said is not passed on', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '503': { description: 'The live service of ARMOR-VISION is not set up, its address is not this machine while vision.service_remote is off, or it is not a valid address (heatmap_not_configured; heatmap_no_data is no longer sent)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/vision/counts:
+    get:
+      summary: How many times each counting line of each camera has been crossed, to the left and to the right, since the live service of ARMOR-VISION started - whole numbers only, no track, label or picture. Administrators and operators only; behind the same option as the heat map (vision.heatmap, off by default, 404 while it is off). It takes no parameter
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The counts, content: { application/json: { schema: { $ref: '#/components/schemas/VisionCounts' } } } }
+        '400': { description: A query parameter was given (invalid_query), content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '401': { description: Not signed in, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: A viewer or a wall panel, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'The option vision.heatmap is off (heatmap_disabled) or the activity pipeline is off in its own settings (counts_pipeline_off)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '502': { description: 'The live service cannot be reached, failed or answered something that is not the counts (counts_failed)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: 'The live service is not set up or its address is not valid for this machine (counts_not_configured)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/alarm-audio:
     get:
       summary: What the sound of an alarm offers on this server - whether the spoken alarm and the uploaded sounds are on (two options of the security settings, both off by default), whether a voice gateway is set up, the limits of a sound and the sounds stored
@@ -2951,6 +2963,8 @@ components:
             sigma: { type: number }
             min_ratio: { type: number }
         evidence: { type: array, maxItems: 20, items: { $ref: '#/components/schemas/DailyBrief' }, description: 'The events that show the pattern, at most 20' }
+    VisionCounts: { type: object, required: [cameras], properties: { cameras: { type: object, description: 'Camera id -> line id -> the crossings counted so far', additionalProperties: { type: object, additionalProperties: { $ref: '#/components/schemas/LineCount' } } } } }
+    LineCount: { type: object, required: [to_left, to_right], properties: { to_left: { type: integer, minimum: 0 }, to_right: { type: integer, minimum: 0 } } }
     HeatmapReport:
       type: object
       description: 'The JSON form of the heat map (the schema heatmap of ARMOR-COMMON): a count per cell of a grid over the scene, positions only; contains_images is always false'
