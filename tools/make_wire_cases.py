@@ -68,7 +68,7 @@ def get(node, path):
 
 
 def schema_at(root_schema: dict, path):
-    node = root_schema
+    node: dict | None = root_schema
     for step in path:
         if node is None:
             return None
@@ -98,7 +98,7 @@ def mutate(doc: dict, root_schema: dict, rnd: random.Random) -> dict:
         here[rnd.choice(["extra", "kind2", "x-y", "A"])] = rnd.choice([1, "s", True, None, [], {}])
         return out
     if choice == 2 and where:   # another type
-        replacement = rnd.choice([None, True, 0, 1.5, "7", [], {}, "x"])
+        replacement: object = rnd.choice([None, True, 0, 1.5, "7", [], {}, "x"])
         parent = get(out, where[:-1])
         parent[where[-1]] = replacement
         return out
