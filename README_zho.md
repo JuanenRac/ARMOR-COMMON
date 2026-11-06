@@ -23,13 +23,13 @@
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
   <img src="https://img.shields.io/badge/Vectors-1387-00E5FF.svg" alt="Vectors">
   <img src="https://img.shields.io/badge/Tests-311%20passing-2ea44f.svg" alt="Tests">
-  <img src="https://img.shields.io/badge/Version-0.8.0.8-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Version-0.8.0.9-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
 ---
 
-**诚实性检查 - 今天真正能运行的部分：** 各模式（遥测、健康、命令、节点信息、太阳能逆变器和电池、电气、带命令和结果的报警、网络）、Python 验证器、1387 个一致性向量、生成的 TypeScript 和 Kotlin 类型、服务器的 OpenAPI 文件（213 个路径）、五个节点共用的固件基础以及共享的项目启动器都是真实的并经过测试（311 个测试）。Kotlin 文件已生成，但 ARMOR-ANDROID-CONTROL **尚未使用**（它保留自己的解析），`set_thresholds` 命令只带一个 `sensitivity` 字段，因为真实的雷达参数要等固件存在才能确定。
+**诚实性检查 - 今天真正能运行的部分：** 各模式（遥测、健康、命令、节点信息、太阳能逆变器和电池、电气、带命令和结果的报警、网络）、Python 验证器、1387 个一致性向量、生成的 TypeScript 和 Kotlin 类型、服务器的 OpenAPI 文件（214 个路径）、五个节点共用的固件基础以及共享的项目启动器都是真实的并经过测试（311 个测试）。Kotlin 文件已生成，但 ARMOR-ANDROID-CONTROL **尚未使用**（它保留自己的解析），`set_thresholds` 命令只带一个 `sensitivity` 字段，因为真实的雷达参数要等固件存在才能确定。
 
 ---
 
@@ -37,12 +37,12 @@
 
 | | |
 |---|---|
-| 版本 | `0.8.0.8` |
+| 版本 | `0.8.0.9` |
 | 成熟度 | 成熟 |
 | 角色 | 家族共用的契约、校验器和固件基础 |
 | 技术栈 | Python 3.11+、JSON Schema、OpenAPI；C++ 固件基础（ESP-IDF） |
 | 测试 | 311 项（`python -m unittest discover -s tests`），1387 个一致性向量 |
-| 契约 | 38 个 JSON Schema，213 条 HTTP 路径（275 个操作） |
+| 契约 | 38 个 JSON Schema，214 条 HTTP 路径（277 个操作） |
 | 运行位置 | 任意计算机（库和工具）；固件基础运行在五个节点内 |
 | 真实硬件 | 只有雷达节点在开发板上运行过共用固件；其他四个没有 |
 | 许可证 | GPL-3.0-or-later |
@@ -73,7 +73,7 @@
 * **无法跳过规则的验证器：**它直接解释模式，并拒绝使用了它未实现的关键字的模式。
 * **一致性向量：**1387 个被接受和被拒绝的负载，由每个实现运行（这里是 Python，ARMOR-SERVER 中是 TypeScript，以及固件仓库的检查），因此偏差会让构建失败。
 * **生成的客户端：**TypeScript 和 Kotlin 类型以及 C++ 常量（`generated/armor_contracts.hpp`）来自模式（`tools/generate_types.py --check` 保持其最新）。
-* **HTTP 契约：**`openapi/armor-server.yaml` 描述服务器的每条路由（213 个路径、275 个操作）、其访问规则，以及每个请求体、响应和错误的具名模式；测试会检查服务器注册的路由与其描述的路由完全一致（方法和路径）。
+* **HTTP 契约：**`openapi/armor-server.yaml` 描述服务器的每条路由（214 个路径、277 个操作）、其访问规则，以及每个请求体、响应和错误的具名模式；测试会检查服务器注册的路由与其描述的路由完全一致（方法和路径）。
 * **固件基础：**`firmware_base/` 把五个节点共用的每个文件只保存一次（网络、设置和用户、网页面板服务器和登录、HTTPS 证书、日志、带 PIN 配对的蓝牙、签名更新检查；继电器和 Zigbee 仅限具备它们的节点）；`tools/sync_firmware_base.py` 把它写入每个节点并检查没有副本偏离（[指南](docs/FIRMWARE_BASE.md)，[签名固件](docs/SIGNED_FIRMWARE.md)）。
 * **共享启动器：**`tools/armor_project_tool.py` 为家族的每个仓库提供相同的 `build`、`build-test` 和 `run` 流程，`tools/armor_ci_validate.py` 提供相同的 CI 检查。
 * **共享节点基础中可选的与代理的 TLS 连接:** `firmware_base` 包含 `mqtt.tls` 开关和 `mqtt.ca_pem` 文本(一个 PEM 证书,最大 2 KB,经过校验)、只信任该机构并检查代理名称的连接,以及五个节点共用的主机测试;默认关闭。
@@ -166,7 +166,7 @@ flowchart LR
 
 * **38 个 JSON Schema**（`src/armor_common/schemas/`）：遥测、健康、命令、节点信息、节点健康、节点控制（命令与结果）、节点维护、太阳能逆变器和电池（含命令与结果）、电气（含命令与结果）、报警（状态、命令、结果、策略和区域）、网络（含其指令）、连接与系统事件、雷达事件、服务器警报、布防配置、布防模式、设备状态、诊断令牌以及语音轮次。
 * **1387 个一致性向量**（`conformance/`，34 个文件，每条消息一个），由本仓库、ARMOR-SERVER 和固件仓库的检查运行。
-* **OpenAPI** `openapi/armor-server.yaml`：213 条路径、275 个操作，每个都有访问规则，且每个请求体、响应和错误都有命名模式。测试确认服务器注册的路由与描述完全一致。语音轮次以字节传输（见 [docs/CONTRACTS.md](docs/CONTRACTS.md)）。
+* **OpenAPI** `openapi/armor-server.yaml`：214 条路径、277 个操作，每个都有访问规则，且每个请求体、响应和错误都有命名模式。测试确认服务器注册的路由与描述完全一致。语音轮次以字节传输（见 [docs/CONTRACTS.md](docs/CONTRACTS.md)）。
 
 ### 命令行工具
 

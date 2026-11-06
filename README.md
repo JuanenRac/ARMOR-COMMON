@@ -23,13 +23,13 @@
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
   <img src="https://img.shields.io/badge/Vectors-1387-00E5FF.svg" alt="Vectors">
   <img src="https://img.shields.io/badge/Tests-311%20passing-2ea44f.svg" alt="Tests">
-  <img src="https://img.shields.io/badge/Version-0.8.0.8-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Version-0.8.0.9-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
 ---
 
-**Honesty check - what runs today:** The schemas (telemetry, health, command, node information, solar inverter and battery, electrical, alarm with its command and result, and network), the Python validator, the 1387 conformance vectors, the generated TypeScript and Kotlin types, the OpenAPI file of the server (213 paths), the firmware base shared by the five nodes and the shared project launcher are real and tested (311 tests). The Kotlin file is generated but **not yet consumed** by ARMOR-ANDROID-CONTROL (which keeps its own parsing), and the `set_thresholds` command carries a single `sensitivity` field because the real radar parameters are not defined until firmware exists.
+**Honesty check - what runs today:** The schemas (telemetry, health, command, node information, solar inverter and battery, electrical, alarm with its command and result, and network), the Python validator, the 1387 conformance vectors, the generated TypeScript and Kotlin types, the OpenAPI file of the server (214 paths), the firmware base shared by the five nodes and the shared project launcher are real and tested (311 tests). The Kotlin file is generated but **not yet consumed** by ARMOR-ANDROID-CONTROL (which keeps its own parsing), and the `set_thresholds` command carries a single `sensitivity` field because the real radar parameters are not defined until firmware exists.
 
 ---
 
@@ -37,12 +37,12 @@
 
 | | |
 |---|---|
-| Version | `0.8.0.8` |
+| Version | `0.8.0.9` |
 | Maturity | Established |
 | Role | Shared contracts, validator and firmware base of the family |
 | Stack | Python 3.11+, JSON Schema, OpenAPI; C++ firmware base (ESP-IDF) |
 | Tests | 311 (`python -m unittest discover -s tests`), 1387 conformance vectors |
-| Contract | 38 JSON Schemas, 213 HTTP paths (275 operations) |
+| Contract | 38 JSON Schemas, 214 HTTP paths (277 operations) |
 | Runs on | Any computer (library and tools); the firmware base runs inside the five nodes |
 | On real hardware | Only the radar node has run the shared firmware on a board; the other four have not |
 | License | GPL-3.0-or-later |
@@ -73,7 +73,7 @@ Each line is one part of this repository and the light says how far it is today.
 * **A validator that cannot skip a rule:** it interprets the schema directly and refuses a schema that uses a keyword it does not implement.
 * **Conformance vectors:** 1387 accepted and rejected payloads run by every implementation (Python here, TypeScript in ARMOR-SERVER, the checks of the firmware repositories), so drift fails a build.
 * **Generated clients:** TypeScript and Kotlin types and the C++ constants (`generated/armor_contracts.hpp`) come from the schemas (`tools/generate_types.py --check` keeps them current).
-* **HTTP contract:** `openapi/armor-server.yaml` describes every server route (213 paths, 275 operations), its access rule, and a named schema for every request body, answer and error, and a test checks that the routes the server registers are exactly the ones it describes (method and path).
+* **HTTP contract:** `openapi/armor-server.yaml` describes every server route (214 paths, 277 operations), its access rule, and a named schema for every request body, answer and error, and a test checks that the routes the server registers are exactly the ones it describes (method and path).
 * **Firmware base:** `firmware_base/` keeps each file the five nodes share (network, settings and users, web panel server and login, HTTPS certificate, log, Bluetooth with PIN pairing, signed-update check; relays and Zigbee for the nodes that have them) once; `tools/sync_firmware_base.py` writes it into every node and checks that no copy drifted ([the guide](docs/FIRMWARE_BASE.md), [signed firmware](docs/SIGNED_FIRMWARE.md)).
 * **Shared launcher:** `tools/armor_project_tool.py` gives every repository of the family the same `build`, `build-test` and `run` workflow, and `tools/armor_ci_validate.py` the same CI checks.
 * **Optional TLS link to the broker in the shared node base:** `firmware_base` carries the `mqtt.tls` switch and the `mqtt.ca_pem` text (one PEM certificate, at most 2 KB, validated), the connection that trusts that authority only and checks the broker's name, and the host tests shared by the five nodes; off by default.
@@ -166,7 +166,7 @@ flowchart LR
 
 * **38 JSON Schemas** in `src/armor_common/schemas/`: telemetry, health, command, node information, node health, node control (command and result), node maintenance, solar inverter and battery (with their commands and results), electrical (with command and result), alarm (state, command, result, policy and zone feed), network (with its orders), connection and system events, radar events, server alert, arming profile, arming modes, device state, diagnostic tokens, and the voice turn.
 * **1387 conformance vectors** in `conformance/` (38 files, one per message), run by this repository, by ARMOR-SERVER and by the checks of the firmware repositories.
-* **OpenAPI** `openapi/armor-server.yaml`: 213 paths and 275 operations, each with its access rule and a named schema for every body, answer and error. A test checks that the routes the server registers are exactly the ones described. The voice turn travels as bytes (see [docs/CONTRACTS.md](docs/CONTRACTS.md)).
+* **OpenAPI** `openapi/armor-server.yaml`: 214 paths and 277 operations, each with its access rule and a named schema for every body, answer and error. A test checks that the routes the server registers are exactly the ones described. The voice turn travels as bytes (see [docs/CONTRACTS.md](docs/CONTRACTS.md)).
 
 ### Command-line tools
 

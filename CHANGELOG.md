@@ -4,8 +4,9 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
-- **The copy of the node traffic is in the HTTP contract:** `GET` and `PUT /api/v1/system/ingest/recording` (an administrator) with the schemas `IngestRecording` and `IngestRecordingChange`, and the security option `ingest.recording` (off by default); the generated REST types are current.
+## [0.8.0.9] - The copy of the node traffic is in the HTTP contract: GET and PUT /api/v1/system/ingest/recording (an administrator) with the schemas IngestRecording and IngestRecordingChange, and the security option ingest.recording (off by... (and 1 more changes)
 
+- **The copy of the node traffic is in the HTTP contract:** `GET` and `PUT /api/v1/system/ingest/recording` (an administrator) with the schemas `IngestRecording` and `IngestRecordingChange`, and the security option `ingest.recording` (off by default); the generated REST types are current.
 - **`tools/make_sbom.py` writes the software bill of materials of a Node.js project:** CycloneDX 1.5 read from its `package-lock.json`, with the version, the hash and the licence of every package, the same file for the same lock file (no time, no machine name), and `--check FILE` compares a published one with the lock file so that a person or the maintenance agent can verify it. It is not a signature of the build.
 
 ## [0.8.0.8] - The health report of a node can say which contracts its firmware was checked against: optional contract in nodehealth (schema 0.2.0, the same three or four numbers as the information message), with 7 vectors (four parts, three... (and 5 more changes)
