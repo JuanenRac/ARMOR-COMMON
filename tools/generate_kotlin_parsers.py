@@ -175,6 +175,10 @@ def render() -> str:
     for key in sorted(roots):
         out.append(f"fun parse{roots[key]}(o: JSONObject): {roots[key]}? = if (checkMessage({json.dumps(key)}, o) == null) read{roots[key]}(o) else null")
     out.append("")
+    out.append("/** The document as the message called `name` (the name of its schema file): its data class, or null when it does not satisfy the schema or the name is not known. */")
+    out.append("fun parseMessage(name: String, o: JSONObject): Any? = when (name) {")
+    out += [f"    {json.dumps(key)} -> parse{roots[key]}(o)" for key in sorted(roots)]
+    out += ["    else -> null", "}", ""]
     return "\n".join(out)
 
 

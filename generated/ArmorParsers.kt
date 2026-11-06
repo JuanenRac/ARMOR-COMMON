@@ -1378,3 +1378,46 @@ fun parseSystemEvent(o: JSONObject): SystemEvent? = if (checkMessage("system_eve
 fun parseTelemetry(o: JSONObject): Telemetry? = if (checkMessage("telemetry", o) == null) readTelemetry(o) else null
 fun parseVoiceTurnMeta(o: JSONObject): VoiceTurnMeta? = if (checkMessage("voice_turn_meta", o) == null) readVoiceTurnMeta(o) else null
 fun parseVoiceTurnResult(o: JSONObject): VoiceTurnResult? = if (checkMessage("voice_turn_result", o) == null) readVoiceTurnResult(o) else null
+
+/** The document as the message called `name` (the name of its schema file): its data class, or null when it does not satisfy the schema or the name is not known. */
+fun parseMessage(name: String, o: JSONObject): Any? = when (name) {
+    "ai_observation" -> parseAiObservation(o)
+    "alarm" -> parseAlarm(o)
+    "alarm_command" -> parseAlarmCommand(o)
+    "alarm_policy" -> parseAlarmPolicy(o)
+    "alarm_result" -> parseAlarmResult(o)
+    "alarm_zone_feed" -> parseAlarmZoneFeed(o)
+    "arm_profile" -> parseArmProfile(o)
+    "arming_modes" -> parseArmingModes(o)
+    "command" -> parseCommand(o)
+    "connection_client" -> parseConnectionClient(o)
+    "connection_event" -> parseConnectionEvent(o)
+    "daily_summary" -> parseDailySummary(o)
+    "device_state" -> parseDeviceState(o)
+    "diagnostic_token_created" -> parseDiagnosticTokenCreated(o)
+    "diagnostic_token_info" -> parseDiagnosticTokenInfo(o)
+    "diagnostic_token_request" -> parseDiagnosticTokenRequest(o)
+    "electrical" -> parseElectrical(o)
+    "electrical_command" -> parseElectricalCommand(o)
+    "electrical_result" -> parseElectricalResult(o)
+    "health" -> parseHealth(o)
+    "heatmap" -> parseHeatmap(o)
+    "info" -> parseInfo(o)
+    "network" -> parseNetwork(o)
+    "network_orders" -> parseNetworkOrders(o)
+    "node_control_command" -> parseNodeControlCommand(o)
+    "node_control_result" -> parseNodeControlResult(o)
+    "node_health" -> parseNodeHealth(o)
+    "node_maintenance" -> parseNodeMaintenance(o)
+    "radar_event" -> parseRadarEvent(o)
+    "server_alert" -> parseServerAlert(o)
+    "solar_battery" -> parseSolarBattery(o)
+    "solar_battery_command" -> parseSolarBatteryCommand(o)
+    "solar_battery_result" -> parseSolarBatteryResult(o)
+    "solar_inverter" -> parseSolarInverter(o)
+    "system_event" -> parseSystemEvent(o)
+    "telemetry" -> parseTelemetry(o)
+    "voice_turn_meta" -> parseVoiceTurnMeta(o)
+    "voice_turn_result" -> parseVoiceTurnResult(o)
+    else -> null
+}
