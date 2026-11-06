@@ -22,14 +22,14 @@
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Linguaggio">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
   <img src="https://img.shields.io/badge/Vectors-1387-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Tests-324%20passing-2ea44f.svg" alt="Test">
-  <img src="https://img.shields.io/badge/Version-0.8.0.9-0f6cbd.svg" alt="Versione">
+  <img src="https://img.shields.io/badge/Tests-338%20passing-2ea44f.svg" alt="Test">
+  <img src="https://img.shields.io/badge/Version-0.8.1.0-0f6cbd.svg" alt="Versione">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturità">
 </p>
 
 ---
 
-**Controllo di onestà - cosa funziona oggi:** Gli schemi (telemetria, salute, comando, informazioni del nodo, inverter e batteria solari, elettrico, allarme con il suo comando e risultato, e rete), il validatore Python, i 1387 vettori di conformità, i tipi TypeScript e Kotlin generati, il file OpenAPI del server (214 percorsi), la base firmware condivisa dai cinque nodi e il lanciatore di progetto condiviso sono reali e provati (324 test). Il file Kotlin è generato ma **non ancora consumato** da ARMOR-ANDROID-CONTROL (che mantiene una propria lettura), e il comando `set_thresholds` porta un solo campo `sensitivity` perché i veri parametri del radar non sono definiti finché non esiste il firmware.
+**Controllo di onestà - cosa funziona oggi:** Gli schemi (telemetria, salute, comando, informazioni del nodo, inverter e batteria solari, elettrico, allarme con il suo comando e risultato, e rete), il validatore Python, i 1387 vettori di conformità, i tipi TypeScript e Kotlin generati, il file OpenAPI del server (214 percorsi), la base firmware condivisa dai cinque nodi e il lanciatore di progetto condiviso sono reali e provati (338 test). Il file Kotlin è generato ma **non ancora consumato** da ARMOR-ANDROID-CONTROL (che mantiene una propria lettura), e il comando `set_thresholds` porta un solo campo `sensitivity` perché i veri parametri del radar non sono definiti finché non esiste il firmware.
 
 ---
 
@@ -37,11 +37,11 @@
 
 | | |
 |---|---|
-| Versione | `0.8.0.9` |
+| Versione | `0.8.1.0` |
 | Maturità | Consolidato |
 | Ruolo | Contratti condivisi, validatore e base firmware della famiglia |
 | Tecnologia | Python 3.11+, JSON Schema, OpenAPI; base firmware in C++ (ESP-IDF) |
-| Test | 324 (`python -m unittest discover -s tests`), 1387 vettori di conformità |
+| Test | 338 (`python -m unittest discover -s tests`), 1387 vettori di conformità |
 | Contratto | 38 JSON Schema, 214 percorsi HTTP (277 operazioni) |
 | Gira su | Qualsiasi computer (libreria e strumenti); la base firmware gira dentro i cinque nodi |
 | Su hardware reale | Solo il nodo radar ha eseguito il firmware condiviso su una scheda; gli altri quattro no |
@@ -58,7 +58,7 @@ Ogni riga è una parte di questo repository e il semaforo dice a che punto è og
 | Area | Stato | Cosa significa qui |
 |---|---|---|
 | Software | 🟢 | Gli schemi, il validatore Python, i tipi TypeScript e Kotlin generati, il file OpenAPI del server e la base firmware condivisa dai cinque nodi sono pronti. |
-| Test | 🟢 | Superano 324 test e 1387 vettori di conformità; i parser JSON, Bluetooth e Improv del firmware sono sottoposti anche a fuzzing con libFuzzer. |
+| Test | 🟢 | Superano 338 test e 1387 vettori di conformità; i parser JSON, Bluetooth e Improv del firmware sono sottoposti anche a fuzzing con libFuzzer. |
 | Protocolli e dati | 🟡 | Solo i messaggi del nodo radar sono usati ogni giorno con una scheda reale e il server; quelli degli altri nodi sono verificati contro simulazioni. |
 | Integrazione | 🟡 | Si verifica che la base firmware sia identica in ogni nodo; i tipi Kotlin sono generati ma l'app Android non li usa ancora, perché mantiene il proprio parsing. |
 | Hardware | 🟠 | Solo il nodo radar ha eseguito questo firmware condiviso su una scheda; gli altri quattro nodi no. |
@@ -207,7 +207,7 @@ Il collegamento TLS del nodo con il broker è un'impostazione del nodo (non dell
 
 ```powershell
 python -m pip install -e .                   # installa la libreria
-python -m unittest discover -s tests         # 324 test, 1387 vettori
+python -m unittest discover -s tests         # 338 test, 1387 vettori
 python tools/generate_types.py --check       # i tipi generati sono aggiornati
 python tools/generate_rest_types.py --check  # i tipi del contratto HTTP sono aggiornati
 python tools/make_conformance.py             # rigenera i vettori dopo aver modificato l'elenco dei casi (--check: aggiornati)
@@ -217,7 +217,7 @@ python tools/sync_firmware_base.py check     # il firmware condiviso non è dive
 ## 🧪 Test
 
 ```powershell
-python -m unittest discover -s tests  # 324 test
+python -m unittest discover -s tests  # 338 test
 python -I tools/armor_ci_validate.py
 ```
 
@@ -279,7 +279,7 @@ ARMOR-COMMON/
 ├── host_tests/                    lettori C++ contro l'oracolo
 ├── scripts/                       avviatore armor-project
 ├── tools/                         generatori, sincronia e rilascio del firmware, avviatore, controlli CI
-├── tests/                         324 test
+├── tests/                         338 test
 ├── docs/                          contratti, firmware, fuzzing
 ├── images/                        banner, icona e immagini del README
 ├── .github/                       workflow CI, avviso alla dashboard, modelli per issue e pull request
