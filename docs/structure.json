@@ -297,6 +297,19 @@
      }
     },
     {
+     "name": "host_tests/",
+     "desc": {
+      "en": "C++ readers against the oracle",
+      "es": "lectores C++ frente al oráculo",
+      "de": "C++-Leser gegen das Orakel",
+      "fr": "lecteurs C++ face à l'oracle",
+      "it": "lettori C++ contro l'oracolo",
+      "ja": "C++ リーダーとオラクル",
+      "zh": "C++ 读取器与基准比对",
+      "pt": "leitores C++ face ao oráculo"
+     }
+    },
+    {
      "name": "scripts/",
      "desc": {
       "en": "armor-project launcher",
