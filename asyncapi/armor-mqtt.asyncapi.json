@@ -1,0 +1,1980 @@
+{
+  "asyncapi": "3.0.0",
+  "info": {
+    "title": "A.R.M.O.R. MQTT topics",
+    "version": "0.1.0",
+    "description": "Who publishes and who reads each topic of the broker, with the QoS, whether the broker keeps it, the schema of its messages and the access lines of each role. Generated: do not edit."
+  },
+  "servers": {
+    "broker": {
+      "host": "armor.local:8883",
+      "protocol": "mqtts",
+      "description": "the broker of the installation (Mosquitto on the CM5)"
+    }
+  },
+  "channels": {
+    "node_telemetry": {
+      "address": "armor/node/{node_id}/telemetry",
+      "description": "What a radar node sees: the tracks and the light.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "telemetry": {
+          "$ref": "#/components/messages/telemetry"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "node_presence": {
+      "address": "armor/node/{node_id}/health",
+      "description": "The presence of a radar or a wall panel (not the health report, which is armor/health/{node_id}).",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "health": {
+          "$ref": "#/components/messages/health"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "node_info": {
+      "address": "armor/node/{node_id}/info",
+      "description": "Name, firmware and address of a radar node or a wall panel.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "info": {
+          "$ref": "#/components/messages/info"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "node_command": {
+      "address": "armor/node/{node_id}/command",
+      "description": "A command to a radar node. Never retained and sent at most once: an old command must never be delivered later.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "command": {
+          "$ref": "#/components/messages/command"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "node_health": {
+      "address": "armor/health/{node_id}",
+      "description": "The health report of a node of any family.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "node_health": {
+          "$ref": "#/components/messages/node_health"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "radar_events": {
+      "address": "armor/radar/{node_id}/events",
+      "description": "The events of the perimeter engine of a radar node.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "radar_event": {
+          "$ref": "#/components/messages/radar_event"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "radar_armed": {
+      "address": "armor/radar/{node_id}/control/armed",
+      "description": "Reserved: the access list of a radar node allows reading it and no message is defined yet.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {},
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "solar_state": {
+      "address": "armor/solar/{node_id}/{device}/state",
+      "description": "An inverter or a battery read by a solar gateway; the `kind` of the message says which.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        },
+        "device": {
+          "description": "the device the message is about"
+        }
+      },
+      "messages": {
+        "solar_inverter": {
+          "$ref": "#/components/messages/solar_inverter"
+        },
+        "solar_battery": {
+          "$ref": "#/components/messages/solar_battery"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "solar_battery_command": {
+      "address": "armor/solar/{node_id}/maintenance/command",
+      "description": "A maintenance step on a battery (write capability); never retained.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "solar_battery_command": {
+          "$ref": "#/components/messages/solar_battery_command"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-acl-wider-than-needed": [
+        "node",
+        "solar-node"
+      ]
+    },
+    "solar_battery_result": {
+      "address": "armor/solar/{node_id}/maintenance/result",
+      "description": "The answer to a maintenance step.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "solar_battery_result": {
+          "$ref": "#/components/messages/solar_battery_result"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "electrical_state": {
+      "address": "armor/electrical/{node_id}/state",
+      "description": "The measurements and the switches of an electrical node.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "electrical": {
+          "$ref": "#/components/messages/electrical"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "electrical_command": {
+      "address": "armor/electrical/{node_id}/command",
+      "description": "A command to one switch; never retained.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "electrical_command": {
+          "$ref": "#/components/messages/electrical_command"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "electrical_result": {
+      "address": "armor/electrical/{node_id}/result",
+      "description": "The answer to a switch command.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "electrical_result": {
+          "$ref": "#/components/messages/electrical_result"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "alarm_state": {
+      "address": "armor/alarm/{node_id}/state",
+      "description": "What the panel of an alarm node is doing.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "alarm": {
+          "$ref": "#/components/messages/alarm"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "alarm_command": {
+      "address": "armor/alarm/{node_id}/command",
+      "description": "Arm, disarm or silence; never retained.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "alarm_command": {
+          "$ref": "#/components/messages/alarm_command"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "alarm_result": {
+      "address": "armor/alarm/{node_id}/result",
+      "description": "The answer to an alarm command.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "alarm_result": {
+          "$ref": "#/components/messages/alarm_result"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "alarm_zone_feed": {
+      "address": "armor/alarm/{node_id}/zigbee",
+      "description": "What the server says about a Zigbee zone while it holds the radio; may be signed.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "alarm_zone_feed": {
+          "$ref": "#/components/messages/alarm_zone_feed"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "alarm_policy": {
+      "address": "armor/alarm/{node_id}/policy",
+      "description": "What the server asks of the panel (configuration hash, zone feed, signature).",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "alarm_policy": {
+          "$ref": "#/components/messages/alarm_policy"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "control_command": {
+      "address": "armor/control/{node_id}/command",
+      "description": "An order to one node (restart, pause, standby, identify, diagnostics...); never retained.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "node_control_command": {
+          "$ref": "#/components/messages/node_control_command"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "control_command_all": {
+      "address": "armor/control/all/command",
+      "description": "An order to every node; an arm only, never an execute.",
+      "messages": {
+        "node_control_command": {
+          "$ref": "#/components/messages/node_control_command"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "control_result": {
+      "address": "armor/control/{node_id}/result",
+      "description": "The answer to an order.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "node_control_result": {
+          "$ref": "#/components/messages/node_control_result"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "control_maintenance": {
+      "address": "armor/control/{node_id}/maintenance",
+      "description": "A node that is about to be quiet on purpose says so; kept by the broker so that a server that starts later also reads it.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "node_maintenance": {
+          "$ref": "#/components/messages/node_maintenance"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "network_state": {
+      "address": "armor/network/{node_id}/state",
+      "description": "What a network node sees of the local network.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "network": {
+          "$ref": "#/components/messages/network"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "server_alert": {
+      "address": "armor/server/alert",
+      "description": "The alert of the server for whoever listens (a siren, a screen).",
+      "messages": {
+        "server_alert": {
+          "$ref": "#/components/messages/server_alert"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
+    "device_layer": {
+      "address": "armor/device/{node_id}/#",
+      "description": "The device layer: `{relay}/state`, `availability` and `set` of each device of a node. Free-form values, described by the device registry of the server.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {},
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    }
+  },
+  "operations": {
+    "node.send.node_telemetry": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/node_telemetry"
+      },
+      "summary": "the `node` role publishes armor/node/{node_id}/telemetry",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "node"
+    },
+    "server.receive.node_telemetry": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/node_telemetry"
+      },
+      "summary": "the `server` role reads armor/node/{node_id}/telemetry",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "node.send.node_presence": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/node_presence"
+      },
+      "summary": "the `node` role publishes armor/node/{node_id}/health",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "node"
+    },
+    "hmi-node.send.node_presence": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/node_presence"
+      },
+      "summary": "the `hmi-node` role publishes armor/node/{node_id}/health",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "hmi-node"
+    },
+    "server.receive.node_presence": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/node_presence"
+      },
+      "summary": "the `server` role reads armor/node/{node_id}/health",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "node.send.node_info": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/node_info"
+      },
+      "summary": "the `node` role publishes armor/node/{node_id}/info",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "node"
+    },
+    "hmi-node.send.node_info": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/node_info"
+      },
+      "summary": "the `hmi-node` role publishes armor/node/{node_id}/info",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "hmi-node"
+    },
+    "server.receive.node_info": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/node_info"
+      },
+      "summary": "the `server` role reads armor/node/{node_id}/info",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "server.send.node_command": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/node_command"
+      },
+      "summary": "the `server` role publishes armor/node/{node_id}/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "node.receive.node_command": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/node_command"
+      },
+      "summary": "the `node` role reads armor/node/{node_id}/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "node"
+    },
+    "node.send.node_health": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/node_health"
+      },
+      "summary": "the `node` role publishes armor/health/{node_id}",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "node",
+      "x-lifecycle": {
+        "qos": 1,
+        "retain": true,
+        "about": "The birth message of a node and its last will are sent on this topic at QoS 1 and kept by the broker, so a server that starts later learns that a node is gone."
+      }
+    },
+    "hmi-node.send.node_health": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/node_health"
+      },
+      "summary": "the `hmi-node` role publishes armor/health/{node_id}",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "hmi-node",
+      "x-lifecycle": {
+        "qos": 1,
+        "retain": true,
+        "about": "The birth message of a node and its last will are sent on this topic at QoS 1 and kept by the broker, so a server that starts later learns that a node is gone."
+      }
+    },
+    "solar-node.send.node_health": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/node_health"
+      },
+      "summary": "the `solar-node` role publishes armor/health/{node_id}",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "solar-node",
+      "x-lifecycle": {
+        "qos": 1,
+        "retain": true,
+        "about": "The birth message of a node and its last will are sent on this topic at QoS 1 and kept by the broker, so a server that starts later learns that a node is gone."
+      }
+    },
+    "electrical-node.send.node_health": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/node_health"
+      },
+      "summary": "the `electrical-node` role publishes armor/health/{node_id}",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "electrical-node",
+      "x-lifecycle": {
+        "qos": 1,
+        "retain": true,
+        "about": "The birth message of a node and its last will are sent on this topic at QoS 1 and kept by the broker, so a server that starts later learns that a node is gone."
+      }
+    },
+    "alarm-node.send.node_health": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/node_health"
+      },
+      "summary": "the `alarm-node` role publishes armor/health/{node_id}",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "alarm-node",
+      "x-lifecycle": {
+        "qos": 1,
+        "retain": true,
+        "about": "The birth message of a node and its last will are sent on this topic at QoS 1 and kept by the broker, so a server that starts later learns that a node is gone."
+      }
+    },
+    "server.receive.node_health": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/node_health"
+      },
+      "summary": "the `server` role reads armor/health/{node_id}",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "node.send.radar_events": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/radar_events"
+      },
+      "summary": "the `node` role publishes armor/radar/{node_id}/events",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "node"
+    },
+    "server.receive.radar_events": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/radar_events"
+      },
+      "summary": "the `server` role reads armor/radar/{node_id}/events",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "node.receive.radar_armed": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/radar_armed"
+      },
+      "summary": "the `node` role reads armor/radar/{node_id}/control/armed",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "node"
+    },
+    "solar-node.send.solar_state": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/solar_state"
+      },
+      "summary": "the `solar-node` role publishes armor/solar/{node_id}/{device}/state",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "solar-node"
+    },
+    "node.send.solar_state": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/solar_state"
+      },
+      "summary": "the `node` role publishes armor/solar/{node_id}/{device}/state",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "node"
+    },
+    "server.receive.solar_state": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/solar_state"
+      },
+      "summary": "the `server` role reads armor/solar/{node_id}/{device}/state",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "server.send.solar_battery_command": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/solar_battery_command"
+      },
+      "summary": "the `server` role publishes armor/solar/{node_id}/maintenance/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "solar-node.receive.solar_battery_command": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/solar_battery_command"
+      },
+      "summary": "the `solar-node` role reads armor/solar/{node_id}/maintenance/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "solar-node",
+      "x-opt-in": "battery-write"
+    },
+    "solar-node.send.solar_battery_result": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/solar_battery_result"
+      },
+      "summary": "the `solar-node` role publishes armor/solar/{node_id}/maintenance/result",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "solar-node"
+    },
+    "node.send.solar_battery_result": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/solar_battery_result"
+      },
+      "summary": "the `node` role publishes armor/solar/{node_id}/maintenance/result",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "node"
+    },
+    "server.receive.solar_battery_result": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/solar_battery_result"
+      },
+      "summary": "the `server` role reads armor/solar/{node_id}/maintenance/result",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "electrical-node.send.electrical_state": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/electrical_state"
+      },
+      "summary": "the `electrical-node` role publishes armor/electrical/{node_id}/state",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "electrical-node"
+    },
+    "server.receive.electrical_state": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/electrical_state"
+      },
+      "summary": "the `server` role reads armor/electrical/{node_id}/state",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "server.send.electrical_command": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/electrical_command"
+      },
+      "summary": "the `server` role publishes armor/electrical/{node_id}/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "electrical-node.receive.electrical_command": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/electrical_command"
+      },
+      "summary": "the `electrical-node` role reads armor/electrical/{node_id}/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "electrical-node",
+      "x-opt-in": "electrical-switching"
+    },
+    "electrical-node.send.electrical_result": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/electrical_result"
+      },
+      "summary": "the `electrical-node` role publishes armor/electrical/{node_id}/result",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "electrical-node"
+    },
+    "server.receive.electrical_result": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/electrical_result"
+      },
+      "summary": "the `server` role reads armor/electrical/{node_id}/result",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "alarm-node.send.alarm_state": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/alarm_state"
+      },
+      "summary": "the `alarm-node` role publishes armor/alarm/{node_id}/state",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "alarm-node"
+    },
+    "server.receive.alarm_state": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/alarm_state"
+      },
+      "summary": "the `server` role reads armor/alarm/{node_id}/state",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "server.send.alarm_command": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/alarm_command"
+      },
+      "summary": "the `server` role publishes armor/alarm/{node_id}/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "alarm-node.receive.alarm_command": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/alarm_command"
+      },
+      "summary": "the `alarm-node` role reads armor/alarm/{node_id}/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "alarm-node",
+      "x-opt-in": "alarm-commands"
+    },
+    "alarm-node.send.alarm_result": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/alarm_result"
+      },
+      "summary": "the `alarm-node` role publishes armor/alarm/{node_id}/result",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "alarm-node"
+    },
+    "server.receive.alarm_result": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/alarm_result"
+      },
+      "summary": "the `server` role reads armor/alarm/{node_id}/result",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "server.send.alarm_zone_feed": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/alarm_zone_feed"
+      },
+      "summary": "the `server` role publishes armor/alarm/{node_id}/zigbee",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "alarm-node.receive.alarm_zone_feed": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/alarm_zone_feed"
+      },
+      "summary": "the `alarm-node` role reads armor/alarm/{node_id}/zigbee",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "alarm-node"
+    },
+    "server.send.alarm_policy": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/alarm_policy"
+      },
+      "summary": "the `server` role publishes armor/alarm/{node_id}/policy",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "alarm-node.receive.alarm_policy": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/alarm_policy"
+      },
+      "summary": "the `alarm-node` role reads armor/alarm/{node_id}/policy",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "alarm-node"
+    },
+    "server.send.control_command": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/control_command"
+      },
+      "summary": "the `server` role publishes armor/control/{node_id}/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "node.receive.control_command": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/control_command"
+      },
+      "summary": "the `node` role reads armor/control/{node_id}/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "node"
+    },
+    "hmi-node.receive.control_command": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/control_command"
+      },
+      "summary": "the `hmi-node` role reads armor/control/{node_id}/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "hmi-node"
+    },
+    "solar-node.receive.control_command": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/control_command"
+      },
+      "summary": "the `solar-node` role reads armor/control/{node_id}/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "solar-node"
+    },
+    "electrical-node.receive.control_command": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/control_command"
+      },
+      "summary": "the `electrical-node` role reads armor/control/{node_id}/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "electrical-node"
+    },
+    "alarm-node.receive.control_command": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/control_command"
+      },
+      "summary": "the `alarm-node` role reads armor/control/{node_id}/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "alarm-node"
+    },
+    "server.send.control_command_all": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/control_command_all"
+      },
+      "summary": "the `server` role publishes armor/control/all/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "node.receive.control_command_all": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/control_command_all"
+      },
+      "summary": "the `node` role reads armor/control/all/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "node"
+    },
+    "hmi-node.receive.control_command_all": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/control_command_all"
+      },
+      "summary": "the `hmi-node` role reads armor/control/all/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "hmi-node"
+    },
+    "solar-node.receive.control_command_all": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/control_command_all"
+      },
+      "summary": "the `solar-node` role reads armor/control/all/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "solar-node"
+    },
+    "electrical-node.receive.control_command_all": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/control_command_all"
+      },
+      "summary": "the `electrical-node` role reads armor/control/all/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "electrical-node"
+    },
+    "alarm-node.receive.control_command_all": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/control_command_all"
+      },
+      "summary": "the `alarm-node` role reads armor/control/all/command",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "alarm-node"
+    },
+    "node.send.control_result": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/control_result"
+      },
+      "summary": "the `node` role publishes armor/control/{node_id}/result",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "node"
+    },
+    "hmi-node.send.control_result": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/control_result"
+      },
+      "summary": "the `hmi-node` role publishes armor/control/{node_id}/result",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "hmi-node"
+    },
+    "solar-node.send.control_result": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/control_result"
+      },
+      "summary": "the `solar-node` role publishes armor/control/{node_id}/result",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "solar-node"
+    },
+    "electrical-node.send.control_result": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/control_result"
+      },
+      "summary": "the `electrical-node` role publishes armor/control/{node_id}/result",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "electrical-node"
+    },
+    "alarm-node.send.control_result": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/control_result"
+      },
+      "summary": "the `alarm-node` role publishes armor/control/{node_id}/result",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "alarm-node"
+    },
+    "server.receive.control_result": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/control_result"
+      },
+      "summary": "the `server` role reads armor/control/{node_id}/result",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "node.send.control_maintenance": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/control_maintenance"
+      },
+      "summary": "the `node` role publishes armor/control/{node_id}/maintenance",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": true,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "node"
+    },
+    "hmi-node.send.control_maintenance": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/control_maintenance"
+      },
+      "summary": "the `hmi-node` role publishes armor/control/{node_id}/maintenance",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": true,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "hmi-node"
+    },
+    "solar-node.send.control_maintenance": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/control_maintenance"
+      },
+      "summary": "the `solar-node` role publishes armor/control/{node_id}/maintenance",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": true,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "solar-node"
+    },
+    "electrical-node.send.control_maintenance": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/control_maintenance"
+      },
+      "summary": "the `electrical-node` role publishes armor/control/{node_id}/maintenance",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": true,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "electrical-node"
+    },
+    "alarm-node.send.control_maintenance": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/control_maintenance"
+      },
+      "summary": "the `alarm-node` role publishes armor/control/{node_id}/maintenance",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": true,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "alarm-node"
+    },
+    "server.receive.control_maintenance": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/control_maintenance"
+      },
+      "summary": "the `server` role reads armor/control/{node_id}/maintenance",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": true,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "network-node.send.network_state": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/network_state"
+      },
+      "summary": "the `network-node` role publishes armor/network/{node_id}/state",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "network-node"
+    },
+    "server.receive.network_state": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/network_state"
+      },
+      "summary": "the `server` role reads armor/network/{node_id}/state",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "server.send.server_alert": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/server_alert"
+      },
+      "summary": "the `server` role publishes armor/server/alert",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "consumer.receive.server_alert": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/server_alert"
+      },
+      "summary": "the `consumer` role reads armor/server/alert",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "consumer"
+    },
+    "node.send.device_layer": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/device_layer"
+      },
+      "summary": "the `node` role publishes armor/device/{node_id}/#",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "node"
+    },
+    "device.send.device_layer": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/device_layer"
+      },
+      "summary": "the `device` role publishes armor/device/{node_id}/#",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "device"
+    },
+    "bridge.send.device_layer": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/device_layer"
+      },
+      "summary": "the `bridge` role publishes armor/device/{node_id}/#",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "bridge"
+    },
+    "server.send.device_layer": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/device_layer"
+      },
+      "summary": "the `server` role publishes armor/device/{node_id}/#",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "node.receive.device_layer": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/device_layer"
+      },
+      "summary": "the `node` role reads armor/device/{node_id}/#",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "node"
+    },
+    "device.receive.device_layer": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/device_layer"
+      },
+      "summary": "the `device` role reads armor/device/{node_id}/#",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "device"
+    },
+    "bridge.receive.device_layer": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/device_layer"
+      },
+      "summary": "the `bridge` role reads armor/device/{node_id}/#",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "bridge"
+    },
+    "server.receive.device_layer": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/device_layer"
+      },
+      "summary": "the `server` role reads armor/device/{node_id}/#",
+      "bindings": {
+        "mqtt": {
+          "qos": 1,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    }
+  },
+  "components": {
+    "messages": {
+      "alarm": {
+        "name": "alarm",
+        "title": "alarm",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/alarm.schema.json"
+        }
+      },
+      "alarm_command": {
+        "name": "alarm_command",
+        "title": "alarm_command",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/alarm_command.schema.json"
+        }
+      },
+      "alarm_policy": {
+        "name": "alarm_policy",
+        "title": "alarm_policy",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/alarm_policy.schema.json"
+        }
+      },
+      "alarm_result": {
+        "name": "alarm_result",
+        "title": "alarm_result",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/alarm_result.schema.json"
+        }
+      },
+      "alarm_zone_feed": {
+        "name": "alarm_zone_feed",
+        "title": "alarm_zone_feed",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/alarm_zone_feed.schema.json"
+        }
+      },
+      "command": {
+        "name": "command",
+        "title": "command",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/command.schema.json"
+        }
+      },
+      "electrical": {
+        "name": "electrical",
+        "title": "electrical",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/electrical.schema.json"
+        }
+      },
+      "electrical_command": {
+        "name": "electrical_command",
+        "title": "electrical_command",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/electrical_command.schema.json"
+        }
+      },
+      "electrical_result": {
+        "name": "electrical_result",
+        "title": "electrical_result",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/electrical_result.schema.json"
+        }
+      },
+      "health": {
+        "name": "health",
+        "title": "health",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/health.schema.json"
+        }
+      },
+      "info": {
+        "name": "info",
+        "title": "info",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/info.schema.json"
+        }
+      },
+      "network": {
+        "name": "network",
+        "title": "network",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/network.schema.json"
+        }
+      },
+      "node_control_command": {
+        "name": "node_control_command",
+        "title": "node_control_command",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/node_control_command.schema.json"
+        }
+      },
+      "node_control_result": {
+        "name": "node_control_result",
+        "title": "node_control_result",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/node_control_result.schema.json"
+        }
+      },
+      "node_health": {
+        "name": "node_health",
+        "title": "node_health",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/node_health.schema.json"
+        }
+      },
+      "node_maintenance": {
+        "name": "node_maintenance",
+        "title": "node_maintenance",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/node_maintenance.schema.json"
+        }
+      },
+      "radar_event": {
+        "name": "radar_event",
+        "title": "radar_event",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/radar_event.schema.json"
+        }
+      },
+      "server_alert": {
+        "name": "server_alert",
+        "title": "server_alert",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/server_alert.schema.json"
+        }
+      },
+      "solar_battery": {
+        "name": "solar_battery",
+        "title": "solar_battery",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/solar_battery.schema.json"
+        }
+      },
+      "solar_battery_command": {
+        "name": "solar_battery_command",
+        "title": "solar_battery_command",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/solar_battery_command.schema.json"
+        }
+      },
+      "solar_battery_result": {
+        "name": "solar_battery_result",
+        "title": "solar_battery_result",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/solar_battery_result.schema.json"
+        }
+      },
+      "solar_inverter": {
+        "name": "solar_inverter",
+        "title": "solar_inverter",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/solar_inverter.schema.json"
+        }
+      },
+      "telemetry": {
+        "name": "telemetry",
+        "title": "telemetry",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/telemetry.schema.json"
+        }
+      }
+    }
+  },
+  "x-acl": {
+    "node": {
+      "user": "field-node-{name}",
+      "lines": [
+        "topic write armor/node/{name}/telemetry",
+        "topic write armor/node/{name}/health",
+        "topic write armor/node/{name}/info",
+        "topic write armor/health/{name}",
+        "topic read armor/node/{name}/command",
+        "topic readwrite armor/device/{name}/#",
+        "topic write armor/solar/{name}/#",
+        "topic write armor/radar/{name}/events",
+        "topic read armor/radar/{name}/control/armed",
+        "topic read armor/control/{name}/command",
+        "topic read armor/control/all/command",
+        "topic write armor/control/{name}/result",
+        "topic write armor/control/{name}/maintenance"
+      ]
+    },
+    "hmi-node": {
+      "user": "hmi-node-{name}",
+      "lines": [
+        "topic write armor/node/{name}/health",
+        "topic write armor/node/{name}/info",
+        "topic write armor/health/{name}",
+        "topic read armor/control/{name}/command",
+        "topic read armor/control/all/command",
+        "topic write armor/control/{name}/result",
+        "topic write armor/control/{name}/maintenance"
+      ]
+    },
+    "solar-node": {
+      "user": "solar-node-{name}",
+      "lines": [
+        "topic write armor/solar/{name}/#",
+        "topic write armor/health/{name}",
+        "topic read armor/control/{name}/command",
+        "topic read armor/control/all/command",
+        "topic write armor/control/{name}/result",
+        "topic write armor/control/{name}/maintenance"
+      ]
+    },
+    "electrical-node": {
+      "user": "electrical-node-{name}",
+      "lines": [
+        "topic write armor/electrical/{name}/state",
+        "topic write armor/electrical/{name}/result",
+        "topic write armor/health/{name}",
+        "topic read armor/control/{name}/command",
+        "topic read armor/control/all/command",
+        "topic write armor/control/{name}/result",
+        "topic write armor/control/{name}/maintenance"
+      ]
+    },
+    "alarm-node": {
+      "user": "alarm-node-{name}",
+      "lines": [
+        "topic write armor/alarm/{name}/state",
+        "topic write armor/alarm/{name}/result",
+        "topic write armor/health/{name}",
+        "topic read armor/alarm/{name}/zigbee",
+        "topic read armor/alarm/{name}/policy",
+        "topic read armor/control/{name}/command",
+        "topic read armor/control/all/command",
+        "topic write armor/control/{name}/result",
+        "topic write armor/control/{name}/maintenance"
+      ]
+    },
+    "network-node": {
+      "user": "network-node-{name}",
+      "lines": [
+        "topic write armor/network/{name}/state"
+      ]
+    },
+    "device": {
+      "user": "device-{name}",
+      "lines": [
+        "topic readwrite armor/device/{name}/#"
+      ]
+    },
+    "bridge": {
+      "user": "bridge-{name}",
+      "lines": [
+        "topic readwrite armor/device/#"
+      ]
+    },
+    "consumer": {
+      "user": "alarm-{name}",
+      "lines": [
+        "topic read armor/server/alert"
+      ]
+    }
+  }
+}

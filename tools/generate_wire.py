@@ -5,12 +5,12 @@ Copyright (C) 2026 JuanenRac (Electro Hobby 3D). GPL-3.0-or-later.
 
 ``generated/armor_wire.hpp`` holds, for every schema: the C++ struct of the message, ``validate_<schema>`` (the schema itself as a table that a few lines of C++ interpret, so the node
 refuses exactly what the Python and TypeScript validators refuse), ``parse_<schema>`` (validate, then fill the struct) and ``write_<schema>`` (the struct as JSON, member by member in
-the order of the schema). Each node project keeps a copy as ``core/armor_wire.hpp``; the tests of the node compare it with this one.
+the order of the schema). A copy lives in ``firmware_base/core/`` and reaches every node project with the rest of the shared firmware (``tools/sync_firmware_base.py``), where ``tests/test_wire.cpp`` runs it against the oracle.
 
 The header is never edited by hand: ``--check`` fails when it is out of date, which is how CI keeps the nodes honest. ``tools/make_wire_cases.py`` writes the seeded cases with the
 verdict of the Python validator that the host tests of the nodes run against this header.
 
-    python tools/generate_wire.py           # write generated/armor_wire.hpp
+    python tools/generate_wire.py           # write generated/ and firmware_base/core/
     python tools/generate_wire.py --check   # verify it is current
 """
 from __future__ import annotations
@@ -26,7 +26,7 @@ import generate_types as gt   # noqa: E402
 import wire_regex   # noqa: E402
 
 ROOT = gt.ROOT
-OUTPUTS = (ROOT / "generated" / "armor_wire.hpp",)
+OUTPUTS = (ROOT / "generated" / "armor_wire.hpp", ROOT / "firmware_base" / "core" / "armor_wire.hpp")
 CPP_KEYWORDS = {"alignas", "and", "auto", "bool", "break", "case", "catch", "char", "class", "const", "continue", "default", "delete", "do", "double", "else", "enum", "explicit", "export", "extern", "false",
                 "float", "for", "friend", "goto", "if", "inline", "int", "long", "mutable", "namespace", "new", "not", "operator", "or", "private", "protected", "public", "register", "return", "short",
                 "signed", "sizeof", "static", "struct", "switch", "template", "this", "throw", "true", "try", "typedef", "typename", "union", "unsigned", "using", "virtual", "void", "volatile", "while", "xor"}

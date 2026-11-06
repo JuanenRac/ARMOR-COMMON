@@ -273,6 +273,7 @@ ARMOR-COMMON/
 ├── conformance/                   1387 accepted and rejected payloads
 ├── generated/                     TypeScript and Kotlin types (generated, do not edit)
 ├── openapi/                       armor-server.yaml, HTTP contract
+├── asyncapi/                      armor-mqtt.asyncapi.json, MQTT topics
 ├── registry/                      repositories.json, the family list
 ├── fuzz/                          libFuzzer targets
 ├── host_tests/                    C++ readers against the oracle

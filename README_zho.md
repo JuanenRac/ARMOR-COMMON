@@ -273,6 +273,7 @@ ARMOR-COMMON/
 ├── conformance/                   1387 条有效与无效消息
 ├── generated/                     TypeScript 和 Kotlin 类型（自动生成，勿编辑）
 ├── openapi/                       armor-server.yaml（HTTP 契约）
+├── asyncapi/                      armor-mqtt.asyncapi.json（MQTT 主题）
 ├── registry/                      repositories.json（清单）
 ├── fuzz/                          libFuzzer 目标
 ├── host_tests/                    C++ 读取器与基准比对

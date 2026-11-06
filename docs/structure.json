@@ -271,6 +271,19 @@
      }
     },
     {
+     "name": "asyncapi/",
+     "desc": {
+      "en": "armor-mqtt.asyncapi.json, MQTT topics",
+      "es": "armor-mqtt.asyncapi.json, topics MQTT",
+      "de": "armor-mqtt.asyncapi.json, MQTT-Topics",
+      "fr": "armor-mqtt.asyncapi.json, topics MQTT",
+      "it": "armor-mqtt.asyncapi.json, topic MQTT",
+      "ja": "armor-mqtt.asyncapi.json（MQTT トピック）",
+      "zh": "armor-mqtt.asyncapi.json（MQTT 主题）",
+      "pt": "armor-mqtt.asyncapi.json, tópicos MQTT"
+     }
+    },
+    {
      "name": "registry/",
      "desc": {
       "en": "repositories.json, the family list",

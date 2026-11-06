@@ -273,6 +273,7 @@ ARMOR-COMMON/
 ├── conformance/                   1387 mensagens válidas e recusadas
 ├── generated/                     tipos TypeScript e Kotlin (gerados, não editar)
 ├── openapi/                       armor-server.yaml, contrato HTTP
+├── asyncapi/                      armor-mqtt.asyncapi.json, tópicos MQTT
 ├── registry/                      repositories.json, lista da família
 ├── fuzz/                          alvos libFuzzer
 ├── host_tests/                    leitores C++ face ao oráculo

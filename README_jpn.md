@@ -273,6 +273,7 @@ ARMOR-COMMON/
 ├── conformance/                   受理・拒否 1387 件
 ├── generated/                     TypeScript と Kotlin の型（生成物、編集不可）
 ├── openapi/                       armor-server.yaml（HTTP 契約）
+├── asyncapi/                      armor-mqtt.asyncapi.json（MQTT トピック）
 ├── registry/                      repositories.json（一覧）
 ├── fuzz/                          libFuzzer ターゲット
 ├── host_tests/                    C++ リーダーとオラクル

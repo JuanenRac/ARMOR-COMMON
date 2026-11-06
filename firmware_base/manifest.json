@@ -822,6 +822,24 @@
         "ARMOR-NODE-ALARM": "tests/test_image_board.cpp",
         "ARMOR-NODE-ELECTRICAL": "tests/test_image_board.cpp"
       }
+    },
+    "core/armor_wire.hpp": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "core/armor_wire.hpp",
+        "ARMOR-NODE-ELECTRICAL": "core/armor_wire.hpp",
+        "ARMOR-NODE-RADAR": "main/core/armor_wire.hpp",
+        "ARMOR-NODE-HMI": "core/armor_wire.hpp",
+        "ARMOR-NODE-ALARM": "core/armor_wire.hpp"
+      }
+    },
+    "tests/test_wire.cpp": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "tests/test_wire.cpp",
+        "ARMOR-NODE-ELECTRICAL": "tests/test_wire.cpp",
+        "ARMOR-NODE-RADAR": "tests/test_wire.cpp",
+        "ARMOR-NODE-HMI": "tests/test_wire.cpp",
+        "ARMOR-NODE-ALARM": "tests/test_wire.cpp"
+      }
     }
   }
 }

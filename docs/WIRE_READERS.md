@@ -11,6 +11,10 @@ The JSON Schemas in `src/armor_common/schemas/` are the single source of truth f
 
 `armor_wire.hpp` needs only `json.hpp` of the shared firmware. The schema is a table that a few lines of C++ interpret (type, enum, const, limits, lengths in code points, required members, unknown members, a map of one kind of value); the patterns are compiled by `tools/wire_regex.py` into a small automaton over code points, which runs without recursion and with one flag per state. A pattern outside the supported subset stops the generator, so a constraint is never ignored without notice.
 
+## The topics
+
+`src/armor_common/mqtt_topics.json` is the one list of the MQTT topics: the address, the schema of the messages, who publishes, who reads, the QoS and whether the broker keeps the message. `tools/generate_asyncapi.py` makes `asyncapi/armor-mqtt.asyncapi.json` from it and from the access lines of `node_roles.json`: AsyncAPI 3.0 with a channel per topic, an operation per role and channel (`send` or `receive`, with its `qos` and `retain`), and `x-acl` with the lines of every role. A topic whose commands exist only when an option is turned on (`alarm-commands`, `electrical-switching`, `battery-write`) says which in `x-opt-in`. `tests/test_mqtt_topics.py` keeps the list and the access lines saying the same thing.
+
 ## The oracle
 
 `tools/make_wire_cases.py` writes `conformance/wire_cases.tsv`: the valid vectors of `conformance/` and seeded mutations of them, one case per line (`schema`, `1` or `0`, the document), with the verdict of the Python validator `armor_common.schema`. The same bytes are written on every run.
