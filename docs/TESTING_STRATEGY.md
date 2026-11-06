@@ -31,3 +31,19 @@ The file is large, so the run was limited to the topic and node id checks and `v
 | `_check_node_id`, `parse_topic`, `validate_topic_and_payload` | 44 | 35 (79.5 %) | 43 (97.7 %) | 1, equivalent |
 
 The mutants that survived the first run were the texts of the refusals (the readers show them, so the tests now compare them) and the character set used up to its last member. The one left is `node_id[0] in "-_"` written as `in "XX-_XX"`, which answers the same for a single character.
+
+## Simulation benches (software against a simulated installation)
+
+Every part of the system that depends on equipment has a bench that plays that equipment from software, with faults injected, and a workflow that runs it without any hardware. A green bench says the software copes with the simulated equipment; it says nothing about the real one, so the manifests say `evidence: simulator` for these repositories and never `bench` or `field` until the code has run on a board.
+
+| Repository | Simulated equipment | Where it runs |
+| --- | --- | --- |
+| ARMOR-NODE-RADAR | the serial stream of the HLK-LD2450 modules, with noise, cut frames, a bad tail, impossible targets and pieces | `Simulation bench` of the node: `tests/sim_bench.cpp` built from the firmware core files, fed by `python -m armor_simulator.node_bench --bus ld2450` |
+| ARMOR-NODE-ELECTRICAL | the Modbus-RTU replies of the PZEM-004T and PZEM-017 meters, with flipped bits, exceptions, silence, short and long replies, another meter's reply and impossible readings | the same, `--bus pzem` |
+| ARMOR-NODE-SOLAR | the console tables of a Pylontech stack, with an absent module, garbled rows, no header and cells out of range | the same, `--bus pylontech` |
+| ARMOR-NODE-ALARM | the voltage of a wired alarm loop, with bounce, noise, a converter settling at power-up, a cut and a shorted wire | the same, `--bus alarm-loop` |
+| ARMOR-NODE-HMI | the live channel of the server to the panel, with broken, oversize and foreign frames and heartbeats beyond the limits | the same, `--bus hmi-feed` |
+| ARMOR-SERVER | the nodes, over HTTP and through a broker, and a recording of its own traffic played again | `Simulation bench` of ARMOR-SIMULATOR: `python -m armor_simulator.bench_ci`, a built server on a loopback port, with no Docker |
+| ARMOR-SIMULATOR | all of the above | its own unit tests, `Simulation bench`, and `docs/NODE_BENCH.md` |
+
+What is not covered, and stays for a board or the CM5: timing and electrical behaviour of every bus, the Docker image and its healthcheck, the Mosquitto settings of the CM5 profile, cameras, microphones and speakers, and anything that needs a person to look at a screen.
