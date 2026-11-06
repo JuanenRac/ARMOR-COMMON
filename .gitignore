@@ -4,3 +4,5 @@ __pycache__/
 .venv/
 fuzz/build/
 fuzz/artifacts/
+# Coverage data written by the test runs
+.coverage
