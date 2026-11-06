@@ -34,7 +34,7 @@ def segments(topic: str) -> list[str]:
 
 
 def covers(pattern: str, address: str) -> bool:
-    """Does an access line's topic (``armor/node/x/telemetry``, ``armor/solar/x/#``, ``armor/device/#``) cover the address of a channel (``{node_id}`` and ``{device}`` stand for one segment)?
+    """Does an access line's topic (``armor/node/x/telemetry``, ``armor/solar/x/#``, ``armor/solar/x/+/state``, ``armor/device/#``) cover the address of a channel (``{node_id}`` and ``{device}`` stand for one segment)?
     A ``#`` covers everything below it; a name in the pattern covers the channel only where the channel says the same name or a placeholder for it."""
     wanted = segments(address)
     given = segments(pattern)
@@ -46,6 +46,8 @@ def covers(pattern: str, address: str) -> bool:
         here = wanted[index]
         if here == "#":
             return False   # the channel is wider than the line
+        if part == "+" and here != "#":
+            continue   # one segment, whatever it is
         if part != here and not (here.startswith("{") and here.endswith("}")):
             return False
     return len(given) == len(wanted)

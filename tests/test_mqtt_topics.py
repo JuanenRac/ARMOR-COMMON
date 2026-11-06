@@ -59,9 +59,6 @@ class AccessLinesAgreeTests(unittest.TestCase):
                 for verb, key in (("write", "publishers"), ("read", "readers")):
                     may = mqtt_topics.allowed(role, verb, item["address"])
                     listed = role in item[key]
-                    wider = role in item.get("acl_wider_than_needed", []) and verb == "write"
-                    if may and wider:
-                        continue   # a known gap: the line `topic write armor/solar/{name}/#` also covers the maintenance command topic, which only the server publishes
                     if may:
                         self.assertTrue(listed, f"{role} may {verb} {item['address']} by its lines but the list does not say it does")
                     elif listed and "opt_in" not in item:
@@ -79,15 +76,30 @@ class AccessLinesAgreeTests(unittest.TestCase):
                 continue
             for role in node_roles.roles():
                 for verb in ("write", "read"):
-                    if verb == "write" and role in item.get("acl_wider_than_needed", []):
-                        continue
                     self.assertFalse(mqtt_topics.allowed(role, verb, item["address"]), f"{role} can {verb} {item['address']} without turning {item['opt_in']} on")
 
-    def test_a_known_gap_is_still_there_or_it_is_removed_from_the_list(self):
-        for item in mqtt_topics.channels():
-            for role in item.get("acl_wider_than_needed", []):
-                self.assertTrue(mqtt_topics.allowed(role, "write", item["address"]), f"{role}: the lines no longer cover {item['address']}, so the note must go")
-                self.assertNotIn(role, item["publishers"], f"{role}: it is listed as a publisher of {item['address']}, so it is not a gap")
+    def test_no_node_role_can_write_any_command_topic(self):
+        """Only the server publishes commands: no line of any node role covers a topic whose last part is `command`, however wide a pattern it uses."""
+        for role in node_roles.roles():
+            for item in mqtt_topics.channels():
+                if item["address"].split("/")[-1] != "command" or role in item["publishers"]:
+                    continue
+                self.assertFalse(mqtt_topics.allowed(role, "write", item["address"]), f"{role} can write {item['address']}")
+            for line in node_roles.table()[role]["topics"]:
+                _word, mode, address = line.split(" ", 2)
+                if "write" in mode and address.startswith("armor/solar/"):
+                    self.assertNotIn("#", address, f"{role}: {line} is wider than the readings and the answers of the maintenance steps")
+
+    def test_the_solar_lines_let_the_readings_and_the_answers_through_and_not_the_order(self):
+        for role in ("solar-node", "node"):
+            self.assertTrue(mqtt_topics.allowed(role, "write", "armor/solar/{node_id}/{device}/state"), role)
+            self.assertTrue(mqtt_topics.allowed(role, "write", "armor/solar/{node_id}/maintenance/result"), role)
+            self.assertFalse(mqtt_topics.allowed(role, "write", "armor/solar/{node_id}/maintenance/command"), role)
+            self.assertFalse(mqtt_topics.allowed(role, "write", "armor/solar/{node_id}/anything/command"), role)
+
+    def test_the_wide_line_is_only_a_relaxed_extra_of_the_two_roles_that_had_it(self):
+        extra = {role: entry["relaxed_extra"] for role, entry in node_roles.table().items() if "relaxed_extra" in entry}
+        self.assertEqual(extra, {"node": ["topic write armor/solar/{name}/#"], "solar-node": ["topic write armor/solar/{name}/#"]})
 
     def test_covers_follows_the_rules_of_a_broker(self):
         self.assertTrue(mqtt_topics.covers("armor/solar/{node_id}/#", "armor/solar/{node_id}/{device}/state"))
@@ -95,6 +107,8 @@ class AccessLinesAgreeTests(unittest.TestCase):
         self.assertFalse(mqtt_topics.covers("armor/device/{node_id}/#", "armor/device/#"))
         self.assertFalse(mqtt_topics.covers("armor/alarm/{node_id}/state", "armor/alarm/{node_id}/command"))
         self.assertFalse(mqtt_topics.covers("armor/alarm/{node_id}", "armor/alarm/{node_id}/state"))
+        self.assertTrue(mqtt_topics.covers("armor/solar/{node_id}/+/state", "armor/solar/{node_id}/{device}/state"))
+        self.assertFalse(mqtt_topics.covers("armor/solar/{node_id}/+/state", "armor/solar/{node_id}/maintenance/command"))
 
 
 class AsyncApiTests(unittest.TestCase):

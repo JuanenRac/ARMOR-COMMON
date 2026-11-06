@@ -47,7 +47,6 @@ def render() -> str:
             **({"parameters": parameters} if parameters else {}),
             "messages": {name: {"$ref": f"#/components/messages/{name}"} for name in names},
             "bindings": {"mqtt": {"bindingVersion": BINDING}},
-            **({"x-acl-wider-than-needed": item["acl_wider_than_needed"]} if "acl_wider_than_needed" in item else {}),
         }
         binding = {"qos": item["qos"], "retain": item["retain"], "bindingVersion": BINDING}
         for action, key in (("send", "publishers"), ("receive", "readers")):

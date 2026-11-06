@@ -184,11 +184,7 @@
         "mqtt": {
           "bindingVersion": "0.2.0"
         }
-      },
-      "x-acl-wider-than-needed": [
-        "node",
-        "solar-node"
-      ]
+      }
     },
     "solar_battery_result": {
       "address": "armor/solar/{node_id}/maintenance/result",
@@ -1894,7 +1890,8 @@
         "topic write armor/health/{name}",
         "topic read armor/node/{name}/command",
         "topic readwrite armor/device/{name}/#",
-        "topic write armor/solar/{name}/#",
+        "topic write armor/solar/{name}/+/state",
+        "topic write armor/solar/{name}/maintenance/result",
         "topic write armor/radar/{name}/events",
         "topic read armor/radar/{name}/control/armed",
         "topic read armor/control/{name}/command",
@@ -1918,7 +1915,8 @@
     "solar-node": {
       "user": "solar-node-{name}",
       "lines": [
-        "topic write armor/solar/{name}/#",
+        "topic write armor/solar/{name}/+/state",
+        "topic write armor/solar/{name}/maintenance/result",
         "topic write armor/health/{name}",
         "topic read armor/control/{name}/command",
         "topic read armor/control/all/command",
