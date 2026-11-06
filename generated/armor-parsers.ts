@@ -1,5 +1,5 @@
 /** Generated from the A.R.M.O.R. JSON Schemas by tools/generate_parsers.py. Do not edit. */
-import type * as T from "./armor-contracts";
+import type * as T from "./armor-contracts.js";
 
 /** What a document gets wrong: where (`/zones/0/id`) and what. */
 export class ContractError extends Error {
