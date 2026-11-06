@@ -1214,6 +1214,20 @@ paths:
       security: [{ operator: [] }]
       responses:
         '200': { description: '{ topics: [{ topic, accepted, rejected, ignored_fields, last_ok_at, last_error, last_error_at, last_payload }] }', content: { application/json: { schema: { $ref: '#/components/schemas/IngestLog' } } } }
+  /api/v1/system/ingest/recording:
+    get:
+      summary: The state of the optional copy of the node traffic that ARMOR-SIMULATOR plays with --replay - whether it is on (off by default), the file, its size, the lines written, the limits and the rotations (an administrator)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: The state, content: { application/json: { schema: { $ref: '#/components/schemas/IngestRecording' } } } }
+    put:
+      summary: Turn the copy of the node traffic on or off (off by default; the option ingest.recording; written in the audit trail). While it is on every message taken or refused is written, with the time, whether it was accepted and why not, as one JSON line; fields named like a secret are left out, the orders to the nodes are not copied, and the file is limited and rotated by ARMOR_INGEST_RECORD_MAX_BYTES and ARMOR_INGEST_RECORD_FILES (an administrator who proved themselves again if they came from outside)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/IngestRecordingChange' } } } }
+      responses:
+        '200': { description: The state after the change, content: { application/json: { schema: { $ref: '#/components/schemas/IngestRecording' } } } }
+        '400': { description: 'The body is not an object with enabled true or false', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: The environment fixes the option, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/system/services:
     get:
       summary: 'Every service of the system, running or not - the programs of the machine (read from systemd: state, process, memory, restarts, when it started) and the field nodes (online or not) - read only'
@@ -2797,6 +2811,7 @@ components:
         network.login_secure_only: { type: boolean, default: false }
         metrics.prometheus: { type: boolean, default: false, description: 'GET /metrics answers the numbers of the server in the Prometheus text form to the bearer token ARMOR_METRICS_TOKEN (off: 404)' }
         heartbeat.enabled: { type: boolean, default: false, description: 'The server asks the address ARMOR_HEARTBEAT_URL every ARMOR_HEARTBEAT_INTERVAL_S seconds, so a service outside the house can tell the owner when the pings stop' }
+        ingest.recording: { type: boolean, default: false, description: 'The server writes a copy of what the nodes send (and why a message was refused) to a JSON-lines file in its data directory that ARMOR-SIMULATOR plays with --replay; fields named like a secret are left out and the file is limited and rotated (off, the default: nothing is written)' }
         login.country_alert: { type: boolean, default: true }
         electrical.set_aside_old_readings: { type: boolean, default: true, description: 'A channel of an electrical node whose own reading is old is left out of the grid figure and the graphs and marked as having no data' }
         voice.multipart_turn: { type: boolean, default: true }
@@ -5109,6 +5124,8 @@ components:
     AutoUpdatesRun: { type: object, required: [at, packages, state], properties: { at: { type: string }, packages: { type: array, items: { type: string } }, state: { type: string, enum: [started, installed, failed] } } }
     AutoUpdatesHealth: { type: object, properties: { checked: { type: integer }, ok: { type: boolean }, restarted: { type: array, items: { type: string } }, down: { type: array, items: { type: string } } } }
     AutoUpdates: { type: object, required: [settings, package, applied, reboot_required, reboot_note, last_reboot, health, conf_written], properties: { settings: { $ref: '#/components/schemas/AutoUpdatesSettings' }, package: { type: boolean, description: 'unattended-upgrades is installed' }, applied: { type: array, items: { $ref: '#/components/schemas/AutoUpdatesRun' } }, reboot_required: { type: boolean }, reboot_note: { type: string, description: 'why the machine has not rebooted yet - armed, armed_unknown, outside_window, policy_never, busy, rebooting or empty' }, last_reboot: { type: integer }, health: { $ref: '#/components/schemas/AutoUpdatesHealth' }, conf_written: { type: boolean } } }
+    IngestRecordingChange: { type: object, required: [enabled], additionalProperties: false, properties: { enabled: { type: boolean } } }
+    IngestRecording: { type: object, required: [enabled, file, bytes, files, max_bytes, max_files, lines, skipped, rotations, since], properties: { enabled: { type: boolean }, file: { type: string }, bytes: { type: integer }, files: { type: integer }, max_bytes: { type: integer }, max_files: { type: integer }, lines: { type: integer }, skipped: { type: integer }, rotations: { type: integer }, since: { type: [string, 'null'] } } }
     MaintenanceArmed: { type: object, required: [armed], properties: { armed: { type: boolean } } }
     PostAdminSystemUpgradeRequest: { type: object, properties: { mode: { type: string, enum: [upgrade, full, repair] } } }
     PostAdminConsoleUnlockRequest: { type: object, required: [password], properties: { password: { type: string } } }

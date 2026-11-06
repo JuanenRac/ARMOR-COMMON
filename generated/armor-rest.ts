@@ -1326,6 +1326,23 @@ export type IngestLog = {
   }[];
 };
 
+export type IngestRecording = {
+  enabled: boolean;
+  file: string;
+  bytes: number;
+  files: number;
+  max_bytes: number;
+  max_files: number;
+  lines: number;
+  skipped: number;
+  rotations: number;
+  since: string | null;
+};
+
+export type IngestRecordingChange = {
+  enabled: boolean;
+};
+
 export type InstallationBundle = {
   format: "armor-installation";
   version: number;
@@ -2430,6 +2447,8 @@ export type SecuritySettings = {
   "metrics.prometheus"?: boolean;
   /** The server asks the address ARMOR_HEARTBEAT_URL every ARMOR_HEARTBEAT_INTERVAL_S seconds, so a service outside the house can tell the owner when the pings stop */
   "heartbeat.enabled"?: boolean;
+  /** The server writes a copy of what the nodes send (and why a message was refused) to a JSON-lines file in its data directory that ARMOR-SIMULATOR plays with --replay; fields named like a secret are left out and the file is limited and rotated (off, the default: nothing is written) */
+  "ingest.recording"?: boolean;
   "login.country_alert"?: boolean;
   /** A channel of an electrical node whose own reading is old is left out of the grid figure and the graphs and marked as having no data */
   "electrical.set_aside_old_readings"?: boolean;
