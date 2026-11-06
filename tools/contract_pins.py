@@ -52,6 +52,10 @@ def main(argv: list[str]) -> int:
                 return 2
             data["consumers"][name] = current()
         PINS.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8", newline="\n")
+        # the compatibility feed is written from the pins, so it moves with them
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import make_compat
+        make_compat.main([])
         return 0
     if "--behind" in argv:
         data = json.loads(PINS.read_text(encoding="utf-8"))["consumers"]

@@ -1,0 +1,158 @@
+{
+  "schema_version": "1.0",
+  "about": "The version of the contracts (ARMOR-COMMON) each consumer was last checked against. The current version of the contracts is the version of armor.project.json of this repository. Written by tools/make_compat.py.",
+  "contracts_manifest": "armor.project.json",
+  "consumers": [
+    {
+      "name": "ARMOR-ANDROID-CONTROL",
+      "kind": "APP",
+      "node": false,
+      "feeds": [],
+      "checked_against": "0.8.0.7"
+    },
+    {
+      "name": "ARMOR-DEVOPS",
+      "kind": "PROJECT",
+      "node": false,
+      "feeds": [
+        "ARMOR-STUDIO"
+      ],
+      "checked_against": "0.8.0.7"
+    },
+    {
+      "name": "ARMOR-DOCS",
+      "kind": "DOCS",
+      "node": false,
+      "feeds": [],
+      "checked_against": "0.8.0.7"
+    },
+    {
+      "name": "ARMOR-HARDWARE",
+      "kind": "HARDWARE",
+      "node": false,
+      "feeds": [],
+      "checked_against": "0.8.0.7"
+    },
+    {
+      "name": "ARMOR-IOS-CONTROL",
+      "kind": "APP",
+      "node": false,
+      "feeds": [],
+      "checked_against": "0.8.0.7"
+    },
+    {
+      "name": "ARMOR-NETWORK",
+      "kind": "PROJECT",
+      "node": false,
+      "feeds": [
+        "ARMOR-SERVER"
+      ],
+      "checked_against": "0.8.0.7"
+    },
+    {
+      "name": "ARMOR-NODE-ALARM",
+      "kind": "FIRMWARE",
+      "node": true,
+      "feeds": [
+        "ARMOR-SERVER"
+      ],
+      "checked_against": "0.8.0.7"
+    },
+    {
+      "name": "ARMOR-NODE-ELECTRICAL",
+      "kind": "FIRMWARE",
+      "node": true,
+      "feeds": [
+        "ARMOR-SERVER"
+      ],
+      "checked_against": "0.8.0.7"
+    },
+    {
+      "name": "ARMOR-NODE-HMI",
+      "kind": "FIRMWARE",
+      "node": true,
+      "feeds": [],
+      "checked_against": "0.8.0.7"
+    },
+    {
+      "name": "ARMOR-NODE-RADAR",
+      "kind": "FIRMWARE",
+      "node": true,
+      "feeds": [
+        "ARMOR-SERVER"
+      ],
+      "checked_against": "0.8.0.7"
+    },
+    {
+      "name": "ARMOR-NODE-SOLAR",
+      "kind": "FIRMWARE",
+      "node": true,
+      "feeds": [
+        "ARMOR-SERVER"
+      ],
+      "checked_against": "0.8.0.7"
+    },
+    {
+      "name": "ARMOR-SERVER",
+      "kind": "SERVICE",
+      "node": false,
+      "feeds": [
+        "ARMOR-ANDROID-CONTROL",
+        "ARMOR-IOS-CONTROL",
+        "ARMOR-NODE-HMI",
+        "ARMOR-STUDIO"
+      ],
+      "checked_against": "0.8.0.7"
+    },
+    {
+      "name": "ARMOR-SERVER-AI",
+      "kind": "SERVICE",
+      "node": false,
+      "feeds": [
+        "ARMOR-SERVER"
+      ],
+      "checked_against": "0.8.0.7"
+    },
+    {
+      "name": "ARMOR-SIMULATOR",
+      "kind": "TOOL",
+      "node": false,
+      "feeds": [
+        "ARMOR-SERVER"
+      ],
+      "checked_against": "0.8.0.7"
+    },
+    {
+      "name": "ARMOR-STUDIO",
+      "kind": "APP",
+      "node": false,
+      "feeds": [],
+      "checked_against": "0.8.0.7"
+    },
+    {
+      "name": "ARMOR-UPDATER",
+      "kind": "TOOL",
+      "node": false,
+      "feeds": [],
+      "checked_against": "0.8.0.7"
+    },
+    {
+      "name": "ARMOR-VISION",
+      "kind": "PROJECT",
+      "node": false,
+      "feeds": [
+        "ARMOR-SERVER-AI"
+      ],
+      "checked_against": "0.8.0.7"
+    },
+    {
+      "name": "ARMOR-VOICE-AI",
+      "kind": "SERVICE",
+      "node": false,
+      "feeds": [
+        "ARMOR-SERVER"
+      ],
+      "checked_against": "0.8.0.7"
+    }
+  ]
+}

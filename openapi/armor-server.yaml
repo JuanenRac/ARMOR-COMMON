@@ -1228,6 +1228,15 @@ paths:
         '200': { description: The state after the change, content: { application/json: { schema: { $ref: '#/components/schemas/IngestRecording' } } } }
         '400': { description: 'The body is not an object with enabled true or false', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '409': { description: The environment fixes the option, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/system/ingest/recording/file:
+    get:
+      summary: One file of the copy of the node traffic, as JSON lines (an administrator who proved themselves again if they came from outside). It answers only while the copy is on (the option ingest.recording is its switch), at most ARMOR_INGEST_RECORD_DOWNLOADS_PER_HOUR times an hour, and every download is written in the audit trail. ?index=0 is the file being written, 1 the one before it, and so on up to the number of files kept
+      security: [{ admin: [] }]
+      parameters: [{ name: index, in: query, required: false, schema: { type: integer, minimum: 0, maximum: 19, default: 0 } }]
+      responses:
+        '200': { description: The file, content: { application/octet-stream: { schema: { type: string, format: binary } } } }
+        '404': { description: 'The copy is off (code recording_disabled) or there is no such file (not_found)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: Too many downloads in the last hour, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/system/services:
     get:
       summary: 'Every service of the system, running or not - the programs of the machine (read from systemd: state, process, memory, restarts, when it started) and the field nodes (online or not) - read only'
@@ -5125,7 +5134,8 @@ components:
     AutoUpdatesHealth: { type: object, properties: { checked: { type: integer }, ok: { type: boolean }, restarted: { type: array, items: { type: string } }, down: { type: array, items: { type: string } } } }
     AutoUpdates: { type: object, required: [settings, package, applied, reboot_required, reboot_note, last_reboot, health, conf_written], properties: { settings: { $ref: '#/components/schemas/AutoUpdatesSettings' }, package: { type: boolean, description: 'unattended-upgrades is installed' }, applied: { type: array, items: { $ref: '#/components/schemas/AutoUpdatesRun' } }, reboot_required: { type: boolean }, reboot_note: { type: string, description: 'why the machine has not rebooted yet - armed, armed_unknown, outside_window, policy_never, busy, rebooting or empty' }, last_reboot: { type: integer }, health: { $ref: '#/components/schemas/AutoUpdatesHealth' }, conf_written: { type: boolean } } }
     IngestRecordingChange: { type: object, required: [enabled], additionalProperties: false, properties: { enabled: { type: boolean } } }
-    IngestRecording: { type: object, required: [enabled, file, bytes, files, max_bytes, max_files, lines, skipped, rotations, since], properties: { enabled: { type: boolean }, file: { type: string }, bytes: { type: integer }, files: { type: integer }, max_bytes: { type: integer }, max_files: { type: integer }, lines: { type: integer }, skipped: { type: integer }, rotations: { type: integer }, since: { type: [string, 'null'] } } }
+    IngestRecording: { type: object, required: [enabled, file, bytes, files, max_bytes, max_files, lines, accepted, rejected, skipped, rotations, since, file_list], properties: { enabled: { type: boolean }, file: { type: string }, bytes: { type: integer }, files: { type: integer }, max_bytes: { type: integer }, max_files: { type: integer }, lines: { type: integer }, accepted: { type: integer, description: 'Lines written for a message that was taken, since the server started' }, rejected: { type: integer, description: 'Lines written for a message that was refused, since the server started' }, skipped: { type: integer }, rotations: { type: integer }, since: { type: [string, 'null'] }, file_list: { type: array, description: 'The files that exist, newest first (index 0 is the one being written)', items: { $ref: '#/components/schemas/IngestRecordingFile' } } } }
+    IngestRecordingFile: { type: object, required: [index, name, bytes], properties: { index: { type: integer }, name: { type: string }, bytes: { type: integer } } }
     MaintenanceArmed: { type: object, required: [armed], properties: { armed: { type: boolean } } }
     PostAdminSystemUpgradeRequest: { type: object, properties: { mode: { type: string, enum: [upgrade, full, repair] } } }
     PostAdminConsoleUnlockRequest: { type: object, required: [password], properties: { password: { type: string } } }
