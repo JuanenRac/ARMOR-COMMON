@@ -1,0 +1,40 @@
+name: Readers and writers of the messages (host tests)
+
+on:
+  push:
+    paths:
+      - "generated/armor_wire.hpp"
+      - "firmware_base/core/json.hpp"
+      - "conformance/wire_cases.tsv"
+      - "host_tests/**"
+      - "tools/generate_wire.py"
+      - "tools/wire_regex.py"
+      - "tools/make_wire_cases.py"
+      - "tools/check_wire_rewrites.py"
+      - "src/armor_common/schemas/**"
+      - ".github/workflows/wire-host.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  wire:
+    name: The C++ readers against the verdicts of the Python validator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.11"
+      - name: Build the oracle test
+        run: |
+          cmake -S host_tests -B build -DCMAKE_BUILD_TYPE=Debug
+          cmake --build build --parallel 2
+      - name: Run it against the seeded cases
+        run: ctest --test-dir build --output-on-failure
+      - name: Compare what the writers wrote back with the documents they read
+        run: python tools/check_wire_rewrites.py build/wire_rewrites.tsv
