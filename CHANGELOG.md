@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **`tools/make_sbom.py` writes the software bill of materials of a Node.js project:** CycloneDX 1.5 read from its `package-lock.json`, with the version, the hash and the licence of every package, the same file for the same lock file (no time, no machine name), and `--check FILE` compares a published one with the lock file so that a person or the maintenance agent can verify it. It is not a signature of the build.
+
 ## [0.8.0.8] - The health report of a node can say which contracts its firmware was checked against: optional contract in nodehealth (schema 0.2.0, the same three or four numbers as the information message), with 7 vectors (four parts, three... (and 5 more changes)
 
 - **The health report of a node can say which contracts its firmware was checked against:** optional `contract` in `node_health` (schema 0.2.0, the same three or four numbers as the information message), with 7 vectors (four parts, three parts, a leading v, two parts, a trailing line feed, a number, empty), the generated types and the document of the contracts updated. The shared firmware writes it into every report from the constant of the node (`main/contract_version.hpp`), only when it looks like a version, with host tests of the rule; so the alarm, electrical and solar nodes, which send no information message, say it too, and the radar and the wall panel say it in both.
