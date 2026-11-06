@@ -1446,6 +1446,48 @@ paths:
       responses:
         '200': { description: '{ available, console, reason }', content: { application/json: { schema: { $ref: '#/components/schemas/AdminAvailability' } } } }
         '503': { description: The maintenance helper is not installed or not answering, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/admin/machine-update:
+    get:
+      summary: Whether updating the machine's programs from Studio or the phone is switched on, here and on the maintenance helper, and which programs it can update (an administrator)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: 'The switch and the programs', content: { application/json: { schema: { $ref: '#/components/schemas/MachineUpdateState' } } } }
+  /api/v1/admin/machine-update/preview:
+    post:
+      summary: First step of an update of the machine - what is installed against the newest release, nothing changes; when the program is outdated the answer holds a plan that is good once for five minutes (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostAdminMachineUpdatePreviewRequest' } } } }
+      responses:
+        '200': { description: 'The versions and, when an update is available, the plan', content: { application/json: { schema: { $ref: '#/components/schemas/MachineUpdatePreview' } } } }
+        '403': { description: 'The machine update is switched off here or on the helper', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'Not a program the helper manages', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: 'Asked again too soon', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: 'The maintenance helper is not installed or not answering', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/admin/machine-update/apply:
+    post:
+      summary: Second step - update the program of a plan, with its name typed again and a recent proof of identity from outside the house; only a signed release is put in place (an administrator; written in the audit trail, the code is not)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostAdminMachineUpdateApplyRequest' } } } }
+      responses:
+        '202': { description: '{ id } - the job runs in the background', content: { application/json: { schema: { $ref: '#/components/schemas/JobStarted' } } } }
+        '403': { description: 'Switched off, or the code or the proof of identity is missing', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'The plan does not exist or was already used', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'Another job is running', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '410': { description: 'The plan expired', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'The name typed again does not match, or a field is not valid', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: 'Another update was applied a moment ago', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: 'The maintenance helper is not installed or not answering', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/admin/machine-update/jobs/{id}:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string } }
+      - { name: since, in: query, required: false, schema: { type: integer, minimum: 0 } }
+    get:
+      summary: The steps, percentage and log of the job an apply started (an administrator)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: 'The job as the maintenance helper reports it', content: { application/json: { schema: { $ref: '#/components/schemas/AgentReply' } } } }
+        '404': { description: 'No such job', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: 'The maintenance helper is not installed or not answering', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/admin/updates:
     get:
       summary: The programs of the machine with the version installed, the newest release on GitHub, a state for each, the operating system and the last operations (an administrator; written in the audit trail)
@@ -5174,6 +5216,10 @@ components:
     PostAdminRemoteWireguardSetupRequest: { type: object, required: [endpoint], properties: { endpoint: { type: string }, port: { type: integer }, lan: { type: string }, subnet: { type: string }, route_lan: { type: string } } }
     PostAdminRemoteWireguardPeersRequest: { type: object, required: [name], properties: { name: { type: string }, full_tunnel: { type: boolean } } }
     PostAdminRemoteDdnsSetupRequest: { type: object, required: [provider], properties: { provider: { type: string, enum: [duckdns, cloudflare, url] }, domain: { type: string }, token: { type: string }, zone: { type: string }, record_name: { type: string }, url: { type: string } } }
+    MachineUpdateState: { type: object, required: [enabled], properties: { enabled: { type: boolean, description: 'On here and on the helper' }, available: { type: boolean }, require_signed: { type: boolean, description: 'Always true: only a signed release is put in place' }, projects: { type: array, items: { type: string } }, reason: { type: string, description: 'Why it is not on: switched_off, not_configured, agent_switched_off, not_answering or refused' } } }
+    PostAdminMachineUpdatePreviewRequest: { type: object, required: [project], properties: { project: { type: string, description: 'The repository name of a program of the machine, for example ARMOR-SERVER' } } }
+    MachineUpdatePreview: { type: object, required: [project, update_available], properties: { project: { type: string }, installed: { type: boolean }, local_version: { type: [string, 'null'] }, github_version: { type: [string, 'null'] }, state: { type: string }, update_available: { type: boolean }, signature_policy: { type: string, enum: [require] }, plan_id: { type: string, description: 'Good once, for expires_in_s seconds; present only when an update is available' }, expires_in_s: { type: integer } } }
+    PostAdminMachineUpdateApplyRequest: { type: object, required: [project, plan_id, confirm], properties: { project: { type: string }, plan_id: { type: string }, confirm: { type: string, description: 'The project name typed again, equal to project' }, totp: { type: string, description: 'The six-digit code of the administrator, passed to the helper and never kept' } } }
     DeleteMediaRequest: { type: object, required: [kind], properties: { kind: { type: string, enum: [snapshot, recording, all] } } }
     PutMediaCameraIdKindFileProtectedRequest: { type: object, required: [protected], properties: { protected: { type: boolean } } }
     PlainText:

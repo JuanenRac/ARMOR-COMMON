@@ -1400,6 +1400,30 @@ export type LineCount = {
   to_right: number;
 };
 
+export type MachineUpdatePreview = {
+  project: string;
+  installed?: boolean;
+  local_version?: string | null;
+  github_version?: string | null;
+  state?: string;
+  update_available: boolean;
+  signature_policy?: "require";
+  /** Good once, for expires_in_s seconds; present only when an update is available */
+  plan_id?: string;
+  expires_in_s?: number;
+};
+
+export type MachineUpdateState = {
+  /** On here and on the helper */
+  enabled: boolean;
+  available?: boolean;
+  /** Always true: only a signed release is put in place */
+  require_signed?: boolean;
+  projects?: string[];
+  /** Why it is not on: switched_off, not_configured, agent_switched_off, not_answering or refused */
+  reason?: string;
+};
+
 export type MaintenanceArmed = {
   armed: boolean;
 };
@@ -1968,6 +1992,20 @@ export type PostAdminInstallationRequest = {
   /** true: answer what the import would do and change nothing */
   dry_run?: boolean;
   parts?: ("cameras" | "site" | "electrical" | "network" | "rules" | "automations" | "devices" | "solar_devices" | "energy_alarms" | "users")[];
+};
+
+export type PostAdminMachineUpdateApplyRequest = {
+  project: string;
+  plan_id: string;
+  /** The project name typed again, equal to project */
+  confirm: string;
+  /** The six-digit code of the administrator, passed to the helper and never kept */
+  totp?: string;
+};
+
+export type PostAdminMachineUpdatePreviewRequest = {
+  /** The repository name of a program of the machine, for example ARMOR-SERVER */
+  project: string;
 };
 
 export type PostAdminMqttAccountsRequest = {
