@@ -22,14 +22,14 @@
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Lenguaje">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
   <img src="https://img.shields.io/badge/Vectors-1387-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Tests-338%20passing-2ea44f.svg" alt="Pruebas">
-  <img src="https://img.shields.io/badge/Version-0.8.1.0-0f6cbd.svg" alt="Versión">
+  <img src="https://img.shields.io/badge/Tests-343%20passing-2ea44f.svg" alt="Pruebas">
+  <img src="https://img.shields.io/badge/Version-0.8.1.1-0f6cbd.svg" alt="Versión">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Madurez">
 </p>
 
 ---
 
-**Comprobación de honestidad - qué funciona hoy:** Los esquemas (telemetría, salud, comando, información del nodo, inversor y batería solares, eléctrico, alarma con su comando y resultado, y red), el validador de Python, los 1387 vectores de conformidad, los tipos generados de TypeScript y Kotlin, el fichero OpenAPI del servidor (214 rutas), la base de firmware compartida por los cinco nodos y el lanzador de proyectos compartido son reales y están probados (338 tests). El fichero de Kotlin está generado pero **todavía no lo consume** ARMOR-ANDROID-CONTROL (que conserva su propia lectura), y el comando `set_thresholds` lleva un único campo `sensitivity` porque los parámetros reales del radar no se definen hasta que exista el firmware.
+**Comprobación de honestidad - qué funciona hoy:** Los esquemas (telemetría, salud, comando, información del nodo, inversor y batería solares, eléctrico, alarma con su comando y resultado, y red), el validador de Python, los 1387 vectores de conformidad, los tipos generados de TypeScript y Kotlin, el fichero OpenAPI del servidor (220 rutas), la base de firmware compartida por los cinco nodos y el lanzador de proyectos compartido son reales y están probados (343 tests). El fichero de Kotlin está generado pero **todavía no lo consume** ARMOR-ANDROID-CONTROL (que conserva su propia lectura), y el comando `set_thresholds` lleva un único campo `sensitivity` porque los parámetros reales del radar no se definen hasta que exista el firmware.
 
 ---
 
@@ -37,12 +37,12 @@
 
 | | |
 |---|---|
-| Versión | `0.8.1.0` |
+| Versión | `0.8.1.1` |
 | Madurez | Establecido |
 | Función | Contratos compartidos, validador y base de firmware de la familia |
 | Tecnología | Python 3.11+, JSON Schema, OpenAPI; base de firmware en C++ (ESP-IDF) |
-| Pruebas | 338 (`python -m unittest discover -s tests`), 1387 vectores de conformidad |
-| Contrato | 38 JSON Schema, 214 rutas HTTP (277 operaciones) |
+| Pruebas | 343 (`python -m unittest discover -s tests`), 1387 vectores de conformidad |
+| Contrato | 38 JSON Schema, 220 rutas HTTP (283 operaciones) |
 | Funciona en | Cualquier ordenador (biblioteca y herramientas); la base de firmware funciona dentro de los cinco nodos |
 | En hardware real | Solo el nodo radar ha ejecutado el firmware compartido en una placa; los otros cuatro no |
 | Licencia | GPL-3.0-or-later |
@@ -58,7 +58,7 @@ Cada línea es una parte de este repositorio y la luz dice hasta dónde llega ho
 | Área | Estado | Qué significa aquí |
 |---|---|---|
 | Software | 🟢 | Los esquemas, el validador de Python, los tipos generados de TypeScript y Kotlin, el archivo OpenAPI del servidor y la base de firmware compartida por los cinco nodos están hechos. |
-| Pruebas | 🟢 | Pasan 338 pruebas y 1387 vectores de conformidad; los analizadores de JSON, Bluetooth e Improv del firmware se prueban además con libFuzzer. |
+| Pruebas | 🟢 | Pasan 343 pruebas y 1387 vectores de conformidad; los analizadores de JSON, Bluetooth e Improv del firmware se prueban además con libFuzzer. |
 | Protocolos y datos | 🟡 | Solo los mensajes del nodo radar se usan a diario con una placa real y el servidor; los de los demás nodos se comprueban contra simulaciones. |
 | Integración | 🟡 | Se comprueba que la base de firmware sea idéntica en cada nodo; los tipos de Kotlin están generados pero la app de Android aún no los usa, porque conserva su propio análisis. |
 | Hardware | 🟠 | Solo el nodo radar ha ejecutado este firmware compartido en una placa; los otros cuatro nodos no. |
@@ -73,7 +73,7 @@ Cada línea es una parte de este repositorio y la luz dice hasta dónde llega ho
 * **Un validador que no puede saltarse una regla:** interpreta el esquema directamente y rechaza un esquema que use una palabra clave que no implementa.
 * **Vectores de conformidad:** 1387 cargas aceptadas y rechazadas que ejecuta cada implementación (Python aquí, TypeScript en ARMOR-SERVER, las comprobaciones de los repositorios de firmware), de modo que una deriva rompe la compilación.
 * **Clientes generados:** los tipos de TypeScript y Kotlin y las constantes de C++ (`generated/armor_contracts.hpp`) salen de los esquemas (`tools/generate_types.py --check` los mantiene al día).
-* **Contrato HTTP:** `openapi/armor-server.yaml` describe cada ruta del servidor (214 rutas, 277 operaciones), su regla de acceso y un esquema con nombre para cada cuerpo de petición, respuesta y error, y un test comprueba que las rutas que registra el servidor son exactamente las que describe (método y ruta).
+* **Contrato HTTP:** `openapi/armor-server.yaml` describe cada ruta del servidor (220 rutas, 283 operaciones), su regla de acceso y un esquema con nombre para cada cuerpo de petición, respuesta y error, y un test comprueba que las rutas que registra el servidor son exactamente las que describe (método y ruta).
 * **Base de firmware:** `firmware_base/` guarda una sola vez cada fichero que comparten los cinco nodos (red, ajustes y usuarios, servidor del panel web y acceso, certificado HTTPS, registro, Bluetooth con emparejamiento por PIN, comprobación de actualizaciones firmadas; relés y Zigbee en los nodos que los tienen); `tools/sync_firmware_base.py` lo escribe en cada nodo y comprueba que ninguna copia se desvíe ([la guía](docs/FIRMWARE_BASE.md), [firmware firmado](docs/SIGNED_FIRMWARE.md)).
 * **Lanzador compartido:** `tools/armor_project_tool.py` da a cada repositorio de la familia el mismo flujo `build`, `build-test` y `run`, y `tools/armor_ci_validate.py` las mismas comprobaciones de CI.
 * **Enlace TLS opcional con el broker en la base compartida de los nodos:** `firmware_base` lleva el interruptor `mqtt.tls` y el texto `mqtt.ca_pem` (un certificado PEM, 2 KB como máximo, validado), la conexión que confía solo en esa autoridad y comprueba el nombre del broker, y las pruebas en ordenador compartidas por los cinco nodos; desactivado por defecto.
@@ -166,7 +166,7 @@ flowchart LR
 
 * **38 JSON Schema** en `src/armor_common/schemas/`: telemetría, salud, orden, información del nodo, salud del nodo, control del nodo (orden y resultado), mantenimiento del nodo, inversor y batería solares (con sus órdenes y resultados), eléctrico (con orden y resultado), alarma (estado, orden, resultado, política y zonas), red (con sus órdenes), eventos de conexión y del sistema, eventos de radar, alerta del servidor, perfil de armado, modos de armado, estado de dispositivo, tokens de diagnóstico y el turno de voz.
 * **1387 vectores de conformidad** en `conformance/` (38 ficheros, uno por mensaje), ejecutados por este repositorio, por ARMOR-SERVER y por las comprobaciones de los repositorios de firmware.
-* **OpenAPI** `openapi/armor-server.yaml`: 214 rutas y 277 operaciones, cada una con su regla de acceso y un esquema con nombre para cada cuerpo, respuesta y error. Una prueba comprueba que las rutas que registra el servidor son exactamente las descritas. El turno de voz viaja como bytes (ver [docs/CONTRACTS.md](docs/CONTRACTS.md)).
+* **OpenAPI** `openapi/armor-server.yaml`: 220 rutas y 283 operaciones, cada una con su regla de acceso y un esquema con nombre para cada cuerpo, respuesta y error. Una prueba comprueba que las rutas que registra el servidor son exactamente las descritas. El turno de voz viaja como bytes (ver [docs/CONTRACTS.md](docs/CONTRACTS.md)).
 
 ### Herramientas de línea de órdenes
 
@@ -207,7 +207,7 @@ El enlace TLS del nodo con el broker es un ajuste del nodo (no de la compilació
 
 ```powershell
 python -m pip install -e .                   # instala la biblioteca
-python -m unittest discover -s tests         # 338 pruebas, 1387 vectores
+python -m unittest discover -s tests         # 343 pruebas, 1387 vectores
 python tools/generate_types.py --check       # los tipos generados están al día
 python tools/generate_rest_types.py --check  # los tipos del contrato HTTP están al día
 python tools/make_conformance.py             # regenera los vectores tras editar la lista de casos (--check: están al día)
@@ -217,7 +217,7 @@ python tools/sync_firmware_base.py check     # el firmware compartido no se ha d
 ## 🧪 Pruebas
 
 ```powershell
-python -m unittest discover -s tests  # 338 pruebas
+python -m unittest discover -s tests  # 343 pruebas
 python -I tools/armor_ci_validate.py
 ```
 
@@ -279,7 +279,7 @@ ARMOR-COMMON/
 ├── host_tests/                    lectores C++ frente al oráculo
 ├── scripts/                       lanzador armor-project
 ├── tools/                         generadores, sincronía y publicación del firmware, lanzador, comprobaciones de CI
-├── tests/                         338 pruebas
+├── tests/                         343 pruebas
 ├── docs/                          contratos, firmware, fuzzing
 ├── images/                        banner, icono y las imágenes del README
 ├── .github/                       flujo de CI, aviso al panel, plantillas de incidencias y pull requests

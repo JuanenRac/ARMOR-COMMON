@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.8.1.1] - The contract describes updating the machine's programs from Studio and the phone: GET /api/v1/admin/machine-update, POST /api/v1/admin/machine-update/preview, POST /api/v1/admin/machine-update/apply and GET... (and 3 more changes)
+
 - **The contract describes updating the machine's programs from Studio and the phone:** `GET /api/v1/admin/machine-update`, `POST /api/v1/admin/machine-update/preview`, `POST /api/v1/admin/machine-update/apply` and `GET /api/v1/admin/machine-update/jobs/{id}` in the HTTP contract, with named request and answer schemas (the state, the preview with its one-use plan, the apply with the project typed again) and the generated types that follow from them.
 - **The crossings of the counting lines in the contract of the server:** `GET /api/v1/vision/counts` (the counts of each counting line of each camera, whole numbers only, behind the same option as the heat map) with its schemas `VisionCounts` and `LineCount`, and the state of the copy of the node traffic now says how many messages were taken and refused and lists its files; the download of a file of that copy is described too.
 - **One file for a page about compatibility:** `registry/compat.json`, written by `tools/make_compat.py` from the registry and the pins of the contracts, lists each consumer with its kind, whether it is a field node, who it feeds and the version of the contracts it was last checked against; a test fails when it is not what those two files give, `tools/contract_pins.py --set` rewrites it with the pins, and it holds no current version (that one is read from `armor.project.json`) so cutting a version never leaves it out of date.
