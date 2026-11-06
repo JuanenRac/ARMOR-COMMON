@@ -133,7 +133,7 @@ def to_js(pattern: str) -> str:
         char = pattern[index]
         if char == "\\":
             nxt = pattern[index + 1]
-            out.append({"S": "[^ \\t\\n\\r\\f\\v]", "d": "[0-9]"}.get(nxt, "\\" + nxt) if not in_class else "\\" + nxt)
+            out.append({"S": "[^ \\t\\n\\r\\f\\x0b]", "d": "[0-9]"}.get(nxt, "\\" + nxt) if not in_class else "\\" + nxt)
             index += 2
             continue
         if in_class:

@@ -7,6 +7,7 @@ The JSON Schemas in `src/armor_common/schemas/` are the single source of truth f
 | `generated/armor-contracts.ts`, `generated/ArmorContracts.kt` | `tools/generate_types.py` | the types of every message |
 | `generated/armor_wire.hpp` | `tools/generate_wire.py` | C++: a struct, `validate_<schema>`, `parse_<schema>` and `write_<schema>` for each schema, and `validate_message(name, value)` / `rewrite_message(name, value, out)` by name |
 | `generated/armor-parsers.ts` | `tools/generate_parsers.py` | TypeScript: `parseMessage(name, value)` (typed or a `ContractError` with the path) and `checkMessage` |
+| `generated/ArmorParsers.kt` | `tools/generate_kotlin_parsers.py` | Kotlin over `org.json`: `checkMessage(name, value)`, `read<Message>(JSONObject)` into the data class and `parse<Message>(JSONObject)` (null when not valid) |
 
 `armor_wire.hpp` needs only `json.hpp` of the shared firmware. The schema is a table that a few lines of C++ interpret (type, enum, const, limits, lengths in code points, required members, unknown members, a map of one kind of value); the patterns are compiled by `tools/wire_regex.py` into a small automaton over code points, which runs without recursion and with one flag per state. A pattern outside the supported subset stops the generator, so a constraint is never ignored without notice.
 

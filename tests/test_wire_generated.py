@@ -70,11 +70,28 @@ class GeneratedFilesAreCurrentTests(unittest.TestCase):
     def test_the_typescript_parsers_are_what_the_schemas_produce(self):
         self.assertEqual(generate_parsers.OUT.read_text(encoding="utf-8"), generate_parsers.render(), "run python tools/generate_parsers.py")
 
+    def test_the_kotlin_parsers_are_what_the_schemas_produce(self):
+        import generate_kotlin_parsers
+        self.assertEqual(generate_kotlin_parsers.OUT.read_text(encoding="utf-8"), generate_kotlin_parsers.render(), "run python tools/generate_kotlin_parsers.py")
+
+    def test_every_schema_has_a_reader_in_each_language(self):
+        import generate_types
+        kotlin = (ROOT / "generated" / "ArmorParsers.kt").read_text(encoding="utf-8")
+        typescript = (ROOT / "generated" / "armor-parsers.ts").read_text(encoding="utf-8")
+        cpp = (ROOT / "generated" / "armor_wire.hpp").read_text(encoding="utf-8")
+        for path in (ROOT / "src" / "armor_common" / "schemas").glob("*.schema.json"):
+            key = path.name[: -len(".schema.json")]
+            self.assertIn(f'"{key}" to JSONObject(', kotlin, key)
+            self.assertIn(f'"{key}": ', typescript, key)
+            self.assertIn(f"inline bool validate_{key}(", cpp, key)
+        for _key, (name, _declared) in generate_types.discover().items():
+            self.assertIn(f"fun parse{name}(", kotlin, name)
+
     def test_the_cases_are_what_the_generator_writes(self):
         self.assertEqual(make_wire_cases.OUT.read_bytes().decode("utf-8"), make_wire_cases.render(), "run python tools/make_wire_cases.py")
 
     def test_the_generated_files_are_never_written_by_hand(self):
-        for path in (ROOT / "generated" / "armor_wire.hpp", ROOT / "generated" / "armor-parsers.ts"):
+        for path in (ROOT / "generated" / "armor_wire.hpp", ROOT / "generated" / "armor-parsers.ts", ROOT / "generated" / "ArmorParsers.kt"):
             self.assertIn("Do not edit", path.read_text(encoding="utf-8").splitlines()[0] + path.read_text(encoding="utf-8").splitlines()[1])
 
 
