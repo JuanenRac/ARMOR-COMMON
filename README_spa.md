@@ -29,7 +29,7 @@
 
 ---
 
-**Comprobación de honestidad - qué funciona hoy:** Los esquemas (telemetría, salud, comando, información del nodo, inversor y batería solares, eléctrico, alarma con su comando y resultado, y red), el validador de Python, los 1387 vectores de conformidad, los tipos generados de TypeScript y Kotlin, el fichero OpenAPI del servidor (220 rutas), la base de firmware compartida por los cinco nodos y el lanzador de proyectos compartido son reales y están probados (343 tests). El fichero de Kotlin está generado pero **todavía no lo consume** ARMOR-ANDROID-CONTROL (que conserva su propia lectura), y el comando `set_thresholds` lleva un único campo `sensitivity` porque los parámetros reales del radar no se definen hasta que exista el firmware.
+**Comprobación de honestidad - qué funciona hoy:** Los esquemas (telemetría, salud, comando, información del nodo, inversor y batería solares, eléctrico, alarma con su comando y resultado, y red), el validador de Python, los 1387 vectores de conformidad, los tipos generados de TypeScript y Kotlin, el fichero OpenAPI del servidor (223 rutas), la base de firmware compartida por los cinco nodos y el lanzador de proyectos compartido son reales y están probados (343 tests). El fichero de Kotlin está generado pero **todavía no lo consume** ARMOR-ANDROID-CONTROL (que conserva su propia lectura), y el comando `set_thresholds` lleva un único campo `sensitivity` porque los parámetros reales del radar no se definen hasta que exista el firmware.
 
 ---
 
@@ -42,7 +42,7 @@
 | Función | Contratos compartidos, validador y base de firmware de la familia |
 | Tecnología | Python 3.11+, JSON Schema, OpenAPI; base de firmware en C++ (ESP-IDF) |
 | Pruebas | 343 (`python -m unittest discover -s tests`), 1387 vectores de conformidad |
-| Contrato | 38 JSON Schema, 220 rutas HTTP (283 operaciones) |
+| Contrato | 38 JSON Schema, 223 rutas HTTP (287 operaciones) |
 | Funciona en | Cualquier ordenador (biblioteca y herramientas); la base de firmware funciona dentro de los cinco nodos |
 | En hardware real | Solo el nodo radar ha ejecutado el firmware compartido en una placa; los otros cuatro no |
 | Licencia | GPL-3.0-or-later |
@@ -73,7 +73,7 @@ Cada línea es una parte de este repositorio y la luz dice hasta dónde llega ho
 * **Un validador que no puede saltarse una regla:** interpreta el esquema directamente y rechaza un esquema que use una palabra clave que no implementa.
 * **Vectores de conformidad:** 1387 cargas aceptadas y rechazadas que ejecuta cada implementación (Python aquí, TypeScript en ARMOR-SERVER, las comprobaciones de los repositorios de firmware), de modo que una deriva rompe la compilación.
 * **Clientes generados:** los tipos de TypeScript y Kotlin y las constantes de C++ (`generated/armor_contracts.hpp`) salen de los esquemas (`tools/generate_types.py --check` los mantiene al día).
-* **Contrato HTTP:** `openapi/armor-server.yaml` describe cada ruta del servidor (220 rutas, 283 operaciones), su regla de acceso y un esquema con nombre para cada cuerpo de petición, respuesta y error, y un test comprueba que las rutas que registra el servidor son exactamente las que describe (método y ruta).
+* **Contrato HTTP:** `openapi/armor-server.yaml` describe cada ruta del servidor (223 rutas, 287 operaciones), su regla de acceso y un esquema con nombre para cada cuerpo de petición, respuesta y error, y un test comprueba que las rutas que registra el servidor son exactamente las que describe (método y ruta).
 * **Base de firmware:** `firmware_base/` guarda una sola vez cada fichero que comparten los cinco nodos (red, ajustes y usuarios, servidor del panel web y acceso, certificado HTTPS, registro, Bluetooth con emparejamiento por PIN, comprobación de actualizaciones firmadas; relés y Zigbee en los nodos que los tienen); `tools/sync_firmware_base.py` lo escribe en cada nodo y comprueba que ninguna copia se desvíe ([la guía](docs/FIRMWARE_BASE.md), [firmware firmado](docs/SIGNED_FIRMWARE.md)).
 * **Lanzador compartido:** `tools/armor_project_tool.py` da a cada repositorio de la familia el mismo flujo `build`, `build-test` y `run`, y `tools/armor_ci_validate.py` las mismas comprobaciones de CI.
 * **Enlace TLS opcional con el broker en la base compartida de los nodos:** `firmware_base` lleva el interruptor `mqtt.tls` y el texto `mqtt.ca_pem` (un certificado PEM, 2 KB como máximo, validado), la conexión que confía solo en esa autoridad y comprueba el nombre del broker, y las pruebas en ordenador compartidas por los cinco nodos; desactivado por defecto.
@@ -166,7 +166,7 @@ flowchart LR
 
 * **38 JSON Schema** en `src/armor_common/schemas/`: telemetría, salud, orden, información del nodo, salud del nodo, control del nodo (orden y resultado), mantenimiento del nodo, inversor y batería solares (con sus órdenes y resultados), eléctrico (con orden y resultado), alarma (estado, orden, resultado, política y zonas), red (con sus órdenes), eventos de conexión y del sistema, eventos de radar, alerta del servidor, perfil de armado, modos de armado, estado de dispositivo, tokens de diagnóstico y el turno de voz.
 * **1387 vectores de conformidad** en `conformance/` (38 ficheros, uno por mensaje), ejecutados por este repositorio, por ARMOR-SERVER y por las comprobaciones de los repositorios de firmware.
-* **OpenAPI** `openapi/armor-server.yaml`: 220 rutas y 283 operaciones, cada una con su regla de acceso y un esquema con nombre para cada cuerpo, respuesta y error. Una prueba comprueba que las rutas que registra el servidor son exactamente las descritas. El turno de voz viaja como bytes (ver [docs/CONTRACTS.md](docs/CONTRACTS.md)).
+* **OpenAPI** `openapi/armor-server.yaml`: 223 rutas y 287 operaciones, cada una con su regla de acceso y un esquema con nombre para cada cuerpo, respuesta y error. Una prueba comprueba que las rutas que registra el servidor son exactamente las descritas. El turno de voz viaja como bytes (ver [docs/CONTRACTS.md](docs/CONTRACTS.md)).
 
 ### Herramientas de línea de órdenes
 
