@@ -64,6 +64,25 @@ export type AdminFiles = {
   }[];
 };
 
+export type AdminFirewall = {
+  /** The setting admin.field_http; when it is off nothing else is given */
+  enabled: boolean;
+  /** Whether the rules of the host firewall were loaded on this machine */
+  installed?: boolean;
+  /** Whether the field network may also reach the server's port over HTTP */
+  field_http?: boolean;
+  /** totp when the authenticator is set up on the machine (needed to change the switch) */
+  approval?: "totp" | "not_enrolled";
+};
+
+export type AdminFirewallChanged = {
+  ok: boolean;
+  state: "on" | "off";
+  installed?: boolean;
+  field_http?: boolean;
+  approval?: "totp" | "not_enrolled";
+};
+
 export type AdminRelayChanged = {
   ok: boolean;
   relay: "battery-write" | "alarm-state-relay";
@@ -1428,6 +1447,18 @@ export type MaintenanceArmed = {
   armed: boolean;
 };
 
+export type MaintenanceStaging = {
+  enabled: boolean;
+  /** studio when an administrator chose it here, env when the setting file of the agent decides */
+  source: "studio" | "env";
+  /** How long the new server may take to answer before it is given up on */
+  wait_s: number;
+};
+
+export type MaintenanceStagingChange = {
+  enabled: boolean;
+};
+
 export type MediaDigest = {
   sha256: string;
 };
@@ -1967,6 +1998,14 @@ export type PostAdminConsoleRunRequest = {
 
 export type PostAdminConsoleUnlockRequest = {
   password: string;
+};
+
+export type PostAdminFirewallFieldHttpRequest = {
+  state: "on" | "off";
+  /** Must be true */
+  confirm: boolean;
+  /** The word field-http typed again */
+  confirm_text: string;
 };
 
 export type PostAdminFirmwareJobsRequest = {
@@ -2514,6 +2553,8 @@ export type SecuritySettings = {
   "voice.panic_cooldown_s"?: number;
   /** Studio may ask the admin agent to open or close the two switches of the broker rules that no install turns on (off - the routes answer 403 - each change also needs two confirmations and the one-time code of the authenticator) */
   "admin.acl_relays"?: boolean;
+  /** Studio may ask the admin agent to let the field network also reach the server's port over HTTP (off - the routes answer 403 - each change also needs a confirmation and the one-time code of the authenticator) */
+  "admin.field_http"?: boolean;
   "panel.live_events"?: boolean;
   "client.device_lock"?: "user" | "sensitive" | "always";
   "client.trusted_devices"?: boolean;

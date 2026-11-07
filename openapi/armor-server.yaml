@@ -1352,6 +1352,37 @@ paths:
         '403': { description: 'The setting admin.acl_relays is off (acl_relays_disabled), the agent has no authenticator set up (totp_not_enrolled), or it wants the one-time code (totp_required) or the code is not good (totp_invalid)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '404': { description: Not one of the two switches, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '422': { description: 'A confirmation is missing or does not match (confirmation_required, confirmation_mismatch), or the state or the node is not valid', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/admin/firewall:
+    get:
+      summary: The firewall switch that Studio may ask for - whether the field network may also reach the server's port over HTTP; only while the setting admin.field_http is on (an administrator)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: '{ enabled } when the setting is off, else { enabled, installed, field_http, approval }', content: { application/json: { schema: { $ref: '#/components/schemas/AdminFirewall' } } } }
+  /api/v1/admin/firewall/field-http:
+    post:
+      summary: Let the field network reach the server's port over HTTP, or stop it, with a confirmation and the one-time code of the authenticator in X-Armor-Maint-Totp, which the admin agent checks; off until the setting admin.field_http is on (an administrator)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostAdminFirewallFieldHttpRequest' } } } }
+      responses:
+        '200': { description: '{ ok, state } and the state of the switch', content: { application/json: { schema: { $ref: '#/components/schemas/AdminFirewallChanged' } } } }
+        '403': { description: 'The setting admin.field_http is off (field_http_disabled), the agent has no authenticator set up (totp_not_enrolled), or it wants the one-time code (totp_required) or the code is not good (totp_invalid)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: The rules of the firewall were never loaded on this machine (firewall_not_loaded), content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'A confirmation is missing or does not match (confirmation_required, confirmation_mismatch) or the state is not valid', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/admin/maintenance/staging:
+    get:
+      summary: Whether a new server is tried on the side (on a free port of the loopback, with an empty data folder and no broker) before it replaces the running one - off by default (an administrator)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: The state, content: { application/json: { schema: { $ref: '#/components/schemas/MaintenanceStaging' } } } }
+        '503': { description: The maintenance helper is not installed or not answering, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+    put:
+      summary: Turn the trial of a new server before the switch on or off (an administrator; written in the audit trail)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/MaintenanceStagingChange' } } } }
+      responses:
+        '200': { description: The state after the change, content: { application/json: { schema: { $ref: '#/components/schemas/MaintenanceStaging' } } } }
+        '422': { description: A value that is not a boolean or a key that does not exist, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: The maintenance helper is not installed or not answering, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/admin/nodes/provision:
     post:
       summary: Adopt a field node in one step - make (or renew) its broker account and write the broker and that account into the node's own panel with the login given, which is used once and never kept (an administrator)
@@ -2883,6 +2914,7 @@ components:
         voice.panic_phrase: { type: boolean, default: false }
         voice.panic_cooldown_s: { type: integer, minimum: 10, maximum: 3600, default: 60 }
         admin.acl_relays: { type: boolean, default: false, description: Studio may ask the admin agent to open or close the two switches of the broker rules that no install turns on (off - the routes answer 403 - each change also needs two confirmations and the one-time code of the authenticator) }
+        admin.field_http: { type: boolean, default: false, description: Studio may ask the admin agent to let the field network also reach the server's port over HTTP (off - the routes answer 403 - each change also needs a confirmation and the one-time code of the authenticator) }
         panel.live_events: { type: boolean, default: true }
         client.device_lock: { type: string, enum: [user, sensitive, always], default: user }
         client.trusted_devices: { type: boolean, default: false }
@@ -4492,6 +4524,30 @@ components:
         battery_write: { type: array, items: { type: string } }
         alarm_state_relay: { type: boolean }
         approval: { type: string, enum: [totp, not_enrolled] }
+    AdminFirewall:
+      type: object
+      required: [enabled]
+      properties:
+        enabled: { type: boolean, description: The setting admin.field_http; when it is off nothing else is given }
+        installed: { type: boolean, description: Whether the rules of the host firewall were loaded on this machine }
+        field_http: { type: boolean, description: Whether the field network may also reach the server's port over HTTP }
+        approval: { type: string, enum: [totp, not_enrolled], description: totp when the authenticator is set up on the machine (needed to change the switch) }
+    AdminFirewallChanged:
+      type: object
+      required: [ok, state]
+      properties:
+        ok: { type: boolean }
+        state: { type: string, enum: ['on', 'off'] }
+        installed: { type: boolean }
+        field_http: { type: boolean }
+        approval: { type: string, enum: [totp, not_enrolled] }
+    MaintenanceStaging:
+      type: object
+      required: [enabled, source, wait_s]
+      properties:
+        enabled: { type: boolean }
+        source: { type: string, enum: [studio, env], description: 'studio when an administrator chose it here, env when the setting file of the agent decides' }
+        wait_s: { type: integer, description: How long the new server may take to answer before it is given up on }
     AdminFileSaved:
       type: object
       required: [ok, restarted]
@@ -5178,6 +5234,8 @@ components:
     PutSystemConnectionRequest: { type: object, properties: { host: { type: string }, port: { type: integer, minimum: 1, maximum: 65535 }, studio_port: { type: integer, minimum: 1, maximum: 65535 } } }
     PutAdminFilesIdRequest: { type: object, required: [content], properties: { content: { type: string }, restart: { type: boolean }, expect_mtime: { type: number } } }
     PostAdminMqttRelaysKindRequest: { type: object, required: [state, confirm, confirm_text], properties: { node: { type: string, description: The solar node (battery-write only) }, state: { type: string, enum: ['on', 'off'] }, confirm: { type: boolean, description: 'Must be true: the first confirmation' }, confirm_text: { type: string, description: 'The second confirmation: the node id for battery-write, alarm-state-relay for the other, typed again' } } }
+    PostAdminFirewallFieldHttpRequest: { type: object, required: [state, confirm, confirm_text], properties: { state: { type: string, enum: ['on', 'off'] }, confirm: { type: boolean, description: Must be true }, confirm_text: { type: string, description: 'The word field-http typed again' } } }
+    MaintenanceStagingChange: { type: object, required: [enabled], additionalProperties: false, properties: { enabled: { type: boolean } } }
     PostAdminMqttAccountsRequest: { type: object, required: [role, name], properties: { role: { type: string, enum: [node, solar-node, electrical-node, network-node, consumer, device, bridge] }, name: { type: string } } }
     PostAdminNodesProvisionRequest: { type: object, required: [node_id, address, broker_host], properties: { node_id: { type: string }, address: { type: string }, panel_user: { type: string }, panel_password: { type: string }, broker_host: { type: string }, broker_port: { type: integer } } }
     PostAdminNodesSettingsRequest: { type: object, required: [node_id, address, panel_user, panel_password], properties: { node_id: { type: string }, address: { type: string }, panel_user: { type: string }, panel_password: { type: string }, login_limit_per_minute: { type: integer, minimum: 0, maximum: 120, description: 'Wrong passwords per minute the node lets through before it locks sign-in (0 for no limit); left out, the node is only read' } } }
