@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The shared CI workflow checks a coverage floor where a repository keeps one:** a Node repository with `docs/coverage_threshold.json` (a number per measure) and a package script `coverage` runs it after the build and tests, and a repository without the file runs nothing more. The numbers live in that file, not in the workflow.
+
 ## [0.8.1.1] - The contract describes updating the machine's programs from Studio and the phone: GET /api/v1/admin/machine-update, POST /api/v1/admin/machine-update/preview, POST /api/v1/admin/machine-update/apply and GET... (and 3 more changes)
 
 - **The contract describes updating the machine's programs from Studio and the phone:** `GET /api/v1/admin/machine-update`, `POST /api/v1/admin/machine-update/preview`, `POST /api/v1/admin/machine-update/apply` and `GET /api/v1/admin/machine-update/jobs/{id}` in the HTTP contract, with named request and answer schemas (the state, the preview with its one-use plan, the apply with the project typed again) and the generated types that follow from them.
