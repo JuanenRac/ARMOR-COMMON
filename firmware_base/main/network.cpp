@@ -20,13 +20,18 @@ extern "C" {
 #include "esp_timer.h"
 #include "esp_wifi.h"
 #include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
 #include "freertos/task.h"
 #include "sdkconfig.h"
+#if defined(CONFIG_ARMOR_NET_LINK_WATCH) && CONFIG_ARMOR_NET_LINK_WATCH
+#include "ping/ping_sock.h"
+#endif
 }
 #if defined(ARMOR_BOARD_S3_ETH)
 #include "board_ethernet.hpp"
 #endif
 #include "core/backoff.hpp"
+#include "core/link_watch.hpp"
 #include "core/net_text.hpp"
 
 namespace armor::network {
@@ -180,6 +185,60 @@ void reconnect_station(void*) {
   if (station_should_wait()) { esp_timer_start_once(g_reconnect_timer, kStationPauseUs); return; }
   esp_wifi_connect();
 }
+
+#if defined(CONFIG_ARMOR_NET_LINK_WATCH) && CONFIG_ARMOR_NET_LINK_WATCH
+// The station's own link (off unless the build asks for it, ARMOR_NET_LINK_WATCH): the radio can stay "connected" (no WIFI_EVENT_STA_DISCONNECTED, a good signal) while the gateway no
+// longer answers the node, until it is reset by hand. This task pings the gateway and, after several rounds in a row without a single reply, forces a fresh association. The rule
+// itself (one reply in a round is enough; a lost packet is not an outage) is core/link_watch.hpp, tested on a computer.
+struct PingRound { SemaphoreHandle_t done; uint32_t replies; };
+
+void on_link_ping_end(esp_ping_handle_t hdl, void* args) {
+  auto* round = static_cast<PingRound*>(args);
+  esp_ping_get_profile(hdl, ESP_PING_PROF_REPLY, &round->replies, sizeof(round->replies));
+  xSemaphoreGive(round->done);
+}
+
+// True when at least one of a few pings to the gateway got an answer.
+bool gateway_answers(const esp_ip4_addr_t& gateway) {
+  PingRound round{xSemaphoreCreateBinary(), 0};
+  if (round.done == nullptr) return linkwatch::round_answered(0, 0);   // could not even try: do not act on a guess
+  esp_ping_config_t config = ESP_PING_DEFAULT_CONFIG();
+  config.target_addr.type = IPADDR_TYPE_V4;
+  config.target_addr.u_addr.ip4.addr = gateway.addr;   // esp_ip4_addr_t and lwIP's own ip4_addr_t are not the same type, only the same layout
+  config.count = 3;
+  config.interval_ms = 400;
+  config.timeout_ms = 1200;
+  const esp_ping_callbacks_t callbacks = {.cb_args = &round, .on_ping_success = nullptr, .on_ping_timeout = nullptr, .on_ping_end = &on_link_ping_end};
+  esp_ping_handle_t session = nullptr;
+  bool answered = true;
+  if (esp_ping_new_session(&config, &callbacks, &session) == ESP_OK) {
+    esp_ping_start(session);
+    if (xSemaphoreTake(round.done, pdMS_TO_TICKS(8000)) == pdTRUE) answered = linkwatch::round_answered(round.replies, config.count);
+    esp_ping_delete_session(session);
+  }
+  vSemaphoreDelete(round.done);
+  return answered;
+}
+
+void link_watchdog_task(void*) {
+  linkwatch::Watch watch;
+  for (;;) {
+    vTaskDelay(pdMS_TO_TICKS(linkwatch::kDefaultCheckEverySeconds * 1000));
+    bool has_ip;
+    { std::lock_guard<std::mutex> guard(g_lock); has_ip = g_status.has_ip; }
+    esp_netif_ip_info_t info{};
+    if (!has_ip || g_ip_netif == nullptr || esp_netif_get_ip_info(g_ip_netif, &info) != ESP_OK || info.gw.addr == 0) { watch.idle(); continue; }
+    switch (watch.round(gateway_answers(info.gw))) {
+      case linkwatch::Verdict::kHealthy: break;
+      case linkwatch::Verdict::kSuspect: ESP_LOGW(kTag, "the gateway has not answered a single ping in %d round(s) of %d s", watch.bad_rounds(), linkwatch::kDefaultCheckEverySeconds); break;
+      case linkwatch::Verdict::kReconnect:
+        ESP_LOGW(kTag, "the station looks connected but the gateway never answers: forcing a fresh association");
+        esp_wifi_disconnect();   // the disconnect handler already schedules a reconnect a few seconds later
+        break;
+    }
+  }
+}
+#endif
 
 void on_wifi_event(void*, esp_event_base_t, int32_t event_id, void* data) {
   switch (event_id) {
@@ -451,6 +510,9 @@ bool start(const config::Settings& s, const netplan::Plan& plan) {
     wifi_tune(plan);
     g_wifi_running = true;
   }
+#if defined(CONFIG_ARMOR_NET_LINK_WATCH) && CONFIG_ARMOR_NET_LINK_WATCH
+  if (plan.station) xTaskCreate(link_watchdog_task, "net-link-wd", 4096, nullptr, 2, nullptr);
+#endif
   return true;
 }
 

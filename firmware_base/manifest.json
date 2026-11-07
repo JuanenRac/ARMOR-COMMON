@@ -840,6 +840,24 @@
         "ARMOR-NODE-HMI": "tests/test_wire.cpp",
         "ARMOR-NODE-ALARM": "tests/test_wire.cpp"
       }
+    },
+    "core/link_watch.hpp": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "core/link_watch.hpp",
+        "ARMOR-NODE-ELECTRICAL": "core/link_watch.hpp",
+        "ARMOR-NODE-HMI": "core/link_watch.hpp",
+        "ARMOR-NODE-ALARM": "core/link_watch.hpp",
+        "ARMOR-NODE-RADAR": "main/core/link_watch.hpp"
+      }
+    },
+    "tests/test_link_watch.cpp": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "tests/test_link_watch.cpp",
+        "ARMOR-NODE-ELECTRICAL": "tests/test_link_watch.cpp",
+        "ARMOR-NODE-HMI": "tests/test_link_watch.cpp",
+        "ARMOR-NODE-ALARM": "tests/test_link_watch.cpp",
+        "ARMOR-NODE-RADAR": "tests/test_link_watch.cpp"
+      }
     }
   }
 }

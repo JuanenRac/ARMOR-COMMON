@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The shared firmware can watch the Wi-Fi link by ping (off by default):** `firmware_base/core/link_watch.hpp` holds the rule (a round of pings to the gateway counts as answered with one reply; three silent rounds in a row force a fresh association), `main/network.cpp` runs it when the build option `ARMOR_NET_LINK_WATCH` is on, and the new `tests/test_link_watch.cpp` covers it on a computer (lost packets, the limit, the count cleared by an answer, a seeded long run). The radar node, which already had the watch of its own, now uses the same rule.
+
 - **The shared CI workflow checks a coverage floor where a repository keeps one:** a Node repository with `docs/coverage_threshold.json` (a number per measure) and a package script `coverage` runs it after the build and tests, and a repository without the file runs nothing more. The numbers live in that file, not in the workflow.
 
 ## [0.8.1.1] - The contract describes updating the machine's programs from Studio and the phone: GET /api/v1/admin/machine-update, POST /api/v1/admin/machine-update/preview, POST /api/v1/admin/machine-update/apply and GET... (and 3 more changes)

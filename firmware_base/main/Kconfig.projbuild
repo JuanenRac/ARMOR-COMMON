@@ -41,6 +41,13 @@ config ARMOR_FLEET_SECRET
         An image built with a secret (or with a set-up code above) is for the boards of its owner only: whoever downloads it can read the secret out of it and work out the code of
         every board of the fleet from its MAC address. Never publish such an image: the build script names it *-local, and the release tool refuses it.
 
+config ARMOR_NET_LINK_WATCH
+    bool "Watch the gateway by ping and reconnect a Wi-Fi link that looks up but is dead"
+    default n
+    help
+        Off by default. On: every 20 seconds the station pings its gateway; after three rounds in a row without a single reply (a lost packet is not an outage: one reply in a
+        round is enough) it forces a fresh association with the access point. Meant for routers that leave the node "connected" but unreachable until it is reset by hand.
+
 config ARMOR_BLE_SETUP_MINUTES
     int "Minutes Bluetooth set-up stays open with nobody connected (mode setup)"
     range 1 120
