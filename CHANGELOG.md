@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The wake word in the shared contract:** `POST /api/v1/voice/wake` (audio up to two seconds, answer `VoiceWake`) and the security option `voice.wake_word` (off by default), with the REST types regenerated.
+
 - **An administrator allows who may have a silent panic phrase:** `PublicUser.panicPhraseAllowed` and `UserChange.panicPhraseAllowed` in the HTTP contract, and the code `panic_not_allowed` (403) of the account's panic phrase route. The user still sets the phrase and the administrator never sees it.
 
 - **The name and the addresses of `network_public.dns` may not be empty strings:** `minLength: 1` on `name` and on the items of `addresses` (the server's reader already refused them by hand; the contract now says so, and every generated reader and writer, the Kotlin parsers, the firmware header and the seeded cases follow).

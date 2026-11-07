@@ -2549,6 +2549,8 @@ export type SecuritySettings = {
   /** A channel of an electrical node whose own reading is old is left out of the grid figure and the graphs and marked as having no data */
   "electrical.set_aside_old_readings"?: boolean;
   "voice.multipart_turn"?: boolean;
+  /** The wall panel may send short chunks of audio to the voice gateway to hear its wake word (on this machine; off - the route answers 403 and nothing is passed on) */
+  "voice.wake_word"?: boolean;
   "voice.panic_phrase"?: boolean;
   "voice.panic_cooldown_s"?: number;
   /** Studio may ask the admin agent to open or close the two switches of the broker rules that no install turns on (off - the routes answer 403 - each change also needs two confirmations and the one-time code of the authenticator) */
@@ -3090,6 +3092,17 @@ export type VoiceTurnMeta = {
   channels: 1;
   /** How the spoken answer comes back; base64 when absent */
   reply_audio?: "base64" | "binary" | "none";
+};
+
+export type VoiceWake = {
+  /** True when the word ended in this chunk (two frames of 80 ms in a row over the threshold of its language) */
+  wake: boolean;
+  /** The phrase that was heard, or null */
+  word: string | null;
+  /** The best score of the frames of this chunk, 0 to 1 */
+  score: number;
+  /** The frames of 80 ms that were looked at */
+  frames: number;
 };
 
 export type WireguardPeer = {

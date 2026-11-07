@@ -1853,6 +1853,26 @@ paths:
         '422': { description: 'A part that is not meta or audio (unknown_part), a part twice (duplicate_part), no audio (missing_audio) or a meta that is not VoiceTurnMeta (bad_meta)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '502': { description: 'The voice gateway answered something that is not a voice reply', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '503': { description: 'No voice gateway is set up, or it does not answer', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/voice/wake:
+    post:
+      summary: Did the wake word end in this chunk of audio - up to two seconds from the wall panel, passed on to the voice gateway on this machine (openWakeWord, no cloud) and dropped; authenticated with the voice token; off until the security option voice.wake_word is on
+      security: []
+      parameters:
+        - { name: X-Armor-Voice-Token, in: header, required: true, schema: { type: string } }
+        - { name: X-Armor-Language, in: header, required: false, schema: { type: string, enum: [en, es, de, fr, it, ja, zh, pt] } }
+        - { name: X-Armor-Panel, in: header, required: false, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          'audio/L16;rate=16000': { schema: { type: string, format: binary, maxLength: 64000 } }
+      responses:
+        '200': { description: 'Whether the word was said', content: { application/json: { schema: { $ref: '#/components/schemas/VoiceWake' } } } }
+        '401': { description: The voice token is wrong, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'The security option voice.wake_word is off (wake_word_disabled) or the gateway was not started with the wake word on (wake_disabled)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '411': { description: No audio, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '413': { description: More than two seconds of audio, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'The language has no wake word configured (no_wake_word_for_language) or the chunk is not 16-bit samples', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: No voice gateway is set up or it does not answer, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/voice/v1/turn:
     post:
       summary: The same as /api/v1/voice/turn, at the path a panel builds when its voice address is this server plus /api/v1/voice
@@ -2911,6 +2931,7 @@ components:
         login.country_alert: { type: boolean, default: true }
         electrical.set_aside_old_readings: { type: boolean, default: true, description: 'A channel of an electrical node whose own reading is old is left out of the grid figure and the graphs and marked as having no data' }
         voice.multipart_turn: { type: boolean, default: true }
+        voice.wake_word: { type: boolean, default: false, description: The wall panel may send short chunks of audio to the voice gateway to hear its wake word (on this machine; off - the route answers 403 and nothing is passed on) }
         voice.panic_phrase: { type: boolean, default: false }
         voice.panic_cooldown_s: { type: integer, minimum: 10, maximum: 3600, default: 60 }
         admin.acl_relays: { type: boolean, default: false, description: Studio may ask the admin agent to open or close the two switches of the broker rules that no install turns on (off - the routes answer 403 - each change also needs two confirmations and the one-time code of the authenticator) }
@@ -4834,6 +4855,14 @@ components:
         reply: { type: string }
         audio: { type: string, contentEncoding: base64, description: 16 kHz 16-bit mono PCM }
         audio_omitted: { type: string, enum: [too_large], description: 'Set by the server, to a request in the binary form, when the spoken answer was above its limit and was left out' }
+    VoiceWake:
+      type: object
+      required: [wake, word, score, frames]
+      properties:
+        wake: { type: boolean, description: 'True when the word ended in this chunk (two frames of 80 ms in a row over the threshold of its language)' }
+        word: { type: [string, 'null'], description: 'The phrase that was heard, or null' }
+        score: { type: number, description: 'The best score of the frames of this chunk, 0 to 1' }
+        frames: { type: integer, description: The frames of 80 ms that were looked at }
     VoiceTurnForm:
       type: object
       required: [audio]
