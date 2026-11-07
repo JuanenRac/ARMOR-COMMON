@@ -457,6 +457,7 @@
           "properties": {
             "name": {
               "type": "string",
+              "minLength": 1,
               "maxLength": 253
             },
             "addresses": {
@@ -464,6 +465,7 @@
               "maxItems": 8,
               "items": {
                 "type": "string",
+                "minLength": 1,
                 "maxLength": 45
               },
               "description": "The addresses the name resolved to (empty when it did not resolve)."

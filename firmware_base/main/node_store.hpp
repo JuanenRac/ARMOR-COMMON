@@ -4,6 +4,7 @@
 // Both are one JSON document each in the NVS partition, written only after they were checked. A build's Kconfig values are the FIRST
 // settings (used while the flash holds none); after that the flash is the truth and the panel is how it changes.
 #pragma once
+#include <functional>
 #include <string>
 #include <string_view>
 
@@ -20,7 +21,9 @@ void init();
 std::string mac_tail();
 unsigned mac_sum();
 
-config::Settings settings();                     // a copy
+config::Settings settings();                     // a copy of everything (about forty texts, some of them kilobytes long): not for a task that asks every second
+// Calls `read` with the stored settings, under the lock of the store, without copying them. `read` must be short and must not call the store.
+void with_settings(const std::function<void(const config::Settings&)>& read);
 std::string settings_json_full();                // the settings as they are kept in flash, secrets included, without copying them (for the diagnostic package, which washes them: core/diag_package.hpp)
 bool settings_are_stored();                      // false until the panel (or a build) has saved them once
 bool save_settings(const config::Settings& s);   // false when flash writing failed

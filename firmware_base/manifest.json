@@ -814,13 +814,17 @@
     "core/image_board.hpp": {
       "targets": {
         "ARMOR-NODE-ALARM": "core/image_board.hpp",
-        "ARMOR-NODE-ELECTRICAL": "core/image_board.hpp"
+        "ARMOR-NODE-ELECTRICAL": "core/image_board.hpp",
+        "ARMOR-NODE-SOLAR": "core/image_board.hpp",
+        "ARMOR-NODE-RADAR": "main/core/image_board.hpp"
       }
     },
     "tests/test_image_board.cpp": {
       "targets": {
         "ARMOR-NODE-ALARM": "tests/test_image_board.cpp",
-        "ARMOR-NODE-ELECTRICAL": "tests/test_image_board.cpp"
+        "ARMOR-NODE-ELECTRICAL": "tests/test_image_board.cpp",
+        "ARMOR-NODE-SOLAR": "tests/test_image_board.cpp",
+        "ARMOR-NODE-RADAR": "tests/test_image_board.cpp"
       }
     },
     "core/armor_wire.hpp": {
@@ -857,6 +861,24 @@
         "ARMOR-NODE-HMI": "tests/test_link_watch.cpp",
         "ARMOR-NODE-ALARM": "tests/test_link_watch.cpp",
         "ARMOR-NODE-RADAR": "tests/test_link_watch.cpp"
+      }
+    },
+    "core/log_line.hpp": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "core/log_line.hpp",
+        "ARMOR-NODE-ELECTRICAL": "core/log_line.hpp",
+        "ARMOR-NODE-HMI": "core/log_line.hpp",
+        "ARMOR-NODE-ALARM": "core/log_line.hpp",
+        "ARMOR-NODE-RADAR": "main/core/log_line.hpp"
+      }
+    },
+    "tests/test_log_line.cpp": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "tests/test_log_line.cpp",
+        "ARMOR-NODE-ELECTRICAL": "tests/test_log_line.cpp",
+        "ARMOR-NODE-HMI": "tests/test_log_line.cpp",
+        "ARMOR-NODE-ALARM": "tests/test_log_line.cpp",
+        "ARMOR-NODE-RADAR": "tests/test_log_line.cpp"
       }
     }
   }

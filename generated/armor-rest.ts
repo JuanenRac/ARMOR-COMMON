@@ -2270,6 +2270,8 @@ export type PublicUser = {
   hasDuress: boolean;
   /** a silent panic phrase is set (the phrase is never shown) */
   hasPanicPhrase?: boolean;
+  /** an administrator has allowed this user to have a silent panic phrase (false until one does; a user who had a phrase before this existed keeps being allowed) */
+  panicPhraseAllowed?: boolean;
 };
 
 export type PushRegistered = {
@@ -2983,6 +2985,8 @@ export type UserChange = {
   username?: string;
   password?: string;
   role?: "admin" | "operator";
+  /** An administrator lets this user have a silent panic phrase (or takes it away, which also deletes the phrase). Only the user sets the phrase; the administrator never sees it. */
+  panicPhraseAllowed?: boolean;
 };
 
 export type UserList = {

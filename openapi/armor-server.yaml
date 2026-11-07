@@ -429,7 +429,7 @@ paths:
       responses:
         '200': { description: 'Your user, with hasPanicPhrase', content: { application/json: { schema: { $ref: '#/components/schemas/PublicUser' } } } }
         '400': { description: 'The phrase is not acceptable (code phrase_too_short, phrase_too_long, phrase_too_common, phrase_is_example or invalid_phrase)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
-        '403': { description: The current password is not right, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'The current password is not right (code wrong_password), or an administrator has not allowed this user to have a panic phrase (code panic_not_allowed)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/account:
     patch:
       summary: Change your own user name and password; the current password is required (rate limited)
@@ -2521,6 +2521,7 @@ components:
         username: { type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._@-]{2,39}$' }
         password: { type: string, minLength: 8, maxLength: 200 }
         role: { type: string, enum: [admin, operator] }
+        panicPhraseAllowed: { type: boolean, description: 'An administrator lets this user have a silent panic phrase (or takes it away, which also deletes the phrase). Only the user sets the phrase; the administrator never sees it.' }
     AccountChange:
       type: object
       additionalProperties: false
@@ -2801,6 +2802,7 @@ components:
         hasPin: { type: boolean }
         hasDuress: { type: boolean }
         hasPanicPhrase: { type: boolean, description: 'a silent panic phrase is set (the phrase is never shown)' }
+        panicPhraseAllowed: { type: boolean, description: 'an administrator has allowed this user to have a silent panic phrase (false until one does; a user who had a phrase before this existed keeps being allowed)' }
     UserList:
       type: object
       required: [users, minPasswordLength]

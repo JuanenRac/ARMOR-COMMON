@@ -4,6 +4,15 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **An administrator allows who may have a silent panic phrase:** `PublicUser.panicPhraseAllowed` and `UserChange.panicPhraseAllowed` in the HTTP contract, and the code `panic_not_allowed` (403) of the account's panic phrase route. The user still sets the phrase and the administrator never sees it.
+
+- **The name and the addresses of `network_public.dns` may not be empty strings:** `minLength: 1` on `name` and on the items of `addresses` (the server's reader already refused them by hand; the contract now says so, and every generated reader and writer, the Kotlin parsers, the firmware header and the seeded cases follow).
+
+- **The log hook no longer takes 224 bytes of the stack of every task that logs:** the line is formatted into one static buffer shared by all the tasks (tried, never waited for, with a small buffer on the stack as the way out), so the tasks with 3 KiB of stack have room and the lines of the panel's log are cut at 383 characters instead of 223. The rule of what is kept is `core/log_line.hpp`, host-tested.
+
+- **The board mark of a firmware image is shared with the solar and radar nodes:** `core/image_board.hpp` and its host test now go to four nodes (the alarm and electrical nodes already had them), so an upload for the other board is refused by all of them.
+- **A sign-in hashes the password outside the lock of the settings, and the shared store has `with_settings()`:** a node with a screen read the settings through the lock of the store every half second, so the 10 000 rounds of a sign-in froze it; the hash is now computed on a copy of the users, and a task that needs a part of the settings can read it under the lock without copying all of them.
+
 - **The shared firmware can watch the Wi-Fi link by ping (off by default):** `firmware_base/core/link_watch.hpp` holds the rule (a round of pings to the gateway counts as answered with one reply; three silent rounds in a row force a fresh association), `main/network.cpp` runs it when the build option `ARMOR_NET_LINK_WATCH` is on, and the new `tests/test_link_watch.cpp` covers it on a computer (lost packets, the limit, the count cleared by an answer, a seeded long run). The radar node, which already had the watch of its own, now uses the same rule.
 
 - **The shared CI workflow checks a coverage floor where a repository keeps one:** a Node repository with `docs/coverage_threshold.json` (a number per measure) and a package script `coverage` runs it after the build and tests, and a repository without the file runs nothing more. The numbers live in that file, not in the workflow.

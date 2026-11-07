@@ -8,7 +8,11 @@
 #include <string>
 #include <vector>
 
+#if __has_include("../core/image_board.hpp")
 #include "../core/image_board.hpp"
+#else
+#include "../main/core/image_board.hpp"   // RADAR keeps the shared core files under main/
+#endif
 
 static int failures = 0;
 static int checks = 0;
