@@ -29,7 +29,7 @@
 
 ---
 
-**Ehrlichkeitsprüfung - was heute läuft:** Die Schemas (Telemetrie, Zustand, Befehl, Knoteninformation, Solar-Wechselrichter und -Batterie, Elektro, Alarm mit Befehl und Ergebnis sowie Netzwerk), der Python-Validator, die 1387 Konformitätsvektoren, die erzeugten TypeScript- und Kotlin-Typen, die OpenAPI-Datei des Servers (223 Pfade), die von den fünf Knoten geteilte Firmware-Basis und der gemeinsame Projektstarter sind real und getestet (343 Tests). Die Kotlin-Datei wird erzeugt, aber **noch nicht verwendet** von ARMOR-ANDROID-CONTROL (das sein eigenes Parsen behält), und der Befehl `set_thresholds` trägt nur ein Feld `sensitivity`, weil die echten Radarparameter erst definiert sind, wenn Firmware existiert.
+**Ehrlichkeitsprüfung - was heute läuft:** Die Schemas (Telemetrie, Zustand, Befehl, Knoteninformation, Solar-Wechselrichter und -Batterie, Elektro, Alarm mit Befehl und Ergebnis sowie Netzwerk), der Python-Validator, die 1387 Konformitätsvektoren, die erzeugten TypeScript- und Kotlin-Typen, die OpenAPI-Datei des Servers (224 Pfade), die von den fünf Knoten geteilte Firmware-Basis und der gemeinsame Projektstarter sind real und getestet (343 Tests). Die Kotlin-Datei wird erzeugt, aber **noch nicht verwendet** von ARMOR-ANDROID-CONTROL (das sein eigenes Parsen behält), und der Befehl `set_thresholds` trägt nur ein Feld `sensitivity`, weil die echten Radarparameter erst definiert sind, wenn Firmware existiert.
 
 ---
 
@@ -42,7 +42,7 @@
 | Rolle | Gemeinsame Verträge, Validator und Firmware-Basis der Familie |
 | Technik | Python 3.11+, JSON Schema, OpenAPI; Firmware-Basis in C++ (ESP-IDF) |
 | Tests | 343 (`python -m unittest discover -s tests`), 1387 Konformitätsvektoren |
-| Vertrag | 38 JSON-Schemas, 223 HTTP-Pfade (287 Operationen) |
+| Vertrag | 38 JSON-Schemas, 224 HTTP-Pfade (288 Operationen) |
 | Läuft auf | Jeder Computer (Bibliothek und Werkzeuge); die Firmware-Basis läuft in den fünf Knoten |
 | Auf echter Hardware | Nur der Radar-Knoten hat die gemeinsame Firmware auf einer Platine ausgeführt; die anderen vier nicht |
 | Lizenz | GPL-3.0-or-later |
@@ -73,7 +73,7 @@ Jede Zeile ist ein Teil dieses Repositorys, und die Ampel sagt, wie weit er heut
 * **Ein Validator, der keine Regel überspringen kann:** er interpretiert das Schema direkt und lehnt ein Schema ab, das ein nicht implementiertes Schlüsselwort verwendet.
 * **Konformitätsvektoren:** 1387 akzeptierte und abgelehnte Nutzlasten, von jeder Implementierung ausgeführt (hier Python, TypeScript in ARMOR-SERVER, die Prüfungen der Firmware-Repositories), sodass eine Abweichung einen Build scheitern lässt.
 * **Erzeugte Clients:** TypeScript- und Kotlin-Typen und die C++-Konstanten (`generated/armor_contracts.hpp`) entstehen aus den Schemas (`tools/generate_types.py --check` hält sie aktuell).
-* **HTTP-Vertrag:** `openapi/armor-server.yaml` beschreibt jede Route des Servers (223 Pfade, 287 Operationen), ihre Zugriffsregel und ein benanntes Schema für jeden Anfragekörper, jede Antwort und jeden Fehler, und ein Test prüft, dass die vom Server registrierten Routen genau die beschriebenen sind (Methode und Pfad).
+* **HTTP-Vertrag:** `openapi/armor-server.yaml` beschreibt jede Route des Servers (224 Pfade, 288 Operationen), ihre Zugriffsregel und ein benanntes Schema für jeden Anfragekörper, jede Antwort und jeden Fehler, und ein Test prüft, dass die vom Server registrierten Routen genau die beschriebenen sind (Methode und Pfad).
 * **Firmware-Basis:** `firmware_base/` hält jede von den fünf Knoten geteilte Datei einmal (Netzwerk, Einstellungen und Benutzer, Panel-Server und Login, HTTPS-Zertifikat, Log, Bluetooth mit PIN-Kopplung, Prüfung signierter Updates; Relais und Zigbee in den Knoten, die sie haben); `tools/sync_firmware_base.py` schreibt sie in jeden Knoten und prüft, dass keine Kopie abweicht ([die Anleitung](docs/FIRMWARE_BASE.md), [signierte Firmware](docs/SIGNED_FIRMWARE.md)).
 * **Gemeinsamer Starter:** `tools/armor_project_tool.py` gibt jedem Repository der Familie denselben Ablauf `build`, `build-test` und `run`, und `tools/armor_ci_validate.py` dieselben CI-Prüfungen.
 * **Optionale TLS-Verbindung zum Broker in der gemeinsamen Knotenbasis:** `firmware_base` enthält den Schalter `mqtt.tls` und den Text `mqtt.ca_pem` (ein PEM-Zertifikat, höchstens 2 KB, geprüft), die Verbindung, die nur dieser Stelle vertraut und den Namen des Brokers prüft, und die Host-Tests, die sich die fünf Knoten teilen; standardmäßig aus.
@@ -166,7 +166,7 @@ flowchart LR
 
 * **38 JSON-Schemas** in `src/armor_common/schemas/`: Telemetrie, Zustand, Befehl, Knoteninformation, Knotenzustand, Knotensteuerung (Befehl und Ergebnis), Knotenwartung, Solar-Wechselrichter und -Batterie (mit Befehlen und Ergebnissen), Elektro (mit Befehl und Ergebnis), Alarm (Zustand, Befehl, Ergebnis, Richtlinie und Zonen), Netzwerk (mit Aufträgen), Verbindungs- und Systemereignisse, Radar-Ereignisse, Server-Alarm, Scharfschaltprofil, Scharfschaltmodi, Gerätezustand, Diagnose-Token und der Sprachturn.
 * **1387 Konformitätsvektoren** in `conformance/` (38 Dateien, eine je Nachricht), ausgeführt von diesem Repository, von ARMOR-SERVER und von den Prüfungen der Firmware-Repositorys.
-* **OpenAPI** `openapi/armor-server.yaml`: 223 Pfade und 287 Operationen, jeweils mit Zugriffsregel und einem benannten Schema für jeden Inhalt, jede Antwort und jeden Fehler. Ein Test prüft, dass die vom Server registrierten Routen genau die beschriebenen sind. Der Sprachturn wird als Bytes übertragen (siehe [docs/CONTRACTS.md](docs/CONTRACTS.md)).
+* **OpenAPI** `openapi/armor-server.yaml`: 224 Pfade und 288 Operationen, jeweils mit Zugriffsregel und einem benannten Schema für jeden Inhalt, jede Antwort und jeden Fehler. Ein Test prüft, dass die vom Server registrierten Routen genau die beschriebenen sind. Der Sprachturn wird als Bytes übertragen (siehe [docs/CONTRACTS.md](docs/CONTRACTS.md)).
 
 ### Kommandozeilen-Werkzeuge
 
