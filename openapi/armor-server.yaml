@@ -976,7 +976,7 @@ paths:
       summary: The public certificate (PEM) of the local CA of the LAN, to install on phones and computers (an administrator only, while the option network.lan_ca is on and the server knows the file). A private key is never served.
       security: [{ admin: [] }]
       responses:
-        '200': { description: The certificate, content: { application/x-pem-file: { schema: { type: string } } } }
+        '200': { description: The certificate, content: { application/x-pem-file: { schema: { type: string, format: binary } } } }
         '403': { description: Not an administrator, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '404': { description: The option is off or the certificate is not available, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/alarm/zone-feed/key/{node}:
