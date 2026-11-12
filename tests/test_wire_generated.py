@@ -73,6 +73,22 @@ class GeneratedFilesAreCurrentTests(unittest.TestCase):
         import generate_kotlin_parsers
         self.assertEqual(generate_kotlin_parsers.OUT.read_text(encoding="utf-8"), generate_kotlin_parsers.render(), "run python tools/generate_kotlin_parsers.py")
 
+    def test_the_swift_readers_are_what_the_schemas_produce(self):
+        import generate_swift_parsers
+        self.assertEqual(generate_swift_parsers.OUT.read_text(encoding="utf-8"), generate_swift_parsers.render(), "run python tools/generate_swift_parsers.py")
+
+    def test_every_schema_has_a_swift_reader_and_writer(self):
+        import generate_swift_parsers
+        import generate_types
+        swift = generate_swift_parsers.OUT.read_text(encoding="utf-8")
+        for path in (ROOT / "src" / "armor_common" / "schemas").glob("*.schema.json"):
+            key = path.name[: -len(".schema.json")]
+            self.assertIn(f'"{key}": #"', swift, key)
+            self.assertIn(f'case "{key}": return parse', swift, key)
+        for _key, (name, _declared) in generate_types.discover().items():
+            self.assertIn(f"public static func parse{name}(", swift, name)
+            self.assertIn(f"extension Contract.{name} {{", swift, name)
+
     def test_every_schema_has_a_reader_in_each_language(self):
         import generate_types
         kotlin = (ROOT / "generated" / "ArmorParsers.kt").read_text(encoding="utf-8")
@@ -90,7 +106,7 @@ class GeneratedFilesAreCurrentTests(unittest.TestCase):
         self.assertEqual(make_wire_cases.OUT.read_bytes().decode("utf-8"), make_wire_cases.render(), "run python tools/make_wire_cases.py")
 
     def test_the_generated_files_are_never_written_by_hand(self):
-        for path in (ROOT / "generated" / "armor_wire.hpp", ROOT / "generated" / "armor-parsers.ts", ROOT / "generated" / "ArmorParsers.kt"):
+        for path in (ROOT / "generated" / "armor_wire.hpp", ROOT / "generated" / "armor-parsers.ts", ROOT / "generated" / "ArmorParsers.kt", ROOT / "generated" / "ArmorContract.swift"):
             self.assertIn("Do not edit", path.read_text(encoding="utf-8").splitlines()[0] + path.read_text(encoding="utf-8").splitlines()[1])
 
 
