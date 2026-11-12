@@ -29,6 +29,7 @@ OUT = ROOT / "conformance" / "wire_cases.tsv"
 SEED = 20261106
 SEEDS_PER_SCHEMA = 5
 MUTATIONS_PER_SCHEMA = 40
+UNION_MUTATIONS = 12
 LARGEST = 30000   # characters: the reader of a node bounds a document, so the cases stay inside the bound
 ODD_TEXTS = ["", " ", "A", "é", "日本語", "\U0001F600", "x\n", "zone:", "-", "0", "a" * 200]
 
@@ -138,6 +139,20 @@ def mutate(doc: dict, root_schema: dict, rnd: random.Random) -> dict:
     return out
 
 
+def union(first, second):
+    """The two documents in one: every member that either of them has (a list is merged item by item, as far as both reach). The result carries the optional members that no single vector has
+    all at once, so that the readers of the nested parts of a message are tried too; whether it is valid is the oracle's to say, as for every other case."""
+    if isinstance(first, dict) and isinstance(second, dict):
+        out = copy.deepcopy(first)
+        for name, value in second.items():
+            out[name] = union(out[name], value) if name in out else copy.deepcopy(value)
+        return out
+    if isinstance(first, list) and isinstance(second, list):
+        merged = [union(a, b) for a, b in zip(first, second, strict=False)]
+        return merged + copy.deepcopy(first[len(second):])
+    return first
+
+
 def verdict(key: str, root_schema: dict, doc) -> bool:
     try:
         sc.validate(doc, root_schema)
@@ -153,6 +168,7 @@ def render() -> str:
         key = path.name[: -len(".schema.json")]
         root_schema = schema_for(key)
         seeds = seeds_of(key)
+        everyone = list(seeds)
         rnd.shuffle(seeds)
         seeds = sorted(seeds[:SEEDS_PER_SCHEMA], key=lambda d: len(json.dumps(d)))
         documents = list(seeds)
@@ -160,6 +176,13 @@ def render() -> str:
             for _ in range(MUTATIONS_PER_SCHEMA):
                 documents.append(mutate(rnd.choice(seeds), root_schema, rnd))
         documents.append({})   # nothing at all is never a message
+        if len(everyone) > 1:   # the vectors all in one document, and a few mutations of it: made apart from the random stream above, so that the older cases do not move
+            everything = everyone[0]
+            for other in everyone[1:]:
+                everything = union(everything, other)
+            documents.append(everything)
+            apart = random.Random(f"{SEED}:{key}:union")
+            documents.extend(mutate(everything, root_schema, apart) for _ in range(UNION_MUTATIONS))
         seen = set()
         for doc in documents:
             text = json.dumps(doc, ensure_ascii=False, separators=(",", ":"), sort_keys=False)

@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The floor of the test coverage goes up:** measured by the workflow `coverage-floor.yml`, lines 86.0 % and branches 81.7 % (before: 65.4 and 66.3); the floor is 85.5 and 81.0.
+
+- **Tests for the shared tools that had none:** `armor_project_tool.py` (the odometer of the versions, the bump of the manifest and of the files that mirror it, the lint plan, the Markdown links, the local development secrets, the steps of each kind of repository and the command line), `sync_manifests.py` (versions, facts of a repository, findings, the GitHub facts with budget and cache, `--apply`), `armor_ci_validate.py` (every failure it names), `pretty_run.py` (the panel and the wrapped scripts) and `make_conformance.py` (the committed vectors are what it writes).
+
+- **One more case per message in the seeded wire cases:** for every message with several valid vectors, `conformance/wire_cases.tsv` now holds a document with the optional members of all of them (and a few mutations of it), so the host tests of the nodes also read and write the nested parts of a message (the boot report and the core dump of a health report, a package of diagnostics, the stages of a battery).
+
+- **Shared host tests for the nodes:** `firmware_base/tests/test_shared_more.cpp` (health report words and its optional parts, the report of a dirty start, the settings kept in flash and the operations of the Bluetooth channel).
+
 - **A floor for the test coverage:** the workflow `coverage-floor.yml` runs the Python tests under coverage and fails when the lines or the branches fall below `docs/coverage_threshold.json`. Floor of src/armor_common and tools/: lines 64.5, branches 65.5 (measured 65.35 and 66.31). Raising it is a change of that file, made with a figure measured by the workflow.
 
 - **More tests for the small tools:** the generator of the port constants (the four files, the check of a file out of date, a registry that is wrong), the check of the pins of the consumers (every kind of problem, `--behind`, `--set`) and the comparison of what a node writes back with what the contract keeps now have tests of their own, on copies in temporary folders.
