@@ -12,6 +12,11 @@ class ProvisioningTests(unittest.TestCase):
         self.assertTrue(text.startswith(PREFIX + ":"))
         self.assertEqual(parse_provisioning(text), {"v": 1, "node_id": "radar-1", "server": "https://armor.local:8443"})
 
+    def test_the_exact_bytes_are_the_ones_every_app_asserts(self):
+        # The same literal is asserted by the Studio, Android and iPhone tests: a code made by one reads in every other, so the text may never change by a byte.
+        self.assertEqual(build_provisioning("radar-1", "https://armor.local:8443"), 'armor-provision:{"node_id":"radar-1","server":"https://armor.local:8443","v":1}')
+        self.assertEqual(parse_provisioning('armor-provision:{"node_id":"radar-1","server":"https://armor.local:8443","v":1}'), {"v": 1, "node_id": "radar-1", "server": "https://armor.local:8443"})
+
     def test_plain_http_on_a_lan_address_is_allowed(self):
         self.assertEqual(parse_provisioning(build_provisioning("a1", "http://192.168.0.180:18080"))["server"], "http://192.168.0.180:18080")
 
