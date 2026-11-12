@@ -2620,6 +2620,10 @@ export type SecuritySettings = {
   "network.login_secure_only"?: boolean;
   /** An administrator may download the public certificate of the local CA of the LAN (GET /api/v1/security/lan-ca); the private key is never served. Turning it on lowers the security. */
   "network.lan_ca"?: boolean;
+  /** How many days snapshots are kept; 0 = the general limit applies. */
+  "media.retention_snapshot_days"?: number;
+  /** How many days recordings are kept; 0 = the general limit applies. */
+  "media.retention_recording_days"?: number;
   /** Search by meaning in ARMOR-VISION (reads personal data). It cannot be on while vision.semantic_search_ack is off. */
   "vision.semantic_search"?: boolean;
   /** Licence plate reading in ARMOR-VISION (reads personal data). It cannot be on while vision.plates_ack is off. */

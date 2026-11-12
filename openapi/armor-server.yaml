@@ -2991,6 +2991,8 @@ components:
         media.rtsp_proxy: { type: boolean, default: true }
         network.login_secure_only: { type: boolean, default: false }
         network.lan_ca: { type: boolean, default: false, description: 'An administrator may download the public certificate of the local CA of the LAN (GET /api/v1/security/lan-ca); the private key is never served. Turning it on lowers the security.' }
+        media.retention_snapshot_days: { type: integer, minimum: 0, maximum: 3650, default: 0, description: 'How many days snapshots are kept; 0 = the general limit applies.' }
+        media.retention_recording_days: { type: integer, minimum: 0, maximum: 3650, default: 0, description: 'How many days recordings are kept; 0 = the general limit applies.' }
         vision.semantic_search: { type: boolean, default: false, description: 'Search by meaning in ARMOR-VISION (reads personal data). It cannot be on while vision.semantic_search_ack is off.' }
         vision.plates: { type: boolean, default: false, description: 'Licence plate reading in ARMOR-VISION (reads personal data). It cannot be on while vision.plates_ack is off.' }
         vision.faces: { type: boolean, default: false, description: 'Face recognition in ARMOR-VISION (biometric data, only people who enrolled). It cannot be on while vision.faces_ack is off.' }
