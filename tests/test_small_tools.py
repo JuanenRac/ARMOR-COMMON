@@ -155,6 +155,14 @@ class KnownOnly(unittest.TestCase):
         self.assertEqual(rewrites.known_only([1, 2], {}), [1, 2])
         self.assertEqual(rewrites.known_only("text", None), "text")
 
+    def test_numbers_agree_to_twelve_digits_and_nothing_else_is_loosened(self):
+        self.assertTrue(rewrites.same_value({"v": [3.3249999999999997, 25]}, {"v": [3.325, 25.0]}))
+        self.assertFalse(rewrites.same_value({"v": 3.325}, {"v": 3.326}))
+        self.assertFalse(rewrites.same_value({"a": 1}, {"a": 1, "b": 2}))
+        self.assertFalse(rewrites.same_value([1, 2], [1]))
+        self.assertFalse(rewrites.same_value(True, 1))
+        self.assertFalse(rewrites.same_value("1", 1))
+
 
 class WireRewrites(unittest.TestCase):
     def test_without_the_file_to_compare_the_command_says_how_it_is_used(self):

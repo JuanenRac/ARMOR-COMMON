@@ -11,6 +11,7 @@ must equal the original document without the members the schema does not name, v
 from __future__ import annotations
 
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -36,6 +37,17 @@ def known_only(value, schema):
     return value
 
 
+def same_value(left, right) -> bool:
+    """Equal documents; two numbers are equal when they agree to 12 digits (the writer of a node prints a number with fewer digits than a double can carry: 3.3249999999999997 comes back as 3.325)."""
+    if isinstance(left, dict) and isinstance(right, dict):
+        return left.keys() == right.keys() and all(same_value(left[name], right[name]) for name in left)
+    if isinstance(left, list) and isinstance(right, list):
+        return len(left) == len(right) and all(same_value(a, b) for a, b in zip(left, right, strict=True))
+    if isinstance(left, (int, float)) and isinstance(right, (int, float)) and not isinstance(left, bool) and not isinstance(right, bool):
+        return math.isclose(left, right, rel_tol=1e-12, abs_tol=1e-12)
+    return left == right and type(left) is type(right)
+
+
 def main(argv: list[str]) -> int:
     if len(argv) != 2:
         print(__doc__)
@@ -50,7 +62,7 @@ def main(argv: list[str]) -> int:
         wanted = known_only(original, schema)
         got = json.loads(text)
         checked += 1
-        if got != wanted:
+        if not same_value(got, wanted):
             problems += 1
             if problems <= 10:
                 print(f"case {number} ({key}): written back differently\n  wanted {json.dumps(wanted)[:300]}\n  got    {text[:300]}", file=sys.stderr)
