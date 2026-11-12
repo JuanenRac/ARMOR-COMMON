@@ -253,27 +253,27 @@ def full_value(node: dict, variant: int, pool: list[str], turn: list[int], parit
             out.append(value)
         return out if fits(out, node) else None
     if kind == "object":
-        out = {}
+        members: dict = {}
         required = set(node.get("required", []))
         for name, child in node.get("properties", {}).items():
             if name not in required and parity is not None and zlib.crc32(f"{trail}/{name}".encode()) % 2 == parity:
                 continue
-            value = full_value(child, variant, pool, turn, parity, f"{trail}/{name}")
-            if value is None:
+            member = full_value(child, variant, pool, turn, parity, f"{trail}/{name}")
+            if member is None:
                 if name in required:
                     return None
                 continue
-            out[name] = value
-        extra = node.get("additionalProperties")
-        if isinstance(extra, dict):
+            members[name] = member
+        more = node.get("additionalProperties")
+        if isinstance(more, dict):
             for key in pool:
-                value = full_value(extra, variant, pool, turn, parity, trail + "/*")
-                if value is None:
+                member = full_value(more, variant, pool, turn, parity, trail + "/*")
+                if member is None:
                     break
-                if fits({key: value}, node):
-                    out[key] = value
+                if fits({key: member}, node):
+                    members[key] = member
                     break
-        return out if fits(out, node) else None
+        return members if fits(members, node) else None
     return None
 
 
