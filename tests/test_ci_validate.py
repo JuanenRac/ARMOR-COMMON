@@ -88,6 +88,11 @@ class ChangelogOrder(unittest.TestCase):
     def test_an_older_version_on_top_fails(self) -> None:
         self.assertIn("newest first", self.check("## [0.1.0]\n## [0.2.0]\n"))
 
+    def test_the_message_names_the_line_of_the_misplaced_heading(self) -> None:
+        message = self.check("# C\n\n## [0.1.0]\n\n- a\n\n## [0.2.0]\n\n- b\n")
+        self.assertIn("CHANGELOG.md line 7: version 0.2.0 is listed after the older 0.1.0", message)
+        self.assertNotIn("- b", message)   # the text of the last line of the file is not what the message points at
+
     def test_no_changelog_is_not_this_checks_business(self) -> None:
         repo = Repository(self)
         (repo.root / "CHANGELOG.md").unlink()

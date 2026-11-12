@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The error of the order of the changelog names the right line:** when a version is listed after an older one, `tools/armor_ci_validate.py` said `line` followed by the text of the last line of the file instead of the number of the misplaced heading; a test fixes the message. The tool is copied to every repository by the sync of the shared CI tools.
+
 ## [0.8.1.2] - The floor of the test coverage goes up: measured by the workflow `coverage-floor.yml`, lines 86.0 % and branches 81.7 % (before: 65.4 and 66.3); the floor is 85.5 and 81.0
 
 - **The floor of the test coverage goes up:** measured by the workflow `coverage-floor.yml`, lines 86.0 % and branches 81.7 % (before: 65.4 and 66.3); the floor is 85.5 and 81.0.
