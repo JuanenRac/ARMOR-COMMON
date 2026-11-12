@@ -2174,6 +2174,24 @@ export type PostAdminUpdatesRequest = {
   force?: boolean;
 };
 
+export type PostAiActivityEventsRequest = {
+  schema: "armor.vision.activity/v1";
+  type: "zone_enter" | "zone_exit" | "dwell" | "loiter" | "line_cross";
+  camera_id: string;
+  track_id: number;
+  label: string;
+  timestamp: number;
+  timestamp_ms: number;
+  authorizes_action: false;
+  zone_id?: string;
+  zone_name?: string;
+  seconds?: number;
+  line_id?: string;
+  direction?: "to_left" | "to_right";
+  /** false: the profile of the arming mode does not tell the people the alarms go to; the event is still recorded */
+  notify?: boolean;
+};
+
 export type PostAiObservationsRequest = {
   camera_id: string;
   severity: "review" | "high";

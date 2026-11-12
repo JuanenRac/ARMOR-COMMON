@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The activity events of the vision service have a route in the server contract:** `POST /api/v1/ai/activity-events` (the token of the observation service) and its named body `PostAiActivityEventsRequest` describe the event `armor.vision.activity/v1`, including the optional `notify` flag that is false when the profile of the arming mode does not tell the people the alarms go to; the server still records the event.
+
 - **The waits before a lost network or broker is tried again, and Improv over the cable, are settings of the node:** `retry` (`wifi_first_ms`, `wifi_max_ms`, `mqtt_first_ms`, `mqtt_max_ms` and `scatter_percent`; the defaults are the waits the firmware always used, 1 s growing to 30 s for the Wi-Fi and to 60 s for the broker, 20 % scatter) and `improv.mode` (`setup`, the default, listens for a Wi-Fi network from an ESP Web Tools page only while the node has none stored; `always`; `off`). A start that owes the page an answer listens whatever the mode. The shared node settings read, check (a ceiling below the first wait is refused) and write both, and the diagnostic package carries the new numbers. Host tests of both.
 
 - **The health report names the task with the least stack:** the optional `stack_min_free` and `stack_min_task` (told together) say which task has had the least stack free at its worst, so the console can show it and not only how many tasks are short. The schema, the generated types, readers and writers, the conformance vectors (eight new) and the wire cases follow; a node of an older firmware simply does not say it.
