@@ -170,6 +170,13 @@ paths:
       responses:
         '204': { description: Forgotten }
         '404': { description: Unknown node, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+  /api/v1/contract:
+    get:
+      summary: 'The version of the shared contracts this server speaks and, for every node that has reported, the one it says its firmware was checked against: current, older (update its firmware), newer or unknown (an older firmware that does not say it)'
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: 'The server''s contract version, the nodes by name and the count of each state', content: { application/json: { schema: { $ref: '#/components/schemas/ContractStatus' } } } }
+        '401': { description: Operator authorization is required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
   /api/v1/nodes/control:
     post:
       summary: >-
@@ -2781,6 +2788,30 @@ components:
         mode: { type: string, enum: [armed, disarmed], description: Only for an operator }
         live_video: { type: boolean, description: Only for an operator }
         mqtt: { type: boolean, description: Only for an operator }
+    ContractStatus:
+      type: object
+      examples: [{"server": "0.8.0.7", "nodes": [{"node_id": "radar-1", "family": "radar", "contract": "0.8.0.7", "status": "current"}], "totals": {"current": 1, "older": 0, "newer": 0, "unknown": 0}}]
+      required: [server, nodes, totals]
+      properties:
+        server: { type: string, pattern: '^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$', description: The version of the contracts this server was checked against }
+        nodes:
+          type: array
+          items:
+            type: object
+            required: [node_id, family, contract, status]
+            properties:
+              node_id: { type: string }
+              family: { type: string, enum: [radar, solar, electrical, alarm, hmi] }
+              contract: { type: [string, 'null'], description: 'The version the node says, or null when it says none or something that is not a version' }
+              status: { type: string, enum: [current, older, newer, unknown], description: 'older - behind the server (update the firmware); newer - ahead of it; unknown - the node does not say' }
+        totals:
+          type: object
+          required: [current, older, newer, unknown]
+          properties:
+            current: { type: integer }
+            older: { type: integer }
+            newer: { type: integer }
+            unknown: { type: integer }
     DesignSaved:
       type: object
       examples: [{"revision": 3, "updated_at": "2026-01-01T00:00:00.000Z", "updated_by": "admin"}]

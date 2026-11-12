@@ -741,6 +741,25 @@ export type ConsoleUnlocked = {
   unlocked_until: number;
 };
 
+export type ContractStatus = {
+  /** The version of the contracts this server was checked against */
+  server: string;
+  nodes: {
+    node_id: string;
+    family: "radar" | "solar" | "electrical" | "alarm" | "hmi";
+    /** The version the node says, or null when it says none or something that is not a version */
+    contract: string | null;
+    /** older - behind the server (update the firmware); newer - ahead of it; unknown - the node does not say */
+    status: "current" | "older" | "newer" | "unknown";
+  }[];
+  totals: {
+    current: number;
+    older: number;
+    newer: number;
+    unknown: number;
+  };
+};
+
 /** How many things a bulk call touched (the name of the field says which) */
 export type Count = {
   acknowledged?: number;
