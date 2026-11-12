@@ -226,26 +226,18 @@ void init() {
   // Bluetooth both refuse it once there is one) and, afterwards, the node's rescue network (network.cpp), which needs a password that still
   // exists and that the owner can learn - the old way erased it the moment the administrator was created, and the rescue network
   // could then not start.
-  const std::size_t secret_length = std::strlen(CONFIG_ARMOR_FLEET_SECRET);
-  if (secret_length >= 16) {
-    // HMAC-SHA256 of the MAC (twelve lowercase hexadecimal digits) with the fleet secret, ten symbols of it.
-    const std::string mac_text = auth::to_hex(g_mac, sizeof g_mac);
-    std::uint8_t digest[32];
-    if (mbedtls_md_hmac(mbedtls_md_info_from_type(MBEDTLS_MD_SHA256), reinterpret_cast<const unsigned char*>(CONFIG_ARMOR_FLEET_SECRET), secret_length,
-                        reinterpret_cast<const unsigned char*>(mac_text.data()), mac_text.size(), digest) == 0) g_setup_code = auth::setup_code_from(digest, 10);
-  }
-  if (!g_setup_code.empty()) { /* derived from the fleet secret */ }
-  else if (std::strlen(CONFIG_ARMOR_SETUP_CODE) >= 8) {
-    g_setup_code = CONFIG_ARMOR_SETUP_CODE;
-    for (char& c : g_setup_code) c = static_cast<char>(std::toupper(static_cast<unsigned char>(c)));   // the panel's form writes the code in capitals, so a code typed in lower case here would never match
-  }
-  else if (read_blob(kSetupCodeKey, text) && text.size() >= 8) g_setup_code = text;
-  else {
-    std::uint8_t bytes[8];
-    random_bytes(bytes, sizeof bytes);
-    g_setup_code = auth::setup_code_from(bytes, sizeof bytes);
-    write_blob(kSetupCodeKey, g_setup_code);
-  }
+  // The rule (which MAC, which source first) is core/auth.hpp's and is tested on a computer: the identity is the Wi-Fi station MAC on both boards.
+  std::string stored_code;
+  if (!read_blob(kSetupCodeKey, stored_code)) stored_code.clear();
+  const auth::SetupCodeChoice choice = auth::choose_setup_code(
+      CONFIG_ARMOR_FLEET_SECRET, CONFIG_ARMOR_SETUP_CODE, stored_code, g_mac,
+      [](std::string_view key, std::string_view message, std::uint8_t* digest) {
+        return mbedtls_md_hmac(mbedtls_md_info_from_type(MBEDTLS_MD_SHA256), reinterpret_cast<const unsigned char*>(key.data()), key.size(),
+                               reinterpret_cast<const unsigned char*>(message.data()), message.size(), digest) == 0;
+      },
+      [](std::uint8_t* bytes, std::size_t length) { random_bytes(bytes, length); });
+  g_setup_code = choice.code;
+  if (choice.keep) write_blob(kSetupCodeKey, g_setup_code);
   // Fifteen seconds after the start the stored text is read again (a task of its own, with its stack in the internal memory: it touches the flash, and it ends when it is done).
   xTaskCreate(settings_check_task, "cfg-check", 4096, nullptr, 1, nullptr);
 }

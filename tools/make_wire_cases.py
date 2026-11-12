@@ -194,11 +194,12 @@ def fits(value, node: dict) -> bool:
     return True
 
 
-def full_value(node: dict, variant: int, pool: list[str], turn: list[int], parity: int | None = None, trail: str = ""):
+def full_value(node: dict, variant: int, pool: list[str], turn: list[int], parity: int | None = None, trail: str = "", mode: str = ""):
     """A value that holds every member that the schema declares (and the first allowed value of what has no member), or None when none was found. ``variant`` and ``turn`` rotate the
     choices (an enumeration, a number, a text) so that the documents of the different variants reach the different branches of the readers. With a ``parity`` (0 or 1) about half of the optional
     members are left out, the half that the checksum of the place of the member in the document (``trail``) picks, so that the pair of documents of the two parities has each optional
-    member present in one and absent in the other."""
+    member present in one and absent in the other. With ``mode`` "empty" every list and every map that may be empty is empty (the readers' branch of a container with no element), with "minimal" the
+    optional members are also left out, so the readers' branch of each absent member runs on every message."""
     if "const" in node:
         return node["const"]
     if "enum" in node:
@@ -241,13 +242,13 @@ def full_value(node: dict, variant: int, pool: list[str], turn: list[int], parit
                 return candidate
         return None
     if kind == "array":
-        count = max(node.get("minItems", 0), 1)
+        count = node.get("minItems", 0) if mode else max(node.get("minItems", 0), 1)
         if variant % 2 == 1 and node.get("maxItems", 2) >= 2:
             count = max(count, 2)
         items = node.get("items")
         out = []
         for _ in range(count):
-            value = full_value(items, variant, pool, turn, parity, trail + "[]") if isinstance(items, dict) else None
+            value = full_value(items, variant, pool, turn, parity, trail + "[]", mode) if isinstance(items, dict) else None
             if value is None:
                 return None
             out.append(value)
@@ -256,18 +257,20 @@ def full_value(node: dict, variant: int, pool: list[str], turn: list[int], parit
         members: dict = {}
         required = set(node.get("required", []))
         for name, child in node.get("properties", {}).items():
+            if name not in required and mode == "minimal":
+                continue
             if name not in required and parity is not None and zlib.crc32(f"{trail}/{name}".encode()) % 2 == parity:
                 continue
-            member = full_value(child, variant, pool, turn, parity, f"{trail}/{name}")
+            member = full_value(child, variant, pool, turn, parity, f"{trail}/{name}", mode)
             if member is None:
                 if name in required:
                     return None
                 continue
             members[name] = member
         more = node.get("additionalProperties")
-        if isinstance(more, dict):
+        if isinstance(more, dict) and not mode:
             for key in pool:
-                member = full_value(more, variant, pool, turn, parity, trail + "/*")
+                member = full_value(more, variant, pool, turn, parity, trail + "/*", mode)
                 if member is None:
                     break
                 if fits({key: member}, node):
@@ -286,8 +289,8 @@ def render_full() -> str:
         key = path.name[: -len(".schema.json")]
         root_schema = schema_for(key)
         seen = set()
-        for variant, parity in [(v, None) for v in range(FULL_VARIANTS)] + [(v, p) for v in (0, 1) for p in (0, 1)]:
-            doc = full_value(root_schema, variant, pool, [0, 0], parity)
+        for variant, parity, mode in [(v, None, "") for v in range(FULL_VARIANTS)] + [(v, p, "") for v in (0, 1) for p in (0, 1)] + [(v, None, m) for v in (0, 1) for m in ("empty", "minimal")]:
+            doc = full_value(root_schema, variant, pool, [0, 0], parity, "", mode)
             if doc is None:
                 continue
             text = json.dumps(doc, ensure_ascii=False, separators=(",", ":"), sort_keys=False)

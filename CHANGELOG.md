@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The generated readers and writers are also tried with empty lists and maps and with only the required members:** `conformance/wire_full_cases.tsv` gains a document per message with every list and every map that may be empty left empty and one with the optional members left out, so the branch of an absent member and of a container with no element runs on every message in the five nodes.
+- **The identity and the setup code of a node are decided in `firmware_base/core/auth.hpp`:** the Wi-Fi station MAC on both boards and the order of the sources, with host tests (copied to the five nodes).
 - **The Kotlin readers give the schema of a message:** `messageSchema(name)` in `generated/ArmorParsers.kt`, so the app can leave out the members that a closed object of the contract does not name before it reads a message, as the iPhone app already does.
 - **The shared gateway watch stands down for a router that never answers a ping:** one fresh association is tried, then no more until a reply or a new address; a gateway that answered before and goes silent is still an outage every time (`firmware_base/core/link_watch.hpp`, copied to the five nodes, with host tests).
 - **The text of the pairing code is pinned byte for byte:** a test asserts the exact text that the Studio, Android and iPhone tests also assert, so a code made by one reads in every other.
