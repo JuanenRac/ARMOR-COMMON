@@ -466,7 +466,8 @@
         "ARMOR-NODE-SOLAR": "core/broker_uri.hpp",
         "ARMOR-NODE-ELECTRICAL": "core/broker_uri.hpp",
         "ARMOR-NODE-HMI": "core/broker_uri.hpp",
-        "ARMOR-NODE-ALARM": "core/broker_uri.hpp"
+        "ARMOR-NODE-ALARM": "core/broker_uri.hpp",
+        "ARMOR-NODE-RADAR": "main/core/broker_uri.hpp"
       }
     },
     "core/node_settings.hpp": {

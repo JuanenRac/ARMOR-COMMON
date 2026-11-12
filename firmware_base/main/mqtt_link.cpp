@@ -25,6 +25,7 @@ extern "C" {
 }
 #include "core/backoff.hpp"
 #include "core/broker_uri.hpp"
+#include "core/link_watch.hpp"
 #include "core/mqtt_topic.hpp"
 #include "core/mqtt_tls.hpp"
 #include "network.hpp"
@@ -231,18 +232,18 @@ constexpr int kBrokerBadRoundsBeforeSwitch = 3;   // about 30 s disconnected bef
 // while, and only when another saved broker exists - never while the one above still works.
 void broker_watchdog_task(void*) {
   int bad_rounds = 0;
-  int rounds_on_backup = 0;
+  linkwatch::BackupReturn back_to_first;
   for (;;) {
     vTaskDelay(pdMS_TO_TICKS(kBrokerCheckEverySeconds * 1000));
     if (g_connected) {
       bad_rounds = 0;
       // On a saved broker that is not the first one for half an hour: the first one is tried again (it used to be forgotten until the next restart). If it is still down the watchdog
       // moves on to the next saved one after the usual wait.
-      if (g_broker_index != 0 && ++rounds_on_backup * kBrokerCheckEverySeconds >= 1800) {
-        rounds_on_backup = 0;
-        const config::Broker first = current_broker(g_settings, 0);
-        // Only when the first one answers: leaving a broker that works for one that is still down cost a minute of silence every half hour.
-        if (!broker_answers(first.uri)) { ESP_LOGI(kTag, "the first saved broker (%s) does not answer yet: staying on the one that works", first.uri.c_str()); continue; }
+      // The rule (when to ask, and to go back only when the first broker answers) is core/link_watch.hpp's, tested on a computer.
+      const config::Broker first = current_broker(g_settings, 0);
+      const linkwatch::BackStep step = back_to_first.connected_round(g_broker_index, kBrokerCheckEverySeconds, [&first]() { return broker_answers(first.uri); });
+      if (step == linkwatch::BackStep::kFirstStillDown) { ESP_LOGI(kTag, "the first saved broker (%s) does not answer yet: staying on the one that works", first.uri.c_str()); continue; }
+      if (step == linkwatch::BackStep::kGoBack) {
         g_broker_index = 0;
         ESP_LOGI(kTag, "back to the first saved broker (%s): it answers again", first.uri.c_str());
         esp_mqtt_client_handle_t old = nullptr;
@@ -253,7 +254,7 @@ void broker_watchdog_task(void*) {
       }
       continue;
     }
-    rounds_on_backup = 0;
+    back_to_first.reset();
     bool no_client = false;
     { std::lock_guard<std::mutex> guard(g_client_lock); no_client = g_client == nullptr; }
     if (no_client) {   // the client could not be created or started: it is tried again, after about half a minute
