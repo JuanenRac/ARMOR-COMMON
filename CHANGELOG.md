@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **More tests for the small tools:** the generator of the port constants (the four files, the check of a file out of date, a registry that is wrong), the check of the pins of the consumers (every kind of problem, `--behind`, `--set`) and the comparison of what a node writes back with what the contract keeps now have tests of their own, on copies in temporary folders.
+
+- **The voice turn result can carry `challenge`, and the silence option can be `challenge`:** `voice_turn_result` has an optional `challenge` (two to six digits, shown on the screen of the panel and never said aloud) with accepted and rejected vectors, and the binary answer of the voice turn has two more shared cases; `voice.silence_confirmation` in the HTTP contract now lists `challenge` (off by default). The generated types, parsers, the wire header of the nodes and the vectors were regenerated, and the five nodes follow the new header.
+
 - **The wake word in the shared contract:** `POST /api/v1/voice/wake` (audio up to two seconds, answer `VoiceWake`) and the security option `voice.wake_word` (off by default), with the REST types regenerated.
 
 - **An administrator allows who may have a silent panic phrase:** `PublicUser.panicPhraseAllowed` and `UserChange.panicPhraseAllowed` in the HTTP contract, and the code `panic_not_allowed` (403) of the account's panic phrase route. The user still sets the phrase and the administrator never sees it.

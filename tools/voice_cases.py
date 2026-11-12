@@ -89,10 +89,13 @@ def cases() -> list[dict]:
     inline_result = part("result", result_text, "application/json", 'Content-Disposition: inline; name="result"')
     inline_audio = part("audio", PCM, "audio/L16;rate=16000", 'Content-Disposition: inline; name="audio"')
     omitted = {"heard": "x", "reply": "y", "audio_omitted": "too_large"}
+    challenged = {"heard": "silence the alarms", "reply": "Say the number shown on the screen to silence the alarms.", "challenge": "47"}
     out += [
         _case("an answer with audio", "reply", ct(kind="mixed"), inline_result + inline_audio + close(), {"result": result, "audio": PCM_B64}),
         _case("an answer without audio", "reply", ct(kind="mixed"), inline_result + close(), {"result": result, "audio": None}),
         _case("an answer with the audio left out", "reply", ct(kind="mixed"), part("result", json.dumps(omitted, separators=(",", ":")).encode(), "application/json", 'Content-Disposition: inline; name="result"') + close(), {"result": omitted, "audio": None}),
+        _case("an answer with the number of a challenge", "reply", ct(kind="mixed"), part("result", json.dumps(challenged, separators=(",", ":")).encode(), "application/json", 'Content-Disposition: inline; name="result"') + close(), {"result": challenged, "audio": None}),
+        _case("an answer with a challenge that is not digits", "reply", ct(kind="mixed"), part("result", json.dumps(dict(challenged, challenge="4x"), separators=(",", ":")).encode(), "application/json", 'Content-Disposition: inline; name="result"') + close(), _error(422, "bad_meta")),
         _case("an answer in the form-data type", "reply", ct(), inline_result + close(), _error(400, "bad_multipart")),
         _case("an answer without a result", "reply", ct(kind="mixed"), inline_audio + close(), _error(422, "bad_meta")),
         _case("an answer whose result holds the audio", "reply", ct(kind="mixed"), part("result", json.dumps(dict(result, audio="AAAA")).encode(), "application/json", 'Content-Disposition: inline; name="result"') + close(), _error(422, "bad_meta")),

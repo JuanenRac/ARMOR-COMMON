@@ -819,7 +819,8 @@ data class VoiceTurnResult(
     val heard: String,
     val reply: String,
     val audio: String? = null,
-    val audio_omitted: String? = null
+    val audio_omitted: String? = null,
+    val challenge: String? = null
 )
 
 data class ConnectionEvent(

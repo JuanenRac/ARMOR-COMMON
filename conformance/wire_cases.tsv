@@ -772,21 +772,21 @@ voice_turn_meta	0	{}
 voice_turn_result	1	{"heard":"","reply":""}
 voice_turn_result	1	{"heard":"arm the system","reply":"Arm the system? Say yes to confirm."}
 voice_turn_result	1	{"heard":"arm the system","reply":"Arm the system? Say yes to confirm.","audio":"AAAA"}
+voice_turn_result	1	{"heard":"arm the system","reply":"Arm the system? Say yes to confirm.","challenge":"47"}
 voice_turn_result	1	{"heard":"arm the system","reply":"Arm the system? Say yes to confirm.","audio_omitted":"too_large"}
 voice_turn_result	0	{"heard":0,"reply":"Arm the system? Say yes to confirm."}
 voice_turn_result	0	{"heard":"arm the system","reply":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","audio":"AAAA"}
-voice_turn_result	0	{"heard":"arm the system","audio_omitted":"too_large"}
+voice_turn_result	0	{"heard":"arm the system","challenge":"47"}
 voice_turn_result	1	{"heard":"arm the system","reply":"Arm the system? Say yes to confiarm."}
-voice_turn_result	0	{"heard":"arm the system","reply":"Arm the system? Say yes to confirm.","audio_omitted":"7"}
-voice_turn_result	0	{"heard":[],"reply":"Arm the system? Say yes to confirm.","audio_omitted":"too_large"}
+voice_turn_result	0	{"heard":"arm the system","reply":"Arm the system? Say yes to confirm.","challenge":"7"}
 voice_turn_result	0	{"heard":"arm the system","reply":"Arm the system? Say yes to confirm.","audio_omitted":""}
-voice_turn_result	1	{"heard":"A","reply":"Arm the system? Say yes to confirm."}
-voice_turn_result	0	{"heard":"","reply":null}
+voice_turn_result	0	{"heard":"arm the system","reply":"Arm the system? Say yes to confirm.","challenge":""}
+voice_turn_result	0	{"heard":"arm the system","reply":0,"audio_omitted":"too_large"}
+voice_turn_result	0	{"reply":"Arm the system? Say yes to confirm.","audio_omitted":"too_large"}
 voice_turn_result	1	{"heard":" ","reply":"Arm the system? Say yes to confirm."}
-voice_turn_result	1	{"heard":"arm the system","reply":"Ar m the system? Say yes to confirm."}
-voice_turn_result	0	{"heard":""}
+voice_turn_result	1	{"heard":"arm the saystem","reply":"Arm the system? Say yes to confirm.","audio_omitted":"too_large"}
 voice_turn_result	1	{"heard":"arm the system","reply":"7","audio":"AAAA"}
+voice_turn_result	1	{"heard":"A","reply":"Arm the system? Say yes to confirm."}
 voice_turn_result	1	{"heard":"日本語","reply":"Arm the system? Say yes to confirm."}
 voice_turn_result	1	{"heard":"arm the system","reply":"x\n"}
-voice_turn_result	0	{"heard":"arm the system","reply":"Arm the system? Say yes to confirm.","audio_omitted":"too_large:"}
 voice_turn_result	0	{}

@@ -456,6 +456,32 @@
    }
   },
   {
+   "name": "an answer with the number of a challenge",
+   "direction": "reply",
+   "content_type": "multipart/mixed; boundary=XB",
+   "body": "LS1YQg0KQ29udGVudC1EaXNwb3NpdGlvbjogaW5saW5lOyBuYW1lPSJyZXN1bHQiDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCg0KeyJoZWFyZCI6InNpbGVuY2UgdGhlIGFsYXJtcyIsInJlcGx5IjoiU2F5IHRoZSBudW1iZXIgc2hvd24gb24gdGhlIHNjcmVlbiB0byBzaWxlbmNlIHRoZSBhbGFybXMuIiwiY2hhbGxlbmdlIjoiNDcifQ0KLS1YQi0tDQo=",
+   "expect": {
+    "result": {
+     "heard": "silence the alarms",
+     "reply": "Say the number shown on the screen to silence the alarms.",
+     "challenge": "47"
+    },
+    "audio": null
+   }
+  },
+  {
+   "name": "an answer with a challenge that is not digits",
+   "direction": "reply",
+   "content_type": "multipart/mixed; boundary=XB",
+   "body": "LS1YQg0KQ29udGVudC1EaXNwb3NpdGlvbjogaW5saW5lOyBuYW1lPSJyZXN1bHQiDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCg0KeyJoZWFyZCI6InNpbGVuY2UgdGhlIGFsYXJtcyIsInJlcGx5IjoiU2F5IHRoZSBudW1iZXIgc2hvd24gb24gdGhlIHNjcmVlbiB0byBzaWxlbmNlIHRoZSBhbGFybXMuIiwiY2hhbGxlbmdlIjoiNHgifQ0KLS1YQi0tDQo=",
+   "expect": {
+    "error": {
+     "status": 422,
+     "code": "bad_meta"
+    }
+   }
+  },
+  {
    "name": "an answer in the form-data type",
    "direction": "reply",
    "content_type": "multipart/form-data; boundary=XB",

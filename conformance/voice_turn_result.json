@@ -52,6 +52,60 @@
    }
   },
   {
+   "name": "with the number of the spoken challenge",
+   "valid": true,
+   "payload": {
+    "heard": "arm the system",
+    "reply": "Arm the system? Say yes to confirm.",
+    "challenge": "47"
+   }
+  },
+  {
+   "name": "a challenge of six digits",
+   "valid": true,
+   "payload": {
+    "heard": "arm the system",
+    "reply": "Arm the system? Say yes to confirm.",
+    "challenge": "123456"
+   }
+  },
+  {
+   "name": "a challenge of one digit",
+   "valid": false,
+   "payload": {
+    "heard": "arm the system",
+    "reply": "Arm the system? Say yes to confirm.",
+    "challenge": "4"
+   }
+  },
+  {
+   "name": "a challenge of seven digits",
+   "valid": false,
+   "payload": {
+    "heard": "arm the system",
+    "reply": "Arm the system? Say yes to confirm.",
+    "challenge": "1234567"
+   }
+  },
+  {
+   "name": "a challenge with a letter",
+   "valid": false,
+   "payload": {
+    "heard": "arm the system",
+    "reply": "Arm the system? Say yes to confirm.",
+    "challenge": "4a"
+   }
+  },
+  {
+   "name": "a challenge as a number",
+   "valid": false,
+   "payload": {
+    "heard": "arm the system",
+    "reply": "Arm the system? Say yes to confirm.",
+    "challenge": 47
+   }
+  },
+  {
    "name": "a text that is too long",
    "valid": false,
    "payload": {

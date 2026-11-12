@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://armor.local/schemas/voice-turn-result-0.1.0.json",
   "title": "A.R.M.O.R. answer to one spoken turn, the JSON of the voice reply",
-  "description": "What the voice gateway answers to a spoken turn: what it heard and what it replies. In the older raw request, and in a binary request with `reply_audio` `base64`, the spoken answer is the optional `audio` field (base64 of 16 kHz 16-bit mono PCM). In a binary request with `reply_audio` `binary` it is the `audio` part of a `multipart/mixed` answer and this JSON is its `result` part, without the `audio` field. `audio_omitted` is set, with the reason, when the server left the spoken answer out: `too_large` (it was above the limit of the server).",
+  "description": "What the voice gateway answers to a spoken turn: what it heard and what it replies. In the older raw request, and in a binary request with `reply_audio` `base64`, the spoken answer is the optional `audio` field (base64 of 16 kHz 16-bit mono PCM). In a binary request with `reply_audio` `binary` it is the `audio` part of a `multipart/mixed` answer and this JSON is its `result` part, without the `audio` field. `audio_omitted` is set, with the reason, when the server left the spoken answer out: `too_large` (it was above the limit of the server). `challenge` is present only while the security option `voice.silence_confirmation` is `challenge` and the service has asked for the number: two to six digits that are NOT said aloud and that the panel must show on its screen (a panel that cannot show it cannot silence by voice in that mode).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -28,6 +28,10 @@
       "enum": [
         "too_large"
       ]
+    },
+    "challenge": {
+      "type": "string",
+      "pattern": "^[0-9]{2,6}$"
     }
   }
 }
