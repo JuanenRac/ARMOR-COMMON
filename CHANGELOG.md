@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **A floor for the test coverage:** the workflow `coverage-floor.yml` runs the Python tests under coverage and fails when the lines or the branches fall below `docs/coverage_threshold.json`. Floor of src/armor_common and tools/: lines 64.5, branches 65.5 (measured 65.35 and 66.31). Raising it is a change of that file, made with a figure measured by the workflow.
+
 - **More tests for the small tools:** the generator of the port constants (the four files, the check of a file out of date, a registry that is wrong), the check of the pins of the consumers (every kind of problem, `--behind`, `--set`) and the comparison of what a node writes back with what the contract keeps now have tests of their own, on copies in temporary folders.
 
 - **The voice turn result can carry `challenge`, and the silence option can be `challenge`:** `voice_turn_result` has an optional `challenge` (two to six digits, shown on the screen of the panel and never said aloud) with accepted and rejected vectors, and the binary answer of the voice turn has two more shared cases; `voice.silence_confirmation` in the HTTP contract now lists `challenge` (off by default). The generated types, parsers, the wire header of the nodes and the vectors were regenerated, and the five nodes follow the new header.
