@@ -6,6 +6,7 @@ on:
       - "generated/armor_wire.hpp"
       - "firmware_base/core/json.hpp"
       - "conformance/wire_cases.tsv"
+      - "conformance/wire_full_cases.tsv"
       - "host_tests/**"
       - "tools/generate_wire.py"
       - "tools/wire_regex.py"

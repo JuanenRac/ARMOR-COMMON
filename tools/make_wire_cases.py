@@ -8,7 +8,7 @@ them, mutations that a seeded random generator makes: a member taken away, an un
 length and one longer, a value outside an enumeration, a list longer than allowed. The verdict is what ``armor_common.schema`` says, never what the C++ says, and the file is the same on
 every run (``--check`` compares).
 
-    python tools/make_wire_cases.py           # write conformance/wire_cases.tsv
+    python tools/make_wire_cases.py           # write conformance/wire_cases.tsv and conformance/wire_full_cases.tsv
     python tools/make_wire_cases.py --check   # fail when it is out of date
 """
 from __future__ import annotations
@@ -18,6 +18,7 @@ import copy
 import json
 import random
 import sys
+import zlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,6 +27,8 @@ from armor_common import schema as sc   # noqa: E402
 
 SCHEMAS = ROOT / "src" / "armor_common" / "schemas"
 OUT = ROOT / "conformance" / "wire_cases.tsv"
+OUT_FULL = ROOT / "conformance" / "wire_full_cases.tsv"
+FULL_VARIANTS = 4   # documents per message that hold every member the schema declares (the choices of an enumeration and of a number turn from one to the next)
 SEED = 20261106
 SEEDS_PER_SCHEMA = 5
 MUTATIONS_PER_SCHEMA = 40
@@ -161,6 +164,140 @@ def verdict(key: str, root_schema: dict, doc) -> bool:
     return True
 
 
+STRING_POOL = ["a", "ab", "node-1", "electrical-1", "0123456789abcdef", "abcdefgh", "12345678", "1.2.3", "0.8.0.7", "aa:bb:cc:dd:ee:ff", "192.168.0.10", "zone-1", "front-door", "https://example.org",
+               "a/b", "00", "47", "5", "grid", "inverter", "hello world", "x1", "0", "-", "key", "1", "ab12", "a_b"]
+
+
+def string_pool() -> list[str]:
+    """The texts that a member may be given: a fixed list and every text the valid vectors of any message hold, so that a pattern of the contract finds one that fits."""
+    found = set(STRING_POOL)
+    for path in sorted((ROOT / "conformance").glob("*.json")):
+        for vector in json.loads(path.read_text(encoding="utf-8")).get("vectors", []):
+            stack = [vector.get("payload")]
+            while stack:
+                node = stack.pop()
+                if isinstance(node, str) and 0 < len(node) <= 80:
+                    found.add(node)
+                elif isinstance(node, dict):
+                    stack.extend(node.values())
+                    found.update(name for name in node if 0 < len(name) <= 80)
+                elif isinstance(node, list):
+                    stack.extend(node)
+    return list(STRING_POOL) + sorted(found - set(STRING_POOL))
+
+
+def fits(value, node: dict) -> bool:
+    try:
+        sc.validate(value, node)
+    except sc.SchemaError:
+        return False
+    return True
+
+
+def full_value(node: dict, variant: int, pool: list[str], turn: list[int], parity: int | None = None, trail: str = ""):
+    """A value that holds every member that the schema declares (and the first allowed value of what has no member), or None when none was found. ``variant`` and ``turn`` rotate the
+    choices (an enumeration, a number, a text) so that the documents of the different variants reach the different branches of the readers. With a ``parity`` (0 or 1) about half of the optional
+    members are left out, the half that the checksum of the place of the member in the document (``trail``) picks, so that the pair of documents of the two parities has each optional
+    member present in one and absent in the other."""
+    if "const" in node:
+        return node["const"]
+    if "enum" in node:
+        turn[0] += 1
+        values = node["enum"]
+        for k in range(len(values)):
+            candidate = values[(variant + turn[0] + k) % len(values)]
+            if fits(candidate, node):
+                return candidate
+        return None
+    kind = node.get("type")
+    if kind == "boolean":
+        return (variant + turn[0]) % 2 == 0
+    if kind in ("integer", "number"):
+        low, high = node.get("minimum"), node.get("maximum")
+        options = []
+        if low is not None and high is not None:
+            options = [low, high, (low + high) // 2 if kind == "integer" else (low + high) / 2, low + 1 if low + 1 <= high else low]
+        elif low is not None:
+            options = [low, low + 1, low + 7, low + 100]
+        elif high is not None:
+            options = [high, high - 1, high - 7, 0 if high >= 0 else high]
+        else:
+            options = [1, 0, 7, 100]
+        turn[0] += 1
+        for k in range(len(options)):
+            candidate = options[(variant + k) % len(options)]
+            if kind == "integer":
+                candidate = int(candidate)
+            if fits(candidate, node):
+                return candidate
+        return None
+    if kind == "string":
+        turn[0] += 1
+        shift = (variant * 7 + turn[0] * 3) % max(1, len(pool))
+        order = pool[shift:] + pool[:shift]
+        extra = ["x" * node["minLength"]] if node.get("minLength", 0) > 1 else []
+        for candidate in extra + order:
+            if fits(candidate, node):
+                return candidate
+        return None
+    if kind == "array":
+        count = max(node.get("minItems", 0), 1)
+        if variant % 2 == 1 and node.get("maxItems", 2) >= 2:
+            count = max(count, 2)
+        items = node.get("items")
+        out = []
+        for _ in range(count):
+            value = full_value(items, variant, pool, turn, parity, trail + "[]") if isinstance(items, dict) else None
+            if value is None:
+                return None
+            out.append(value)
+        return out if fits(out, node) else None
+    if kind == "object":
+        out = {}
+        required = set(node.get("required", []))
+        for name, child in node.get("properties", {}).items():
+            if name not in required and parity is not None and zlib.crc32(f"{trail}/{name}".encode()) % 2 == parity:
+                continue
+            value = full_value(child, variant, pool, turn, parity, f"{trail}/{name}")
+            if value is None:
+                if name in required:
+                    return None
+                continue
+            out[name] = value
+        extra = node.get("additionalProperties")
+        if isinstance(extra, dict):
+            for key in pool:
+                value = full_value(extra, variant, pool, turn, parity, trail + "/*")
+                if value is None:
+                    break
+                if fits({key: value}, node):
+                    out[key] = value
+                    break
+        return out if fits(out, node) else None
+    return None
+
+
+def render_full() -> str:
+    """One document per variant for every message, each with every member of the schema (the members that no valid vector has among them): the host tests of the nodes read and write them back,
+    which tries the readers and writers of the nested parts that the vectors never reach. The verdict is the oracle's as for every other case."""
+    pool = string_pool()
+    lines = []
+    for path in sorted(SCHEMAS.glob("*.schema.json")):
+        key = path.name[: -len(".schema.json")]
+        root_schema = schema_for(key)
+        seen = set()
+        for variant, parity in [(v, None) for v in range(FULL_VARIANTS)] + [(v, p) for v in (0, 1) for p in (0, 1)]:
+            doc = full_value(root_schema, variant, pool, [0, 0], parity)
+            if doc is None:
+                continue
+            text = json.dumps(doc, ensure_ascii=False, separators=(",", ":"), sort_keys=False)
+            if len(text) > LARGEST or text in seen or "\t" in text or "\n" in text:
+                continue
+            seen.add(text)
+            lines.append(f"{key}\t{1 if verdict(key, root_schema, doc) else 0}\t{text}")
+    return "\n".join(lines) + "\n"
+
+
 def render() -> str:
     rnd = random.Random(SEED)
     lines = []
@@ -197,17 +334,19 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    content = render()
-    current = OUT.read_bytes().decode("utf-8") if OUT.exists() else None
-    if current == content:
-        print("wire cases are current")
-        return 0
-    if args.check:
-        print("conformance/wire_cases.tsv is out of date", file=sys.stderr)
-        return 1
-    OUT.write_bytes(content.encode("utf-8"))
-    print(f"wrote {content.count(chr(10))} cases")
-    return 0
+    stale = False
+    for target, content in ((OUT, render()), (OUT_FULL, render_full())):
+        current = target.read_bytes().decode("utf-8") if target.exists() else None
+        if current == content:
+            print(f"{target.name} is current")
+            continue
+        if args.check:
+            print(f"conformance/{target.name} is out of date", file=sys.stderr)
+            stale = True
+            continue
+        target.write_bytes(content.encode("utf-8"))
+        print(f"wrote {content.count(chr(10))} cases to {target.name}")
+    return 1 if stale else 0
 
 
 if __name__ == "__main__":

@@ -889,6 +889,15 @@
         "ARMOR-NODE-HMI": "tests/test_shared_more.cpp",
         "ARMOR-NODE-ALARM": "tests/test_shared_more.cpp"
       }
+    },
+    "tests/test_wire_full.cpp": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "tests/test_wire_full.cpp",
+        "ARMOR-NODE-ELECTRICAL": "tests/test_wire_full.cpp",
+        "ARMOR-NODE-RADAR": "tests/test_wire_full.cpp",
+        "ARMOR-NODE-HMI": "tests/test_wire_full.cpp",
+        "ARMOR-NODE-ALARM": "tests/test_wire_full.cpp"
+      }
     }
   }
 }
