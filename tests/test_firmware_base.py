@@ -176,6 +176,80 @@ class CheckAndSyncTests(unittest.TestCase):
         self.assertEqual(tool.drift(fx.root), [])
 
 
+class InFlightTests(unittest.TestCase):
+    """The base and the nodes are pushed one after the other: while a node says it is on another version of the base, a copy that differs is pending, not broken."""
+
+    def shared(self) -> Fixture:
+        fx = Fixture(self)
+        for project in tool.PROJECTS:
+            fx.put(project, "main/entropy.cpp", source(project), crlf=True)
+        tool.do_import(fx.root)
+        tool.do_sync(fx.root)   # registers the version of the base in every node
+        return fx
+
+    def change_base(self) -> None:
+        base = tool.BASE_DIR / "main" / "entropy.cpp"
+        base.write_text(base.read_text(encoding="utf-8") + "// a new line of the base\n", encoding="utf-8")
+
+    def test_sync_registers_the_version_of_the_base_in_every_node(self):
+        fx = self.shared()
+        for project in tool.PROJECTS:
+            self.assertEqual(tool.recorded_version(fx.root, project), tool.base_version())
+        self.assertEqual(tool.do_check(fx.root), 0)
+
+    def test_the_version_changes_when_the_base_changes_and_not_otherwise(self):
+        fx = self.shared()
+        before = tool.base_version()
+        self.assertEqual(before, tool.base_version())
+        self.change_base()
+        self.assertNotEqual(before, tool.base_version())
+
+    def test_a_base_pushed_first_leaves_the_nodes_pending_and_not_broken(self):
+        fx = self.shared()
+        self.change_base()
+        broken, pending = tool.classify_drift(fx.root)
+        self.assertEqual(broken, [])
+        self.assertEqual(len(pending), len(tool.PROJECTS))
+        self.assertEqual(tool.do_check(fx.root), 0)   # PENDING is not a failure
+        tool.do_sync(fx.root)
+        self.assertEqual(tool.classify_drift(fx.root), ([], []))
+
+    def test_a_copy_edited_by_hand_in_a_node_that_is_on_this_version_is_broken(self):
+        fx = self.shared()
+        path = fx.root / "ARMOR-NODE-SOLAR" / "main" / "entropy.cpp"
+        path.write_bytes(path.read_bytes() + b"// an edit that did not go through the base\r\n")
+        broken, pending = tool.classify_drift(fx.root)
+        self.assertEqual(pending, [])
+        self.assertEqual(broken, ["ARMOR-NODE-SOLAR: main/entropy.cpp differs from the base"])
+        self.assertEqual(tool.do_check(fx.root), 1)
+
+    def test_a_node_that_is_on_another_version_and_edited_its_copy_is_only_pending_but_a_synced_one_is_still_checked(self):
+        fx = self.shared()
+        self.change_base()
+        tool.do_sync(fx.root)                                                  # every node is on the new version...
+        path = fx.root / "ARMOR-NODE-ALARM" / "main" / "entropy.cpp"
+        path.write_bytes(path.read_bytes() + b"// drift after the sync\r\n")  # ...and one of them drifts
+        broken, _pending = tool.classify_drift(fx.root)
+        self.assertEqual(broken, ["ARMOR-NODE-ALARM: main/entropy.cpp differs from the base"])
+
+    def test_a_node_without_a_lock_file_is_broken_when_it_differs(self):
+        fx = self.shared()
+        (fx.root / "ARMOR-NODE-HMI" / tool.LOCK_NAME).unlink()
+        path = fx.root / "ARMOR-NODE-HMI" / "main" / "entropy.cpp"
+        path.write_bytes(path.read_bytes() + b"// edit\r\n")
+        broken, pending = tool.classify_drift(fx.root)
+        self.assertEqual(pending, [])
+        self.assertEqual(len(broken), 1)
+        self.assertIn(tool.LOCK_NAME, broken[0])
+
+    def test_a_damaged_lock_file_counts_as_missing(self):
+        fx = self.shared()
+        (fx.root / "ARMOR-NODE-RADAR" / tool.LOCK_NAME).write_text("not json", encoding="utf-8")
+        self.assertIsNone(tool.recorded_version(fx.root, "ARMOR-NODE-RADAR"))
+        (fx.root / "ARMOR-NODE-RADAR" / tool.LOCK_NAME).write_text("[1]", encoding="utf-8")
+        self.assertIsNone(tool.recorded_version(fx.root, "ARMOR-NODE-RADAR"))
+
+
 class RealProjectsTests(unittest.TestCase):
     def test_the_real_copies_match_the_base(self):
         real_base = TOOL.parent.parent / "firmware_base"
@@ -184,7 +258,8 @@ class RealProjectsTests(unittest.TestCase):
         saved = (tool.BASE_DIR, tool.MANIFEST)
         tool.BASE_DIR, tool.MANIFEST = real_base, real_base / "manifest.json"
         try:
-            self.assertEqual(tool.drift(TOOL.parents[2]), [])
+            broken, _pending = tool.classify_drift(TOOL.parents[2])
+            self.assertEqual(broken, [])   # a copy that differs is only allowed while its node says it is on another version of the base
         finally:
             tool.BASE_DIR, tool.MANIFEST = saved
 

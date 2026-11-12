@@ -109,7 +109,7 @@ class TaskSafetyTest(unittest.TestCase):
         self.assertEqual(self.run_on({"main/a.cpp": code})[1], [])
 
     def test_the_http_client_must_use_the_long_header_buffer(self) -> None:
-        good = 'void check(){ esp_http_client_config_t config{}; config.buffer_size = header_buffer(); }\n'
+        good = 'void check(){ esp_http_client_config_t config{}; config.buffer_size = header_buffer(); config.buffer_size_tx = release::kRequestBuffer; }\n'
         self.assertEqual(safety.http_buffer_problems(Path("."), safety.load(Project(self, {"main/github_update.cpp": good}).root)), [])
         for bad in ("config.buffer_size = 4096;", "config.buffer_size = 2048;"):
             files = safety.load(Project(self, {"main/github_update.cpp": f"void c(){{ {bad} }}\n"}).root)

@@ -27,6 +27,16 @@ python tools/sync_firmware_base.py import    # (re)make the base from the projec
 If a change was made in a project's copy by mistake, `check` says so and `sync` puts the base back. If it was meant (a fix found in one project), copy it into the base and
 `sync`, or run `import`, which takes what is identical in two or more projects as the base.
 
+## The version of the base, and a base that is pushed before its nodes
+
+`sync` also writes `firmware_base.lock` in the root of every node: the version of the base (a short hash of the manifest and of every file of the base) that its copies were synchronised with. The base and the five nodes are pushed one after the other, so for a while the repositories disagree; `check` tells that apart from a real failure:
+
+- a copy that differs in a node whose lock holds **another** version than the base is **pending** (`FIRMWARE_BASE=PENDING`, exit 0): the node has not been synchronised yet, or already holds a newer base than the one that is pushed;
+- a copy that differs in a node whose lock holds **this** version is **broken** (`FIRMWARE_BASE=FAIL`): somebody edited the copy or ran no `sync`; a node without a lock file is also broken, because it has never been registered;
+- the settings that the shared code reads and a node does not declare are always a failure.
+
+So the base may be pushed first: its CI shows `PENDING` until the nodes are pushed, and turns red only when a node that says it is on this version drifts. The order of a change is: edit the base, `sync`, test the five nodes on temporary branches, push the base, push the five nodes (with their lock files), and start the firmware build of the five with nothing else pushed to main meanwhile.
+
 ## What is shared and what is not
 
 `status` lists it. A file is shared by exactly the projects whose copies are identical once the name is turned into placeholders: the Ethernet driver, the entropy, the log, the

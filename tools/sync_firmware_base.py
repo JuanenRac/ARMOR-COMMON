@@ -30,6 +30,7 @@ base file that has an @kind@ written by hand (it says so) and `sync` and `check`
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -158,18 +159,65 @@ def near_misses(root: Path, shared: dict) -> list[tuple[str, list[str]]]:
     return out
 
 
-def drift(root: Path) -> list[str]:
-    """The copies that differ from the base, as 'project: path'."""
-    out: list[str] = []
+LOCK_NAME = "firmware_base.lock"   # in the root of each node: the version of the base that its copies were last synchronised with
+
+
+def base_version() -> str:
+    """The version of the base: a hash of the manifest and of every file of the base (line endings as LF). It changes whenever the base changes."""
+    digest = hashlib.sha256()
+    manifest = load_manifest()["files"]
+    for candidate in sorted(manifest):
+        digest.update(candidate.encode("utf-8") + b"\0")
+        digest.update(read_text(BASE_DIR / candidate).replace("\r\n", "\n").encode("utf-8") + b"\0")
+        digest.update(json.dumps(manifest[candidate]["targets"], sort_keys=True).encode("utf-8") + b"\0")
+    return digest.hexdigest()[:16]
+
+
+def recorded_version(root: Path, project: str) -> str | None:
+    """The version of the base that a node says it was synchronised with, or None when it has no lock file."""
+    path = root / project / LOCK_NAME
+    if not path.is_file():
+        return None
+    try:
+        value = json.loads(read_text(path)).get("base")
+    except (ValueError, AttributeError):
+        return None
+    return value if isinstance(value, str) else None
+
+
+def drift_items(root: Path) -> list[tuple[str, str]]:
+    """The copies that differ from the base, as (project, 'project: path ...')."""
+    out: list[tuple[str, str]] = []
     for candidate, entry in load_manifest()["files"].items():
         base = read_text(BASE_DIR / candidate).replace("\r\n", "\n")   # the base is LF whatever the editor did
         for project, relative in entry["targets"].items():
             path = root / project / relative
             if not path.is_file():
-                out.append(f"{project}: {relative} is missing")
+                out.append((project, f"{project}: {relative} is missing"))
             elif read_text(path).replace("\r\n", "\n") != from_base(base, project):
-                out.append(f"{project}: {relative} differs from the base")
+                out.append((project, f"{project}: {relative} differs from the base"))
     return out
+
+
+def drift(root: Path) -> list[str]:
+    """The copies that differ from the base, as 'project: path'."""
+    return [text for _, text in drift_items(root)]
+
+
+def classify_drift(root: Path) -> tuple[list[str], list[str]]:
+    """(broken, pending). A copy that differs in a node that says it was synchronised with THIS version of the base is broken (somebody edited the copy, or the sync was not run); a copy that
+    differs in a node that says it was synchronised with another version, or with none, is only pending: the base and the nodes are pushed one after the other and for a while the node
+    projects hold the old copies (or the nodes already hold the new ones and the base is not pushed yet). A node without a lock file is broken: it has never been registered."""
+    version = base_version()
+    broken: list[str] = []
+    pending: list[str] = []
+    for project, text in drift_items(root):
+        recorded = recorded_version(root, project)
+        if recorded is None or recorded == version:
+            broken.append(text if recorded is not None else text + f" and has no {LOCK_NAME}")
+        else:
+            pending.append(f"{text} (the node was synchronised with base {recorded}, this is {version})")
+    return broken, pending
 
 
 def settings_fields(root: Path) -> list[str]:
@@ -196,10 +244,17 @@ def settings_fields(root: Path) -> list[str]:
 
 
 def do_check(root: Path) -> int:
-    problems = drift(root) + settings_fields(root)
+    broken, pending = classify_drift(root)
+    problems = broken + settings_fields(root)
     for line in problems:
         print(line)
+    for line in pending:
+        print("pending: " + line)
     manifest = load_manifest()["files"]
+    if pending and not problems:
+        projects = sorted({line.split(":", 1)[0] for line in pending})
+        print(f"FIRMWARE_BASE=PENDING {len(pending)} copies of {len(projects)} node(s) are still on another version of the base ({', '.join(projects)}): run `sync` and push them; not a failure while the nodes say so")
+        return 0
     if problems:
         print(f"FIRMWARE_BASE=FAIL {len(problems)} copies drifted (make the change in ARMOR-COMMON/firmware_base and run `sync`, or `import` to take the projects' files as they are)")
         return 1
@@ -218,6 +273,13 @@ def do_sync(root: Path) -> int:
                 write_like(path, wanted)
                 written += 1
                 print(f"written: {project}/{relative}")
+    version = base_version()
+    for project in {project for entry in load_manifest()["files"].values() for project in entry["targets"]}:   # every node says which version of the base it holds now
+        lock = root / project / LOCK_NAME
+        text = json.dumps({"base": version}, indent=2) + "\n"
+        if not lock.is_file() or read_text(lock).replace("\r\n", "\n") != text:
+            write_like(lock, text)
+            print(f"written: {project}/{LOCK_NAME} (base {version})")
     print(f"{written} copies written")
     return 0
 
