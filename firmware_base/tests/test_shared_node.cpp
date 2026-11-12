@@ -434,6 +434,22 @@ static void test_node_read_rules() {
   p = read(s, "{\"system\":{\"auto_restart_hours\":0}}"); CHECK(p.empty() && !s.ota_require_board_mark);   // a document without it keeps it
   p = read(s, "{\"security\":{\"ota_check_board\":false,\"ota_require_board_mark\":true}}"); CHECK(p.empty() && !s.ota_check_board && s.ota_require_board_mark && tail_text(s).find("\"ota_check_board\":false,\"ota_require_board_mark\":true") != std::string::npos);
   p = read(s, "{\"security\":{\"ota_check_board\":true}}"); CHECK(p.empty() && s.ota_check_board);
+  // Improv over the cable: "setup" until the settings say otherwise; the waits before a lost network or broker is tried again: the waits the firmware always had until the settings say otherwise
+  CHECK(s.improv == ImprovMode::kSetup && s.retry_wifi_first_ms == 1000 && s.retry_wifi_max_ms == 30000 && s.retry_mqtt_first_ms == 1000 && s.retry_mqtt_max_ms == 60000 && s.retry_scatter_percent == 20);
+  p = read(s, "{\"improv\":{\"mode\":\"sometimes\"}}"); CHECK(has(p, "improv.mode", "invalid") && s.improv == ImprovMode::kSetup);
+  p = read(s, "{\"improv\":{\"mode\":\"off\"}}"); CHECK(p.empty() && s.improv == ImprovMode::kOff && tail_text(s).find("\"improv\":{\"mode\":\"off\"}") != std::string::npos);
+  p = read(s, "{\"system\":{\"auto_restart_hours\":0}}"); CHECK(p.empty() && s.improv == ImprovMode::kOff);   // a document without it keeps it
+  p = read(s, "{\"improv\":{\"mode\":\"always\"}}"); CHECK(p.empty() && s.improv == ImprovMode::kAlways);
+  p = read(s, "{\"improv\":{\"mode\":\"setup\"}}"); CHECK(p.empty() && s.improv == ImprovMode::kSetup);
+  p = read(s, "{\"retry\":{\"wifi_first_ms\":199}}"); CHECK(has(p, "retry.wifi_first_ms", "range") && s.retry_wifi_first_ms == 1000);
+  p = read(s, "{\"retry\":{\"mqtt_max_ms\":600001}}"); CHECK(has(p, "retry.mqtt_max_ms", "range") && s.retry_mqtt_max_ms == 60000);
+  p = read(s, "{\"retry\":{\"scatter_percent\":91}}"); CHECK(has(p, "retry.scatter_percent", "range") && s.retry_scatter_percent == 20);
+  p = read(s, "{\"retry\":{\"scatter_percent\":\"a lot\"}}"); CHECK(has(p, "retry.scatter_percent", "invalid") && s.retry_scatter_percent == 20);
+  p = read(s, "{\"retry\":{\"wifi_first_ms\":5000,\"wifi_max_ms\":4000}}"); CHECK(p.empty() && has(check(s), "retry.wifi_max_ms", "invalid"));   // the ceiling is never below the first wait
+  p = read(s, "{\"retry\":{\"wifi_first_ms\":500,\"wifi_max_ms\":120000,\"mqtt_first_ms\":2000,\"mqtt_max_ms\":300000,\"scatter_percent\":0}}");
+  CHECK(p.empty() && !has(check(s), "retry.wifi_max_ms", "invalid") && s.retry_wifi_first_ms == 500 && s.retry_mqtt_max_ms == 300000 && s.retry_scatter_percent == 0);
+  CHECK(tail_text(s).find("\"retry\":{\"wifi_first_ms\":500,\"wifi_max_ms\":120000,\"mqtt_first_ms\":2000,\"mqtt_max_ms\":300000,\"scatter_percent\":0}") != std::string::npos);
+  s.improv = ImprovMode::kSetup; s.retry_wifi_first_ms = 1000; s.retry_wifi_max_ms = 30000; s.retry_mqtt_first_ms = 1000; s.retry_mqtt_max_ms = 60000; s.retry_scatter_percent = 20;
   // the older place of the time server
   s.auto_restart_hours = 0;
   p = read(s, "{\"mqtt\":{\"ntp\":\"old.example\"}}"); CHECK(p.empty() && s.time.ntp == "old.example");

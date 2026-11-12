@@ -445,6 +445,7 @@ void arm_rescue(const netplan::Plan& rescue_plan, int after_seconds) {
 bool start(const config::Settings& s, const netplan::Plan& plan) {
   g_plan = plan;
   g_settings = s;
+  g_wifi_backoff = retry::Backoff(static_cast<std::uint32_t>(s.retry_wifi_first_ms), static_cast<std::uint32_t>(s.retry_wifi_max_ms), static_cast<std::uint32_t>(s.retry_scatter_percent));   // the waits are the node's setting ("retry" in the settings)
   g_status.layout = netplan::to_text(plan.layout);
   g_status.ap_active = plan.ap.enabled;
   g_status.ap_setup = plan.ap.setup;

@@ -27,6 +27,8 @@ enum class WifiSecurity { kOpen, kWpa2, kWpa3, kWpa2Wpa3 };
 // The panel over plain HTTP only, over HTTP and HTTPS (a certificate the node made for itself), or over HTTPS only (port 80 sends the browser to HTTPS).
 enum class WebMode { kHttp, kBoth, kHttps };
 enum class BleMode { kOff, kSetup, kAlways };   // when the node listens to a phone over Bluetooth
+// When the node listens on its USB serial line for an Improv Wi-Fi packet (ESP Web Tools): never, only while no Wi-Fi network is stored (the default), or always.
+enum class ImprovMode { kOff, kSetup, kAlways };
 // How the node reaches the network: over the Ethernet cable (only the s3-eth board has one) or as a Wi-Fi station.
 enum class Uplink { kWifi, kEthernet };
 
@@ -110,6 +112,11 @@ struct NodeSettings {
   // also refuses an image that carries no mark at all (an old image); turn it off to go back to a version that predates the marks.
   bool ota_check_board = true;
   bool ota_require_board_mark = true;
+  // Improv Wi-Fi over the USB cable: "setup" (only while the node has no Wi-Fi network stored), "always" or "off". See core/improv.hpp (should_listen).
+  ImprovMode improv = ImprovMode::kSetup;
+  // How long the node waits before it tries a lost Wi-Fi network or a lost broker again (core/backoff.hpp): the wait doubles from the first value to the ceiling, scattered by up to the percent given.
+  // The defaults are the waits the firmware has always used (1 s growing to 30 s for the Wi-Fi, to 60 s for the broker, 20 % scatter).
+  int retry_wifi_first_ms = 1000, retry_wifi_max_ms = 30000, retry_mqtt_first_ms = 1000, retry_mqtt_max_ms = 60000, retry_scatter_percent = 20;
 };
 
 inline const char* to_text(WifiSecurity v) {
@@ -118,6 +125,7 @@ inline const char* to_text(WifiSecurity v) {
 }
 inline const char* to_text(Uplink v) { return v == Uplink::kEthernet ? "ethernet" : "wifi"; }
 inline const char* to_text(BleMode v) { return v == BleMode::kAlways ? "always" : v == BleMode::kOff ? "off" : "setup"; }
+inline const char* to_text(ImprovMode v) { return v == ImprovMode::kAlways ? "always" : v == ImprovMode::kOff ? "off" : "setup"; }
 inline const char* to_text(WebMode v) { return v == WebMode::kHttps ? "https" : v == WebMode::kHttp ? "http" : "both"; }
 
 
@@ -312,6 +320,16 @@ inline void node_read(const json::Value& document, NodeSettings& s, Problems& pr
     read_bool(*security, "ota_check_board", s.ota_check_board, "security.ota_check_board", problems);
     read_bool(*security, "ota_require_board_mark", s.ota_require_board_mark, "security.ota_require_board_mark", problems);
   }
+  if (const json::Value* improv = document.get("improv"); improv != nullptr && improv->is_object()) {
+    if (!read_choice<ImprovMode>(*improv, "mode", {{"off", ImprovMode::kOff}, {"setup", ImprovMode::kSetup}, {"always", ImprovMode::kAlways}}, s.improv)) bad(problems, "improv.mode", "invalid");
+  }
+  if (const json::Value* retry = document.get("retry"); retry != nullptr && retry->is_object()) {
+    read_int(*retry, "wifi_first_ms", s.retry_wifi_first_ms, 200, 60000, "retry.wifi_first_ms", problems);
+    read_int(*retry, "wifi_max_ms", s.retry_wifi_max_ms, 200, 600000, "retry.wifi_max_ms", problems);
+    read_int(*retry, "mqtt_first_ms", s.retry_mqtt_first_ms, 200, 60000, "retry.mqtt_first_ms", problems);
+    read_int(*retry, "mqtt_max_ms", s.retry_mqtt_max_ms, 200, 600000, "retry.mqtt_max_ms", problems);
+    read_int(*retry, "scatter_percent", s.retry_scatter_percent, 0, 90, "retry.scatter_percent", problems);
+  }
 }
 
 // ---- checking -------------------------------------------------------------------------------------------------------------------
@@ -324,6 +342,8 @@ inline void node_validate(const NodeSettings& s, Problems& problems) {
   else if (!net::valid_utf8(s.node_name, &name_characters) || name_characters > 48) bad(problems, "node.name", "invalid");
   if (!language_is_known(s.language)) bad(problems, "ui.language", "invalid");
   if (!auto_restart_hours_is_valid(s.auto_restart_hours)) bad(problems, "system.auto_restart_hours", "invalid");
+  if (s.retry_wifi_max_ms < s.retry_wifi_first_ms) bad(problems, "retry.wifi_max_ms", "invalid");     // the ceiling is never below the first wait
+  if (s.retry_mqtt_max_ms < s.retry_mqtt_first_ms) bad(problems, "retry.mqtt_max_ms", "invalid");
   if (!s.hostname.empty() && !net::valid_hostname(s.hostname)) bad(problems, "node.hostname", "invalid");
 
   // the way in: the Ethernet cable (only the s3-eth board has one), with DHCP or a fixed address, or Wi-Fi
@@ -421,6 +441,8 @@ inline void node_write_tail(json::Writer& w, const NodeSettings& s) {
   w.key("time").begin_object().field("ntp_enabled", s.time.ntp_enabled).field("ntp", s.time.ntp).field("zone", s.time.zone).end_object();
   w.key("system").begin_object().field("auto_restart_hours", s.auto_restart_hours).field("login_limit_per_minute", s.login_limit_per_minute).end_object();
   w.key("security").begin_object().field("seal_secrets", s.seal_secrets).field("ota_check_board", s.ota_check_board).field("ota_require_board_mark", s.ota_require_board_mark).end_object();
+  w.key("improv").begin_object().field("mode", to_text(s.improv)).end_object();
+  w.key("retry").begin_object().field("wifi_first_ms", s.retry_wifi_first_ms).field("wifi_max_ms", s.retry_wifi_max_ms).field("mqtt_first_ms", s.retry_mqtt_first_ms).field("mqtt_max_ms", s.retry_mqtt_max_ms).field("scatter_percent", s.retry_scatter_percent).end_object();
 }
 
 }  // namespace armor::config

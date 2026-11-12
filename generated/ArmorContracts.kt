@@ -792,6 +792,8 @@ data class NodeHealth(
     val rssi_dbm: Long? = null,
     val broker_reconnects: Long,
     val low_stack_tasks: Long? = null,
+    val stack_min_free: Long? = null,
+    val stack_min_task: String? = null,
     val last_error: String? = null,
     val control_state: String? = null,
     val control_since_ms: Long? = null,

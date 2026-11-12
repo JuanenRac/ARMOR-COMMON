@@ -791,6 +791,8 @@ export type NodeHealth = {
   rssi_dbm?: number;
   broker_reconnects: number;
   low_stack_tasks?: number;
+  stack_min_free?: number;
+  stack_min_task?: string;
   last_error?: string;
   control_state?: "running" | "paused" | "standby";
   control_since_ms?: number;

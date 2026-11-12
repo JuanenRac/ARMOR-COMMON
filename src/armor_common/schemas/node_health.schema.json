@@ -146,6 +146,17 @@
       "maximum": 64,
       "description": "How many tasks of the node have less than 512 bytes of stack left at their worst."
     },
+    "stack_min_free": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "The least stack, in bytes, that any task of the node has had free at its worst (FreeRTOS high-water mark); sent with stack_min_task. Absent from a node that does not read its tasks."
+    },
+    "stack_min_task": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32,
+      "description": "The name of the task that has had the least stack free (the one stack_min_free is about). Sent with stack_min_free."
+    },
     "last_error": {
       "type": "string",
       "minLength": 1,

@@ -825,6 +825,182 @@
    }
   },
   {
+   "name": "a node that names the task with the least stack left",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "stack_min_free": 2400,
+    "stack_min_task": "mqtt_link"
+   }
+  },
+  {
+   "name": "a task short of stack that is named",
+   "valid": true,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 1,
+    "stack_min_free": 0,
+    "stack_min_task": "meters"
+   }
+  },
+  {
+   "name": "a negative stack",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "stack_min_free": -1,
+    "stack_min_task": "main"
+   }
+  },
+  {
+   "name": "a stack as a string",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "stack_min_free": "2 KB",
+    "stack_min_task": "main"
+   }
+  },
+  {
+   "name": "an empty task name",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "stack_min_free": 100,
+    "stack_min_task": ""
+   }
+  },
+  {
+   "name": "a task name of thirty-three characters",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "stack_min_free": 100,
+    "stack_min_task": "ttttttttttttttttttttttttttttttttt"
+   }
+  },
+  {
+   "name": "the stack without the task",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "stack_min_free": 100
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "the task without the stack",
+   "valid": false,
+   "payload": {
+    "kind": "node_health",
+    "node_id": "alarm-1",
+    "timestamp_ms": 9000,
+    "family": "alarm",
+    "firmware": "0.3.6",
+    "board": "s3-eth",
+    "uptime_s": 86400,
+    "reset_reason": "power_on",
+    "heap_free": 142000,
+    "heap_min": 98000,
+    "link": "ethernet",
+    "link_up": true,
+    "broker_reconnects": 1,
+    "low_stack_tasks": 0,
+    "stack_min_task": "main"
+   },
+   "schema_valid": true
+  },
+  {
    "name": "a node whose work is paused",
    "valid": true,
    "payload": {

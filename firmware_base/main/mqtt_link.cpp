@@ -294,6 +294,7 @@ void link_task(void*) {
 
 void start(const config::Settings& settings) {
   g_settings = settings;
+  g_mqtt_backoff = retry::Backoff(static_cast<std::uint32_t>(settings.retry_mqtt_first_ms), static_cast<std::uint32_t>(settings.retry_mqtt_max_ms), static_cast<std::uint32_t>(settings.retry_scatter_percent));   // the waits are the node's setting ("retry" in the settings)
   g_broker_index = 0;
   if (!settings.mqtt.enabled || settings.mqtt.uri.empty()) {
     ESP_LOGW(kTag, "no broker is set up: the node serves its panel and reads its ports, and sends nothing");

@@ -714,6 +714,8 @@ def validate_node_health(topic: str, payload: Mapping[str, object]) -> None:
         raise ContractError("the internal memory is told whole: heap_internal_free, heap_internal_min and heap_internal_largest together")
     if internal and (payload["heap_internal_min"] > payload["heap_internal_free"] or payload["heap_internal_largest"] > payload["heap_internal_free"]):   # type: ignore[operator]
         raise ContractError("the least internal memory and its biggest block are never more than the internal memory free now")
+    if ("stack_min_free" in payload) != ("stack_min_task" in payload):
+        raise ContractError("the least stack and the task it belongs to come together: stack_min_free and stack_min_task")
     if payload["link"] == "none" and payload["link_up"] is not False:
         raise ContractError("no link means a link that is down")
     if "rssi_dbm" in payload and not (payload["link"] == "wifi" and payload["link_up"] is True):

@@ -52,6 +52,10 @@ of this repository tries the script against a stand-in broker.
 
 `main/zigbee_bridge.cpp` and `main/zigbee_bridge.hpp` are listed for ARMOR-NODE-ELECTRICAL only: ARMOR-NODE-ALARM keeps its own copy, which takes a hook for the node itself to speak Zigbee while the radio is its own (see ARMOR-NODE-ALARM's `docs/FAILOVER.md`). `core/zigbee_bridge.hpp` (who may connect, the arbiter, the reset sequence) is still shared by both.
 
+## The waits and Improv
+
+The waits before a lost Wi-Fi network or broker is tried again are the node's `retry` settings (`core/node_settings.hpp`, read by `main/network.cpp` and `main/mqtt_link.cpp` into `core/backoff.hpp`): a first wait, a ceiling and a scatter, with the waits the firmware always used as defaults. Improv Wi-Fi over the USB cable (`main/improv_serial.cpp`) listens according to `improv.mode`: `setup` (the default, only while no Wi-Fi network is stored), `always` or `off`; `improv::should_listen` in `core/improv.hpp` decides and is tested on a computer. Nothing here has run on a board.
+
 ## The health report
 
 `core/node_health.hpp`, `main/node_health.hpp` and `main/node_health.cpp` are shared by the five nodes: the report every node publishes to `armor/health/<node>` (the `node_health` contract). `core/node_health.hpp` holds what is decided without hardware - the words of the ESP-IDF reset reasons, which link the node is on, the last error of the log, the JSON of the report - and is tested in `tests/test_base.cpp`; `main/node_health.cpp` reads the real values (heap, uptime, reset reason, the network status, the log) and sends the message about once a minute. `mqtt_link.cpp` counts the connections to the broker for it (ARMOR-NODE-RADAR's own `mqtt_link.cpp` too). Each node calls `node_health::start` from its `app_main.cpp` and lists `node_health.cpp` in its `main/CMakeLists.txt`. It has not run on a board.
