@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.8.1.2] - The floor of the test coverage goes up: measured by the workflow `coverage-floor.yml`, lines 86.0 % and branches 81.7 % (before: 65.4 and 66.3); the floor is 85.5 and 81.0
+
 - **The floor of the test coverage goes up:** measured by the workflow `coverage-floor.yml`, lines 86.0 % and branches 81.7 % (before: 65.4 and 66.3); the floor is 85.5 and 81.0.
 
 - **Tests for the shared tools that had none:** `armor_project_tool.py` (the odometer of the versions, the bump of the manifest and of the files that mirror it, the lint plan, the Markdown links, the local development secrets, the steps of each kind of repository and the command line), `sync_manifests.py` (versions, facts of a repository, findings, the GitHub facts with budget and cache, `--apply`), `armor_ci_validate.py` (every failure it names), `pretty_run.py` (the panel and the wrapped scripts) and `make_conformance.py` (the committed vectors are what it writes).
