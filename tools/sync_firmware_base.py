@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -171,8 +172,31 @@ def drift(root: Path) -> list[str]:
     return out
 
 
+def settings_fields(root: Path) -> list[str]:
+    """The settings that the shared code reads (`settings.improv`, `s.retry_wifi_first_ms`...) but that a node's own configuration does not declare: a node whose host tests pass can still fail to
+    compile its firmware when the base reads a member that its configuration lacks (the host tests do not build main/)."""
+    pattern = re.compile(r"\b(?:settings|s)(?:\.|->)(improv|retry_[a-z_]+)\b")
+    wanted: set[str] = set()
+    for path in (BASE_DIR / "main").glob("*.cpp"):
+        wanted.update(pattern.findall(read_text(path)))
+    out: list[str] = []
+    for project in PROJECTS:
+        folder = root / project
+        if not folder.is_dir():
+            continue
+        declared = ""
+        for header in list(folder.glob("core/*.hpp")) + list(folder.glob("main/core/*.hpp")):
+            text = read_text(header)
+            if re.search(r"\bstruct (Node)?Settings\b", text):
+                declared += text
+        for name in sorted(wanted):
+            if declared and not re.search(rf"\b{name}\b", declared):
+                out.append(f"{project}: the shared code reads the setting {name} and the configuration of the node does not declare it")
+    return out
+
+
 def do_check(root: Path) -> int:
-    problems = drift(root)
+    problems = drift(root) + settings_fields(root)
     for line in problems:
         print(line)
     manifest = load_manifest()["files"]
