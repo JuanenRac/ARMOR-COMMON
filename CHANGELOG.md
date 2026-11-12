@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The Kotlin readers give the schema of a message:** `messageSchema(name)` in `generated/ArmorParsers.kt`, so the app can leave out the members that a closed object of the contract does not name before it reads a message, as the iPhone app already does.
 - **The shared gateway watch stands down for a router that never answers a ping:** one fresh association is tried, then no more until a reply or a new address; a gateway that answered before and goes silent is still an outage every time (`firmware_base/core/link_watch.hpp`, copied to the five nodes, with host tests).
 - **The text of the pairing code is pinned byte for byte:** a test asserts the exact text that the Studio, Android and iPhone tests also assert, so a code made by one reads in every other.
 - **The activity events of the vision service have a route in the server contract, behind a security option:** the setting `vision.activity_events` (off by default) decides whether `POST /api/v1/ai/activity-events` takes anything (off: `{ raised: false, reason: feature_off }`); the route `POST /api/v1/ai/activity-events` (the token of the observation service) and its named body `PostAiActivityEventsRequest` describe the event `armor.vision.activity/v1`, including the optional `notify` flag that is false when the profile of the arming mode does not tell the people the alarms go to; the server still records the event.

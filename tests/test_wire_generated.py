@@ -102,6 +102,10 @@ class GeneratedFilesAreCurrentTests(unittest.TestCase):
         for _key, (name, _declared) in generate_types.discover().items():
             self.assertIn(f"fun parse{name}(", kotlin, name)
 
+    def test_the_kotlin_readers_give_the_schema_of_a_message(self):
+        kotlin = (ROOT / "generated" / "ArmorParsers.kt").read_text(encoding="utf-8")
+        self.assertIn("fun messageSchema(name: String): JSONObject? = SCHEMAS[name]", kotlin)
+
     def test_the_cases_are_what_the_generator_writes(self):
         self.assertEqual(make_wire_cases.OUT.read_bytes().decode("utf-8"), make_wire_cases.render(), "run python tools/make_wire_cases.py")
 

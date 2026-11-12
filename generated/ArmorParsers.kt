@@ -160,6 +160,9 @@ private val SCHEMAS: Map<String, JSONObject> by lazy {
 
 val MESSAGE_NAMES: List<String> get() = SCHEMAS.keys.sorted()
 
+/** The JSON Schema of the message called `name`, or null: what a reader needs to leave out the members a closed object does not name. */
+fun messageSchema(name: String): JSONObject? = SCHEMAS[name]
+
 /** The first thing wrong with the document as the message called `name` (a JSONObject, a JSONArray, a String, a Number or a Boolean), or null when it is valid. */
 fun checkMessage(name: String, value: Any?): ContractError? = firstError(value, SCHEMAS.getValue(name), "")
 
