@@ -971,6 +971,14 @@ paths:
         '200': { description: The options after the change, content: { application/json: { schema: { $ref: '#/components/schemas/SecuritySettingsState' } } } }
         '400': { description: 'Unknown option, invalid value or fixed by the environment (code invalid_setting, setting names it)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '403': { description: 'Not an administrator, or the proof of identity is needed again', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/security/lan-ca:
+    get:
+      summary: The public certificate (PEM) of the local CA of the LAN, to install on phones and computers (an administrator only, while the option network.lan_ca is on and the server knows the file). A private key is never served.
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: The certificate, content: { application/x-pem-file: { schema: { type: string } } } }
+        '403': { description: Not an administrator, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: The option is off or the certificate is not available, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/alarm/zone-feed/key/{node}:
     get:
       summary: The key a panel verifies the signature of its zone messages with (HMAC-SHA256, 64 hex characters; an administrator only, from outside the house after proving identity again). It is entered in the panel and never travels on the broker
@@ -2965,6 +2973,13 @@ components:
         server.alarm_state_signature: { type: boolean, default: false, description: 'The server also publishes each alarm state it hears, signed with the key of the installation, on armor/alarm/{node_id}/state (off: it publishes nothing there; on: every one it publishes is signed)' }
         media.rtsp_proxy: { type: boolean, default: true }
         network.login_secure_only: { type: boolean, default: false }
+        network.lan_ca: { type: boolean, default: false, description: 'An administrator may download the public certificate of the local CA of the LAN (GET /api/v1/security/lan-ca); the private key is never served. Turning it on lowers the security.' }
+        vision.semantic_search: { type: boolean, default: false, description: 'Search by meaning in ARMOR-VISION (reads personal data). It cannot be on while vision.semantic_search_ack is off.' }
+        vision.plates: { type: boolean, default: false, description: 'Licence plate reading in ARMOR-VISION (reads personal data). It cannot be on while vision.plates_ack is off.' }
+        vision.faces: { type: boolean, default: false, description: 'Face recognition in ARMOR-VISION (biometric data, only people who enrolled). It cannot be on while vision.faces_ack is off.' }
+        vision.semantic_search_ack: { type: boolean, default: false, description: 'The privacy notice of search by meaning was read.' }
+        vision.plates_ack: { type: boolean, default: false, description: 'The privacy notice of plate reading was read.' }
+        vision.faces_ack: { type: boolean, default: false, description: 'The privacy notice of face recognition was read.' }
         metrics.prometheus: { type: boolean, default: false, description: 'GET /metrics answers the numbers of the server in the Prometheus text form to the bearer token ARMOR_METRICS_TOKEN (off: 404)' }
         heartbeat.enabled: { type: boolean, default: false, description: 'The server asks the address ARMOR_HEARTBEAT_URL every ARMOR_HEARTBEAT_INTERVAL_S seconds, so a service outside the house can tell the owner when the pings stop' }
         ingest.recording: { type: boolean, default: false, description: 'The server writes a copy of what the nodes send (and why a message was refused) to a JSON-lines file in its data directory that ARMOR-SIMULATOR plays with --replay; fields named like a secret are left out and the file is limited and rotated (off, the default: nothing is written)' }

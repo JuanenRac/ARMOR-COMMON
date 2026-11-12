@@ -2582,6 +2582,20 @@ export type SecuritySettings = {
   "server.alarm_state_signature"?: boolean;
   "media.rtsp_proxy"?: boolean;
   "network.login_secure_only"?: boolean;
+  /** An administrator may download the public certificate of the local CA of the LAN (GET /api/v1/security/lan-ca); the private key is never served. Turning it on lowers the security. */
+  "network.lan_ca"?: boolean;
+  /** Search by meaning in ARMOR-VISION (reads personal data). It cannot be on while vision.semantic_search_ack is off. */
+  "vision.semantic_search"?: boolean;
+  /** Licence plate reading in ARMOR-VISION (reads personal data). It cannot be on while vision.plates_ack is off. */
+  "vision.plates"?: boolean;
+  /** Face recognition in ARMOR-VISION (biometric data, only people who enrolled). It cannot be on while vision.faces_ack is off. */
+  "vision.faces"?: boolean;
+  /** The privacy notice of search by meaning was read. */
+  "vision.semantic_search_ack"?: boolean;
+  /** The privacy notice of plate reading was read. */
+  "vision.plates_ack"?: boolean;
+  /** The privacy notice of face recognition was read. */
+  "vision.faces_ack"?: boolean;
   /** GET /metrics answers the numbers of the server in the Prometheus text form to the bearer token ARMOR_METRICS_TOKEN (off: 404) */
   "metrics.prometheus"?: boolean;
   /** The server asks the address ARMOR_HEARTBEAT_URL every ARMOR_HEARTBEAT_INTERVAL_S seconds, so a service outside the house can tell the owner when the pings stop */
