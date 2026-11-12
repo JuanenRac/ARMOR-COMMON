@@ -1179,6 +1179,30 @@ export type ServerAlert = {
   login_country_new?: true;
 };
 
+export type VisionEventVectors = {
+  track_id: number;
+  dx: number;
+  dy: number;
+  speed: number;
+};
+
+export type VisionEvent = {
+  schema: "armor.vision.event/v1" | "armor.vision.event/v2";
+  type: "alert" | "detection";
+  camera_id: string;
+  zone_id: string;
+  zone_name: string;
+  track_id: number;
+  label: string;
+  confidence: number;
+  box: number[];
+  timestamp: number;
+  timestamp_ms: number;
+  authorizes_action: false;
+  radar_tracks?: number;
+  vectors?: VisionEventVectors[];
+};
+
 export const MAX_TARGETS = 15;
 export const MAX_LUX = 200000;
 export const NODE_ID_PATTERN = /^[a-z0-9][a-z0-9_-]{0,63}$/;

@@ -1180,6 +1180,30 @@ data class ServerAlert(
     val login_country_new: Boolean? = null
 )
 
+data class VisionEventVectors(
+    val track_id: Long,
+    val dx: Double,
+    val dy: Double,
+    val speed: Double
+)
+
+data class VisionEvent(
+    val schema: String,
+    val type: String,
+    val camera_id: String,
+    val zone_id: String,
+    val zone_name: String,
+    val track_id: Long,
+    val label: String,
+    val confidence: Double,
+    val box: List<Double>,
+    val timestamp: Double,
+    val timestamp_ms: Long,
+    val authorizes_action: Boolean = false,
+    val radar_tracks: Long? = null,
+    val vectors: List<VisionEventVectors>? = null
+)
+
 object ContractLimits {
     const val MAX_TARGETS = 15
     const val MAX_LUX = 200000.0

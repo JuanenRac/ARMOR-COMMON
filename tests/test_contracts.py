@@ -39,6 +39,7 @@ MESSAGE_RULES = {
     "voice_turn_meta": lambda payload: validate_payload("voice_turn_meta", payload),
     "voice_turn_result": lambda payload: validate_payload("voice_turn_result", payload),
     "ai_observation": lambda payload: validate_payload("ai_observation", payload),
+    "vision_event": lambda payload: validate_payload("vision_event", payload),
 }
 
 

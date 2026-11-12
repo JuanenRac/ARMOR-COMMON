@@ -369,6 +369,13 @@ def ai_observation(**changes):
     return base
 
 
+def vision_event(**changes):
+    base = {"schema": "armor.vision.event/v1", "type": "alert", "camera_id": "front-door", "zone_id": "driveway", "zone_name": "Driveway", "track_id": 3, "label": "person",
+            "confidence": 0.87, "box": [0.1, 0.2, 0.3, 0.6], "timestamp": 1000.5, "timestamp_ms": 1000500, "authorizes_action": False}
+    base.update(changes)
+    return base
+
+
 def without(payload, key):
     return {name: value for name, value in payload.items() if name != key}
 
@@ -1297,6 +1304,31 @@ cases: dict[str, list[Any]] = {
         ("a region with a number as a text", False, ai_observation(regions=[{"x": "0.5", "y": 0, "w": 0.2, "h": 0.5}])),
         ("a region with an unknown field", False, ai_observation(regions=[{"x": 0, "y": 0, "w": 0.2, "h": 0.5, "label": "person"}])),
         ("regions that are not a list", False, ai_observation(regions={"x": 0, "y": 0, "w": 0.2, "h": 0.5})),
+        ("not an object", False, ["front-door"]),
+    ],
+    "vision_event": [
+        ("a person in a zone that raises an alert", True, vision_event()),
+        ("a detection that is only recorded", True, vision_event(type="detection")),
+        ("the second version with the radar tracks", True, vision_event(schema="armor.vision.event/v2", radar_tracks=2)),
+        ("with the vectors of the followed objects", True, vision_event(vectors=[{"track_id": 3, "dx": 0.6, "dy": -0.8, "speed": 0.25}])),
+        ("no vectors", True, vision_event(vectors=[])),
+        ("sixteen vectors", True, vision_event(vectors=[{"track_id": 1, "dx": 1, "dy": 0, "speed": 0}] * 16)),
+        ("seventeen vectors", False, vision_event(vectors=[{"track_id": 1, "dx": 1, "dy": 0, "speed": 0}] * 17)),
+        ("a vector with a direction above one", False, vision_event(vectors=[{"track_id": 1, "dx": 1.2, "dy": 0, "speed": 0}])),
+        ("a vector with a negative speed", False, vision_event(vectors=[{"track_id": 1, "dx": 0, "dy": 0, "speed": -1}])),
+        ("a vector without a speed", False, vision_event(vectors=[{"track_id": 1, "dx": 0, "dy": 0}])),
+        ("a vector with an unknown field", False, vision_event(vectors=[{"track_id": 1, "dx": 0, "dy": 0, "speed": 0, "label": "person"}])),
+        ("a schema version that does not exist", False, vision_event(schema="armor.vision.event/v3")),
+        ("a type that does not exist", False, vision_event(type="alarm")),
+        ("an event that authorizes an action", False, vision_event(authorizes_action=True)),
+        ("a missing authorization flag", False, without(vision_event(), "authorizes_action")),
+        ("a camera id of two characters", False, vision_event(camera_id="ab")),
+        ("a confidence above one", False, vision_event(confidence=1.01)),
+        ("a box of three numbers", False, vision_event(box=[0.1, 0.2, 0.3])),
+        ("a box with a corner outside the picture", False, vision_event(box=[0.1, 0.2, 1.3, 0.6])),
+        ("a track id of zero", False, vision_event(track_id=0)),
+        ("a fraction of a radar track", False, vision_event(schema="armor.vision.event/v2", radar_tracks=1.5)),
+        ("an unknown field", False, vision_event(picture="AAAA")),
         ("not an object", False, ["front-door"]),
     ],
     "voice_turn_result": [

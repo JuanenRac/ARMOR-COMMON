@@ -2155,6 +2155,29 @@ export type PostAiObservationsRequest = {
   radar_tracks: number;
 };
 
+export type PostAiVisionEventsRequest = {
+  schema: "armor.vision.event/v1" | "armor.vision.event/v2";
+  type: "alert" | "detection";
+  camera_id: string;
+  zone_id: string;
+  zone_name: string;
+  track_id: number;
+  label: string;
+  confidence: number;
+  box: number[];
+  timestamp: number;
+  timestamp_ms: number;
+  authorizes_action: false;
+  radar_tracks?: number;
+  /** Where the followed objects were heading: a unit direction in the picture and a speed in pictures per second */
+  vectors?: {
+    track_id: number;
+    dx: number;
+    dy: number;
+    speed: number;
+  }[];
+};
+
 export type PostAlarmCommandRequest = {
   pin?: string;
   node: string;

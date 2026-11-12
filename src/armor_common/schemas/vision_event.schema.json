@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/vision-event-1.0.0.json",
+  "title": "A.R.M.O.R. event of the vision service, as it reports it to the server",
+  "description": "The body of POST /api/v1/ai/vision-events: one object that entered a zone, as ARMOR-VISION sees it. `schema` is `armor.vision.event/v1`, or `armor.vision.event/v2` when the event also says how many radar targets were being followed (`radar_tracks`). `type` is the kind of the zone: `alert` (the server raises an alarm while the system is armed) or `detection` (only recorded). `box` is `[x_min, y_min, x_max, y_max]` in fractions of the picture. `vectors`, when given, say where the objects of the camera were heading at that moment: one per followed object (at most 16), `dx` and `dy` the unit direction in the picture (y grows downwards) and `speed` in pictures per second. It carries no picture and `authorizes_action` is always false: it reports what was seen and never asks for anything to be done.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "type",
+    "camera_id",
+    "zone_id",
+    "zone_name",
+    "track_id",
+    "label",
+    "confidence",
+    "box",
+    "timestamp",
+    "timestamp_ms",
+    "authorizes_action"
+  ],
+  "properties": {
+    "schema": { "type": "string", "enum": ["armor.vision.event/v1", "armor.vision.event/v2"] },
+    "type": { "type": "string", "enum": ["alert", "detection"] },
+    "camera_id": { "type": "string", "pattern": "^[A-Za-z0-9._-]{3,80}$" },
+    "zone_id": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "zone_name": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "track_id": { "type": "integer", "minimum": 1 },
+    "label": { "type": "string", "minLength": 1, "maxLength": 60 },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "box": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "type": "number", "minimum": 0, "maximum": 1 }
+    },
+    "timestamp": { "type": "number", "minimum": 0 },
+    "timestamp_ms": { "type": "integer", "minimum": 0 },
+    "authorizes_action": { "type": "boolean", "const": false },
+    "radar_tracks": { "type": "integer", "minimum": 0, "maximum": 1000 },
+    "vectors": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["track_id", "dx", "dy", "speed"],
+        "properties": {
+          "track_id": { "type": "integer", "minimum": 1 },
+          "dx": { "type": "number", "minimum": -1, "maximum": 1 },
+          "dy": { "type": "number", "minimum": -1, "maximum": 1 },
+          "speed": { "type": "number", "minimum": 0, "maximum": 100 }
+        }
+      }
+    }
+  }
+}

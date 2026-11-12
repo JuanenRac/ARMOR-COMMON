@@ -1693,6 +1693,15 @@ paths:
         '200': { description: '{ raised, alarm_id?, reason? }', content: { application/json: { schema: { $ref: '#/components/schemas/AiObservationResult' } } } }
         '404': { description: Unknown camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
         '422': { description: Not a valid observation, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/ai/vision-events:
+    post:
+      summary: For ARMOR-VISION - one object that entered a zone (the event armor.vision.event, with the radar tracks and the vectors of the followed objects when it has them); a zone of kind alert raises an alarm only while the system is armed, once per camera and zone until it is closed, a zone of kind detection is only recorded
+      security: [{ aiBearer: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostAiVisionEventsRequest' } } } }
+      responses:
+        '200': { description: '{ raised, alarm_id?, reason? }', content: { application/json: { schema: { $ref: '#/components/schemas/AiObservationResult' } } } }
+        '404': { description: Unknown camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+        '422': { description: Not a valid vision event, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/voice/status:
     get:
       summary: Whether written and spoken commands are available on this install (a voice gateway is set up)
@@ -5317,6 +5326,7 @@ components:
     PostAdminSystemUpgradeRequest: { type: object, properties: { mode: { type: string, enum: [upgrade, full, repair] } } }
     PostAdminConsoleUnlockRequest: { type: object, required: [password], properties: { password: { type: string } } }
     PostAdminConsoleRunRequest: { type: object, required: [command], properties: { command: { type: string }, cwd: { type: string }, timeout_s: { type: integer } } }
+    PostAiVisionEventsRequest: { type: object, required: [schema, type, camera_id, zone_id, zone_name, track_id, label, confidence, box, timestamp, timestamp_ms, authorizes_action], properties: { schema: { type: string, enum: [armor.vision.event/v1, armor.vision.event/v2] }, type: { type: string, enum: [alert, detection] }, camera_id: { type: string }, zone_id: { type: string }, zone_name: { type: string }, track_id: { type: integer }, label: { type: string }, confidence: { type: number }, box: { type: array, items: { type: number } }, timestamp: { type: number }, timestamp_ms: { type: integer }, authorizes_action: { type: boolean, enum: [false] }, radar_tracks: { type: integer }, vectors: { type: array, maxItems: 16, description: 'Where the followed objects were heading: a unit direction in the picture and a speed in pictures per second', items: { type: object, required: [track_id, dx, dy, speed], properties: { track_id: { type: integer }, dx: { type: number }, dy: { type: number }, speed: { type: number } } } } } }
     PostAiObservationsRequest: { type: object, required: [camera_id, severity, reasons, profile, motion, radar_tracks], properties: { camera_id: { type: string }, severity: { type: string, enum: [review, high] }, reasons: { type: array, items: { type: string } }, profile: { type: string, enum: [daylight, low-light] }, motion: { type: number }, motion_ratio: { type: number }, regions: { type: array, maxItems: 16, description: 'Rectangles where it moved, in fractions of the picture, the largest first', items: { type: object, required: [x, y, w, h], properties: { x: { type: number }, y: { type: number }, w: { type: number }, h: { type: number } } } }, radar_tracks: { type: integer } } }
     PostVoiceCommandRequest: { type: object, required: [text], properties: { text: { type: string, maxLength: 200 }, language: { type: string, enum: [en, es, de, fr, it, ja, zh, pt] }, confirmation: { type: string }, silence_pin: { type: string, maxLength: 32, description: 'The PIN that silencing by voice asks for in the pin mode; it is not the PIN of the signed-in user' } } }
     PostVoicePanicCheckRequest: { type: object, required: [text], properties: { text: { type: string, maxLength: 240 }, language: { type: string, enum: [en, es, de, fr, it, ja, zh, pt] } } }
