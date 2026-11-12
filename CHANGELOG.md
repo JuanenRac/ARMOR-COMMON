@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **Tests of the branches the nodes shared and nobody tried:** `firmware_base/tests/test_shared_more.cpp` (copied to the five nodes) now runs the diagnostic package through every branch that decides what leaves a node (the address of a broker without its login, the leaves that are carried and the words that mark a secret, nesting and list limits, a value of each kind, every way a credential is washed from the log, the bounds of the package and of the log), the text of a release signature and of the manifest it signs, the matching of an MQTT topic with its wildcards and the will and birth messages, the frame, reassembly and request of the Bluetooth channel, and the wait between tries. The branch coverage of `diag_package` goes from 77 % to 94 % in every node.
+
 - **The contract describes `GET /api/v1/contract`:** the version of the contracts the server speaks and the state of every node that reported (`ContractStatus`: `server`, `nodes` with `node_id`, `family`, `contract` and `status` current, older, newer or unknown, and `totals`), with its types generated.
 
 - **The error of the order of the changelog names the right line:** when a version is listed after an older one, `tools/armor_ci_validate.py` said `line` followed by the text of the last line of the file instead of the number of the misplaced heading; a test fixes the message. The tool is copied to every repository by the sync of the shared CI tools.
