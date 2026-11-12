@@ -2685,6 +2685,8 @@ export type SecuritySettings = {
   "alarm_audio.custom_sounds"?: boolean;
   /** Administrators and operators may ask for the summary of a day (GET /api/v1/summary/daily; off: 404) */
   "summary.daily"?: boolean;
+  /** The server takes the activity events of ARMOR-VISION (POST /api/v1/ai/activity-events); off: it answers { raised: false, reason: feature_off } and reads nothing. */
+  "vision.activity_events"?: boolean;
   /** Administrators and operators may ask for the activity heat map of a camera (GET /api/v1/vision/heatmap; off: 404) */
   "vision.heatmap"?: boolean;
   /** Where the live ARMOR-VISION service listens: an http or https origin such as http://127.0.0.1:8765, with no sign-in, path or query in it. Empty: not set up (the heat map answers 503). The heat map is asked of that service, which keeps the activity engine in memory */

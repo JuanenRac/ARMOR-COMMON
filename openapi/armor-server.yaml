@@ -1729,11 +1729,11 @@ paths:
         '422': { description: Not a valid vision event, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/ai/activity-events:
     post:
-      summary: For ARMOR-VISION - one event of the activity engine (a zone entered, left, stayed in or loitered in, or a counting line crossed; the event armor.vision.activity). Every event is recorded; an entry, a stay or a loitering in a zone of kind alert raises an alarm only while the system is armed and only when the event does not say notify false (the profile of the arming mode watches the zone without telling the people the alarms go to), once per camera and zone until it is closed; a zone of kind detection, a zone the server does not know, an exit and a line crossing are only recorded
+      summary: For ARMOR-VISION - while the option vision.activity_events is on (off by default, the answer is raised false with reason feature_off and nothing is read), one event of the activity engine (a zone entered, left, stayed in or loitered in, or a counting line crossed; the event armor.vision.activity). Every event is recorded; an entry, a stay or a loitering in a zone of kind alert raises an alarm only while the system is armed and only when the event does not say notify false (the profile of the arming mode watches the zone without telling the people the alarms go to), once per camera and zone until it is closed; a zone of kind detection, a zone the server does not know, an exit and a line crossing are only recorded
       security: [{ aiBearer: [] }]
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostAiActivityEventsRequest' } } } }
       responses:
-        '200': { description: '{ raised, alarm_id?, reason? } - reason is disarmed, recorded, notify_off or already_open', content: { application/json: { schema: { $ref: '#/components/schemas/AiObservationResult' } } } }
+        '200': { description: '{ raised, alarm_id?, reason? } - reason is feature_off, disarmed, recorded, notify_off or already_open', content: { application/json: { schema: { $ref: '#/components/schemas/AiObservationResult' } } } }
         '404': { description: Unknown camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
         '422': { description: Not a valid activity event, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/voice/status:
@@ -3029,6 +3029,7 @@ components:
         alarm_audio.spoken: { type: boolean, default: false, description: 'The wall panel may ask for an alarm to be said out loud (off: 404)' }
         alarm_audio.custom_sounds: { type: boolean, default: false, description: 'Administrators may upload a sound for an alarm origin and the wall panel may ask for it (off: nothing is accepted or served)' }
         summary.daily: { type: boolean, default: false, description: 'Administrators and operators may ask for the summary of a day (GET /api/v1/summary/daily; off: 404)' }
+        vision.activity_events: { type: boolean, default: false, description: 'The server takes the activity events of ARMOR-VISION (POST /api/v1/ai/activity-events); off: it answers { raised: false, reason: feature_off } and reads nothing.' }
         vision.heatmap: { type: boolean, default: false, description: 'Administrators and operators may ask for the activity heat map of a camera (GET /api/v1/vision/heatmap; off: 404)' }
         vision.service_url: { type: string, maxLength: 100, default: '', description: 'Where the live ARMOR-VISION service listens: an http or https origin such as http://127.0.0.1:8765, with no sign-in, path or query in it. Empty: not set up (the heat map answers 503). The heat map is asked of that service, which keeps the activity engine in memory' }
         vision.service_token_set: { type: boolean, default: false, readOnly: true, description: 'Whether the server holds a token for the live vision service (ARMOR_VISION_SERVICE_TOKEN or ARMOR_VISION_SERVICE_TOKEN_FILE). Read only: the token itself is never sent, shown or stored here' }
