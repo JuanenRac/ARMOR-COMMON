@@ -943,6 +943,23 @@ paths:
         '200': { description: The lines as kept, content: { application/json: { schema: { $ref: '#/components/schemas/CountLines' } } } }
         '400': { description: 'A line is not two different points inside the picture, a name is repeated or there are too many', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '404': { description: Unknown camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+  /api/v1/cameras/{id}/detection-zones:
+    get:
+      summary: 'The detection zones of a camera (polygons with the labels they count) and what each arming mode watches ({ camera_id, zones, profiles }); the shape of the zones follows the ARMOR-VISION configuration'
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: The zones and the profiles, content: { application/json: { schema: { $ref: '#/components/schemas/DetectionZones' } } } }
+        '404': { description: Unknown camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+    put:
+      summary: 'Replace them (an administrator only; at most 16 zones of 3 to 12 corners inside the picture that do not cross themselves, names not repeated; a profile lists only zones of this camera). A mode with no profile watches every zone.'
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DetectionZonesInput' } } } }
+      responses:
+        '200': { description: The zones and the profiles as kept, content: { application/json: { schema: { $ref: '#/components/schemas/DetectionZones' } } } }
+        '400': { description: 'A zone or a profile is not valid', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: Unknown camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
   /api/v1/capture-settings:
     get:
       summary: 'What the server takes by itself when a camera sees something while the perimeter is armed ({ settings: { enabled, photo, photo_count, photo_interval_s, video, video_seconds, cooldown_s }, recent: the latest captures })'
@@ -4047,6 +4064,50 @@ components:
       properties:
         camera_id: { type: string }
         lines: { type: array, maxItems: 16, items: { $ref: '#/components/schemas/CountLine' } }
+    DetectionZone:
+      type: object
+      additionalProperties: false
+      required: [id, name, points]
+      description: 'A zone of detection: a polygon of 3 to 12 corners as [x, y] fractions of the picture from the top left, the kind (alert raises an alert, detection is only recorded), the labels it counts (all when empty) and how long an object stays in it before it counts'
+      properties:
+        id: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,31}$' }
+        name: { type: string, minLength: 1, maxLength: 60 }
+        points: { type: array, minItems: 3, maxItems: 12, items: { type: array, minItems: 2, maxItems: 2, items: { type: number, minimum: 0, maximum: 1 } } }
+        kind: { type: string, enum: [alert, detection], default: alert }
+        labels: { type: array, maxItems: 8, items: { type: string, pattern: '^[a-z][a-z0-9_-]{0,31}$' } }
+        min_frames: { type: integer, minimum: 1, maximum: 300, default: 1 }
+        min_seconds: { type: number, minimum: 0, maximum: 3600, default: 0 }
+    ModeProfile:
+      type: object
+      additionalProperties: false
+      required: [watch]
+      description: 'What one arming mode does with the zones of a camera: the zones it watches, how sensitive the detection is and whether it is told to the people the alarms go to'
+      properties:
+        watch: { type: array, items: { type: string } }
+        sensitivity: { type: string, enum: [low, normal, high], default: normal }
+        notify: { type: boolean, default: true }
+    DetectionProfiles:
+      type: object
+      additionalProperties: false
+      properties:
+        away: { $ref: '#/components/schemas/ModeProfile' }
+        home: { $ref: '#/components/schemas/ModeProfile' }
+        night: { $ref: '#/components/schemas/ModeProfile' }
+        disarmed: { $ref: '#/components/schemas/ModeProfile' }
+    DetectionZonesInput:
+      type: object
+      additionalProperties: false
+      required: [zones]
+      properties:
+        zones: { type: array, maxItems: 16, items: { $ref: '#/components/schemas/DetectionZone' } }
+        profiles: { $ref: '#/components/schemas/DetectionProfiles' }
+    DetectionZones:
+      type: object
+      required: [camera_id, zones, profiles]
+      properties:
+        camera_id: { type: string }
+        zones: { type: array, maxItems: 16, items: { $ref: '#/components/schemas/DetectionZone' } }
+        profiles: { $ref: '#/components/schemas/DetectionProfiles' }
     CaptureSettings:
       type: object
       examples: [{"enabled": true, "photo": true, "photo_count": 1, "photo_interval_s": 2, "video": true, "video_seconds": 15, "cooldown_s": 30}]

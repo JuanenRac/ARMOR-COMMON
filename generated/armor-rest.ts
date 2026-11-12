@@ -905,6 +905,35 @@ export type DesignVersions = {
   }[];
 };
 
+export type DetectionProfiles = {
+  away?: ModeProfile;
+  home?: ModeProfile;
+  night?: ModeProfile;
+  disarmed?: ModeProfile;
+};
+
+/** A zone of detection: a polygon of 3 to 12 corners as [x, y] fractions of the picture from the top left, the kind (alert raises an alert, detection is only recorded), the labels it counts (all when empty) and how long an object stays in it before it counts */
+export type DetectionZone = {
+  id: string;
+  name: string;
+  points: number[][];
+  kind?: "alert" | "detection";
+  labels?: string[];
+  min_frames?: number;
+  min_seconds?: number;
+};
+
+export type DetectionZones = {
+  camera_id: string;
+  zones: DetectionZone[];
+  profiles: DetectionProfiles;
+};
+
+export type DetectionZonesInput = {
+  zones: DetectionZone[];
+  profiles?: DetectionProfiles;
+};
+
 export type Device = {
   id: string;
   name: string;
@@ -1499,6 +1528,13 @@ export type MediaItemResult = {
 export type MediaList = {
   items: MediaItem[];
   activeCameraIds: string[];
+};
+
+/** What one arming mode does with the zones of a camera: the zones it watches, how sensitive the detection is and whether it is told to the people the alarms go to */
+export type ModeProfile = {
+  watch: string[];
+  sensitivity?: "low" | "normal" | "high";
+  notify?: boolean;
 };
 
 export type MqttAccountCreated = {
