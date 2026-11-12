@@ -198,7 +198,7 @@ class InFlightTests(unittest.TestCase):
         self.assertEqual(tool.do_check(fx.root), 0)
 
     def test_the_version_changes_when_the_base_changes_and_not_otherwise(self):
-        fx = self.shared()
+        self.shared()
         before = tool.base_version()
         self.assertEqual(before, tool.base_version())
         self.change_base()
