@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **A Wi-Fi search on a node that uses the cable no longer takes its address away:** when the station loses its network on the s3-eth board in the Ethernet or the Ethernet-with-access-point layout, the link and the address that came from the cable stay as they are (before, a search of networks in the access point mode marked the node as having no address and cut the broker link); the rule is `netplan::after_station_lost` with host tests for every combination of the flags.
 - **The check of the shared firmware also looks at the settings that the shared code reads:** `sync_firmware_base.py check` fails when `improv` or a `retry_*` setting is read by a shared file and the configuration of a node does not declare it, which the host tests cannot see because they do not build `main/`.
 - **The generated readers and writers are also tried with empty lists and maps and with only the required members:** `conformance/wire_full_cases.tsv` gains a document per message with every list and every map that may be empty left empty and one with the optional members left out, so the branch of an absent member and of a container with no element runs on every message in the five nodes.
 - **The identity and the setup code of a node are decided in `firmware_base/core/auth.hpp`:** the Wi-Fi station MAC on both boards and the order of the sources, with host tests (copied to the five nodes).

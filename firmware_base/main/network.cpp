@@ -289,9 +289,10 @@ void on_wifi_event(void*, esp_event_base_t, int32_t event_id, void* data) {
       int total;
       {
         std::lock_guard<std::mutex> guard(g_lock);
-        g_status.link_up = false;
-        g_status.sta_connected = false;
-        g_status.has_ip = false;
+        const netplan::LinkFlags after = netplan::after_station_lost({g_status.link_up, g_status.sta_connected, g_status.has_ip}, g_settings.uplink == config::Uplink::kEthernet);
+        g_status.link_up = after.link_up;
+        g_status.sta_connected = after.sta_connected;
+        g_status.has_ip = after.has_ip;   // on the cable the address is the cable's: a search of the access point mode must not take it away
         g_status.sta_error = error;
         ssid = g_status.sta_ssid;
         total = station_network_count(g_settings);

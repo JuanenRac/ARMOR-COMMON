@@ -39,6 +39,17 @@ struct Plan {
   std::string hostname;
 };
 
+// What the station's loss of its network does to the node's link state. On a node that reaches the network over the cable (kEthernet and kEthernetWithAp), the station only ever exists to look
+// around or to serve the access point: its "disconnected" says nothing about the cable, so the link and the address that came from the cable stay as they are. Only a node whose way in IS the
+// station loses its link and its address.
+struct LinkFlags { bool link_up = false, sta_connected = false, has_ip = false; };
+inline LinkFlags after_station_lost(LinkFlags now, bool wired_uplink) {
+  LinkFlags out = now;
+  out.sta_connected = false;
+  if (!wired_uplink) { out.link_up = false; out.has_ip = false; }
+  return out;
+}
+
 // A host name from the settings, or "armor-" + the node id (underscores become hyphens, at most 32 characters, never ending in a hyphen).
 inline std::string hostname_for(const config::Settings& s) {
   if (!s.hostname.empty()) return s.hostname;
