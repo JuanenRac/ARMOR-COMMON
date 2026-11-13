@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The host check of the shared firmware also refuses a sign-in that hashes the password while the lock of the settings store is held:** the hash takes about a third of a second and a screen reads the settings through that lock every half second, so holding it froze the picture and the touch. `user_verify` must copy the users under the lock, let it go and verify afterwards; `check_task_safety.py` reads the function and reports a verify call placed inside the guarded block. Unit tests for the good, bad and edge cases.
+
 ## [0.8.1.3] - Vision events, shared firmware base lock and generated readers
 
 - **The check of the shared firmware tells a base that is pushed before its nodes from a real drift:** `sync` writes `firmware_base.lock` in every node with the version of the base (a hash) it was synchronised with; `check` reports `PENDING` (not a failure) for a copy that differs in a node whose lock holds another version, and fails only for a node that says it is on this version and differs, or that has no lock file. Tests for both cases and the documentation in `docs/FIRMWARE_BASE.md`.
