@@ -2707,6 +2707,8 @@ export type SecuritySettings = {
   /** A channel of an electrical node whose own reading is old is left out of the grid figure and the graphs and marked as having no data */
   "electrical.set_aside_old_readings"?: boolean;
   "voice.multipart_turn"?: boolean;
+  /** A phone of a signed-in operator or administrator may speak to the voice gateway through POST /api/v1/voice/mobile-turn. Turning it on lowers the security. */
+  "voice.mobile_turn"?: boolean;
   /** The wall panel may send short chunks of audio to the voice gateway to hear its wake word (on this machine; off - the route answers 403 and nothing is passed on) */
   "voice.wake_word"?: boolean;
   "voice.panic_phrase"?: boolean;
