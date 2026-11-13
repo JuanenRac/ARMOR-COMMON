@@ -171,5 +171,28 @@ class Apply(unittest.TestCase):
             self.assertEqual(before, (repo / "README.md").read_bytes())
 
 
+class WhiteLightTests(unittest.TestCase):
+    """A line that does not apply is white, and white is never a step of the scale; green on the hardware line of a repository with no hardware is refused."""
+
+    def problems(self, manifest, light):
+        state = {"manifest": manifest, "items": [{"index": 0, "label": "Hardware", "kind": "hardware", "light": light, "ceiling": status_lights.GREEN, "why": "no limit"}]}
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            return status_lights.problems_of(Path(tmp) / "ARMOR-DEMO", state)
+
+    def test_white_has_a_name_and_is_not_on_the_scale(self):
+        self.assertEqual(status_lights.NAMES["white"], status_lights.WHITE)
+        self.assertNotIn(status_lights.WHITE, status_lights.ORDER)
+
+    def test_no_hardware_may_be_white_and_never_green(self):
+        unbound = {"maturity": "functional", "evidence": "none", "hardware_bound": False}
+        self.assertEqual(self.problems(unbound, status_lights.WHITE), [])
+        self.assertTrue(any("never green" in line for line in self.problems(unbound, status_lights.GREEN)))
+
+    def test_white_is_refused_where_hardware_applies(self):
+        bound = {"maturity": "functional", "evidence": "field"}
+        self.assertTrue(any("hardware_bound" in line for line in self.problems(bound, status_lights.WHITE)))
+
+
 if __name__ == "__main__":
     unittest.main()
