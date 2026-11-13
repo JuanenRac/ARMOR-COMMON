@@ -2669,6 +2669,8 @@ export type SecuritySettings = {
   "server.alarm_state_signature"?: boolean;
   "media.rtsp_proxy"?: boolean;
   "network.login_secure_only"?: boolean;
+  /** A Studio session in use gets a new id and cookie each time it is renewed, and the previous id keeps working for 30 seconds so requests already in flight are not signed out. Off, the default, the id lasts as long as the session. Turning it off again lowers security and asks for a new proof of identity. */
+  "session.rotate_id"?: boolean;
   /** Requests from outside the house and the VPN are taken at all. Off, the default, every one is answered 403 public_access_off. On, a request from outside still needs TLS, a control token of 32 characters or more and a sign-in password of 12 or more (403 public_access_unsafe with the reasons, or 403 tls_required), and an address that fails to sign in too often is closed with 429 public_login_locked. Turning it on lowers security and asks for a new proof of identity. */
   "network.public_access"?: boolean;
   /** An administrator may download the public certificate of the local CA of the LAN (GET /api/v1/security/lan-ca); the private key is never served. Turning it on lowers the security. */
