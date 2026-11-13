@@ -2728,7 +2728,7 @@ export type SecuritySettings = {
   "alarm_audio.custom_sounds"?: boolean;
   /** Administrators and operators may ask for the summary of a day (GET /api/v1/summary/daily; off: 404) */
   "summary.daily"?: boolean;
-  /** The server takes the activity events of ARMOR-VISION (POST /api/v1/ai/activity-events); off: it answers { raised: false, reason: feature_off } and reads nothing. */
+  /** The server takes the activity events of ARMOR-VISION (POST /api/v1/ai/activity-events); on by default; off: it answers { raised: false, reason: feature_off } and reads nothing, and an alert zone raises no alarm. Turning it off lowers the security. */
   "vision.activity_events"?: boolean;
   /** Administrators and operators may ask for the activity heat map of a camera (GET /api/v1/vision/heatmap; off: 404) */
   "vision.heatmap"?: boolean;
