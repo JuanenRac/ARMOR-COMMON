@@ -1390,6 +1390,21 @@ paths:
       security: [{ admin: [] }]
       responses:
         '200': { description: '{ enabled } when the setting is off, else { enabled, installed, field_http, approval }', content: { application/json: { schema: { $ref: '#/components/schemas/AdminFirewall' } } } }
+  /api/v1/admin/lan-ca:
+    get:
+      summary: The state of the local authority of the LAN and of its certificate (days left, fingerprints, and which are within renew_days of their end); only while the setting network.lan_ca is on (an administrator)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: '{ enabled } when the setting is off, else the state read by the admin agent', content: { application/json: { schema: { $ref: '#/components/schemas/AdminLanCaStatus' } } } }
+        '502': { description: The admin agent could not be reached or failed, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+    post:
+      summary: Make (setup), renew (renew) or replace (rotate) the local authority of the LAN and its certificate for a private address, with a confirmation and the one-time code of the authenticator in X-Armor-Maint-Totp; off until the setting network.lan_ca is on (an administrator)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostAdminLanCaRequest' } } } }
+      responses:
+        '200': { description: '{ ok, action, devices_must_reinstall } and the new state', content: { application/json: { schema: { $ref: '#/components/schemas/AdminLanCaChanged' } } } }
+        '403': { description: 'The setting network.lan_ca is off (lan_ca_disabled), the agent has no authenticator set up (totp_not_enrolled), or it wants the one-time code (totp_required) or the code is not good (totp_invalid)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'A confirmation is missing or does not match, or the action, the address or a name is not valid', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/admin/firewall/field-http:
     post:
       summary: Let the field network reach the server's port over HTTP, or stop it, with a confirmation and the one-time code of the authenticator in X-Armor-Maint-Totp, which the admin agent checks; off until the setting admin.field_http is on (an administrator)
@@ -4682,6 +4697,27 @@ components:
         installed: { type: boolean, description: Whether the rules of the host firewall were loaded on this machine }
         field_http: { type: boolean, description: Whether the field network may also reach the server's port over HTTP }
         approval: { type: string, enum: [totp, not_enrolled], description: totp when the authenticator is set up on the machine (needed to change the switch) }
+    AdminLanCaStatus:
+      type: object
+      required: [enabled]
+      properties:
+        enabled: { type: boolean }
+        installed: { type: boolean }
+        approval: { type: string, enum: [totp, not_enrolled] }
+        authority: { type: [object, 'null'], properties: { days_left: { type: integer }, sha256: { type: string } } }
+        certificate: { type: [object, 'null'], properties: { days_left: { type: integer }, sha256: { type: string } } }
+        renew_days: { type: integer }
+        expiring: { type: array, items: { type: string, enum: [authority, certificate] } }
+    AdminLanCaChanged:
+      allOf:
+        - { $ref: '#/components/schemas/AdminLanCaStatus' }
+        - type: object
+          required: [ok, action, devices_must_reinstall]
+          properties:
+            ok: { type: boolean }
+            action: { type: string, enum: [setup, renew, rotate] }
+            devices_must_reinstall: { type: boolean }
+    PostAdminLanCaRequest: { type: object, required: [action, ip, confirm, confirm_text], properties: { action: { type: string, enum: [setup, renew, rotate] }, ip: { type: string, description: 'A private IPv4 address of the machine' }, names: { type: array, maxItems: 4, items: { type: string, description: 'A name ending in .lan or .local' } }, confirm: { type: boolean, description: Must be true }, confirm_text: { type: string, description: 'The word lan-ca typed again' } } }
     AdminFirewallChanged:
       type: object
       required: [ok, state]
