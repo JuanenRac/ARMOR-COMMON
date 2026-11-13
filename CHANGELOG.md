@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The security option `session.rotate_id` is in the server contract:** off by default; a Studio session in use gets a new id and cookie each time it is renewed, and the previous id keeps working for 30 seconds. Turning it off again asks for a new proof of identity.
 - **The option `vision.activity_events` is on by default in the server contract:** the activity events of the vision service are taken from the start, and turning the option off lowers the security. The generated REST types follow.
 - **The microphone of a phone is in the server contract:** `POST /api/v1/voice/mobile-turn` (a signed-in operator or administrator; the audio and the answer of the turn of the wall panel; off until the security option `voice.mobile_turn` is on, which lowers the security), and the option itself. The generated REST types follow.
 - **The security option `admin.require_masked_agent` is in the server contract:** off by default (an older maintenance agent is accepted and the server hides the secrets of an environment file itself); on, the file routes answer `409 agent_not_masking` and relay nothing when the agent does not say it hides the secrets itself (`masked: true`)
