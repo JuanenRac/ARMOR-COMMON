@@ -27,6 +27,9 @@ enum class WifiSecurity { kOpen, kWpa2, kWpa3, kWpa2Wpa3 };
 // The panel over plain HTTP only, over HTTP and HTTPS (a certificate the node made for itself), or over HTTPS only (port 80 sends the browser to HTTPS).
 enum class WebMode { kHttp, kBoth, kHttps };
 enum class BleMode { kOff, kSetup, kAlways };   // when the node listens to a phone over Bluetooth
+// Where the Bluetooth pairing PIN comes from: derived from the setup code on the label (the default, the same every time) or a random one made for each pairing and shown only on the node's own
+// console and display (a PIN nobody can read off the label, at the price of needing to be at the node).
+enum class BlePasskeyMode { kDerived, kRandomDisplay };
 // When the node listens on its USB serial line for an Improv Wi-Fi packet (ESP Web Tools): never, only while no Wi-Fi network is stored (the default), or always.
 enum class ImprovMode { kOff, kSetup, kAlways };
 // How the node reaches the network: over the Ethernet cable (only the s3-eth board has one) or as a Wi-Fi station.
@@ -96,6 +99,7 @@ struct NodeSettings {
   Clock time;
   WebMode web = WebMode::kBoth;
   std::string admin_sources;   // the networks that may use the panel; empty = the private ranges of a house (see admin_sources.hpp)
+  BlePasskeyMode ble_passkey = BlePasskeyMode::kDerived;   // "derived" (default) or "random_display"
   BleMode ble = BleMode::kSetup;   // "setup": only while the node has no user; "always"; "off": the Bluetooth stack is not even started
   std::string language = "en";
   // A periodic, unconditional restart (disconnect_before_restart() then esp_restart()), independent of any fault: 0 means never. One of
@@ -124,6 +128,7 @@ inline const char* to_text(WifiSecurity v) {
   return "wpa2";
 }
 inline const char* to_text(Uplink v) { return v == Uplink::kEthernet ? "ethernet" : "wifi"; }
+inline const char* to_text(BlePasskeyMode v) { return v == BlePasskeyMode::kRandomDisplay ? "random_display" : "derived"; }
 inline const char* to_text(BleMode v) { return v == BleMode::kAlways ? "always" : v == BleMode::kOff ? "off" : "setup"; }
 inline const char* to_text(ImprovMode v) { return v == ImprovMode::kAlways ? "always" : v == ImprovMode::kOff ? "off" : "setup"; }
 inline const char* to_text(WebMode v) { return v == WebMode::kHttps ? "https" : v == WebMode::kHttp ? "http" : "both"; }
@@ -304,6 +309,7 @@ inline void node_read(const json::Value& document, NodeSettings& s, Problems& pr
   }
   if (const json::Value* ble = document.get("ble"); ble != nullptr && ble->is_object()) {
     if (!read_choice<BleMode>(*ble, "mode", {{"off", BleMode::kOff}, {"setup", BleMode::kSetup}, {"always", BleMode::kAlways}}, s.ble)) bad(problems, "ble.mode", "invalid");
+    if (!read_choice<BlePasskeyMode>(*ble, "passkey_mode", {{"derived", BlePasskeyMode::kDerived}, {"random_display", BlePasskeyMode::kRandomDisplay}}, s.ble_passkey)) bad(problems, "ble.passkey_mode", "invalid");
   }
   if (const json::Value* time = document.get("time"); time != nullptr && time->is_object()) {
     read_bool(*time, "ntp_enabled", s.time.ntp_enabled, "time.ntp_enabled", problems);
@@ -436,7 +442,7 @@ inline void node_write_head(json::Writer& w, const NodeSettings& s, bool secrets
 // The last members: the panel's mode, Bluetooth, the language, the clock and the periodic restart.
 inline void node_write_tail(json::Writer& w, const NodeSettings& s) {
   w.key("web").begin_object().field("mode", to_text(s.web)).field("admin_sources", s.admin_sources).end_object();
-  w.key("ble").begin_object().field("mode", to_text(s.ble)).end_object();
+  w.key("ble").begin_object().field("mode", to_text(s.ble)).field("passkey_mode", to_text(s.ble_passkey)).end_object();
   w.key("ui").begin_object().field("language", s.language).end_object();
   w.key("time").begin_object().field("ntp_enabled", s.time.ntp_enabled).field("ntp", s.time.ntp).field("zone", s.time.zone).end_object();
   w.key("system").begin_object().field("auto_restart_hours", s.auto_restart_hours).field("login_limit_per_minute", s.login_limit_per_minute).end_object();

@@ -404,6 +404,8 @@ static void test_node_read_rules() {
   p = read(s, "{\"web\":{\"admin_sources\":\"\"}}"); CHECK(p.empty() && s.admin_sources.empty());   // empty is the house's private ranges
   p = read(s, "{\"web\":{\"admin_sources\":\"" + std::string(121, '1') + "\"}}"); CHECK(has(p, "web.admin_sources", "too_long"));
   p = read(s, "{\"ble\":{\"mode\":\"sometimes\"}}"); CHECK(has(p, "ble.mode", "invalid") && s.ble == BleMode::kSetup);
+  p = read(s, "{\"ble\":{\"passkey_mode\":\"random_display\"}}"); CHECK(p.empty() && s.ble_passkey == BlePasskeyMode::kRandomDisplay && std::string(to_text(s.ble_passkey)) == "random_display");
+  p = read(s, "{\"ble\":{\"passkey_mode\":\"whatever\"}}"); CHECK(has(p, "ble.passkey_mode", "invalid") && s.ble_passkey == BlePasskeyMode::kRandomDisplay);
   p = read(s, "{\"time\":{\"ntp_enabled\":\"x\",\"ntp\":\"" + std::string(65, 'n') + "\",\"zone\":\"" + std::string(49, 'z') + "\"}}"); CHECK(has(p, "time.ntp_enabled", "invalid") && has(p, "time.ntp", "too_long") && has(p, "time.zone", "too_long"));
   p = read(s, "{\"ui\":{\"language\":\"english\"}}"); CHECK(has(p, "ui.language", "too_long") && s.language == "en");
   p = read(s, "{\"ui\":{\"language\":\"xx\"}}"); CHECK(p.empty() && s.language == "xx" && has(check(s), "ui.language", "invalid"));   // reading accepts a short text; checking is what refuses an unknown language

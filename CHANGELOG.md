@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The Bluetooth pairing PIN of the field nodes can be random, behind a setting that keeps today's behaviour by default:** `ble.passkey_mode` is `derived` (the default: six digits derived from the setup code on the label) or `random_display` (a new random PIN for every pairing, made from the radio's generator with no bias and shown only on the node's own console). Read, checked and written with the other node settings, and tested on a computer.
 - **The security option `session.rotate_id` is in the server contract:** off by default; a Studio session in use gets a new id and cookie each time it is renewed, and the previous id keeps working for 30 seconds. Turning it off again asks for a new proof of identity.
 - **The option `vision.activity_events` is on by default in the server contract:** the activity events of the vision service are taken from the start, and turning the option off lowers the security. The generated REST types follow.
 - **The microphone of a phone is in the server contract:** `POST /api/v1/voice/mobile-turn` (a signed-in operator or administrator; the audio and the answer of the turn of the wall panel; off until the security option `voice.mobile_turn` is on, which lowers the security), and the option itself. The generated REST types follow.
