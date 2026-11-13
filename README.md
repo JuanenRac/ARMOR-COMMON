@@ -22,14 +22,14 @@
   <img src="https://img.shields.io/badge/Language-Python%203.11%2B-3776ab.svg" alt="Language">
   <img src="https://img.shields.io/badge/Dependencies-none-2ea44f.svg" alt="Dependencies">
   <img src="https://img.shields.io/badge/Vectors-1427-00E5FF.svg" alt="Vectors">
-  <img src="https://img.shields.io/badge/Tests-493%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-506%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.8.1.3-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-established-2EA44F.svg" alt="Maturity">
 </p>
 
 ---
 
-**Honesty check - what runs today:** The schemas (telemetry, health, command, node information, solar inverter and battery, electrical, alarm with its command and result, and network), the Python validator, the 1427 conformance vectors, the generated TypeScript and Kotlin types, the OpenAPI file of the server (232 paths), the firmware base shared by the five nodes and the shared project launcher are real and tested (493 tests). The Kotlin file is generated but **not yet consumed** by ARMOR-ANDROID-CONTROL (which keeps its own parsing), and the `set_thresholds` command carries a single `sensitivity` field because the real radar parameters are not defined until firmware exists.
+**Honesty check - what runs today:** The schemas (telemetry, health, command, node information, solar inverter and battery, electrical, alarm with its command and result, and network), the Python validator, the 1427 conformance vectors, the generated TypeScript and Kotlin types, the OpenAPI file of the server (232 paths), the firmware base shared by the five nodes and the shared project launcher are real and tested (506 tests). The Kotlin file is generated but **not yet consumed** by ARMOR-ANDROID-CONTROL (which keeps its own parsing), and the `set_thresholds` command carries a single `sensitivity` field because the real radar parameters are not defined until firmware exists.
 
 ---
 
@@ -41,7 +41,7 @@
 | Maturity | Established |
 | Role | Shared contracts, validator and firmware base of the family |
 | Stack | Python 3.11+, JSON Schema, OpenAPI; C++ firmware base (ESP-IDF) |
-| Tests | 493 (`python -m unittest discover -s tests`), 1427 conformance vectors |
+| Tests | 506 (`python -m unittest discover -s tests`), 1427 conformance vectors |
 | Contract | 39 JSON Schemas, 232 HTTP paths (299 operations) |
 | Runs on | Any computer (library and tools); the firmware base runs inside the five nodes |
 | On real hardware | Only the radar node has run the shared firmware on a board; the other four have not |
@@ -58,7 +58,7 @@ Each line is one part of this repository and the light says how far it is today.
 | Area | State | What it means here |
 |---|---|---|
 | Software | 🟢 | The schemas, the Python validator, the generated TypeScript and Kotlin types, the OpenAPI file of the server and the firmware base shared by the five nodes are in place. |
-| Tests | 🟢 | 493 tests and 1427 conformance vectors pass; the JSON, Bluetooth and Improv parsers of the firmware are also fuzzed with libFuzzer. |
+| Tests | 🟢 | 506 tests and 1427 conformance vectors pass; the JSON, Bluetooth and Improv parsers of the firmware are also fuzzed with libFuzzer. |
 | Protocols and data | 🟡 | Only the radar node's messages are used every day with a real board and the server; those of the other nodes are checked against stand-ins. |
 | Integration | 🟡 | The firmware base is checked to be identical in every node; the Kotlin types are generated but not yet used by the Android app, which keeps its own parsing. |
 | Hardware | 🟠 | Only the radar node has run this shared firmware on a board; the other four nodes have not. |
@@ -207,7 +207,7 @@ The node's own TLS link to the broker is a setting of the node (not of the build
 
 ```powershell
 python -m pip install -e .                   # install the library
-python -m unittest discover -s tests         # 493 tests, 1427 conformance vectors
+python -m unittest discover -s tests         # 506 tests, 1427 conformance vectors
 python tools/generate_types.py --check       # the generated types are current
 python tools/generate_rest_types.py --check  # the types of the HTTP contract are current
 python tools/make_conformance.py             # regenerate the vectors after editing the case list (--check: they are current)
@@ -217,7 +217,7 @@ python tools/sync_firmware_base.py check     # the firmware the nodes share has 
 ## 🧪 Testing
 
 ```powershell
-python -m unittest discover -s tests  # 493 tests
+python -m unittest discover -s tests  # 506 tests
 python -I tools/armor_ci_validate.py
 ```
 
@@ -279,7 +279,7 @@ ARMOR-COMMON/
 ├── host_tests/                    C++ readers against the oracle
 ├── scripts/                       armor-project launcher
 ├── tools/                         generators, firmware sync and release, launcher, CI checks
-├── tests/                         493 tests
+├── tests/                         506 tests
 ├── docs/                          contracts, firmware, fuzzing
 ├── images/                        banner, icon and the pictures of the README
 ├── .github/                       CI workflow, dashboard notice, issue and pull-request templates
