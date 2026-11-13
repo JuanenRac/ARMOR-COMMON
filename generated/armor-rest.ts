@@ -1381,6 +1381,24 @@ export type FirmwareRelease = {
   checksum: boolean;
 };
 
+/** How a firmware job from GitHub is spread over the nodes while the option admin.firmware_rollout is on. The nodes are ordered by a hash of their id and the version, so the same nodes go first for a version and a larger percent only adds nodes. */
+export type FirmwareRolloutSettings = {
+  /** stable takes the latest release; beta takes the newest release, a pre-release included */
+  channel?: "stable" | "beta";
+  /** The share of the nodes of a job that take the version now (at least one node); the others are listed as deferred until the job is started again with a larger percent */
+  percent?: number;
+  /** A node that took the image and did not come back with it is asked to start from its previous slot again */
+  rollback?: boolean;
+  /** After a node failed, the nodes that were still to come are deferred and not touched */
+  halt_on_failure?: boolean;
+};
+
+export type FirmwareRolloutState = {
+  /** The option admin.firmware_rollout */
+  enabled: boolean;
+  settings: FirmwareRolloutSettings;
+};
+
 export type FirmwareUpload = {
   id: string;
   name: string;
@@ -2871,6 +2889,8 @@ export type SecuritySettings = {
   "commands.require_sig"?: boolean;
   /** An administrator may set up encrypted, scheduled backups of the data directory and make or prove one (the /api/v1/admin/backup routes). Off: they answer 403 backup_disabled. */
   "admin.backup"?: boolean;
+  /** A firmware job from GitHub follows the staged rollout of the settings (/api/v1/admin/firmware/rollout): the channel stable or beta, a percent of the nodes at a time, and the way back for a node that does not come back. Off: a job updates every node it was given with the latest release, as always. */
+  "admin.firmware_rollout"?: boolean;
   /** When the grid draw is over the limit, the devices listed as not critical are switched off one at a time and on again below the restore level. Off: nothing is ever shed. */
   "electrical.load_shedding"?: boolean;
   /** The server works out the energy balance of the house and watches it for information (GET /api/v1/electrical/balance). Off: 404 and nothing is watched. */
