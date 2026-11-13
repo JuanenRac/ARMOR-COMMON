@@ -1556,6 +1556,19 @@ paths:
         '202': { description: '{ id } - the job runs in the background', content: { application/json: { schema: { $ref: '#/components/schemas/JobStarted' } } } }
         '409': { description: Another job is running, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '422': { description: 'Unknown kind or source, not a local address, no login, or an unknown upload', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/admin/firmware/rollout:
+    get:
+      summary: The staged rollout of the firmware (an administrator) - whether the option admin.firmware_rollout is on and its settings (the channel, the share of the nodes that take a new version in one go, and what happens when a node does not come back)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: The state, content: { application/json: { schema: { $ref: '#/components/schemas/FirmwareRolloutState' } } } }
+    put:
+      summary: Set the staged rollout (channel, percent, rollback, halt); a new proof of identity from outside the house. The settings can be saved while the option is off; they take effect only when it is on
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/FirmwareRolloutSettings' } } } }
+      responses:
+        '200': { description: The state with the new settings, content: { application/json: { schema: { $ref: '#/components/schemas/FirmwareRolloutState' } } } }
+        '422': { description: 'A value is not valid (invalid_settings)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/admin/firmware/jobs/{id}:
     get:
       summary: How a firmware job stands - its state and, for every node, where it is and the version before and after (an administrator)
@@ -2955,6 +2968,21 @@ components:
         require_mount: { type: boolean, description: 'The destination must be on another device than the data' }
         include_media: { type: boolean }
         max_mb: { type: integer, minimum: 1, maximum: 2048 }
+    FirmwareRolloutSettings:
+      type: object
+      additionalProperties: false
+      description: 'How a firmware job from GitHub is spread over the nodes while the option admin.firmware_rollout is on. The nodes are ordered by a hash of their id and the version, so the same nodes go first for a version and a larger percent only adds nodes.'
+      properties:
+        channel: { type: string, enum: [stable, beta], default: stable, description: 'stable takes the latest release; beta takes the newest release, a pre-release included' }
+        percent: { type: integer, minimum: 1, maximum: 100, default: 100, description: 'The share of the nodes of a job that take the version now (at least one node); the others are listed as deferred until the job is started again with a larger percent' }
+        rollback: { type: boolean, default: true, description: 'A node that took the image and did not come back with it is asked to start from its previous slot again' }
+        halt_on_failure: { type: boolean, default: true, description: 'After a node failed, the nodes that were still to come are deferred and not touched' }
+    FirmwareRolloutState:
+      type: object
+      required: [enabled, settings]
+      properties:
+        enabled: { type: boolean, description: The option admin.firmware_rollout }
+        settings: { $ref: '#/components/schemas/FirmwareRolloutSettings' }
     BackupSettingsRequest:
       type: object
       additionalProperties: false
@@ -3319,6 +3347,7 @@ components:
         vacation.mode: { type: boolean, default: false, description: 'The automations with a schedule trigger run, only while the system is armed away (presence simulation). Off: no schedule ever runs.' }
         commands.require_sig: { type: boolean, default: false, description: 'The critical commands (alarm_command, electrical_command) are published with a nonce and an HMAC-SHA256 signature of this installation. Off: unsigned.' }
         admin.backup: { type: boolean, default: false, description: 'An administrator may set up encrypted, scheduled backups of the data directory and make or prove one (the /api/v1/admin/backup routes). Off: they answer 403 backup_disabled.' }
+        admin.firmware_rollout: { type: boolean, default: false, description: 'A firmware job from GitHub follows the staged rollout of the settings (/api/v1/admin/firmware/rollout): the channel stable or beta, a percent of the nodes at a time, and the way back for a node that does not come back. Off: a job updates every node it was given with the latest release, as always.' }
         electrical.load_shedding: { type: boolean, default: false, description: 'When the grid draw is over the limit, the devices listed as not critical are switched off one at a time and on again below the restore level. Off: nothing is ever shed.' }
         electrical.balance: { type: boolean, default: false, description: 'The server works out the energy balance of the house and watches it for information (GET /api/v1/electrical/balance). Off: 404 and nothing is watched.' }
         client.device_lock: { type: string, enum: [user, sensitive, always], default: user }
