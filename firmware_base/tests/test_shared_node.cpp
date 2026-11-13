@@ -337,7 +337,7 @@ static void test_node_round_trip() {
   s.mqtt.enabled = true; s.mqtt.uri = "mqtt://10.0.0.9:1884"; s.mqtt.username = "node"; s.mqtt.password = "mqtt-secret"; s.mqtt.heartbeat_s = 20;
   s.mqtt.backup = {{"mqtt://10.0.0.10", "u2", "p2"}};
   s.time.ntp_enabled = false; s.time.ntp = "ntp.local"; s.time.zone = "CET-1CEST,M3.5.0,M10.5.0/3";
-  s.web = WebMode::kHttps; s.admin_sources = "192.168.0.0/24, 203.0.113.9"; s.ble = BleMode::kAlways; s.language = "pt"; s.auto_restart_hours = 12;
+  s.web = WebMode::kHttps; s.admin_sources = "192.168.0.0/24, 203.0.113.9"; s.ble = BleMode::kAlways; s.ble_passkey = BlePasskeyMode::kRandomDisplay; s.language = "pt"; s.auto_restart_hours = 12;
   CHECK(check(s).empty());
 
   // flash: everything, secrets included
@@ -352,7 +352,7 @@ static void test_node_round_trip() {
         back.ap.tx_power_dbm == 8 && back.ap.bandwidth_mhz == 40 && back.ap.country == "DE");
   CHECK(back.sta.enabled && back.sta.ssid == "casa" && back.sta.password == "una-clave-larga" && back.sta.backup.size() == 2 && back.sta.backup[0].ssid == "back1" && back.sta.backup[0].password == "back1-password" && back.sta.backup[1].password.empty());
   CHECK(back.mqtt.enabled && back.mqtt.uri == "mqtt://10.0.0.9:1884" && back.mqtt.username == "node" && back.mqtt.password == "mqtt-secret" && back.mqtt.heartbeat_s == 20 && back.mqtt.backup.size() == 1 && back.mqtt.backup[0].password == "p2");
-  CHECK(!back.time.ntp_enabled && back.time.ntp == "ntp.local" && back.time.zone == s.time.zone && back.web == WebMode::kHttps && back.admin_sources == s.admin_sources && back.ble == BleMode::kAlways && back.language == "pt" && back.auto_restart_hours == 12);
+  CHECK(!back.time.ntp_enabled && back.time.ntp == "ntp.local" && back.time.zone == s.time.zone && back.web == WebMode::kHttps && back.ble_passkey == BlePasskeyMode::kRandomDisplay && back.admin_sources == s.admin_sources && back.ble == BleMode::kAlways && back.language == "pt" && back.auto_restart_hours == 12);
   CHECK(written(back, true) == stored);   // writing what was read gives the same document
   CHECK(check(back).empty());
 
@@ -405,6 +405,8 @@ static void test_node_read_rules() {
   p = read(s, "{\"web\":{\"admin_sources\":\"" + std::string(121, '1') + "\"}}"); CHECK(has(p, "web.admin_sources", "too_long"));
   p = read(s, "{\"ble\":{\"mode\":\"sometimes\"}}"); CHECK(has(p, "ble.mode", "invalid") && s.ble == BleMode::kSetup);
   p = read(s, "{\"ble\":{\"passkey_mode\":\"random_display\"}}"); CHECK(p.empty() && s.ble_passkey == BlePasskeyMode::kRandomDisplay && std::string(to_text(s.ble_passkey)) == "random_display");
+  p = read(s, "{\"ble\":{\"passkey_mode\":\"derived\"}}"); CHECK(p.empty() && s.ble_passkey == BlePasskeyMode::kDerived && std::string(to_text(s.ble_passkey)) == "derived");
+  p = read(s, "{\"ble\":{\"passkey_mode\":\"random_display\"}}");
   p = read(s, "{\"ble\":{\"passkey_mode\":\"whatever\"}}"); CHECK(has(p, "ble.passkey_mode", "invalid") && s.ble_passkey == BlePasskeyMode::kRandomDisplay);
   p = read(s, "{\"time\":{\"ntp_enabled\":\"x\",\"ntp\":\"" + std::string(65, 'n') + "\",\"zone\":\"" + std::string(49, 'z') + "\"}}"); CHECK(has(p, "time.ntp_enabled", "invalid") && has(p, "time.ntp", "too_long") && has(p, "time.zone", "too_long"));
   p = read(s, "{\"ui\":{\"language\":\"english\"}}"); CHECK(has(p, "ui.language", "too_long") && s.language == "en");
