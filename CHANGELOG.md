@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The shared broker test starts the broker from a private copy on Linux:** a broker installed from a distribution package can run under a security profile that lets it read only its own folders and then cannot open the configuration of the test; `firmware_base/tests/check_mosquitto.py` now copies the program into the test folder first and says the exit code and the error file when the broker does not start. This is the change the alarm node had made in its own copy; the other nodes take it with their next `sync`.
 - **The Bluetooth pairing PIN of the field nodes can be random, behind a setting that keeps today's behaviour by default:** `ble.passkey_mode` is `derived` (the default: six digits derived from the setup code on the label) or `random_display` (a new random PIN for every pairing, made from the radio's generator with no bias and shown only on the node's own console). Read, checked and written with the other node settings, and tested on a computer.
 - **The security option `session.rotate_id` is in the server contract:** off by default; a Studio session in use gets a new id and cookie each time it is renewed, and the previous id keeps working for 30 seconds. Turning it off again asks for a new proof of identity.
 - **The option `vision.activity_events` is on by default in the server contract:** the activity events of the vision service are taken from the start, and turning the option off lowers the security. The generated REST types follow.
