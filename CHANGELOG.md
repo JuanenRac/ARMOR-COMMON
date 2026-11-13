@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The security option `network.public_access` is in the server contract:** off by default (every request from outside the house is answered `403 public_access_off`); on, a request from outside still needs TLS and strong secrets and failed sign-ins close an address (`429 public_login_locked`). The generated REST types follow.
 - **The host check of the shared firmware also refuses a sign-in that hashes the password while the lock of the settings store is held:** the hash takes about a third of a second and a screen reads the settings through that lock every half second, so holding it froze the picture and the touch. `user_verify` must copy the users under the lock, let it go and verify afterwards; `check_task_safety.py` reads the function and reports a verify call placed inside the guarded block. Unit tests for the good, bad and edge cases.
 
 ## [0.8.1.3] - Vision events, shared firmware base lock and generated readers
