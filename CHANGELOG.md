@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The option `vision.activity_events` is on by default in the server contract:** the activity events of the vision service are taken from the start, and turning the option off lowers the security. The generated REST types follow.
 - **The microphone of a phone is in the server contract:** `POST /api/v1/voice/mobile-turn` (a signed-in operator or administrator; the audio and the answer of the turn of the wall panel; off until the security option `voice.mobile_turn` is on, which lowers the security), and the option itself. The generated REST types follow.
 - **The security option `admin.require_masked_agent` is in the server contract:** off by default (an older maintenance agent is accepted and the server hides the secrets of an environment file itself); on, the file routes answer `409 agent_not_masking` and relay nothing when the agent does not say it hides the secrets itself (`masked: true`)
 - **The generators of the types and of the AsyncAPI document and the check of the shared motion core are tried on small fixed inputs:** the TypeScript and Kotlin type of each kind of field (constants, enumerations, arrays, grids, maps, nested objects), the default of a Kotlin property, the three ways the command of each generator ends (written, current, stale, also with another line ending), and every way the copies of the motion core can drift (missing, different, another line ending, a project that is not next to the repository, the usage text), all in a throwaway folder. Thirteen tests.
