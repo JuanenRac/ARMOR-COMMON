@@ -747,6 +747,34 @@ paths:
         '200': { description: '{ revision, updated_at, updated_by }', content: { application/json: { schema: { $ref: '#/components/schemas/DesignSaved' } } } }
         '400': { description: 'The design is not an object, or too large', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '409': { description: Someone else saved first; the answer carries `current`, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/electrical/load-shedding:
+    get:
+      summary: Load shedding of the house (operators and administrators) - whether the option electrical.load_shedding is on, the settings, the devices shed now, the grid draw and the log of what was done
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: 'The state', content: { application/json: { schema: { $ref: '#/components/schemas/LoadShedding' } } } }
+    put:
+      summary: Set the limits and the list of devices that may be shed (an administrator; a new proof of identity from outside the house). A device that is a critical circuit is never shed, whatever the list says
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/LoadSheddingSettings' } } } }
+      responses:
+        '200': { description: 'The state with the new settings', content: { application/json: { schema: { $ref: '#/components/schemas/LoadShedding' } } } }
+        '422': { description: 'A value is out of range, restore_w is not at least 100 W under limit_w, or the list is not valid', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/electrical/balance:
+    get:
+      summary: The energy balance of the house now (production, consumption, import, export, self-consumption, autarky), the findings that are open and the settings; only while the option electrical.balance is on
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: 'The balance', content: { application/json: { schema: { $ref: '#/components/schemas/EnergyBalance' } } } }
+        '404': { description: 'The option electrical.balance is off (balance_off)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+    put:
+      summary: Set the thresholds of the balance and the channels whose history is watched (an administrator; a new proof of identity from outside the house)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/EnergyBalanceSettings' } } } }
+      responses:
+        '200': { description: 'The balance with the new settings', content: { application/json: { schema: { $ref: '#/components/schemas/EnergyBalance' } } } }
+        '404': { description: 'The option electrical.balance is off (balance_off)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'A value is out of range or the list is not valid', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/electrical/devices:
     get:
       summary: The devices of the house that measure or switch electricity (Zigbee plugs and breakers, meters, smart lights) with what they say, whether they can be switched and how much it matters
@@ -1391,6 +1419,39 @@ paths:
       security: [{ admin: [] }]
       responses:
         '200': { description: '{ enabled } when the setting is off, else { enabled, installed, field_http, approval }', content: { application/json: { schema: { $ref: '#/components/schemas/AdminFirewall' } } } }
+  /api/v1/admin/backup:
+    get:
+      summary: The encrypted backups of the data directory (an administrator) - whether the option admin.backup is on, the settings, whether a passphrase is set, the last result of a backup and of a proof, and the backups on the destination, newest first
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: 'The state', content: { application/json: { schema: { $ref: '#/components/schemas/BackupState' } } } }
+    put:
+      summary: Set the backups (schedule, hours between backups, how many to keep, destination, require_mount, include_media, max_mb) and, when given, the passphrase that makes the key; a new proof of identity from outside the house. The passphrase is never returned or kept
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/BackupSettingsRequest' } } } }
+      responses:
+        '200': { description: 'The state with the new settings', content: { application/json: { schema: { $ref: '#/components/schemas/BackupState' } } } }
+        '403': { description: 'The option admin.backup is off (backup_disabled)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'A value is not valid, the passphrase is too short (weak_passphrase), a schedule has no passphrase (passphrase_needed) or the destination is not under an allowed place (destination_not_allowed)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/admin/backup/run:
+    post:
+      summary: Make a backup now (an administrator; a new proof of identity from outside the house)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: 'What was written', content: { application/json: { schema: { $ref: '#/components/schemas/BackupResult' } } } }
+        '403': { description: 'The option admin.backup is off (backup_disabled)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'A backup is already being made (busy), or the destination is not there (destination_missing) or is on the same device as the data (not_mounted)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'No passphrase yet (passphrase_needed) or the data is larger than max_mb (too_large)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/admin/backup/verify:
+    post:
+      summary: 'Prove a backup (the newest, or name): open it, check the authentication tag and every hash and write the files into a temporary folder that is removed, so that a restore is known to work'
+      security: [{ admin: [] }]
+      requestBody: { required: false, content: { application/json: { schema: { $ref: '#/components/schemas/BackupVerifyRequest' } } } }
+      responses:
+        '200': { description: 'The proof', content: { application/json: { schema: { $ref: '#/components/schemas/BackupResult' } } } }
+        '403': { description: 'The option admin.backup is off (backup_disabled)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'There is no such backup (no_backup)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'Not the name of a backup, the key is not the one that made it or it was changed (wrong_key), or it is damaged (corrupt)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/admin/lan-ca:
     get:
       summary: The state of the local authority of the LAN and of its certificate (days left, fingerprints, and which are within renew_days of their end); only while the setting network.lan_ca is on (an administrator)
@@ -2653,6 +2714,15 @@ components:
             source_type: { type: string, enum: [node, camera, device, solar, electrical, network, alarm] }
             source_id: { type: string }
         - { type: object, additionalProperties: false, required: [type, mode], properties: { type: { const: mode }, mode: { type: string, enum: [armed, disarmed] } } }
+        - type: object
+          additionalProperties: false
+          required: [type, at]
+          properties:
+            type: { const: schedule }
+            at: { type: string, pattern: '^([01]\d|2[0-3]):[0-5]\d$', description: 'Time of day, HH:MM, the clock of the server' }
+            days: { type: array, minItems: 1, maxItems: 7, uniqueItems: true, items: { type: integer, minimum: 0, maximum: 6 }, description: '0 is Sunday; all days when absent' }
+            jitter_min: { type: integer, minimum: 0, maximum: 120, description: 'Up to this many minutes either way, repeatable from the seed and the day' }
+            seed: { type: string, pattern: '^[A-Za-z0-9._-]{1,32}$' }
     AutomationAction:
       description: What an automation does
       oneOf:
@@ -2809,6 +2879,128 @@ components:
       required: [deleted]
       properties:
         deleted: { type: integer, minimum: 0 }
+    LoadSheddingSettings:
+      type: object
+      additionalProperties: false
+      properties:
+        limit_w: { type: integer, minimum: 200, maximum: 100000, description: 'Shed above this grid draw, in watts' }
+        restore_w: { type: integer, minimum: 100, maximum: 100000, description: 'Switch on again below this draw; at least 100 W under limit_w' }
+        hold_s: { type: integer, minimum: 5, maximum: 3600, description: 'How long the draw must stay beyond a limit before anything is done' }
+        step_s: { type: integer, minimum: 5, maximum: 3600, description: 'The least time between two actions' }
+        loads: { type: array, maxItems: 16, uniqueItems: true, items: { type: string, pattern: '^[A-Za-z0-9._-]{1,80}$' }, description: 'The ids of the devices that may be shed, the first is the first to be shed' }
+    LoadSheddingLogEntry:
+      type: object
+      required: [at, action, device, grid_w]
+      properties:
+        at: { type: string, format: date-time }
+        action: { type: string, enum: [shed, restore, refused, failed, released] }
+        device: { type: string }
+        grid_w: { type: [number, 'null'] }
+        detail: { type: string }
+    LoadShedding:
+      type: object
+      required: [enabled, settings, shed, grid_w, log]
+      properties:
+        enabled: { type: boolean, description: 'The option electrical.load_shedding' }
+        settings: { $ref: '#/components/schemas/LoadSheddingSettings' }
+        shed: { type: array, items: { type: string }, description: 'The devices switched off by this module and not yet switched on again' }
+        grid_w: { type: [number, 'null'] }
+        log: { type: array, maxItems: 100, items: { $ref: '#/components/schemas/LoadSheddingLogEntry' } }
+    EnergyBalanceSettings:
+      type: object
+      additionalProperties: false
+      properties:
+        allow_export: { type: boolean, description: 'The installation may feed the grid; off: an export above export_alert_w for hold_s is told' }
+        export_alert_w: { type: integer, minimum: 10, maximum: 50000 }
+        hold_s: { type: integer, minimum: 10, maximum: 3600 }
+        mismatch_pct: { type: integer, minimum: 10, maximum: 90 }
+        mismatch_min_w: { type: integer, minimum: 50, maximum: 50000 }
+        stopped_h: { type: integer, minimum: 1, maximum: 48 }
+        watch_channels: { type: array, maxItems: 8, uniqueItems: true, items: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,63}/[A-Za-z0-9._-]{1,40}$' }, description: 'node/channel of the channels whose history is looked at' }
+    EnergyBalanceFinding:
+      type: object
+      required: [code, key, source, detail]
+      properties:
+        code: { type: string, enum: [grid_export_unexpected, meter_mismatch, consumption_appliance_stopped, consumption_standby_high, consumption_phase_down] }
+        key: { type: string }
+        source: { type: string }
+        detail: { type: object, additionalProperties: { type: [number, string] } }
+    EnergyBalance:
+      type: object
+      required: [enabled, settings, balance, findings]
+      properties:
+        enabled: { type: boolean }
+        settings: { $ref: '#/components/schemas/EnergyBalanceSettings' }
+        balance:
+          type: object
+          required: [production_w, consumption_w, import_w, export_w, battery_charge_w, self_consumption_pct, autarky_pct, reported_load_w]
+          properties:
+            production_w: { type: [number, 'null'] }
+            consumption_w: { type: [number, 'null'], description: 'Production plus grid draw minus battery charge' }
+            import_w: { type: [number, 'null'] }
+            export_w: { type: [number, 'null'] }
+            battery_charge_w: { type: [number, 'null'] }
+            self_consumption_pct: { type: [number, 'null'] }
+            autarky_pct: { type: [number, 'null'] }
+            reported_load_w: { type: [number, 'null'], description: 'The load the inverters report, to compare with consumption_w' }
+        findings: { type: array, items: { $ref: '#/components/schemas/EnergyBalanceFinding' } }
+    BackupSettings:
+      type: object
+      required: [schedule, every_h, keep, destination, require_mount, include_media, max_mb]
+      properties:
+        schedule: { type: boolean }
+        every_h: { type: integer, minimum: 1, maximum: 720 }
+        keep: { type: integer, minimum: 1, maximum: 60 }
+        destination: { type: string, maxLength: 300, description: 'An absolute path under /media, /mnt, /run/media or the data directory; empty is the folder backups of the data directory' }
+        require_mount: { type: boolean, description: 'The destination must be on another device than the data' }
+        include_media: { type: boolean }
+        max_mb: { type: integer, minimum: 1, maximum: 2048 }
+    BackupSettingsRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        schedule: { type: boolean }
+        every_h: { type: integer, minimum: 1, maximum: 720 }
+        keep: { type: integer, minimum: 1, maximum: 60 }
+        destination: { type: string, maxLength: 300 }
+        require_mount: { type: boolean }
+        include_media: { type: boolean }
+        max_mb: { type: integer, minimum: 1, maximum: 2048 }
+        passphrase: { type: string, minLength: 12, maxLength: 200, description: 'Makes the key for the next backups; never returned or kept' }
+    BackupVerifyRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        name: { type: string, pattern: '^armor-backup-\d{8}T\d{6}Z\.armorbk$' }
+        passphrase: { type: string, maxLength: 200, description: 'For a backup made under another passphrase than the one the server holds' }
+    BackupResult:
+      type: object
+      required: [ok, at]
+      properties:
+        ok: { type: boolean }
+        at: { type: string, format: date-time }
+        file: { type: string }
+        bytes: { type: integer }
+        files: { type: integer }
+        error: { type: string }
+    BackupInfo:
+      type: object
+      required: [name, bytes, at]
+      properties:
+        name: { type: string }
+        bytes: { type: integer }
+        at: { type: string }
+    BackupState:
+      type: object
+      required: [enabled, settings, key_set, running, last, last_verify, backups]
+      properties:
+        enabled: { type: boolean, description: 'The option admin.backup' }
+        settings: { $ref: '#/components/schemas/BackupSettings' }
+        key_set: { type: boolean }
+        running: { type: boolean }
+        last: { oneOf: [{ $ref: '#/components/schemas/BackupResult' }, { type: 'null' }] }
+        last_verify: { oneOf: [{ $ref: '#/components/schemas/BackupResult' }, { type: 'null' }] }
+        backups: { type: array, items: { $ref: '#/components/schemas/BackupInfo' } }
     ApiError:
       type: object
       examples: [{"error": "operator authorization is required"}]
@@ -3121,6 +3313,14 @@ components:
         admin.field_http: { type: boolean, default: false, description: Studio may ask the admin agent to let the field network also reach the server's port over HTTP (off - the routes answer 403 - each change also needs a confirmation and the one-time code of the authenticator) }
         admin.require_masked_agent: { type: boolean, default: false, description: The server refuses the text of an environment file from a maintenance agent that does not hide the secrets itself (off - an older agent is accepted and the server hides them; on - the answer is 409 agent_not_masking and no secret is relayed) }
         panel.live_events: { type: boolean, default: true }
+        capture.on_alarm: { type: boolean, default: false, description: 'When a node or an alarm panel raises a high or critical alarm (or a node alert level goes to high), the cameras that the site design says cover it take the photo and video of the capture settings. Off: only the vision service starts a capture.' }
+        capture.on_alarm_per_min: { type: integer, minimum: 1, maximum: 60, default: 6, description: 'The most captures one minute of alarms may start in all.' }
+        live.events: { type: boolean, default: true, description: 'Besides the whole state, the console channel /api/v1/events sends {type, id, version} notices when an alarm, a device, a solar device, a network node or a design changes. Off: the state only.' }
+        vacation.mode: { type: boolean, default: false, description: 'The automations with a schedule trigger run, only while the system is armed away (presence simulation). Off: no schedule ever runs.' }
+        commands.require_sig: { type: boolean, default: false, description: 'The critical commands (alarm_command, electrical_command) are published with a nonce and an HMAC-SHA256 signature of this installation. Off: unsigned.' }
+        admin.backup: { type: boolean, default: false, description: 'An administrator may set up encrypted, scheduled backups of the data directory and make or prove one (the /api/v1/admin/backup routes). Off: they answer 403 backup_disabled.' }
+        electrical.load_shedding: { type: boolean, default: false, description: 'When the grid draw is over the limit, the devices listed as not critical are switched off one at a time and on again below the restore level. Off: nothing is ever shed.' }
+        electrical.balance: { type: boolean, default: false, description: 'The server works out the energy balance of the house and watches it for information (GET /api/v1/electrical/balance). Off: 404 and nothing is watched.' }
         client.device_lock: { type: string, enum: [user, sensitive, always], default: user }
         client.trusted_devices: { type: boolean, default: false }
         client.trusted_session_h: { type: integer, minimum: 1, maximum: 720, default: 72 }
