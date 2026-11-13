@@ -1338,6 +1338,7 @@ paths:
       responses:
         '200': { description: '{ id, path, format, content, mtime, masked }', content: { application/json: { schema: { $ref: '#/components/schemas/AdminFile' } } } }
         '404': { description: Not one of the files, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+        '409': { description: 'The setting admin.require_masked_agent is on and the maintenance agent does not hide the secrets itself (agent_not_masking); nothing of the file is given', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
     put:
       summary: Save one settings file (a masked line keeps its real value), optionally restarting the services that read it; the old file is kept as a copy (an administrator)
       security: [{ admin: [] }]
@@ -1345,7 +1346,7 @@ paths:
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PutAdminFilesIdRequest' } } } }
       responses:
         '200': { description: '{ ok, restarted }', content: { application/json: { schema: { $ref: '#/components/schemas/AdminFileSaved' } } } }
-        '409': { description: The file changed since it was read, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'The file changed since it was read, or the setting admin.require_masked_agent is on and the maintenance agent does not hide the secrets itself (agent_not_masking)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '422': { description: The content is not valid for this kind of file, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/admin/mqtt/accounts:
     get:
@@ -3117,6 +3118,7 @@ components:
         voice.panic_cooldown_s: { type: integer, minimum: 10, maximum: 3600, default: 60 }
         admin.acl_relays: { type: boolean, default: false, description: Studio may ask the admin agent to open or close the two switches of the broker rules that no install turns on (off - the routes answer 403 - each change also needs two confirmations and the one-time code of the authenticator) }
         admin.field_http: { type: boolean, default: false, description: Studio may ask the admin agent to let the field network also reach the server's port over HTTP (off - the routes answer 403 - each change also needs a confirmation and the one-time code of the authenticator) }
+        admin.require_masked_agent: { type: boolean, default: false, description: The server refuses the text of an environment file from a maintenance agent that does not hide the secrets itself (off - an older agent is accepted and the server hides them; on - the answer is 409 agent_not_masking and no secret is relayed) }
         panel.live_events: { type: boolean, default: true }
         client.device_lock: { type: string, enum: [user, sensitive, always], default: user }
         client.trusted_devices: { type: boolean, default: false }
