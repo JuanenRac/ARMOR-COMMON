@@ -264,3 +264,7 @@ In the History a node that started after a crash or by its own guard is told onc
 ## The provisioning code
 
 `armor_common.provisioning` writes and reads the text of the QR code that adds a node: `armor-provision:` followed by the compact JSON `{"node_id": ..., "server": ..., "v": 1}`. It holds the id of the node and the address of the server and nothing else: no password, no token, no certificate and no one-time broker user. The reader refuses any other field, a version other than 1, an address with a user name, a query, a fragment or a path, and a node id the contract does not accept. Showing and scanning the code (Studio, Android, the node over Bluetooth) is the job of those projects.
+
+### Signed commands
+
+While the security option `commands.require_sig` is on, the server publishes `alarm_command` and `electrical_command` with two more fields, `nonce` (sixteen lowercase hexadecimal digits, never reused) and `sig` (64 hexadecimal digits): the HMAC-SHA256 of `armor-command|kind|node_id|timestamp_ms|command_id|nonce|fields`, where `fields` is the JSON of every other field of the command with the keys in alphabetical order at every level and no spaces, with a key that only the server and the nodes that were given it hold. A node that checks the signature also checks that `timestamp_ms` is recent and keeps the nonces it has seen. With the option off the two fields are absent and nothing changes.
