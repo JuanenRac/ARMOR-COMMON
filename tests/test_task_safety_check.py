@@ -117,6 +117,28 @@ class TaskSafetyTest(unittest.TestCase):
         none = safety.load(Project(self, {"main/github_update.cpp": "void c(){}\n"}).root)
         self.assertTrue(safety.http_buffer_problems(Path("."), none))
 
+    VERIFY_HEAD = "bool user_verify(std::string_view name, std::string_view password, auth::Role& role) {\n"
+    VERIFY_GOOD = VERIFY_HEAD + "  auth::UserStore users;\n  {\n    std::lock_guard<std::mutex> guard(g_lock);\n    users = g_users;\n  }\n  return users.verify(name, password, hash_password, role);\n}\n"
+    VERIFY_BAD = VERIFY_HEAD + "  std::lock_guard<std::mutex> guard(g_lock);\n  return g_users.verify(name, password, hash_password, role);\n}\n"
+    VERIFY_BAD_IN_BLOCK = VERIFY_HEAD + "  bool ok = false;\n  {\n    std::lock_guard<std::mutex> guard(g_lock);\n    ok = g_users.verify(name, password, hash_password, role);\n  }\n  return ok;\n}\n"
+
+    def test_the_hash_of_a_password_is_never_computed_under_the_lock_of_the_store(self) -> None:
+        good = safety.load(Project(self, {"main/node_store.cpp": self.VERIFY_GOOD}).root)
+        self.assertEqual(safety.password_hash_problems(good), [])
+        for bad in (self.VERIFY_BAD, self.VERIFY_BAD_IN_BLOCK):
+            files = safety.load(Project(self, {"main/node_store.cpp": bad}).root)
+            problems = safety.password_hash_problems(files)
+            self.assertEqual(len(problems), 1, bad)
+            self.assertIn("lock of the store is held", problems[0])
+
+    def test_a_function_without_a_lock_or_a_file_without_user_verify_passes_and_one_that_hashes_nothing_is_reported(self) -> None:
+        nolock = safety.load(Project(self, {"main/node_store.cpp": "bool user_verify(std::string_view n, std::string_view p, auth::Role& r) { return users_.verify(n, p, hash_password, r); }\n"}).root)
+        self.assertEqual(safety.password_hash_problems(nolock), [])
+        other = safety.load(Project(self, {"main/other.cpp": "void f() {}\n"}).root)
+        self.assertEqual(safety.password_hash_problems(other), [])
+        empty = safety.load(Project(self, {"main/node_store.cpp": "bool user_verify(std::string_view n, std::string_view p, auth::Role& r) { return false; }\n"}).root)
+        self.assertEqual(len(safety.password_hash_problems(empty)), 1)
+
     def test_a_short_buffer_constant_is_refused(self) -> None:
         project = Project(self, {"main/github_update.cpp": "void c(){ config.buffer_size = header_buffer(); }\n", "main/core/release_assets.hpp": "constexpr int kHeaderBufferExternal = 20480;\nconstexpr int kHeaderBufferInternal = 4096;\n"})
         self.assertTrue(any("kHeaderBufferInternal" in p for p in safety.http_buffer_problems(project.root, safety.load(project.root))))
