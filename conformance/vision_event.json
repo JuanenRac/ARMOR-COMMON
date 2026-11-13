@@ -704,6 +704,83 @@
    }
   },
   {
+   "name": "the largest exact track id",
+   "valid": true,
+   "payload": {
+    "schema": "armor.vision.event/v1",
+    "type": "alert",
+    "camera_id": "front-door",
+    "zone_id": "driveway",
+    "zone_name": "Driveway",
+    "track_id": 9007199254740991,
+    "label": "person",
+    "confidence": 0.87,
+    "box": [
+     0.1,
+     0.2,
+     0.3,
+     0.6
+    ],
+    "timestamp": 1000.5,
+    "timestamp_ms": 1000500,
+    "authorizes_action": false
+   }
+  },
+  {
+   "name": "a track id one above the largest exact integer",
+   "valid": false,
+   "payload": {
+    "schema": "armor.vision.event/v1",
+    "type": "alert",
+    "camera_id": "front-door",
+    "zone_id": "driveway",
+    "zone_name": "Driveway",
+    "track_id": 9007199254740992,
+    "label": "person",
+    "confidence": 0.87,
+    "box": [
+     0.1,
+     0.2,
+     0.3,
+     0.6
+    ],
+    "timestamp": 1000.5,
+    "timestamp_ms": 1000500,
+    "authorizes_action": false
+   }
+  },
+  {
+   "name": "a vector with a track id above the largest exact integer",
+   "valid": false,
+   "payload": {
+    "schema": "armor.vision.event/v1",
+    "type": "alert",
+    "camera_id": "front-door",
+    "zone_id": "driveway",
+    "zone_name": "Driveway",
+    "track_id": 3,
+    "label": "person",
+    "confidence": 0.87,
+    "box": [
+     0.1,
+     0.2,
+     0.3,
+     0.6
+    ],
+    "timestamp": 1000.5,
+    "timestamp_ms": 1000500,
+    "authorizes_action": false,
+    "vectors": [
+     {
+      "track_id": 9007199254740992,
+      "dx": 0,
+      "dy": 0,
+      "speed": 0
+     }
+    ]
+   }
+  },
+  {
    "name": "a fraction of a radar track",
    "valid": false,
    "payload": {
