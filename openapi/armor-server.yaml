@@ -1888,6 +1888,31 @@ paths:
         '200': { description: '{ ok: true } whether or not the text matched', content: { application/json: { schema: { $ref: '#/components/schemas/VoicePanicCheckReply' } } } }
         '403': { description: 'A signed-in session was used instead of the token of the gateway (code gateway_only)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '422': { description: 'No text, or longer than 240 characters', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/voice/mobile-turn:
+    post:
+      summary: One spoken turn from the microphone of a phone - the audio goes to the voice gateway on this machine and its answer comes back as it is; a signed-in operator or administrator (a session or the operator token), never the voice token; off (403 mobile_voice_disabled) until the security option voice.mobile_turn is on. The spoken orders keep the same confirmations as the typed ones.
+      security: [{ operator: [] }]
+      parameters:
+        - { name: X-Armor-Language, in: header, required: false, schema: { type: string, enum: [en, es, de, fr, it, ja, zh, pt] } }
+      requestBody:
+        required: true
+        description: 'The audio alone as the whole body (audio/L16;rate=16000, raw 16 kHz 16-bit mono PCM) or, when the server allows it (voice.multipart_turn), multipart/form-data like the turn of the wall panel.'
+        content:
+          'audio/L16;rate=16000': { schema: { type: string, format: binary, maxLength: 480000 } }
+          multipart/form-data:
+            schema: { $ref: '#/components/schemas/VoiceTurnForm' }
+      responses:
+        '200':
+          description: '{ heard, reply, audio? } as the turn of the wall panel'
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/VoiceTurn' } }
+            multipart/mixed: { schema: { type: string, format: binary } }
+        '401': { description: 'Not signed in', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'The option voice.mobile_turn is off (mobile_voice_disabled) or the person is a viewer', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '411': { description: 'No audio', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '413': { description: 'More audio than the limit of the server', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '415': { description: 'The server does not take multipart turns (multipart_turn_disabled)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: 'The voice gateway is not set up or does not answer', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/voice/turn:
     post:
       summary: One spoken turn from the wall panel - the audio goes to the voice gateway on this machine and its answer comes back as it is; authenticated with the voice token, not with a session
@@ -3087,6 +3112,7 @@ components:
         login.country_alert: { type: boolean, default: true }
         electrical.set_aside_old_readings: { type: boolean, default: true, description: 'A channel of an electrical node whose own reading is old is left out of the grid figure and the graphs and marked as having no data' }
         voice.multipart_turn: { type: boolean, default: true }
+        voice.mobile_turn: { type: boolean, default: false, description: 'A phone of a signed-in operator or administrator may speak to the voice gateway through POST /api/v1/voice/mobile-turn. Turning it on lowers the security.' }
         voice.wake_word: { type: boolean, default: false, description: The wall panel may send short chunks of audio to the voice gateway to hear its wake word (on this machine; off - the route answers 403 and nothing is passed on) }
         voice.panic_phrase: { type: boolean, default: false }
         voice.panic_cooldown_s: { type: integer, minimum: 10, maximum: 3600, default: 60 }
