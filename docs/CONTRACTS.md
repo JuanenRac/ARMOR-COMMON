@@ -267,4 +267,10 @@ In the History a node that started after a crash or by its own guard is told onc
 
 ### Signed commands
 
-While the security option `commands.require_sig` is on, the server publishes `alarm_command` and `electrical_command` with two more fields, `nonce` (sixteen lowercase hexadecimal digits, never reused) and `sig` (64 hexadecimal digits): the HMAC-SHA256 of `armor-command|kind|node_id|timestamp_ms|command_id|nonce|fields`, where `fields` is the JSON of every other field of the command with the keys in alphabetical order at every level and no spaces, with a key that only the server and the nodes that were given it hold. A node that checks the signature also checks that `timestamp_ms` is recent and keeps the nonces it has seen. With the option off the two fields are absent and nothing changes.
+While the security option `commands.require_sig` is on, the server publishes `alarm_command` and `electrical_command` with two more fields, `nonce` (sixteen lowercase hexadecimal digits, never reused) and, as the very last field, `sig` (64 lowercase hexadecimal digits). The signature is over the bytes of the payload exactly as they are published, so a node checks it without rebuilding any JSON:
+
+1. the payload must end with `,"sig":"<64 hex digits>"}`; cut that ending and put `}` in its place, which gives the body (the nonce is its last field);
+2. `sig` is the HMAC-SHA256, in hex, of the ASCII text `armor-command-v2|` followed by the body, with the key of the node;
+3. the key of a node is the HMAC-SHA256 of the text `node|` followed by the id of the node, under a master key that only the server holds and that is never sent to a node or on the broker. An administrator reads the key of one node, once, in the `command_key` field of `GET /api/v1/admin/nodes/{id}/token` (present only while the option is on) and gives it to that node.
+
+A node that has a key refuses a command whose signature does not match (comparing in constant time), whose nonce it has seen among the last ones it keeps, or, when its clock is valid, whose `timestamp_ms` is more than two minutes away from its own time; it drops the command without an answer. A fixed vector for tests is in `conformance/signatures/command.json`. With the option off the two fields are absent and nothing changes.
