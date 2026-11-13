@@ -7,10 +7,16 @@ import tempfile
 import unittest
 from pathlib import Path
 
-for _cand in (Path(__file__).resolve().parent.parent, Path(__file__).resolve().parent.parent / "tools"):
-    if (_cand / "workflow_hygiene.py").is_file():
-        sys.path.insert(0, str(_cand))
-        break
+def _find_tool_folder() -> str:
+    """The folder that holds the tool: beside the tests, in a sibling tools/ folder or in tools/canonical/ of a parent."""
+    for up in Path(__file__).resolve().parents[:4]:
+        for cand in (up, up / "tools", up / "tools" / "canonical"):
+            if (cand / "workflow_hygiene.py").is_file():
+                return str(cand)
+    return str(Path(__file__).resolve().parent.parent)
+
+
+sys.path.insert(0, _find_tool_folder())
 import workflow_hygiene as wh  # noqa: E402
 
 SHA = "3d3c42e5aac5ba805825da76410c181273ba90b1"
