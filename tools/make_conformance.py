@@ -1979,6 +1979,42 @@ def signing_cases() -> str:
     return json.dumps(doc, indent=1) + "\n"
 
 
+def command_signing_cases() -> str:
+    """Signed critical commands (docs/CONTRACTS.md, signed commands): the key of a node is HMAC-SHA256(master, "node|" + id), the signature is HMAC-SHA256(node key, "armor-command-v2|" + body) in hex, and the payload is the body with ,"sig":"<hex>"} in place of its closing brace."""
+    def node_key(node_id: str) -> str:
+        return hmac.new(bytes.fromhex(SIGNING_KEY), f"node|{node_id}".encode("utf-8"), hashlib.sha256).hexdigest()
+
+    def sign(key: str, body: str) -> str:
+        return hmac.new(bytes.fromhex(key), ("armor-command-v2|" + body).encode("utf-8"), hashlib.sha256).hexdigest()
+
+    def payload_of(key: str, body: str) -> str:
+        return body[:-1] + ',"sig":"' + sign(key, body) + '"}'
+
+    bodies = [
+        ("an arm of an alarm panel, away, forced", "alarm-1", '{"kind":"alarm_command","node_id":"alarm-1","timestamp_ms":1000000,"command_id":"c000000000000001","action":"arm","mode":"away","force":true,"nonce":"0123456789abcdef"}'),
+        ("a disarm of an alarm panel", "alarm-1", '{"kind":"alarm_command","node_id":"alarm-1","timestamp_ms":1000001,"command_id":"c000000000000002","action":"disarm","nonce":"fedcba9876543210"}'),
+        ("a close of a transfer switch with its token", "electrical-1", '{"kind":"electrical_command","node_id":"electrical-1","timestamp_ms":1000002,"command_id":"c000000000000003","switch":"transfer","action":"close_a","token":"00112233445566778899aabbccddeeff","nonce":"0f1e2d3c4b5a6978"}'),
+    ]
+    cases = [{"name": name, "node_id": node_id, "node_key": node_key(node_id), "body": body, "sig": sign(node_key(node_id), body), "payload": payload_of(node_key(node_id), body)} for name, node_id, body in bodies]
+    first = cases[0]
+    other_key = node_key("alarm-2")
+    refused = [
+        ("the action changed after signing", first["payload"].replace('"arm"', '"disarm"'), first["node_key"]),
+        ("the node changed after signing", first["payload"].replace("alarm-1", "alarm-2"), first["node_key"]),
+        ("the nonce changed after signing", first["payload"].replace("0123456789abcdef", "0123456789abcdee"), first["node_key"]),
+        ("signed with the key of another node", payload_of(other_key, first["body"]), first["node_key"]),
+        ("the signature is not the last field", first["body"][:-1] + ',"sig":"' + first["sig"] + '","extra":1}', first["node_key"]),
+        ("a byte after the closing brace", first["payload"] + " ", first["node_key"]),
+        ("the signature in capital letters", first["payload"].replace(first["sig"], first["sig"].upper()), first["node_key"]),
+        ("a signature that is too short", first["payload"].replace(first["sig"], first["sig"][:-2]), first["node_key"]),
+        ("no signature at all", first["body"], first["node_key"]),
+    ]
+    doc = {"description": "Signed critical commands (docs/CONTRACTS.md, signed commands): the master key, and for each node the key it holds, the body (the payload without its sig field), the HMAC-SHA256 in hex of 'armor-command-v2|' + body, and the payload as published. 'refused' payloads must not verify with the key given.",
+           "master_key": SIGNING_KEY, "cases": cases,
+           "refused": [{"name": name, "payload": payload, "node_key": key} for name, payload, key in refused]}
+    return json.dumps(doc, indent=1) + "\n"
+
+
 CHECK = "--check" in sys.argv[1:]
 stale: list[str] = []
 if not CHECK:
@@ -2013,6 +2049,15 @@ else:
     sign_path.parent.mkdir(exist_ok=True)
     sign_path.write_text(sign_text, encoding="utf-8", newline="\n")
     print("signatures/alarm_state", len(json.loads(sign_text)["cases"]), "cases")
+cmd_path = ROOT / "signatures" / "command.json"
+cmd_text = command_signing_cases()
+if CHECK:
+    if not cmd_path.is_file() or cmd_path.read_text(encoding="utf-8").replace("\r\n", "\n") != cmd_text:
+        stale.append("signatures/command.json")
+else:
+    cmd_path.parent.mkdir(exist_ok=True)
+    cmd_path.write_text(cmd_text, encoding="utf-8", newline="\n")
+    print("signatures/command", len(json.loads(cmd_text)["cases"]), "cases")
 if CHECK:
     if stale:
         print("CONFORMANCE=FAIL these files are not what tools/make_conformance.py writes (run it): " + ", ".join(stale))

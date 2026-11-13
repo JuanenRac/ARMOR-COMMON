@@ -5077,6 +5077,7 @@ components:
         node_id: { type: string }
         token: { type: string }
         strict: { type: boolean }
+        command_key: { type: string, pattern: '^[0-9a-f]{64}$', description: 'The key this node checks the signature of the critical commands with (HMAC-SHA256 of node| and its id under the master key of the server); only while the option commands.require_sig is on. Given once to the node; never cached.' }
     InstallationBundle:
       type: object
       required: [format, version, exported_at, exported_by, parts]
