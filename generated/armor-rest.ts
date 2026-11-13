@@ -2085,6 +2085,8 @@ export type NodeToken = {
   node_id: string;
   token: string;
   strict: boolean;
+  /** The key this node checks the signature of the critical commands with (HMAC-SHA256 of node| and its id under the master key of the server); only while the option commands.require_sig is on. Given once to the node; never cached. */
+  command_key?: string;
 };
 
 export type NotificationChannels = {
