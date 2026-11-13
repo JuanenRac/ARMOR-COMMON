@@ -83,6 +83,28 @@ export type AdminFirewallChanged = {
   approval?: "totp" | "not_enrolled";
 };
 
+export type AdminLanCaChanged = AdminLanCaStatus & {
+  ok: boolean;
+  action: "setup" | "renew" | "rotate";
+  devices_must_reinstall: boolean;
+};
+
+export type AdminLanCaStatus = {
+  enabled: boolean;
+  installed?: boolean;
+  approval?: "totp" | "not_enrolled";
+  authority?: {
+    days_left?: number;
+    sha256?: string;
+  } | null;
+  certificate?: {
+    days_left?: number;
+    sha256?: string;
+  } | null;
+  renew_days?: number;
+  expiring?: ("authority" | "certificate")[];
+};
+
 export type AdminRelayChanged = {
   ok: boolean;
   relay: "battery-write" | "alarm-state-relay";
@@ -2086,6 +2108,17 @@ export type PostAdminInstallationRequest = {
   /** true: answer what the import would do and change nothing */
   dry_run?: boolean;
   parts?: ("cameras" | "site" | "electrical" | "network" | "rules" | "automations" | "devices" | "solar_devices" | "energy_alarms" | "users")[];
+};
+
+export type PostAdminLanCaRequest = {
+  action: "setup" | "renew" | "rotate";
+  /** A private IPv4 address of the machine */
+  ip: string;
+  names?: string[];
+  /** Must be true */
+  confirm: boolean;
+  /** The word lan-ca typed again */
+  confirm_text: string;
 };
 
 export type PostAdminMachineUpdateApplyRequest = {
