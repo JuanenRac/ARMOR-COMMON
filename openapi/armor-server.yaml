@@ -2325,6 +2325,31 @@ paths:
       responses:
         '200': { description: Finished evidence item, content: { application/json: { schema: { $ref: '#/components/schemas/MediaItemResult' } } } }
         '409': { description: Not recording, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/vision/timeline:
+    get:
+      summary: 'The review timeline of the vision service, newest first: the events of the alert zones (level alert) and of the detection zones (level detection) with the evidence taken when they were seen. Operators and administrators. Off (the answer is enabled false and no items) until the setting vision.timeline is on.'
+      security: [{ operator: [] }]
+      parameters:
+        - { name: since, in: query, required: false, schema: { type: string, format: date-time }, description: Only the entries after this time }
+        - { name: level, in: query, required: false, schema: { type: string, enum: [alert, detection] } }
+        - { name: camera_id, in: query, required: false, schema: { type: string, pattern: '^[A-Za-z0-9._-]{1,80}$' } }
+        - { name: limit, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 500, default: 100 } }
+      responses:
+        '200': { description: The entries, content: { application/json: { schema: { $ref: '#/components/schemas/VisionTimeline' } } } }
+        '422': { description: A filter is not valid, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+    delete:
+      summary: Delete every entry of the timeline (an administrator); the evidence files are kept under their own retention
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: How many entries were deleted, content: { application/json: { schema: { $ref: '#/components/schemas/VisionTimelineDeleted' } } } }
+  /api/v1/vision/timeline/{id}:
+    delete:
+      summary: Delete one entry of the timeline (an administrator); its evidence files are kept under their own retention
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^vt-[0-9a-f]{8,32}$' } }]
+      responses:
+        '200': { description: The entry was deleted, content: { application/json: { schema: { $ref: '#/components/schemas/VisionTimelineDeleted' } } } }
+        '404': { description: Unknown entry, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/media:
     get:
       summary: Evidence catalogue, newest first
@@ -2731,6 +2756,33 @@ components:
                     speed_mm_s: { type: number }
                     counted: { type: boolean }
               alert_level: { type: string, enum: [normal, review, high] }
+    VisionTimeline:
+      type: object
+      required: [enabled, days, items]
+      properties:
+        enabled: { type: boolean, description: 'Whether the setting vision.timeline is on' }
+        days: { type: integer, description: 'The days an entry is kept (vision.timeline_days)' }
+        items: { type: array, maxItems: 500, items: { $ref: '#/components/schemas/VisionTimelineItem' } }
+    VisionTimelineItem:
+      type: object
+      required: [id, at, camera_id, level, zone_id, zone_name, label]
+      properties:
+        id: { type: string, pattern: '^vt-[0-9a-f]{8,32}$' }
+        at: { type: string, format: date-time }
+        camera_id: { type: string }
+        level: { type: string, enum: [alert, detection], description: 'alert: a zone of kind alert; detection: any other zone' }
+        zone_id: { type: string }
+        zone_name: { type: string }
+        label: { type: string }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        alarm_id: { type: [string, 'null'], description: 'The alarm this event raised, when it raised one' }
+        snapshot_id: { type: [string, 'null'], description: 'The id of the evidence photo taken when it was seen (as in /api/v1/media), when there is one' }
+        clip_id: { type: [string, 'null'], description: 'The id of the evidence recording taken when it was seen, when there is one' }
+    VisionTimelineDeleted:
+      type: object
+      required: [deleted]
+      properties:
+        deleted: { type: integer, minimum: 0 }
     ApiError:
       type: object
       examples: [{"error": "operator authorization is required"}]
@@ -3024,6 +3076,10 @@ components:
         vision.semantic_search_ack: { type: boolean, default: false, description: 'The privacy notice of search by meaning was read.' }
         vision.plates_ack: { type: boolean, default: false, description: 'The privacy notice of plate reading was read.' }
         vision.faces_ack: { type: boolean, default: false, description: 'The privacy notice of face recognition was read.' }
+        vision.timeline: { type: boolean, default: false, description: 'The server keeps the events of the vision service (an alert zone or a detection zone) in a timeline with the evidence taken when it was seen, for the review panel of Studio (GET /api/v1/vision/timeline). Off, the default, nothing is kept.' }
+        vision.timeline_days: { type: integer, minimum: 1, maximum: 3650, default: 30, description: 'How many days an entry of the timeline is kept before it is pruned.' }
+        push.photo: { type: boolean, default: false, description: 'The notification of an alarm that a camera raised carries a small photo of the event. The photo goes through the push service of Google (FCM). It cannot be on while push.photo_ack is off, and the photo is never written to a log. Turning it on lowers the security.' }
+        push.photo_ack: { type: boolean, default: false, description: 'The notice that the photo of a notification passes through FCM / Google was read.' }
         metrics.prometheus: { type: boolean, default: false, description: 'GET /metrics answers the numbers of the server in the Prometheus text form to the bearer token ARMOR_METRICS_TOKEN (off: 404)' }
         heartbeat.enabled: { type: boolean, default: false, description: 'The server asks the address ARMOR_HEARTBEAT_URL every ARMOR_HEARTBEAT_INTERVAL_S seconds, so a service outside the house can tell the owner when the pings stop' }
         ingest.recording: { type: boolean, default: false, description: 'The server writes a copy of what the nodes send (and why a message was refused) to a JSON-lines file in its data directory that ARMOR-SIMULATOR plays with --replay; fields named like a secret are left out and the file is limited and rotated (off, the default: nothing is written)' }
