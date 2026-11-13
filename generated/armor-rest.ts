@@ -2715,6 +2715,8 @@ export type SecuritySettings = {
   "admin.acl_relays"?: boolean;
   /** Studio may ask the admin agent to let the field network also reach the server's port over HTTP (off - the routes answer 403 - each change also needs a confirmation and the one-time code of the authenticator) */
   "admin.field_http"?: boolean;
+  /** The server refuses the text of an environment file from a maintenance agent that does not hide the secrets itself (off - an older agent is accepted and the server hides them; on - the answer is 409 agent_not_masking and no secret is relayed) */
+  "admin.require_masked_agent"?: boolean;
   "panel.live_events"?: boolean;
   "client.device_lock"?: "user" | "sensitive" | "always";
   "client.trusted_devices"?: boolean;
