@@ -23,7 +23,9 @@ permissions:
 jobs:
   floor:
     name: Measure the coverage and hold the floor
-    runs-on: ubuntu-latest
+    # pinned: the branch counts of gcov change with the Ubuntu of the image, and the floor is a measured figure
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
