@@ -158,10 +158,20 @@ export type AiContext = {
     online: boolean;
     targets: number;
     lux: number | null;
+    /** Where the radar stands on the floor plan, when the site design places it (absent otherwise) */
+    pose?: AiPose;
+    /** The tracks the radar counts, in its own frame (x to the right of the radar, y straight ahead of it), in millimetres; absent when the radar reports none or the design cannot place it */
+    track_points?: AiTrackPoint[];
   }[];
   cameras: {
     id: string;
     name: string;
+    /** Where the camera stands on the floor plan and the way it faces, when the site design places it */
+    pose?: AiPose;
+    /** The horizontal field of view, when the design gives it */
+    fov_deg?: number;
+    /** How far the camera sees, when the design gives it */
+    range_mm?: number;
   }[];
 };
 
@@ -169,6 +179,18 @@ export type AiObservationResult = {
   raised: boolean;
   alarm_id?: string;
   reason?: string;
+};
+
+/** A position on the floor plan in millimetres and the direction the device faces, in degrees clockwise from the +y axis of the plan */
+export type AiPose = {
+  x_mm: number;
+  y_mm: number;
+  yaw_deg: number;
+};
+
+export type AiTrackPoint = {
+  x_mm: number;
+  y_mm: number;
 };
 
 export type Alarm = {
