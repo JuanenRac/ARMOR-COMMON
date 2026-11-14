@@ -171,6 +171,30 @@ class CheckMosquittoTest(unittest.TestCase):
                 self.assertEqual(check.main(), 1)
             self.assertIn("MOSQUITTO=MISSING", err.getvalue())
 
+    def test_a_broker_that_fails_to_start_is_tried_again_on_a_new_port(self) -> None:
+        tries = [AssertionError("mosquitto did not start (exit 1):  "), AssertionError("mosquitto did not open its port"), (mock.Mock(), 4321)]
+        with mock.patch.object(check, "find", return_value="/usr/sbin/mosquitto"), mock.patch.object(check, "_start_broker_once", side_effect=tries) as once, \
+                mock.patch.object(check.time, "sleep") as pause, redirect_stderr(io.StringIO()) as err:
+            self.assertEqual(check.start_broker(Path("."), {}, ""), (tries[2][0], 4321))
+        self.assertEqual(once.call_count, 3)
+        self.assertEqual([call.args[0] for call in pause.call_args_list], [1, 2])
+        self.assertEqual(err.getvalue().count("MOSQUITTO=RETRY"), 2)
+
+    def test_a_broker_that_never_starts_fails_after_three_attempts_with_the_last_reason(self) -> None:
+        with mock.patch.object(check, "find", return_value="/usr/sbin/mosquitto"), mock.patch.object(check, "_start_broker_once", side_effect=AssertionError("mosquitto did not start (exit 1): boom")) as once, \
+                mock.patch.object(check.time, "sleep"), redirect_stderr(io.StringIO()):
+            with self.assertRaises(AssertionError) as caught:
+                check.start_broker(Path("."), {}, "")
+        self.assertEqual(once.call_count, 3)
+        self.assertIn("boom", str(caught.exception))
+        self.assertIn("after 3 attempts", str(caught.exception))
+
+    def test_a_missing_program_is_not_retried(self) -> None:
+        with mock.patch.object(check, "find", return_value=None), mock.patch.object(check, "_start_broker_once") as once:
+            with self.assertRaises(AssertionError):
+                check.start_broker(Path("."), {}, "")
+        once.assert_not_called()
+
     def test_the_lines_a_node_prints_are_told_apart(self) -> None:
         self.assertEqual(check.classify("armor/solar/s1/inverter", {}, "x"), ("armor/solar/s1/inverter", "s1", True))
         self.assertEqual(check.classify("armor/alarm/a1/command", {}, "x"), ("armor/alarm/a1/command", "a1", False))

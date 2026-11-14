@@ -49,7 +49,7 @@ parts of the network and the broker link that only a radar node has (`mqtt_link`
 `tests/check_mosquitto.py` is shared with the five projects. It starts Mosquitto on a free port of the loopback address with the account rules of a node, plays the MQTT client of the node
 (esp-mqtt: client id, retained birth and last will, QoS 1, its own order topic) with a small codec, and checks that what the node's serialiser prints (`emit_samples`) reaches the server
 on the right topic, that an order reaches the node, that the node cannot write on another node's topics and that the retained last will arrives when the connection dies. Where Mosquitto is
-not installed it says so and passes; the shared workflow installs it in the node repositories and sets `ARMOR_REQUIRE_MOSQUITTO`, so there a missing broker is a failure. `tests/test_check_mosquitto.py`
+not installed it says so and passes; the shared workflow installs it in the node repositories and sets `ARMOR_REQUIRE_MOSQUITTO`, so there a missing broker is a failure. If the broker does not start (a lost race for the port, a service that is late) the start is tried again, up to three times, 1 s and 2 s apart and on a new port; the checks themselves are never repeated. `tests/test_check_mosquitto.py`
 of this repository tries the script against a stand-in broker.
 
 ## Limits
