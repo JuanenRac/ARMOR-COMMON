@@ -60,6 +60,8 @@ of this repository tries the script against a stand-in broker.
 
 ## Files that are not shared with every node
 
+`main/Kconfig.projbuild` and `tools/build_node.sh` are listed without ARMOR-NODE-ELECTRICAL: its copies hold the switching image (`CONFIG_ARMOR_SWITCHING`, its pins and times, and `ARMOR_SWITCHING=1` in the build script), which no other node has. They are ARMOR-NODE-ELECTRICAL's own files; a change to the shared Kconfig or build script has to be made there by hand as well (`check` no longer looks at them).
+
 `main/zigbee_bridge.cpp` and `main/zigbee_bridge.hpp` are listed for ARMOR-NODE-ELECTRICAL only: ARMOR-NODE-ALARM keeps its own copy, which takes a hook for the node itself to speak Zigbee while the radio is its own (see ARMOR-NODE-ALARM's `docs/FAILOVER.md`). `core/zigbee_bridge.hpp` (who may connect, the arbiter, the reset sequence) is still shared by both.
 
 ## The waits and Improv

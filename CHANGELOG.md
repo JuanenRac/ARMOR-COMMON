@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The Kconfig and the build script of the electrical node are its own files:** `firmware_base/manifest.json` no longer lists ARMOR-NODE-ELECTRICAL for `main/Kconfig.projbuild` and `tools/build_node.sh`, because its copies carry the switching image (a build option that is off by default); the check of the shared firmware stops reading them there, and the other nodes are as they were. The nodes' locks show a pending version until they are synchronised again.
 ## [0.8.1.4] - Server contract for the new security options, vision timeline and notices, solar summary and shared firmware checks
 
 - **The test against a real broker retries the start of the broker:** `firmware_base/tests/check_mosquitto.py` makes up to three attempts to start Mosquitto (1 s and 2 s apart, each on a new port) before it reports `mosquitto did not start`, because a runner can lose the race for the port or start the service late. Only the start is retried, never the checks that follow, and a missing program is not retried. 3 tests; the five node projects get the file with the next `sync`.

@@ -221,7 +221,6 @@
     "main/Kconfig.projbuild": {
       "targets": {
         "ARMOR-NODE-SOLAR": "main/Kconfig.projbuild",
-        "ARMOR-NODE-ELECTRICAL": "main/Kconfig.projbuild",
         "ARMOR-NODE-HMI": "main/Kconfig.projbuild",
         "ARMOR-NODE-ALARM": "main/Kconfig.projbuild"
       }
@@ -427,7 +426,6 @@
     "tools/build_node.sh": {
       "targets": {
         "ARMOR-NODE-SOLAR": "tools/build_node.sh",
-        "ARMOR-NODE-ELECTRICAL": "tools/build_node.sh",
         "ARMOR-NODE-ALARM": "tools/build_node.sh"
       }
     },
