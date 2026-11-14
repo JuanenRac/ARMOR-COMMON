@@ -12,3 +12,7 @@ endif()
 add_executable(test_wire_oracle test_wire_oracle.cpp)
 target_include_directories(test_wire_oracle PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../generated ${CMAKE_CURRENT_SOURCE_DIR}/../firmware_base/core)
 add_test(NAME wire_oracle COMMAND test_wire_oracle ${CMAKE_CURRENT_SOURCE_DIR}/../conformance/wire_cases.tsv ${CMAKE_CURRENT_BINARY_DIR}/wire_rewrites.tsv)
+
+# The rule of the broker watchdog of the nodes (when to leave a broker that stays down), tried against scripted brokers.
+add_executable(test_broker_failover ../firmware_base/tests/test_broker_failover.cpp)
+add_test(NAME broker_failover COMMAND test_broker_failover)

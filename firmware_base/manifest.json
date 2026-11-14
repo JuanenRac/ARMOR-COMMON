@@ -312,6 +312,22 @@
         "ARMOR-NODE-ALARM": "core/backoff.hpp"
       }
     },
+    "core/broker_failover.hpp": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "core/broker_failover.hpp",
+        "ARMOR-NODE-ELECTRICAL": "core/broker_failover.hpp",
+        "ARMOR-NODE-HMI": "core/broker_failover.hpp",
+        "ARMOR-NODE-ALARM": "core/broker_failover.hpp"
+      }
+    },
+    "tests/test_broker_failover.cpp": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "tests/test_broker_failover.cpp",
+        "ARMOR-NODE-ELECTRICAL": "tests/test_broker_failover.cpp",
+        "ARMOR-NODE-HMI": "tests/test_broker_failover.cpp",
+        "ARMOR-NODE-ALARM": "tests/test_broker_failover.cpp"
+      }
+    },
     "core/improv.hpp": {
       "targets": {
         "ARMOR-NODE-SOLAR": "core/improv.hpp",
