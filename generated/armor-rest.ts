@@ -153,22 +153,56 @@ export type AgentReply = {
 
 export type AiContext = {
   mode: "armed" | "disarmed";
+  /** The options of the server that the service follows (both off when absent) */
+  options?: {
+    /** The setting ai.spatial */
+    spatial?: boolean;
+    /** The setting ai.learn */
+    learn?: boolean;
+  };
   nodes: {
     id: string;
     online: boolean;
     targets: number;
     lux: number | null;
+    /** Where the radar stands on the floor plan, when the site design places it (absent otherwise) */
+    pose?: AiPose;
+    /** The tracks the radar counts, in its own frame (x to the right of the radar, y straight ahead of it), in millimetres; absent when the radar reports none or the design cannot place it */
+    track_points?: AiTrackPoint[];
   }[];
   cameras: {
     id: string;
     name: string;
+    /** Where the camera stands on the floor plan and the way it faces, when the site design places it */
+    pose?: AiPose;
+    /** The horizontal field of view, when the design gives it */
+    fov_deg?: number;
+    /** How far the camera sees, when the design gives it */
+    range_mm?: number;
   }[];
+};
+
+export type AiIgnoreProposalResult = {
+  stored: boolean;
+  reason?: string;
 };
 
 export type AiObservationResult = {
   raised: boolean;
   alarm_id?: string;
   reason?: string;
+};
+
+/** A position on the floor plan in millimetres and the direction the device faces, in degrees clockwise from the +y axis of the plan */
+export type AiPose = {
+  x_mm: number;
+  y_mm: number;
+  yaw_deg: number;
+};
+
+export type AiTrackPoint = {
+  x_mm: number;
+  y_mm: number;
 };
 
 export type Alarm = {
@@ -464,6 +498,75 @@ export type AutomationTrigger = {
 } | {
   type: "mode";
   mode: "armed" | "disarmed";
+} | {
+  type: "schedule";
+  /** Time of day, HH:MM, the clock of the server */
+  at: string;
+  /** 0 is Sunday; all days when absent */
+  days?: number[];
+  /** Up to this many minutes either way, repeatable from the seed and the day */
+  jitter_min?: number;
+  seed?: string;
+} | {
+  type: "presence";
+  /** Fires when the sum of the words of home or away that the phones told the server (option presence.by_user) becomes this one */
+  state: "everyone_away" | "someone_home";
+};
+
+export type BackupInfo = {
+  name: string;
+  bytes: number;
+  at: string;
+};
+
+export type BackupResult = {
+  ok: boolean;
+  at: string;
+  file?: string;
+  bytes?: number;
+  files?: number;
+  error?: string;
+};
+
+export type BackupSettings = {
+  schedule: boolean;
+  every_h: number;
+  keep: number;
+  /** An absolute path under /media, /mnt, /run/media or the data directory; empty is the folder backups of the data directory */
+  destination: string;
+  /** The destination must be on another device than the data */
+  require_mount: boolean;
+  include_media: boolean;
+  max_mb: number;
+};
+
+export type BackupSettingsRequest = {
+  schedule?: boolean;
+  every_h?: number;
+  keep?: number;
+  destination?: string;
+  require_mount?: boolean;
+  include_media?: boolean;
+  max_mb?: number;
+  /** Makes the key for the next backups; never returned or kept */
+  passphrase?: string;
+};
+
+export type BackupState = {
+  /** The option admin.backup */
+  enabled: boolean;
+  settings: BackupSettings;
+  key_set: boolean;
+  running: boolean;
+  last: BackupResult | null;
+  last_verify: BackupResult | null;
+  backups: BackupInfo[];
+};
+
+export type BackupVerifyRequest = {
+  name?: string;
+  /** For a backup made under another passphrase than the one the server holds */
+  passphrase?: string;
 };
 
 export type BatteryArmRequest = {
@@ -1210,6 +1313,58 @@ export type EnergyAlarmSettings = {
   health_low_percent: number;
 };
 
+export type EnergyBalance = {
+  enabled: boolean;
+  settings: EnergyBalanceSettings;
+  balance: {
+    production_w: number | null;
+    /** Production plus grid draw minus battery charge */
+    consumption_w: number | null;
+    import_w: number | null;
+    export_w: number | null;
+    battery_charge_w: number | null;
+    self_consumption_pct: number | null;
+    autarky_pct: number | null;
+    /** The load the inverters report, to compare with consumption_w */
+    reported_load_w: number | null;
+  };
+  findings: EnergyBalanceFinding[];
+};
+
+export type EnergyBalanceFinding = {
+  code: "grid_export_unexpected" | "meter_mismatch" | "consumption_appliance_stopped" | "consumption_standby_high" | "consumption_phase_down";
+  key: string;
+  source: string;
+  detail: {
+    [key: string]: number | string;
+  };
+};
+
+export type EnergyBalanceSettings = {
+  /** The installation may feed the grid; off: an export above export_alert_w for hold_s is told */
+  allow_export?: boolean;
+  export_alert_w?: number;
+  hold_s?: number;
+  mismatch_pct?: number;
+  mismatch_min_w?: number;
+  stopped_h?: number;
+  /** node/channel of the channels whose history is looked at */
+  watch_channels?: string[];
+};
+
+export type EnrolmentCode = {
+  code: string;
+  expires_at: string;
+  origin: string;
+  /** SHA-256 of the certificate of the local authority of the LAN, 64 hex characters; null when the server has none to name */
+  ca_fingerprint: string | null;
+};
+
+export type EnrolmentFacts = {
+  origin: string;
+  ca_fingerprint: string | null;
+};
+
 /** A signed statement of what a file was, with the chain of what was done to it */
 export type EvidenceProof = {
   version: 1;
@@ -1277,6 +1432,24 @@ export type FirmwareRelease = {
   checksum: boolean;
 };
 
+/** How a firmware job from GitHub is spread over the nodes while the option admin.firmware_rollout is on. The nodes are ordered by a hash of their id and the version, so the same nodes go first for a version and a larger percent only adds nodes. */
+export type FirmwareRolloutSettings = {
+  /** stable takes the latest release; beta takes the newest release, a pre-release included */
+  channel?: "stable" | "beta";
+  /** The share of the nodes of a job that take the version now (at least one node); the others are listed as deferred until the job is started again with a larger percent */
+  percent?: number;
+  /** A node that took the image and did not come back with it is asked to start from its previous slot again */
+  rollback?: boolean;
+  /** After a node failed, the nodes that were still to come are deferred and not touched */
+  halt_on_failure?: boolean;
+};
+
+export type FirmwareRolloutState = {
+  /** The option admin.firmware_rollout */
+  enabled: boolean;
+  settings: FirmwareRolloutSettings;
+};
+
 export type FirmwareUpload = {
   id: string;
   name: string;
@@ -1337,6 +1510,25 @@ export type HistorySummary = {
     node_incidents: number;
     camera_incidents: number;
   };
+};
+
+export type IgnoreProposalDecided = {
+  camera_id: string;
+  decision: "accept" | "reject";
+  /** The areas the camera ignores after the decision */
+  zones: IgnoreZone[];
+};
+
+export type IgnoreProposalDecision = {
+  decision: "accept" | "reject";
+};
+
+export type IgnoreProposals = {
+  proposals: {
+    camera_id: string;
+    camera_name: string;
+    zones: IgnoreZone[];
+  }[];
 };
 
 /** A rectangle as fractions of the picture, from the top left */
@@ -1487,6 +1679,37 @@ export type JobStarted = {
 export type LineCount = {
   to_left: number;
   to_right: number;
+};
+
+export type LoadShedding = {
+  /** The option electrical.load_shedding */
+  enabled: boolean;
+  settings: LoadSheddingSettings;
+  /** The devices switched off by this module and not yet switched on again */
+  shed: string[];
+  grid_w: number | null;
+  log: LoadSheddingLogEntry[];
+};
+
+export type LoadSheddingLogEntry = {
+  at: string;
+  action: "shed" | "restore" | "refused" | "failed" | "released";
+  device: string;
+  grid_w: number | null;
+  detail?: string;
+};
+
+export type LoadSheddingSettings = {
+  /** Shed above this grid draw, in watts */
+  limit_w?: number;
+  /** Switch on again below this draw; at least 100 W under limit_w */
+  restore_w?: number;
+  /** How long the draw must stay beyond a limit before anything is done */
+  hold_s?: number;
+  /** The least time between two actions */
+  step_s?: number;
+  /** The ids of the devices that may be shed, the first is the first to be shed */
+  loads?: string[];
 };
 
 export type MachineUpdatePreview = {
@@ -1688,12 +1911,14 @@ export type NetworkOverview = {
   };
   events: {
     id: string;
-    kind: "new_device" | "device_online" | "device_offline" | "ip_changed" | "arp_conflict" | "port_opened" | "port_closed" | "internet_down" | "internet_up" | "gateway_down" | "gateway_up";
+    kind: "new_device" | "device_online" | "device_offline" | "ip_changed" | "arp_conflict" | "port_opened" | "port_closed" | "internet_down" | "internet_up" | "gateway_down" | "gateway_up" | "risky_port" | "rogue_dhcp";
     at_ms: number;
     node_id: string;
     device_id?: string;
     port?: number;
     outage_s?: number;
+    server?: string;
+    recommendation?: string;
     detail?: string;
   }[];
   outages: {
@@ -1950,6 +2175,8 @@ export type NodeToken = {
   node_id: string;
   token: string;
   strict: boolean;
+  /** The key this node checks the signature of the critical commands with (HMAC-SHA256 of node| and its id under the master key of the server); only while the option commands.require_sig is on. Given once to the node; never cached. */
+  command_key?: string;
 };
 
 export type NotificationChannels = {
@@ -1998,6 +2225,11 @@ export type OperatorSessionOpened = {
 
 export type PanelSummary = {
   mode: "armed" | "disarmed";
+  /** Present only while a countdown runs: the time left to leave the house after arming (exit) or to disarm after a door opened (entry); the panel shows it big and sounds it */
+  delay?: {
+    phase: "exit" | "entry";
+    remaining_s: number;
+  };
   revision: number;
   time_ms: number;
   nodes: {
@@ -2225,6 +2457,11 @@ export type PostAiActivityEventsRequest = {
   notify?: boolean;
 };
 
+export type PostAiIgnoreProposalsRequest = {
+  camera_id: string;
+  zones: IgnoreZone[];
+};
+
 export type PostAiObservationsRequest = {
   camera_id: string;
   severity: "review" | "high";
@@ -2321,6 +2558,11 @@ export type PostElectricalSwitchRequest = {
   action: "arm" | "close_a" | "close_b" | "open" | "acknowledge";
 };
 
+export type PostEnrolmentCodeRequest = {
+  /** The https address the phones use to reach this server, e.g. https://armor.local:18080 */
+  origin?: string;
+};
+
 export type PostModeRequest = {
   /** armed is away. home and night exist only while alarm.arming_modes is on (else 400 modes_disabled) */
   mode: "armed" | "disarmed" | "away" | "home" | "night";
@@ -2408,6 +2650,21 @@ export type Preflight = {
     id: string;
     /** What the issue is about, such as the zone that is open */
     detail?: string;
+  }[];
+};
+
+export type PresenceMine = {
+  state: ("home" | "away") | null;
+  since: string | null;
+};
+
+export type PresenceSummary = {
+  /** everyone_away when at least one person told the server a word of the last day and all of those words are away; someone_home when one of them is home; unknown when nobody did */
+  state: "everyone_away" | "someone_home" | "unknown";
+  people: {
+    user: string;
+    state: "home" | "away";
+    since: string;
   }[];
 };
 
@@ -2534,6 +2791,10 @@ export type PutPreferencesRequest = {
   weatherPlace?: {
     [key: string]: unknown;
   } | null;
+};
+
+export type PutPresenceRequest = {
+  state: "home" | "away";
 };
 
 export type PutSiteRequest = {
@@ -2673,6 +2934,10 @@ export type SecuritySettings = {
   "session.rotate_id"?: boolean;
   /** Requests from outside the house and the VPN are taken at all. Off, the default, every one is answered 403 public_access_off. On, a request from outside still needs TLS, a control token of 32 characters or more and a sign-in password of 12 or more (403 public_access_unsafe with the reasons, or 403 tls_required), and an address that fails to sign in too often is closed with 429 public_login_locked. Turning it on lowers security and asks for a new proof of identity. */
   "network.public_access"?: boolean;
+  /** A signed-in person may let their phone tell the server only the word home or away (PUT /api/v1/presence/me), and the automations may have a presence trigger. The position of the phone never reaches the server. Off: the routes answer 404 and the trigger never fires. */
+  "presence.by_user"?: boolean;
+  /** An administrator may ask for a code of one use and five minutes (POST /api/v1/admin/enrolment-code) for the QR that sets up an app on a phone, and a phone reads the public facts of the server with it (GET /api/v1/enrolment/{code}). The code carries no secret. Off: both routes answer 404. */
+  "client.enrolment_code"?: boolean;
   /** An administrator may download the public certificate of the local CA of the LAN (GET /api/v1/security/lan-ca); the private key is never served. Turning it on lowers the security. */
   "network.lan_ca"?: boolean;
   /** How many days snapshots are kept; 0 = the general limit applies. */
@@ -2693,6 +2958,10 @@ export type SecuritySettings = {
   "vision.faces_ack"?: boolean;
   /** The server keeps the events of the vision service (an alert zone or a detection zone) in a timeline with the evidence taken when it was seen, for the review panel of Studio (GET /api/v1/vision/timeline). Off, the default, nothing is kept. */
   "vision.timeline"?: boolean;
+  /** The observation service judges where each radar track falls in a camera's picture, from the places the site design gives the radars and cameras (off: a radar track anywhere in the area a camera covers counts for that camera). It is told in the context (options.spatial). */
+  "ai.spatial"?: boolean;
+  /** The observation service may study the pictures of the cameras while the system is disarmed and propose parts of the picture to ignore (a tree, a road). Nothing is applied until an administrator accepts a proposal. It is told in the context (options.learn). */
+  "ai.learn"?: boolean;
   /** How many days an entry of the timeline is kept before it is pruned. */
   "vision.timeline_days"?: number;
   /** The notification of an alarm that a camera raised carries a small photo of the event. The photo goes through the push service of Google (FCM). It cannot be on while push.photo_ack is off, and the photo is never written to a log. Turning it on lowers the security. */
@@ -2714,6 +2983,8 @@ export type SecuritySettings = {
   /** The wall panel may send short chunks of audio to the voice gateway to hear its wake word (on this machine; off - the route answers 403 and nothing is passed on) */
   "voice.wake_word"?: boolean;
   "voice.panic_phrase"?: boolean;
+  /** The hidden gesture of the apps (POST /api/v1/alarm/panic-gesture) raises the silent duress alarm. Off: the route answers 404 and the apps do not offer the gesture. */
+  "client.panic_gesture"?: boolean;
   "voice.panic_cooldown_s"?: number;
   /** Studio may ask the admin agent to open or close the two switches of the broker rules that no install turns on (off - the routes answer 403 - each change also needs two confirmations and the one-time code of the authenticator) */
   "admin.acl_relays"?: boolean;
@@ -2722,6 +2993,28 @@ export type SecuritySettings = {
   /** The server refuses the text of an environment file from a maintenance agent that does not hide the secrets itself (off - an older agent is accepted and the server hides them; on - the answer is 409 agent_not_masking and no secret is relayed) */
   "admin.require_masked_agent"?: boolean;
   "panel.live_events"?: boolean;
+  /** The account of a wall panel may read the check before arming (GET /api/v1/preflight) to show what is wrong when the person presses Arm. Off: it answers 403 and the panel arms as before. */
+  "panel.preflight"?: boolean;
+  /** The account of a wall panel may read a still picture of a camera (GET /api/v1/cameras/{id}/snapshot), at most one every two seconds for each camera. Off: it answers 403. */
+  "panel.camera_view"?: boolean;
+  /** When a node or an alarm panel raises a high or critical alarm (or a node alert level goes to high), the cameras that the site design says cover it take the photo and video of the capture settings. Off: only the vision service starts a capture. */
+  "capture.on_alarm"?: boolean;
+  /** The most captures one minute of alarms may start in all. */
+  "capture.on_alarm_per_min"?: number;
+  /** Besides the whole state, the console channel /api/v1/events sends {type, id, version} notices when an alarm, a device, a solar device, a network node or a design changes. Off: the state only. */
+  "live.events"?: boolean;
+  /** The automations with a schedule trigger run, only while the system is armed away (presence simulation). Off: no schedule ever runs. */
+  "vacation.mode"?: boolean;
+  /** The critical commands (alarm_command, electrical_command) are published with a nonce and an HMAC-SHA256 signature of this installation. Off: unsigned. */
+  "commands.require_sig"?: boolean;
+  /** An administrator may set up encrypted, scheduled backups of the data directory and make or prove one (the /api/v1/admin/backup routes). Off: they answer 403 backup_disabled. */
+  "admin.backup"?: boolean;
+  /** A firmware job from GitHub follows the staged rollout of the settings (/api/v1/admin/firmware/rollout): the channel stable or beta, a percent of the nodes at a time, and the way back for a node that does not come back. Off: a job updates every node it was given with the latest release, as always. */
+  "admin.firmware_rollout"?: boolean;
+  /** When the grid draw is over the limit, the devices listed as not critical are switched off one at a time and on again below the restore level. Off: nothing is ever shed. */
+  "electrical.load_shedding"?: boolean;
+  /** The server works out the energy balance of the house and watches it for information (GET /api/v1/electrical/balance). Off: 404 and nothing is watched. */
+  "electrical.balance"?: boolean;
   "client.device_lock"?: "user" | "sensitive" | "always";
   "client.trusted_devices"?: boolean;
   "client.trusted_session_h"?: number;

@@ -15731,6 +15731,643 @@
    "schema_valid": true
   },
   {
+   "name": "a risky port event with its recommendation",
+   "valid": true,
+   "payload": {
+    "kind": "network",
+    "node_id": "network-1",
+    "timestamp_ms": 1790000060000,
+    "interface": {
+     "name": "Ethernet",
+     "ip": "192.168.0.10",
+     "cidr": "192.168.0.0/24",
+     "gateway": "192.168.0.1",
+     "rx_bps": 1200000,
+     "tx_bps": 340000
+    },
+    "internet": {
+     "state": "up",
+     "since_ms": 1789990000000,
+     "gateway_ok": true,
+     "latency_ms": 12.5,
+     "loss_percent": 0.0,
+     "probes": [
+      {
+       "target": "1.1.1.1",
+       "kind": "tcp",
+       "ok": true,
+       "latency_ms": 11.2
+      },
+      {
+       "target": "8.8.8.8",
+       "kind": "dns",
+       "ok": true,
+       "latency_ms": 13.8
+      }
+     ],
+     "last_outage": {
+      "started_ms": 1789900000000,
+      "ended_ms": 1789900300000,
+      "duration_s": 300
+     },
+     "outages_24h": 1,
+     "downtime_24h_s": 300
+    },
+    "devices": [
+     {
+      "id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1",
+      "mac": "14:2e:5e:86:d9:62",
+      "vendor": "Sagemcom Broadband SAS",
+      "hostname": "router",
+      "kind": "router",
+      "os": "network gear",
+      "online": true,
+      "first_seen_ms": 1790000000000,
+      "last_seen_ms": 1790000060000,
+      "latency_ms": 1.4,
+      "ports": [
+       {
+        "port": 80,
+        "proto": "tcp",
+        "service": "http",
+        "banner": "Router login"
+       },
+       {
+        "port": 443,
+        "proto": "tcp",
+        "service": "https"
+       }
+      ],
+      "services": [
+       "_http._tcp"
+      ]
+     }
+    ],
+    "events": [
+     {
+      "id": "e11",
+      "kind": "risky_port",
+      "at_ms": 1790000030000,
+      "device_id": "96:b3:ed:0b:1c:18",
+      "detail": "Telnet is open",
+      "port": 23,
+      "recommendation": "close_telnet"
+     }
+    ],
+    "scan": {
+     "last_ms": 1790000050000,
+     "hosts": 254,
+     "duration_ms": 9000
+    }
+   }
+  },
+  {
+   "name": "a risky port event that names no port",
+   "valid": false,
+   "payload": {
+    "kind": "network",
+    "node_id": "network-1",
+    "timestamp_ms": 1790000060000,
+    "interface": {
+     "name": "Ethernet",
+     "ip": "192.168.0.10",
+     "cidr": "192.168.0.0/24",
+     "gateway": "192.168.0.1",
+     "rx_bps": 1200000,
+     "tx_bps": 340000
+    },
+    "internet": {
+     "state": "up",
+     "since_ms": 1789990000000,
+     "gateway_ok": true,
+     "latency_ms": 12.5,
+     "loss_percent": 0.0,
+     "probes": [
+      {
+       "target": "1.1.1.1",
+       "kind": "tcp",
+       "ok": true,
+       "latency_ms": 11.2
+      },
+      {
+       "target": "8.8.8.8",
+       "kind": "dns",
+       "ok": true,
+       "latency_ms": 13.8
+      }
+     ],
+     "last_outage": {
+      "started_ms": 1789900000000,
+      "ended_ms": 1789900300000,
+      "duration_s": 300
+     },
+     "outages_24h": 1,
+     "downtime_24h_s": 300
+    },
+    "devices": [
+     {
+      "id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1",
+      "mac": "14:2e:5e:86:d9:62",
+      "vendor": "Sagemcom Broadband SAS",
+      "hostname": "router",
+      "kind": "router",
+      "os": "network gear",
+      "online": true,
+      "first_seen_ms": 1790000000000,
+      "last_seen_ms": 1790000060000,
+      "latency_ms": 1.4,
+      "ports": [
+       {
+        "port": 80,
+        "proto": "tcp",
+        "service": "http",
+        "banner": "Router login"
+       },
+       {
+        "port": 443,
+        "proto": "tcp",
+        "service": "https"
+       }
+      ],
+      "services": [
+       "_http._tcp"
+      ]
+     }
+    ],
+    "events": [
+     {
+      "id": "e12",
+      "kind": "risky_port",
+      "at_ms": 1790000030000,
+      "device_id": "96:b3:ed:0b:1c:18",
+      "detail": "A device that was never seen has joined the network"
+     }
+    ],
+    "scan": {
+     "last_ms": 1790000050000,
+     "hosts": 254,
+     "duration_ms": 9000
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a rogue DHCP server event",
+   "valid": true,
+   "payload": {
+    "kind": "network",
+    "node_id": "network-1",
+    "timestamp_ms": 1790000060000,
+    "interface": {
+     "name": "Ethernet",
+     "ip": "192.168.0.10",
+     "cidr": "192.168.0.0/24",
+     "gateway": "192.168.0.1",
+     "rx_bps": 1200000,
+     "tx_bps": 340000
+    },
+    "internet": {
+     "state": "up",
+     "since_ms": 1789990000000,
+     "gateway_ok": true,
+     "latency_ms": 12.5,
+     "loss_percent": 0.0,
+     "probes": [
+      {
+       "target": "1.1.1.1",
+       "kind": "tcp",
+       "ok": true,
+       "latency_ms": 11.2
+      },
+      {
+       "target": "8.8.8.8",
+       "kind": "dns",
+       "ok": true,
+       "latency_ms": 13.8
+      }
+     ],
+     "last_outage": {
+      "started_ms": 1789900000000,
+      "ended_ms": 1789900300000,
+      "duration_s": 300
+     },
+     "outages_24h": 1,
+     "downtime_24h_s": 300
+    },
+    "devices": [
+     {
+      "id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1",
+      "mac": "14:2e:5e:86:d9:62",
+      "vendor": "Sagemcom Broadband SAS",
+      "hostname": "router",
+      "kind": "router",
+      "os": "network gear",
+      "online": true,
+      "first_seen_ms": 1790000000000,
+      "last_seen_ms": 1790000060000,
+      "latency_ms": 1.4,
+      "ports": [
+       {
+        "port": 80,
+        "proto": "tcp",
+        "service": "http",
+        "banner": "Router login"
+       },
+       {
+        "port": 443,
+        "proto": "tcp",
+        "service": "https"
+       }
+      ],
+      "services": [
+       "_http._tcp"
+      ]
+     }
+    ],
+    "events": [
+     {
+      "id": "e13",
+      "kind": "rogue_dhcp",
+      "at_ms": 1,
+      "server": "192.168.0.77",
+      "recommendation": "find_the_dhcp_server"
+     }
+    ],
+    "scan": {
+     "last_ms": 1790000050000,
+     "hosts": 254,
+     "duration_ms": 9000
+    }
+   }
+  },
+  {
+   "name": "a rogue DHCP server event that names no server",
+   "valid": false,
+   "payload": {
+    "kind": "network",
+    "node_id": "network-1",
+    "timestamp_ms": 1790000060000,
+    "interface": {
+     "name": "Ethernet",
+     "ip": "192.168.0.10",
+     "cidr": "192.168.0.0/24",
+     "gateway": "192.168.0.1",
+     "rx_bps": 1200000,
+     "tx_bps": 340000
+    },
+    "internet": {
+     "state": "up",
+     "since_ms": 1789990000000,
+     "gateway_ok": true,
+     "latency_ms": 12.5,
+     "loss_percent": 0.0,
+     "probes": [
+      {
+       "target": "1.1.1.1",
+       "kind": "tcp",
+       "ok": true,
+       "latency_ms": 11.2
+      },
+      {
+       "target": "8.8.8.8",
+       "kind": "dns",
+       "ok": true,
+       "latency_ms": 13.8
+      }
+     ],
+     "last_outage": {
+      "started_ms": 1789900000000,
+      "ended_ms": 1789900300000,
+      "duration_s": 300
+     },
+     "outages_24h": 1,
+     "downtime_24h_s": 300
+    },
+    "devices": [
+     {
+      "id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1",
+      "mac": "14:2e:5e:86:d9:62",
+      "vendor": "Sagemcom Broadband SAS",
+      "hostname": "router",
+      "kind": "router",
+      "os": "network gear",
+      "online": true,
+      "first_seen_ms": 1790000000000,
+      "last_seen_ms": 1790000060000,
+      "latency_ms": 1.4,
+      "ports": [
+       {
+        "port": 80,
+        "proto": "tcp",
+        "service": "http",
+        "banner": "Router login"
+       },
+       {
+        "port": 443,
+        "proto": "tcp",
+        "service": "https"
+       }
+      ],
+      "services": [
+       "_http._tcp"
+      ]
+     }
+    ],
+    "events": [
+     {
+      "id": "e14",
+      "kind": "rogue_dhcp",
+      "at_ms": 1
+     }
+    ],
+    "scan": {
+     "last_ms": 1790000050000,
+     "hosts": 254,
+     "duration_ms": 9000
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a rogue DHCP server event about a device",
+   "valid": false,
+   "payload": {
+    "kind": "network",
+    "node_id": "network-1",
+    "timestamp_ms": 1790000060000,
+    "interface": {
+     "name": "Ethernet",
+     "ip": "192.168.0.10",
+     "cidr": "192.168.0.0/24",
+     "gateway": "192.168.0.1",
+     "rx_bps": 1200000,
+     "tx_bps": 340000
+    },
+    "internet": {
+     "state": "up",
+     "since_ms": 1789990000000,
+     "gateway_ok": true,
+     "latency_ms": 12.5,
+     "loss_percent": 0.0,
+     "probes": [
+      {
+       "target": "1.1.1.1",
+       "kind": "tcp",
+       "ok": true,
+       "latency_ms": 11.2
+      },
+      {
+       "target": "8.8.8.8",
+       "kind": "dns",
+       "ok": true,
+       "latency_ms": 13.8
+      }
+     ],
+     "last_outage": {
+      "started_ms": 1789900000000,
+      "ended_ms": 1789900300000,
+      "duration_s": 300
+     },
+     "outages_24h": 1,
+     "downtime_24h_s": 300
+    },
+    "devices": [
+     {
+      "id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1",
+      "mac": "14:2e:5e:86:d9:62",
+      "vendor": "Sagemcom Broadband SAS",
+      "hostname": "router",
+      "kind": "router",
+      "os": "network gear",
+      "online": true,
+      "first_seen_ms": 1790000000000,
+      "last_seen_ms": 1790000060000,
+      "latency_ms": 1.4,
+      "ports": [
+       {
+        "port": 80,
+        "proto": "tcp",
+        "service": "http",
+        "banner": "Router login"
+       },
+       {
+        "port": 443,
+        "proto": "tcp",
+        "service": "https"
+       }
+      ],
+      "services": [
+       "_http._tcp"
+      ]
+     }
+    ],
+    "events": [
+     {
+      "id": "e15",
+      "kind": "rogue_dhcp",
+      "at_ms": 1,
+      "server": "192.168.0.77",
+      "device_id": "14:2e:5e:86:d9:62"
+     }
+    ],
+    "scan": {
+     "last_ms": 1790000050000,
+     "hosts": 254,
+     "duration_ms": 9000
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a server on an event that is not a rogue DHCP server",
+   "valid": false,
+   "payload": {
+    "kind": "network",
+    "node_id": "network-1",
+    "timestamp_ms": 1790000060000,
+    "interface": {
+     "name": "Ethernet",
+     "ip": "192.168.0.10",
+     "cidr": "192.168.0.0/24",
+     "gateway": "192.168.0.1",
+     "rx_bps": 1200000,
+     "tx_bps": 340000
+    },
+    "internet": {
+     "state": "up",
+     "since_ms": 1789990000000,
+     "gateway_ok": true,
+     "latency_ms": 12.5,
+     "loss_percent": 0.0,
+     "probes": [
+      {
+       "target": "1.1.1.1",
+       "kind": "tcp",
+       "ok": true,
+       "latency_ms": 11.2
+      },
+      {
+       "target": "8.8.8.8",
+       "kind": "dns",
+       "ok": true,
+       "latency_ms": 13.8
+      }
+     ],
+     "last_outage": {
+      "started_ms": 1789900000000,
+      "ended_ms": 1789900300000,
+      "duration_s": 300
+     },
+     "outages_24h": 1,
+     "downtime_24h_s": 300
+    },
+    "devices": [
+     {
+      "id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1",
+      "mac": "14:2e:5e:86:d9:62",
+      "vendor": "Sagemcom Broadband SAS",
+      "hostname": "router",
+      "kind": "router",
+      "os": "network gear",
+      "online": true,
+      "first_seen_ms": 1790000000000,
+      "last_seen_ms": 1790000060000,
+      "latency_ms": 1.4,
+      "ports": [
+       {
+        "port": 80,
+        "proto": "tcp",
+        "service": "http",
+        "banner": "Router login"
+       },
+       {
+        "port": 443,
+        "proto": "tcp",
+        "service": "https"
+       }
+      ],
+      "services": [
+       "_http._tcp"
+      ]
+     }
+    ],
+    "events": [
+     {
+      "id": "e16",
+      "kind": "new_device",
+      "at_ms": 1790000030000,
+      "device_id": "96:b3:ed:0b:1c:18",
+      "detail": "A device that was never seen has joined the network",
+      "server": "192.168.0.77"
+     }
+    ],
+    "scan": {
+     "last_ms": 1790000050000,
+     "hosts": 254,
+     "duration_ms": 9000
+    }
+   },
+   "schema_valid": true
+  },
+  {
+   "name": "a recommendation on a plain device event",
+   "valid": false,
+   "payload": {
+    "kind": "network",
+    "node_id": "network-1",
+    "timestamp_ms": 1790000060000,
+    "interface": {
+     "name": "Ethernet",
+     "ip": "192.168.0.10",
+     "cidr": "192.168.0.0/24",
+     "gateway": "192.168.0.1",
+     "rx_bps": 1200000,
+     "tx_bps": 340000
+    },
+    "internet": {
+     "state": "up",
+     "since_ms": 1789990000000,
+     "gateway_ok": true,
+     "latency_ms": 12.5,
+     "loss_percent": 0.0,
+     "probes": [
+      {
+       "target": "1.1.1.1",
+       "kind": "tcp",
+       "ok": true,
+       "latency_ms": 11.2
+      },
+      {
+       "target": "8.8.8.8",
+       "kind": "dns",
+       "ok": true,
+       "latency_ms": 13.8
+      }
+     ],
+     "last_outage": {
+      "started_ms": 1789900000000,
+      "ended_ms": 1789900300000,
+      "duration_s": 300
+     },
+     "outages_24h": 1,
+     "downtime_24h_s": 300
+    },
+    "devices": [
+     {
+      "id": "14:2e:5e:86:d9:62",
+      "ip": "192.168.0.1",
+      "mac": "14:2e:5e:86:d9:62",
+      "vendor": "Sagemcom Broadband SAS",
+      "hostname": "router",
+      "kind": "router",
+      "os": "network gear",
+      "online": true,
+      "first_seen_ms": 1790000000000,
+      "last_seen_ms": 1790000060000,
+      "latency_ms": 1.4,
+      "ports": [
+       {
+        "port": 80,
+        "proto": "tcp",
+        "service": "http",
+        "banner": "Router login"
+       },
+       {
+        "port": 443,
+        "proto": "tcp",
+        "service": "https"
+       }
+      ],
+      "services": [
+       "_http._tcp"
+      ]
+     }
+    ],
+    "events": [
+     {
+      "id": "e17",
+      "kind": "new_device",
+      "at_ms": 1790000030000,
+      "device_id": "96:b3:ed:0b:1c:18",
+      "detail": "A device that was never seen has joined the network",
+      "recommendation": "close_telnet"
+     }
+    ],
+    "scan": {
+     "last_ms": 1790000050000,
+     "hosts": 254,
+     "duration_ms": 9000
+    }
+   },
+   "schema_valid": true
+  },
+  {
    "name": "a network that is not a private range",
    "valid": false,
    "payload": {

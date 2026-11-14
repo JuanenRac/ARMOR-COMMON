@@ -139,6 +139,18 @@
       "feeds": []
     },
     {
+      "name": "ARMOR-WATCH",
+      "kind": "APP",
+      "group": "CLIENTS",
+      "technologies": ["Kotlin", "Wear OS", "Data Layer"],
+      "node": false,
+      "shared_tools": true,
+      "studio_e2e": false,
+      "contract_link": false,
+      "map": {"column": 3, "row": 3.75},
+      "feeds": []
+    },
+    {
       "name": "ARMOR-SERVER-AI",
       "kind": "SERVICE",
       "group": "CORE SERVICES",

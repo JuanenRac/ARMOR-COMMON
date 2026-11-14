@@ -24,6 +24,7 @@ extern "C" {
 #include "mqtt_client.h"
 }
 #include "core/backoff.hpp"
+#include "core/broker_failover.hpp"
 #include "core/broker_uri.hpp"
 #include "core/link_watch.hpp"
 #include "core/mqtt_topic.hpp"
@@ -231,12 +232,12 @@ constexpr int kBrokerBadRoundsBeforeSwitch = 3;   // about 30 s disconnected bef
 // The same idea as network.cpp's Wi-Fi link watchdog, for the broker: tried only when the connection has stayed down for a
 // while, and only when another saved broker exists - never while the one above still works.
 void broker_watchdog_task(void*) {
-  int bad_rounds = 0;
+  brokerfail::Failover failover(kBrokerBadRoundsBeforeSwitch);
   linkwatch::BackupReturn back_to_first;
   for (;;) {
     vTaskDelay(pdMS_TO_TICKS(kBrokerCheckEverySeconds * 1000));
     if (g_connected) {
-      bad_rounds = 0;
+      failover.connected_round();
       // On a saved broker that is not the first one for half an hour: the first one is tried again (it used to be forgotten until the next restart). If it is still down the watchdog
       // moves on to the next saved one after the usual wait.
       // The rule (when to ask, and to go back only when the first broker answers) is core/link_watch.hpp's, tested on a computer.
@@ -258,15 +259,13 @@ void broker_watchdog_task(void*) {
     bool no_client = false;
     { std::lock_guard<std::mutex> guard(g_client_lock); no_client = g_client == nullptr; }
     if (no_client) {   // the client could not be created or started: it is tried again, after about half a minute
-      if (++bad_rounds >= kBrokerBadRoundsBeforeSwitch) { bad_rounds = 0; start_client(current_broker(g_settings, g_broker_index)); }
+      if (failover.down_round(false, g_broker_index, broker_count(g_settings)).action == brokerfail::Action::kRestartSame) start_client(current_broker(g_settings, g_broker_index));
       continue;
     }
-    const int total = broker_count(g_settings);
-    if (total <= 1) continue;
-    bad_rounds += 1;
-    if (bad_rounds < kBrokerBadRoundsBeforeSwitch) continue;
-    bad_rounds = 0;
-    g_broker_index = (g_broker_index + 1) % total;
+    // The rule (when to leave a broker that stays down) is core/broker_failover.hpp's, tested on a computer; this only carries out the answer.
+    const brokerfail::Step step = failover.down_round(true, g_broker_index, broker_count(g_settings));
+    if (step.action != brokerfail::Action::kSwitchNext) continue;
+    g_broker_index = step.next_index;
     const config::Broker broker = current_broker(g_settings, g_broker_index);
     ESP_LOGW(kTag, "the broker has not answered in a while: trying the next saved one (%s)", broker.uri.c_str());
     esp_mqtt_client_handle_t old = nullptr;

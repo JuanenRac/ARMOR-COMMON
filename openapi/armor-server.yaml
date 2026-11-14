@@ -447,6 +447,30 @@ paths:
         '400': { description: 'Invalid value, or nothing to change', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '401': { description: Not signed in, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
         '403': { description: The current password is wrong, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/presence/me:
+    get:
+      summary: 'Whether the server keeps the home or away word of your phone, and the last one it was told. Off until the option presence.by_user is on (404).'
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: 'The last word and when it was told; state is null while none was told or it is older than a day', content: { application/json: { schema: { $ref: '#/components/schemas/PresenceMine' } } } }
+        '403': { description: A service token has no person, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: The option presence.by_user is off, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+    put:
+      summary: 'Your phone tells the server that you are home or away. Only that word travels: the position of the phone never leaves it. Off until the option presence.by_user is on (404). A word older than a day counts as unknown.'
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PutPresenceRequest' } } } }
+      responses:
+        '200': { description: The word as it stands now, content: { application/json: { schema: { $ref: '#/components/schemas/PresenceMine' } } } }
+        '400': { description: The state is not home or away, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: A service token has no person, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: The option presence.by_user is off, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/presence:
+    get:
+      summary: 'Who has told the server that they are home or away, and the sum of it (everyone_away, someone_home or unknown) that the automations with a presence trigger follow (an administrator). Off until the option presence.by_user is on (404).'
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: The people and the sum, content: { application/json: { schema: { $ref: '#/components/schemas/PresenceSummary' } } } }
+        '404': { description: The option presence.by_user is off, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/preferences:
     get:
       summary: Your own language, theme and saved weather place - kept per account, not per browser or address
@@ -747,6 +771,34 @@ paths:
         '200': { description: '{ revision, updated_at, updated_by }', content: { application/json: { schema: { $ref: '#/components/schemas/DesignSaved' } } } }
         '400': { description: 'The design is not an object, or too large', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '409': { description: Someone else saved first; the answer carries `current`, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/electrical/load-shedding:
+    get:
+      summary: Load shedding of the house (operators and administrators) - whether the option electrical.load_shedding is on, the settings, the devices shed now, the grid draw and the log of what was done
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: 'The state', content: { application/json: { schema: { $ref: '#/components/schemas/LoadShedding' } } } }
+    put:
+      summary: Set the limits and the list of devices that may be shed (an administrator; a new proof of identity from outside the house). A device that is a critical circuit is never shed, whatever the list says
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/LoadSheddingSettings' } } } }
+      responses:
+        '200': { description: 'The state with the new settings', content: { application/json: { schema: { $ref: '#/components/schemas/LoadShedding' } } } }
+        '422': { description: 'A value is out of range, restore_w is not at least 100 W under limit_w, or the list is not valid', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/electrical/balance:
+    get:
+      summary: The energy balance of the house now (production, consumption, import, export, self-consumption, autarky), the findings that are open and the settings; only while the option electrical.balance is on
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: 'The balance', content: { application/json: { schema: { $ref: '#/components/schemas/EnergyBalance' } } } }
+        '404': { description: 'The option electrical.balance is off (balance_off)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+    put:
+      summary: Set the thresholds of the balance and the channels whose history is watched (an administrator; a new proof of identity from outside the house)
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/EnergyBalanceSettings' } } } }
+      responses:
+        '200': { description: 'The balance with the new settings', content: { application/json: { schema: { $ref: '#/components/schemas/EnergyBalance' } } } }
+        '404': { description: 'The option electrical.balance is off (balance_off)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'A value is out of range or the list is not valid', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/electrical/devices:
     get:
       summary: The devices of the house that measure or switch electricity (Zigbee plugs and breakers, meters, smart lights) with what they say, whether they can be switched and how much it matters
@@ -903,6 +955,32 @@ paths:
         '202': { description: 'Accepted; { accepted, ignored? }', content: { application/json: { schema: { $ref: '#/components/schemas/Accepted' } } } }
         '400': { description: Not the contract's message, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '401': { description: Missing or wrong ingest token, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+  /api/v1/alarm/panic-gesture:
+    post:
+      summary: 'The hidden gesture of the apps (a long press on the logo, or five quick touches) raises the silent duress alarm of the signed-in person, exactly as the duress PIN does: nothing shows on the phone, the mode is not touched, and the answer is the same as for any other accepted request. While the option client.panic_gesture is off (the default) the route answers 404, as if it did not exist; a second gesture inside voice.panic_cooldown_s seconds raises nothing more but is answered the same.'
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: 'Always the same answer when the option is on, whether an alarm was raised or the quiet time had not ended', content: { application/json: { schema: { $ref: '#/components/schemas/Ok' } } } }
+        '404': { description: 'The option client.panic_gesture is off', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/admin/enrolment-code:
+    post:
+      summary: 'An administrator asks for a code of one use that lives five minutes, to put in the QR that sets up an app on a phone. The code carries no secret and opens no session: it only lets the phone read the public facts of this server (its address and the fingerprint of its local authority) through GET /api/v1/enrolment/{code}; the person still types their user and password. Off until the option client.enrolment_code is on (404). The body may name the address the phones use (an https address of the house); without it the server answers with the address of the request.'
+      security: [{ admin: [] }]
+      requestBody: { required: false, content: { application/json: { schema: { $ref: '#/components/schemas/PostEnrolmentCodeRequest' } } } }
+      responses:
+        '200': { description: 'The code, when it ends and what the QR carries', content: { application/json: { schema: { $ref: '#/components/schemas/EnrolmentCode' } } } }
+        '400': { description: The address is not an https address, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: Not an administrator or the proof of identity is needed again, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: The option client.enrolment_code is off, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/enrolment/{code}:
+    get:
+      summary: 'What a phone reads after scanning the QR of an enrolment code: the address of the server and the fingerprint of its local authority, nothing secret. The code works once and for five minutes; a used, ended or wrong code, or the option client.enrolment_code off, all answer the same 404, and too many tries from one address answer 429.'
+      security: []
+      parameters: [{ name: code, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: The public facts of the server, content: { application/json: { schema: { $ref: '#/components/schemas/EnrolmentFacts' } } } }
+        '404': { description: 'Unknown, used or ended code, or the option is off', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: Too many tries from this address, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/alarm/nodes:
     get:
       summary: The latest state of every alarm node ({ nodes, totals }); a node that has been silent for thirty seconds is stale
@@ -1236,7 +1314,7 @@ paths:
         '404': { description: The setting is off or the server holds no metrics token, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/preflight:
     get:
-      summary: The check before arming - nodes that do not answer, silent panels, open zones, cameras that are down, open doors and windows and alarms nobody has seen - each finding blocking or only a warning; read only
+      summary: The check before arming - nodes that do not answer, silent panels, open zones, cameras that are down, open doors and windows and alarms nobody has seen - each finding blocking or only a warning; read only. The account of a wall panel may read it only while the option panel.preflight is on (otherwise 403)
       security: [{ operator: [] }]
       responses:
         '200': { description: '{ ready, checked_at, blocking, warnings, issues: [{ kind, level, code, id, detail? }] }', content: { application/json: { schema: { $ref: '#/components/schemas/Preflight' } } } }
@@ -1391,6 +1469,39 @@ paths:
       security: [{ admin: [] }]
       responses:
         '200': { description: '{ enabled } when the setting is off, else { enabled, installed, field_http, approval }', content: { application/json: { schema: { $ref: '#/components/schemas/AdminFirewall' } } } }
+  /api/v1/admin/backup:
+    get:
+      summary: The encrypted backups of the data directory (an administrator) - whether the option admin.backup is on, the settings, whether a passphrase is set, the last result of a backup and of a proof, and the backups on the destination, newest first
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: 'The state', content: { application/json: { schema: { $ref: '#/components/schemas/BackupState' } } } }
+    put:
+      summary: Set the backups (schedule, hours between backups, how many to keep, destination, require_mount, include_media, max_mb) and, when given, the passphrase that makes the key; a new proof of identity from outside the house. The passphrase is never returned or kept
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/BackupSettingsRequest' } } } }
+      responses:
+        '200': { description: 'The state with the new settings', content: { application/json: { schema: { $ref: '#/components/schemas/BackupState' } } } }
+        '403': { description: 'The option admin.backup is off (backup_disabled)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'A value is not valid, the passphrase is too short (weak_passphrase), a schedule has no passphrase (passphrase_needed) or the destination is not under an allowed place (destination_not_allowed)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/admin/backup/run:
+    post:
+      summary: Make a backup now (an administrator; a new proof of identity from outside the house)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: 'What was written', content: { application/json: { schema: { $ref: '#/components/schemas/BackupResult' } } } }
+        '403': { description: 'The option admin.backup is off (backup_disabled)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'A backup is already being made (busy), or the destination is not there (destination_missing) or is on the same device as the data (not_mounted)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'No passphrase yet (passphrase_needed) or the data is larger than max_mb (too_large)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/admin/backup/verify:
+    post:
+      summary: 'Prove a backup (the newest, or name): open it, check the authentication tag and every hash and write the files into a temporary folder that is removed, so that a restore is known to work'
+      security: [{ admin: [] }]
+      requestBody: { required: false, content: { application/json: { schema: { $ref: '#/components/schemas/BackupVerifyRequest' } } } }
+      responses:
+        '200': { description: 'The proof', content: { application/json: { schema: { $ref: '#/components/schemas/BackupResult' } } } }
+        '403': { description: 'The option admin.backup is off (backup_disabled)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'There is no such backup (no_backup)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: 'Not the name of a backup, the key is not the one that made it or it was changed (wrong_key), or it is damaged (corrupt)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/admin/lan-ca:
     get:
       summary: The state of the local authority of the LAN and of its certificate (days left, fingerprints, and which are within renew_days of their end); only while the setting network.lan_ca is on (an administrator)
@@ -1495,6 +1606,19 @@ paths:
         '202': { description: '{ id } - the job runs in the background', content: { application/json: { schema: { $ref: '#/components/schemas/JobStarted' } } } }
         '409': { description: Another job is running, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '422': { description: 'Unknown kind or source, not a local address, no login, or an unknown upload', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/admin/firmware/rollout:
+    get:
+      summary: The staged rollout of the firmware (an administrator) - whether the option admin.firmware_rollout is on and its settings (the channel, the share of the nodes that take a new version in one go, and what happens when a node does not come back)
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: The state, content: { application/json: { schema: { $ref: '#/components/schemas/FirmwareRolloutState' } } } }
+    put:
+      summary: Set the staged rollout (channel, percent, rollback, halt); a new proof of identity from outside the house. The settings can be saved while the option is off; they take effect only when it is on
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/FirmwareRolloutSettings' } } } }
+      responses:
+        '200': { description: The state with the new settings, content: { application/json: { schema: { $ref: '#/components/schemas/FirmwareRolloutState' } } } }
+        '422': { description: 'A value is not valid (invalid_settings)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/admin/firmware/jobs/{id}:
     get:
       summary: How a firmware job stands - its state and, for every node, where it is and the version before and after (an administrator)
@@ -1714,7 +1838,7 @@ paths:
       summary: 'For the observation service (ARMOR-SERVER-AI, with its own token): the mode, the radar nodes with their tracks and light, and the cameras it can look at'
       security: [{ aiBearer: [] }]
       responses:
-        '200': { description: '{ mode, nodes: [{ id, online, targets, lux }], cameras: [{ id, name }] }', content: { application/json: { schema: { $ref: '#/components/schemas/AiContext' } } } }
+        '200': { description: '{ mode, nodes: [{ id, online, targets, lux, pose?, track_points? }], cameras: [{ id, name, pose?, fov_deg?, range_mm? }] }', content: { application/json: { schema: { $ref: '#/components/schemas/AiContext' } } } }
         '401': { description: Not the observation service token, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
   /api/v1/ai/cameras/{id}/frame:
     get:
@@ -1743,6 +1867,31 @@ paths:
         '200': { description: '{ raised, alarm_id?, reason? }', content: { application/json: { schema: { $ref: '#/components/schemas/AiObservationResult' } } } }
         '404': { description: Unknown camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
         '422': { description: Not a valid vision event, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/ai/ignore-proposals:
+    post:
+      summary: 'For the observation service - the parts of a camera''s picture it found always busy and proposes to ignore (rectangles as fractions of the picture). Only kept while the setting ai.learn is on (otherwise { stored: false, reason: feature_off }); nothing is applied until an administrator accepts it'
+      security: [{ aiBearer: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostAiIgnoreProposalsRequest' } } } }
+      responses:
+        '200': { description: '{ stored, reason? } - reason is feature_off, empty, rejected_before or unchanged', content: { application/json: { schema: { $ref: '#/components/schemas/AiIgnoreProposalResult' } } } }
+        '404': { description: Unknown camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+        '422': { description: Not a valid proposal, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/ignore-proposals:
+    get:
+      summary: 'The proposals of areas to ignore that wait for a decision, one per camera ({ proposals: [{ camera_id, camera_name, zones }] }); empty while the setting ai.learn is off'
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The proposals, content: { application/json: { schema: { $ref: '#/components/schemas/IgnoreProposals' } } } }
+  /api/v1/ignore-proposals/{id}:
+    post:
+      summary: 'Decide a proposal (an administrator only). accept adds its rectangles to the areas the camera ignores (16 at most; the ones already there stay); reject drops it and the same rectangles are not proposed again. Written in the audit'
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/IgnoreProposalDecision' } } } }
+      responses:
+        '200': { description: 'The decision taken and the areas the camera ignores now', content: { application/json: { schema: { $ref: '#/components/schemas/IgnoreProposalDecided' } } } }
+        '400': { description: 'The decision is neither accept nor reject, or accepting would pass the limit of areas', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: No proposal waits for that camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
   /api/v1/ai/activity-events:
     post:
       summary: For ARMOR-VISION - while the option vision.activity_events is on (on by default; off, the answer is raised false with reason feature_off and nothing is read), one event of the activity engine (a zone entered, left, stayed in or loitered in, or a counting line crossed; the event armor.vision.activity). Every event is recorded; an entry, a stay or a loitering in a zone of kind alert raises an alarm only while the system is armed and only when the event does not say notify false (the profile of the arming mode watches the zone without telling the people the alarms go to), once per camera and zone until it is closed; a zone of kind detection, a zone the server does not know, an exit and a line crossing are only recorded
@@ -2328,6 +2477,17 @@ paths:
         '404': { description: No such camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
         '502': { description: 'The camera did not give a picture: no valid snapshot address, login refused or no answer', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/cameras/{id}/snapshot:
+    get:
+      summary: The camera's still picture right now, as a JPEG, fetched by the server with the camera's own login; nothing is saved and no evidence item is made. The account of a wall panel may read it only while the option panel.camera_view is on (otherwise 403), at most one picture every two seconds for each camera (429 with Retry-After) and never over 1 MiB (502)
+      security: [{ operator: [] }]
+      parameters: [{ $ref: '#/components/parameters/CameraId' }]
+      responses:
+        '200': { description: A JPEG picture, content: { image/jpeg: { schema: { type: string, format: binary } } } }
+        '403': { description: 'The account of a wall panel and the option panel.camera_view is off', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: No such camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: The camera has no snapshot address, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: Too soon after the last picture of this camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '502': { description: 'The camera did not give a picture, or it is too big', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
     post:
       summary: Capture a JPEG
       security: [{ operator: [] }]
@@ -2653,6 +2813,47 @@ components:
             source_type: { type: string, enum: [node, camera, device, solar, electrical, network, alarm] }
             source_id: { type: string }
         - { type: object, additionalProperties: false, required: [type, mode], properties: { type: { const: mode }, mode: { type: string, enum: [armed, disarmed] } } }
+        - type: object
+          additionalProperties: false
+          required: [type, at]
+          properties:
+            type: { const: schedule }
+            at: { type: string, pattern: '^([01]\d|2[0-3]):[0-5]\d$', description: 'Time of day, HH:MM, the clock of the server' }
+            days: { type: array, minItems: 1, maxItems: 7, uniqueItems: true, items: { type: integer, minimum: 0, maximum: 6 }, description: '0 is Sunday; all days when absent' }
+            jitter_min: { type: integer, minimum: 0, maximum: 120, description: 'Up to this many minutes either way, repeatable from the seed and the day' }
+            seed: { type: string, pattern: '^[A-Za-z0-9._-]{1,32}$' }
+        - type: object
+          additionalProperties: false
+          required: [type, state]
+          properties:
+            type: { const: presence }
+            state: { type: string, enum: [everyone_away, someone_home], description: 'Fires when the sum of the words of home or away that the phones told the server (option presence.by_user) becomes this one' }
+    PutPresenceRequest:
+      type: object
+      additionalProperties: false
+      required: [state]
+      properties:
+        state: { type: string, enum: [home, away] }
+    PresenceMine:
+      type: object
+      required: [state, since]
+      properties:
+        state: { anyOf: [{ type: string, enum: [home, away] }, { type: 'null' }] }
+        since: { type: [string, 'null'], format: date-time }
+    PresenceSummary:
+      type: object
+      required: [state, people]
+      properties:
+        state: { type: string, enum: [everyone_away, someone_home, unknown], description: 'everyone_away when at least one person told the server a word of the last day and all of those words are away; someone_home when one of them is home; unknown when nobody did' }
+        people:
+          type: array
+          items:
+            type: object
+            required: [user, state, since]
+            properties:
+              user: { type: string }
+              state: { type: string, enum: [home, away] }
+              since: { type: string, format: date-time }
     AutomationAction:
       description: What an automation does
       oneOf:
@@ -2809,6 +3010,143 @@ components:
       required: [deleted]
       properties:
         deleted: { type: integer, minimum: 0 }
+    LoadSheddingSettings:
+      type: object
+      additionalProperties: false
+      properties:
+        limit_w: { type: integer, minimum: 200, maximum: 100000, description: 'Shed above this grid draw, in watts' }
+        restore_w: { type: integer, minimum: 100, maximum: 100000, description: 'Switch on again below this draw; at least 100 W under limit_w' }
+        hold_s: { type: integer, minimum: 5, maximum: 3600, description: 'How long the draw must stay beyond a limit before anything is done' }
+        step_s: { type: integer, minimum: 5, maximum: 3600, description: 'The least time between two actions' }
+        loads: { type: array, maxItems: 16, uniqueItems: true, items: { type: string, pattern: '^[A-Za-z0-9._-]{1,80}$' }, description: 'The ids of the devices that may be shed, the first is the first to be shed' }
+    LoadSheddingLogEntry:
+      type: object
+      required: [at, action, device, grid_w]
+      properties:
+        at: { type: string, format: date-time }
+        action: { type: string, enum: [shed, restore, refused, failed, released] }
+        device: { type: string }
+        grid_w: { type: [number, 'null'] }
+        detail: { type: string }
+    LoadShedding:
+      type: object
+      required: [enabled, settings, shed, grid_w, log]
+      properties:
+        enabled: { type: boolean, description: 'The option electrical.load_shedding' }
+        settings: { $ref: '#/components/schemas/LoadSheddingSettings' }
+        shed: { type: array, items: { type: string }, description: 'The devices switched off by this module and not yet switched on again' }
+        grid_w: { type: [number, 'null'] }
+        log: { type: array, maxItems: 100, items: { $ref: '#/components/schemas/LoadSheddingLogEntry' } }
+    EnergyBalanceSettings:
+      type: object
+      additionalProperties: false
+      properties:
+        allow_export: { type: boolean, description: 'The installation may feed the grid; off: an export above export_alert_w for hold_s is told' }
+        export_alert_w: { type: integer, minimum: 10, maximum: 50000 }
+        hold_s: { type: integer, minimum: 10, maximum: 3600 }
+        mismatch_pct: { type: integer, minimum: 10, maximum: 90 }
+        mismatch_min_w: { type: integer, minimum: 50, maximum: 50000 }
+        stopped_h: { type: integer, minimum: 1, maximum: 48 }
+        watch_channels: { type: array, maxItems: 8, uniqueItems: true, items: { type: string, pattern: '^[a-z0-9][a-z0-9_-]{0,63}/[A-Za-z0-9._-]{1,40}$' }, description: 'node/channel of the channels whose history is looked at' }
+    EnergyBalanceFinding:
+      type: object
+      required: [code, key, source, detail]
+      properties:
+        code: { type: string, enum: [grid_export_unexpected, meter_mismatch, consumption_appliance_stopped, consumption_standby_high, consumption_phase_down] }
+        key: { type: string }
+        source: { type: string }
+        detail: { type: object, additionalProperties: { type: [number, string] } }
+    EnergyBalance:
+      type: object
+      required: [enabled, settings, balance, findings]
+      properties:
+        enabled: { type: boolean }
+        settings: { $ref: '#/components/schemas/EnergyBalanceSettings' }
+        balance:
+          type: object
+          required: [production_w, consumption_w, import_w, export_w, battery_charge_w, self_consumption_pct, autarky_pct, reported_load_w]
+          properties:
+            production_w: { type: [number, 'null'] }
+            consumption_w: { type: [number, 'null'], description: 'Production plus grid draw minus battery charge' }
+            import_w: { type: [number, 'null'] }
+            export_w: { type: [number, 'null'] }
+            battery_charge_w: { type: [number, 'null'] }
+            self_consumption_pct: { type: [number, 'null'] }
+            autarky_pct: { type: [number, 'null'] }
+            reported_load_w: { type: [number, 'null'], description: 'The load the inverters report, to compare with consumption_w' }
+        findings: { type: array, items: { $ref: '#/components/schemas/EnergyBalanceFinding' } }
+    BackupSettings:
+      type: object
+      required: [schedule, every_h, keep, destination, require_mount, include_media, max_mb]
+      properties:
+        schedule: { type: boolean }
+        every_h: { type: integer, minimum: 1, maximum: 720 }
+        keep: { type: integer, minimum: 1, maximum: 60 }
+        destination: { type: string, maxLength: 300, description: 'An absolute path under /media, /mnt, /run/media or the data directory; empty is the folder backups of the data directory' }
+        require_mount: { type: boolean, description: 'The destination must be on another device than the data' }
+        include_media: { type: boolean }
+        max_mb: { type: integer, minimum: 1, maximum: 2048 }
+    FirmwareRolloutSettings:
+      type: object
+      additionalProperties: false
+      description: 'How a firmware job from GitHub is spread over the nodes while the option admin.firmware_rollout is on. The nodes are ordered by a hash of their id and the version, so the same nodes go first for a version and a larger percent only adds nodes.'
+      properties:
+        channel: { type: string, enum: [stable, beta], default: stable, description: 'stable takes the latest release; beta takes the newest release, a pre-release included' }
+        percent: { type: integer, minimum: 1, maximum: 100, default: 100, description: 'The share of the nodes of a job that take the version now (at least one node); the others are listed as deferred until the job is started again with a larger percent' }
+        rollback: { type: boolean, default: true, description: 'A node that took the image and did not come back with it is asked to start from its previous slot again' }
+        halt_on_failure: { type: boolean, default: true, description: 'After a node failed, the nodes that were still to come are deferred and not touched' }
+    FirmwareRolloutState:
+      type: object
+      required: [enabled, settings]
+      properties:
+        enabled: { type: boolean, description: The option admin.firmware_rollout }
+        settings: { $ref: '#/components/schemas/FirmwareRolloutSettings' }
+    BackupSettingsRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        schedule: { type: boolean }
+        every_h: { type: integer, minimum: 1, maximum: 720 }
+        keep: { type: integer, minimum: 1, maximum: 60 }
+        destination: { type: string, maxLength: 300 }
+        require_mount: { type: boolean }
+        include_media: { type: boolean }
+        max_mb: { type: integer, minimum: 1, maximum: 2048 }
+        passphrase: { type: string, minLength: 12, maxLength: 200, description: 'Makes the key for the next backups; never returned or kept' }
+    BackupVerifyRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        name: { type: string, pattern: '^armor-backup-\d{8}T\d{6}Z\.armorbk$' }
+        passphrase: { type: string, maxLength: 200, description: 'For a backup made under another passphrase than the one the server holds' }
+    BackupResult:
+      type: object
+      required: [ok, at]
+      properties:
+        ok: { type: boolean }
+        at: { type: string, format: date-time }
+        file: { type: string }
+        bytes: { type: integer }
+        files: { type: integer }
+        error: { type: string }
+    BackupInfo:
+      type: object
+      required: [name, bytes, at]
+      properties:
+        name: { type: string }
+        bytes: { type: integer }
+        at: { type: string }
+    BackupState:
+      type: object
+      required: [enabled, settings, key_set, running, last, last_verify, backups]
+      properties:
+        enabled: { type: boolean, description: 'The option admin.backup' }
+        settings: { $ref: '#/components/schemas/BackupSettings' }
+        key_set: { type: boolean }
+        running: { type: boolean }
+        last: { oneOf: [{ $ref: '#/components/schemas/BackupResult' }, { type: 'null' }] }
+        last_verify: { oneOf: [{ $ref: '#/components/schemas/BackupResult' }, { type: 'null' }] }
+        backups: { type: array, items: { $ref: '#/components/schemas/BackupInfo' } }
     ApiError:
       type: object
       examples: [{"error": "operator authorization is required"}]
@@ -3094,6 +3432,8 @@ components:
         network.login_secure_only: { type: boolean, default: false }
         session.rotate_id: { type: boolean, default: false, description: 'A Studio session in use gets a new id and cookie each time it is renewed, and the previous id keeps working for 30 seconds so requests already in flight are not signed out. Off, the default, the id lasts as long as the session. Turning it off again lowers security and asks for a new proof of identity.' }
         network.public_access: { type: boolean, default: false, description: 'Requests from outside the house and the VPN are taken at all. Off, the default, every one is answered 403 public_access_off. On, a request from outside still needs TLS, a control token of 32 characters or more and a sign-in password of 12 or more (403 public_access_unsafe with the reasons, or 403 tls_required), and an address that fails to sign in too often is closed with 429 public_login_locked. Turning it on lowers security and asks for a new proof of identity.' }
+        presence.by_user: { type: boolean, default: false, description: 'A signed-in person may let their phone tell the server only the word home or away (PUT /api/v1/presence/me), and the automations may have a presence trigger. The position of the phone never reaches the server. Off: the routes answer 404 and the trigger never fires.' }
+        client.enrolment_code: { type: boolean, default: false, description: 'An administrator may ask for a code of one use and five minutes (POST /api/v1/admin/enrolment-code) for the QR that sets up an app on a phone, and a phone reads the public facts of the server with it (GET /api/v1/enrolment/{code}). The code carries no secret. Off: both routes answer 404.' }
         network.lan_ca: { type: boolean, default: false, description: 'An administrator may download the public certificate of the local CA of the LAN (GET /api/v1/security/lan-ca); the private key is never served. Turning it on lowers the security.' }
         media.retention_snapshot_days: { type: integer, minimum: 0, maximum: 3650, default: 0, description: 'How many days snapshots are kept; 0 = the general limit applies.' }
         media.retention_recording_days: { type: integer, minimum: 0, maximum: 3650, default: 0, description: 'How many days recordings are kept; 0 = the general limit applies.' }
@@ -3104,6 +3444,8 @@ components:
         vision.plates_ack: { type: boolean, default: false, description: 'The privacy notice of plate reading was read.' }
         vision.faces_ack: { type: boolean, default: false, description: 'The privacy notice of face recognition was read.' }
         vision.timeline: { type: boolean, default: false, description: 'The server keeps the events of the vision service (an alert zone or a detection zone) in a timeline with the evidence taken when it was seen, for the review panel of Studio (GET /api/v1/vision/timeline). Off, the default, nothing is kept.' }
+        ai.spatial: { type: boolean, default: false, description: 'The observation service judges where each radar track falls in a camera''s picture, from the places the site design gives the radars and cameras (off: a radar track anywhere in the area a camera covers counts for that camera). It is told in the context (options.spatial).' }
+        ai.learn: { type: boolean, default: false, description: 'The observation service may study the pictures of the cameras while the system is disarmed and propose parts of the picture to ignore (a tree, a road). Nothing is applied until an administrator accepts a proposal. It is told in the context (options.learn).' }
         vision.timeline_days: { type: integer, minimum: 1, maximum: 3650, default: 30, description: 'How many days an entry of the timeline is kept before it is pruned.' }
         push.photo: { type: boolean, default: false, description: 'The notification of an alarm that a camera raised carries a small photo of the event. The photo goes through the push service of Google (FCM). It cannot be on while push.photo_ack is off, and the photo is never written to a log. Turning it on lowers the security.' }
         push.photo_ack: { type: boolean, default: false, description: 'The notice that the photo of a notification passes through FCM / Google was read.' }
@@ -3116,11 +3458,23 @@ components:
         voice.mobile_turn: { type: boolean, default: false, description: 'A phone of a signed-in operator or administrator may speak to the voice gateway through POST /api/v1/voice/mobile-turn. Turning it on lowers the security.' }
         voice.wake_word: { type: boolean, default: false, description: The wall panel may send short chunks of audio to the voice gateway to hear its wake word (on this machine; off - the route answers 403 and nothing is passed on) }
         voice.panic_phrase: { type: boolean, default: false }
+        client.panic_gesture: { type: boolean, default: false, description: 'The hidden gesture of the apps (POST /api/v1/alarm/panic-gesture) raises the silent duress alarm. Off: the route answers 404 and the apps do not offer the gesture.' }
         voice.panic_cooldown_s: { type: integer, minimum: 10, maximum: 3600, default: 60 }
         admin.acl_relays: { type: boolean, default: false, description: Studio may ask the admin agent to open or close the two switches of the broker rules that no install turns on (off - the routes answer 403 - each change also needs two confirmations and the one-time code of the authenticator) }
         admin.field_http: { type: boolean, default: false, description: Studio may ask the admin agent to let the field network also reach the server's port over HTTP (off - the routes answer 403 - each change also needs a confirmation and the one-time code of the authenticator) }
         admin.require_masked_agent: { type: boolean, default: false, description: The server refuses the text of an environment file from a maintenance agent that does not hide the secrets itself (off - an older agent is accepted and the server hides them; on - the answer is 409 agent_not_masking and no secret is relayed) }
         panel.live_events: { type: boolean, default: true }
+        panel.preflight: { type: boolean, default: false, description: 'The account of a wall panel may read the check before arming (GET /api/v1/preflight) to show what is wrong when the person presses Arm. Off: it answers 403 and the panel arms as before.' }
+        panel.camera_view: { type: boolean, default: false, description: 'The account of a wall panel may read a still picture of a camera (GET /api/v1/cameras/{id}/snapshot), at most one every two seconds for each camera. Off: it answers 403.' }
+        capture.on_alarm: { type: boolean, default: false, description: 'When a node or an alarm panel raises a high or critical alarm (or a node alert level goes to high), the cameras that the site design says cover it take the photo and video of the capture settings. Off: only the vision service starts a capture.' }
+        capture.on_alarm_per_min: { type: integer, minimum: 1, maximum: 60, default: 6, description: 'The most captures one minute of alarms may start in all.' }
+        live.events: { type: boolean, default: true, description: 'Besides the whole state, the console channel /api/v1/events sends {type, id, version} notices when an alarm, a device, a solar device, a network node or a design changes. Off: the state only.' }
+        vacation.mode: { type: boolean, default: false, description: 'The automations with a schedule trigger run, only while the system is armed away (presence simulation). Off: no schedule ever runs.' }
+        commands.require_sig: { type: boolean, default: false, description: 'The critical commands (alarm_command, electrical_command) are published with a nonce and an HMAC-SHA256 signature of this installation. Off: unsigned.' }
+        admin.backup: { type: boolean, default: false, description: 'An administrator may set up encrypted, scheduled backups of the data directory and make or prove one (the /api/v1/admin/backup routes). Off: they answer 403 backup_disabled.' }
+        admin.firmware_rollout: { type: boolean, default: false, description: 'A firmware job from GitHub follows the staged rollout of the settings (/api/v1/admin/firmware/rollout): the channel stable or beta, a percent of the nodes at a time, and the way back for a node that does not come back. Off: a job updates every node it was given with the latest release, as always.' }
+        electrical.load_shedding: { type: boolean, default: false, description: 'When the grid draw is over the limit, the devices listed as not critical are switched off one at a time and on again below the restore level. Off: nothing is ever shed.' }
+        electrical.balance: { type: boolean, default: false, description: 'The server works out the energy balance of the house and watches it for information (GET /api/v1/electrical/balance). Off: 404 and nothing is watched.' }
         client.device_lock: { type: string, enum: [user, sensitive, always], default: user }
         client.trusted_devices: { type: boolean, default: false }
         client.trusted_session_h: { type: integer, minimum: 1, maximum: 720, default: 72 }
@@ -3310,6 +3664,24 @@ components:
         stored: { $ref: '#/components/schemas/SecuritySettings' }
         defaults: { $ref: '#/components/schemas/SecuritySettings' }
         locked: { type: array, items: { type: string } }
+    PostEnrolmentCodeRequest:
+      type: object
+      properties:
+        origin: { type: string, description: 'The https address the phones use to reach this server, e.g. https://armor.local:18080' }
+    EnrolmentCode:
+      type: object
+      required: [code, expires_at, origin, ca_fingerprint]
+      properties:
+        code: { type: string, minLength: 22, maxLength: 64, pattern: '^[A-Za-z0-9_-]+$' }
+        expires_at: { type: string, format: date-time }
+        origin: { type: string }
+        ca_fingerprint: { type: [string, 'null'], description: 'SHA-256 of the certificate of the local authority of the LAN, 64 hex characters; null when the server has none to name' }
+    EnrolmentFacts:
+      type: object
+      required: [origin, ca_fingerprint]
+      properties:
+        origin: { type: string }
+        ca_fingerprint: { type: [string, 'null'], pattern: '^[0-9a-f]{64}$' }
     ZoneFeedKey:
       type: object
       required: [node_id, key, algorithm]
@@ -4155,6 +4527,45 @@ components:
       properties:
         camera_id: { type: string }
         zones: { type: array, maxItems: 16, items: { $ref: '#/components/schemas/IgnoreZone' } }
+    PostAiIgnoreProposalsRequest:
+      type: object
+      additionalProperties: false
+      required: [camera_id, zones]
+      properties:
+        camera_id: { type: string }
+        zones: { type: array, maxItems: 16, items: { $ref: '#/components/schemas/IgnoreZone' } }
+    AiIgnoreProposalResult:
+      type: object
+      required: [stored]
+      properties:
+        stored: { type: boolean }
+        reason: { type: string }
+    IgnoreProposals:
+      type: object
+      required: [proposals]
+      properties:
+        proposals:
+          type: array
+          items:
+            type: object
+            required: [camera_id, camera_name, zones]
+            properties:
+              camera_id: { type: string }
+              camera_name: { type: string }
+              zones: { type: array, maxItems: 16, items: { $ref: '#/components/schemas/IgnoreZone' } }
+    IgnoreProposalDecision:
+      type: object
+      additionalProperties: false
+      required: [decision]
+      properties:
+        decision: { type: string, enum: [accept, reject] }
+    IgnoreProposalDecided:
+      type: object
+      required: [camera_id, decision, zones]
+      properties:
+        camera_id: { type: string }
+        decision: { type: string, enum: [accept, reject] }
+        zones: { type: array, maxItems: 16, items: { $ref: '#/components/schemas/IgnoreZone' }, description: The areas the camera ignores after the decision }
     CountLine:
       type: object
       additionalProperties: false
@@ -4382,12 +4793,14 @@ components:
             required: [id, kind, at_ms, node_id]
             properties:
               id: { type: string }
-              kind: { type: string, enum: [new_device, device_online, device_offline, ip_changed, arp_conflict, port_opened, port_closed, internet_down, internet_up, gateway_down, gateway_up] }
+              kind: { type: string, enum: [new_device, device_online, device_offline, ip_changed, arp_conflict, port_opened, port_closed, internet_down, internet_up, gateway_down, gateway_up, risky_port, rogue_dhcp] }
               at_ms: { type: integer }
               node_id: { type: string }
               device_id: { type: string }
               port: { type: integer }
               outage_s: { type: integer }
+              server: { type: string }
+              recommendation: { type: string }
               detail: { type: string }
         outages:
           type: array
@@ -4599,6 +5012,13 @@ components:
       required: [mode, revision, time_ms, nodes, energy, alarms]
       properties:
         mode: { type: string, enum: [armed, disarmed] }
+        delay:
+          type: object
+          description: 'Present only while a countdown runs: the time left to leave the house after arming (exit) or to disarm after a door opened (entry); the panel shows it big and sounds it'
+          required: [phase, remaining_s]
+          properties:
+            phase: { type: string, enum: [exit, entry] }
+            remaining_s: { type: integer, minimum: 0 }
         revision: { type: integer }
         time_ms: { type: integer }
         nodes:
@@ -4877,6 +5297,7 @@ components:
         node_id: { type: string }
         token: { type: string }
         strict: { type: boolean }
+        command_key: { type: string, pattern: '^[0-9a-f]{64}$', description: 'The key this node checks the signature of the critical commands with (HMAC-SHA256 of node| and its id under the master key of the server); only while the option commands.require_sig is on. Given once to the node; never cached.' }
     InstallationBundle:
       type: object
       required: [format, version, exported_at, exported_by, parts]
@@ -5053,6 +5474,13 @@ components:
       required: [mode, nodes, cameras]
       properties:
         mode: { type: string, enum: [armed, disarmed] }
+        options:
+          type: object
+          description: 'The options of the server that the service follows (both off when absent)'
+          additionalProperties: false
+          properties:
+            spatial: { type: boolean, description: 'The setting ai.spatial' }
+            learn: { type: boolean, description: 'The setting ai.learn' }
         nodes:
           type: array
           items:
@@ -5063,6 +5491,12 @@ components:
               online: { type: boolean }
               targets: { type: integer }
               lux: { type: [number, 'null'] }
+              pose: { $ref: '#/components/schemas/AiPose', description: 'Where the radar stands on the floor plan, when the site design places it (absent otherwise)' }
+              track_points:
+                type: array
+                maxItems: 16
+                description: 'The tracks the radar counts, in its own frame (x to the right of the radar, y straight ahead of it), in millimetres; absent when the radar reports none or the design cannot place it'
+                items: { $ref: '#/components/schemas/AiTrackPoint' }
         cameras:
           type: array
           items:
@@ -5071,6 +5505,23 @@ components:
             properties:
               id: { type: string }
               name: { type: string }
+              pose: { $ref: '#/components/schemas/AiPose', description: 'Where the camera stands on the floor plan and the way it faces, when the site design places it' }
+              fov_deg: { type: number, minimum: 20, maximum: 180, description: 'The horizontal field of view, when the design gives it' }
+              range_mm: { type: number, minimum: 0, description: 'How far the camera sees, when the design gives it' }
+    AiPose:
+      type: object
+      required: [x_mm, y_mm, yaw_deg]
+      description: 'A position on the floor plan in millimetres and the direction the device faces, in degrees clockwise from the +y axis of the plan'
+      properties:
+        x_mm: { type: number }
+        y_mm: { type: number }
+        yaw_deg: { type: number }
+    AiTrackPoint:
+      type: object
+      required: [x_mm, y_mm]
+      properties:
+        x_mm: { type: number }
+        y_mm: { type: number }
     AiObservationResult:
       type: object
       examples: [{"raised": false, "reason": "disarmed"}]

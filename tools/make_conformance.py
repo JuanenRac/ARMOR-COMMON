@@ -396,6 +396,12 @@ def battery(**changes):
     return base
 
 
+def solar_system(**changes):
+    base = {"kind": "system", "node_id": "solar-1", "timestamp_ms": 5000, "inverters": 1, "batteries": 2, "pv_w": 856, "load_w": 119, "soc_percent": 88.5, "balance_w": 737, "alerts": []}
+    base.update(changes)
+    return base
+
+
 def connection_event(**changes):
     base = {"id": 7, "at": "2026-01-01T10:00:00.000Z", "type": "connection", "action": "login", "client_kind": "studio", "client_id": "0123456789abcdef", "user": "ana", "origin": "local", "two_factor": False}
     base.update(changes)
@@ -1159,6 +1165,13 @@ cases: dict[str, list[Any]] = {
         ("a device event that names no device", False, network(events=[{"id": "e8", "kind": "new_device", "at_ms": 1}]), True),
         ("a duration on an event that is not an end", False, network(events=[net_event(id="e9", outage_s=5)]), True),
         ("a port event that names no port", False, network(events=[net_event(id="e10", kind="port_opened")]), True),
+        ("a risky port event with its recommendation", True, network(events=[net_event(id="e11", kind="risky_port", port=23, recommendation="close_telnet", detail="Telnet is open")])),
+        ("a risky port event that names no port", False, network(events=[net_event(id="e12", kind="risky_port")]), True),
+        ("a rogue DHCP server event", True, network(events=[{"id": "e13", "kind": "rogue_dhcp", "at_ms": 1, "server": "192.168.0.77", "recommendation": "find_the_dhcp_server"}])),
+        ("a rogue DHCP server event that names no server", False, network(events=[{"id": "e14", "kind": "rogue_dhcp", "at_ms": 1}]), True),
+        ("a rogue DHCP server event about a device", False, network(events=[{"id": "e15", "kind": "rogue_dhcp", "at_ms": 1, "server": "192.168.0.77", "device_id": "14:2e:5e:86:d9:62"}]), True),
+        ("a server on an event that is not a rogue DHCP server", False, network(events=[net_event(id="e16", server="192.168.0.77")]), True),
+        ("a recommendation on a plain device event", False, network(events=[net_event(id="e17", recommendation="close_telnet")]), True),
         ("a network that is not a private range", False, network(interface=dict(network()["interface"], cidr="8.8.8.0/24")), True),
         ("a network wider than a private range", False, network(interface=dict(network()["interface"], cidr="0.0.0.0/0")), True),
         ("a private range of 172.16", True, network(interface=dict(network()["interface"], cidr="172.16.4.0/24"))),
@@ -1333,6 +1346,31 @@ cases: dict[str, list[Any]] = {
         ("a fraction of a radar track", False, vision_event(schema="armor.vision.event/v2", radar_tracks=1.5)),
         ("an unknown field", False, vision_event(picture="AAAA")),
         ("not an object", False, ["front-door"]),
+    ],
+    "solar_system": [
+        ("a typical summary", True, solar_system()),
+        ("an alert raised by the node", True, solar_system(alerts=[{"code": "soc_low", "device": "us3000-1"}])),
+        ("the four alert codes", True, solar_system(alerts=[{"code": c, "device": "us3000-1"} for c in ("soc_low", "cell_over_voltage", "temperature_high", "temperature_low")])),
+        ("a negative balance", True, solar_system(pv_w=0, load_w=300, balance_w=-300)),
+        ("no battery answered, so no state of charge", True, without(solar_system(batteries=0), "soc_percent")),
+        ("nothing answered", True, {"kind": "system", "node_id": "solar-1", "timestamp_ms": 0, "inverters": 0, "batteries": 0, "alerts": []}),
+        ("sixteen alerts, the limit", True, solar_system(alerts=[{"code": "soc_low", "device": "us3000-1"}] * 16)),
+        ("seventeen alerts", False, solar_system(alerts=[{"code": "soc_low", "device": "us3000-1"}] * 17)),
+        ("an alert code the contract does not know", False, solar_system(alerts=[{"code": "fire", "device": "us3000-1"}])),
+        ("an alert without its device", False, solar_system(alerts=[{"code": "soc_low"}])),
+        ("an alert with free text", False, solar_system(alerts=[{"code": "soc_low", "device": "us3000-1", "text": "low"}])),
+        ("a device name in capitals", False, solar_system(alerts=[{"code": "soc_low", "device": "US3000"}])),
+        ("a state of charge above 100", False, solar_system(soc_percent=100.5)),
+        ("a negative state of charge", False, solar_system(soc_percent=-1)),
+        ("a negative panel power", False, solar_system(pv_w=-1)),
+        ("a negative load", False, solar_system(load_w=-1)),
+        ("seventeen inverters", False, solar_system(inverters=17)),
+        ("a battery count as text", False, solar_system(batteries="2")),
+        ("a missing alert list", False, without(solar_system(), "alerts")),
+        ("a kind that is not system", False, solar_system(kind="battery")),
+        ("a node id with a slash", False, solar_system(node_id="solar/1")),
+        ("an unknown field", False, solar_system(fuel=1)),
+        ("not an object", False, [1, 2]),
     ],
     "voice_turn_result": [
         ("what was heard and the reply", True, voice_result()),
@@ -1979,6 +2017,42 @@ def signing_cases() -> str:
     return json.dumps(doc, indent=1) + "\n"
 
 
+def command_signing_cases() -> str:
+    """Signed critical commands (docs/CONTRACTS.md, signed commands): the key of a node is HMAC-SHA256(master, "node|" + id), the signature is HMAC-SHA256(node key, "armor-command-v2|" + body) in hex, and the payload is the body with ,"sig":"<hex>"} in place of its closing brace."""
+    def node_key(node_id: str) -> str:
+        return hmac.new(bytes.fromhex(SIGNING_KEY), f"node|{node_id}".encode("utf-8"), hashlib.sha256).hexdigest()
+
+    def sign(key: str, body: str) -> str:
+        return hmac.new(bytes.fromhex(key), ("armor-command-v2|" + body).encode("utf-8"), hashlib.sha256).hexdigest()
+
+    def payload_of(key: str, body: str) -> str:
+        return body[:-1] + ',"sig":"' + sign(key, body) + '"}'
+
+    bodies = [
+        ("an arm of an alarm panel, away, forced", "alarm-1", '{"kind":"alarm_command","node_id":"alarm-1","timestamp_ms":1000000,"command_id":"c000000000000001","action":"arm","mode":"away","force":true,"nonce":"0123456789abcdef"}'),
+        ("a disarm of an alarm panel", "alarm-1", '{"kind":"alarm_command","node_id":"alarm-1","timestamp_ms":1000001,"command_id":"c000000000000002","action":"disarm","nonce":"fedcba9876543210"}'),
+        ("a close of a transfer switch with its token", "electrical-1", '{"kind":"electrical_command","node_id":"electrical-1","timestamp_ms":1000002,"command_id":"c000000000000003","switch":"transfer","action":"close_a","token":"00112233445566778899aabbccddeeff","nonce":"0f1e2d3c4b5a6978"}'),
+    ]
+    cases = [{"name": name, "node_id": node_id, "node_key": node_key(node_id), "body": body, "sig": sign(node_key(node_id), body), "payload": payload_of(node_key(node_id), body)} for name, node_id, body in bodies]
+    first = cases[0]
+    other_key = node_key("alarm-2")
+    refused = [
+        ("the action changed after signing", first["payload"].replace('"arm"', '"disarm"'), first["node_key"]),
+        ("the node changed after signing", first["payload"].replace("alarm-1", "alarm-2"), first["node_key"]),
+        ("the nonce changed after signing", first["payload"].replace("0123456789abcdef", "0123456789abcdee"), first["node_key"]),
+        ("signed with the key of another node", payload_of(other_key, first["body"]), first["node_key"]),
+        ("the signature is not the last field", first["body"][:-1] + ',"sig":"' + first["sig"] + '","extra":1}', first["node_key"]),
+        ("a byte after the closing brace", first["payload"] + " ", first["node_key"]),
+        ("the signature in capital letters", first["payload"].replace(first["sig"], first["sig"].upper()), first["node_key"]),
+        ("a signature that is too short", first["payload"].replace(first["sig"], first["sig"][:-2]), first["node_key"]),
+        ("no signature at all", first["body"], first["node_key"]),
+    ]
+    doc = {"description": "Signed critical commands (docs/CONTRACTS.md, signed commands): the master key, and for each node the key it holds, the body (the payload without its sig field), the HMAC-SHA256 in hex of 'armor-command-v2|' + body, and the payload as published. 'refused' payloads must not verify with the key given.",
+           "master_key": SIGNING_KEY, "cases": cases,
+           "refused": [{"name": name, "payload": payload, "node_key": key} for name, payload, key in refused]}
+    return json.dumps(doc, indent=1) + "\n"
+
+
 CHECK = "--check" in sys.argv[1:]
 stale: list[str] = []
 if not CHECK:
@@ -1986,7 +2060,7 @@ if not CHECK:
 for kind, entries in cases.items():
     # A fourth item, True, marks a payload the schema accepts and the message-level rule refuses (a token where none belongs, a switch named twice).
     vectors = [{"name": name, "valid": valid, "payload": payload, **({"schema_valid": True} if extra else {})} for name, valid, payload, *extra in entries]
-    schema_kind = {"solar_inverter": "inverter", "solar_battery": "battery"}.get(kind, kind)   # the solar files are named after their schema, and carry the payload's kind
+    schema_kind = {"solar_inverter": "inverter", "solar_battery": "battery", "solar_system": "system"}.get(kind, kind)   # the solar files are named after their schema, and carry the payload's kind
     text = json.dumps({"kind": schema_kind, "vectors": vectors}, indent=1) + "\n"
     if CHECK:
         path = ROOT / f"{kind}.json"
@@ -2013,6 +2087,15 @@ else:
     sign_path.parent.mkdir(exist_ok=True)
     sign_path.write_text(sign_text, encoding="utf-8", newline="\n")
     print("signatures/alarm_state", len(json.loads(sign_text)["cases"]), "cases")
+cmd_path = ROOT / "signatures" / "command.json"
+cmd_text = command_signing_cases()
+if CHECK:
+    if not cmd_path.is_file() or cmd_path.read_text(encoding="utf-8").replace("\r\n", "\n") != cmd_text:
+        stale.append("signatures/command.json")
+else:
+    cmd_path.parent.mkdir(exist_ok=True)
+    cmd_path.write_text(cmd_text, encoding="utf-8", newline="\n")
+    print("signatures/command", len(json.loads(cmd_text)["cases"]), "cases")
 if CHECK:
     if stale:
         print("CONFORMANCE=FAIL these files are not what tools/make_conformance.py writes (run it): " + ", ".join(stale))

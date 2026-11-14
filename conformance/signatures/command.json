@@ -1,0 +1,77 @@
+{
+ "description": "Signed critical commands (docs/CONTRACTS.md, signed commands): the master key, and for each node the key it holds, the body (the payload without its sig field), the HMAC-SHA256 in hex of 'armor-command-v2|' + body, and the payload as published. 'refused' payloads must not verify with the key given.",
+ "master_key": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+ "cases": [
+  {
+   "name": "an arm of an alarm panel, away, forced",
+   "node_id": "alarm-1",
+   "node_key": "156a3ba893545ebfde6009ac5393395fcb033e467f7ee6fb1839548da19a66b3",
+   "body": "{\"kind\":\"alarm_command\",\"node_id\":\"alarm-1\",\"timestamp_ms\":1000000,\"command_id\":\"c000000000000001\",\"action\":\"arm\",\"mode\":\"away\",\"force\":true,\"nonce\":\"0123456789abcdef\"}",
+   "sig": "74f16f5431411bbecb71cc858aca6a59035ac0ce0f906b7a69882f692d2e493a",
+   "payload": "{\"kind\":\"alarm_command\",\"node_id\":\"alarm-1\",\"timestamp_ms\":1000000,\"command_id\":\"c000000000000001\",\"action\":\"arm\",\"mode\":\"away\",\"force\":true,\"nonce\":\"0123456789abcdef\",\"sig\":\"74f16f5431411bbecb71cc858aca6a59035ac0ce0f906b7a69882f692d2e493a\"}"
+  },
+  {
+   "name": "a disarm of an alarm panel",
+   "node_id": "alarm-1",
+   "node_key": "156a3ba893545ebfde6009ac5393395fcb033e467f7ee6fb1839548da19a66b3",
+   "body": "{\"kind\":\"alarm_command\",\"node_id\":\"alarm-1\",\"timestamp_ms\":1000001,\"command_id\":\"c000000000000002\",\"action\":\"disarm\",\"nonce\":\"fedcba9876543210\"}",
+   "sig": "63e7ee9a583f23f6c491fa4e8c216bf4fa8a589391076f8c15e6a0e89e9e0e30",
+   "payload": "{\"kind\":\"alarm_command\",\"node_id\":\"alarm-1\",\"timestamp_ms\":1000001,\"command_id\":\"c000000000000002\",\"action\":\"disarm\",\"nonce\":\"fedcba9876543210\",\"sig\":\"63e7ee9a583f23f6c491fa4e8c216bf4fa8a589391076f8c15e6a0e89e9e0e30\"}"
+  },
+  {
+   "name": "a close of a transfer switch with its token",
+   "node_id": "electrical-1",
+   "node_key": "9d2bf6e333a39afd9ff219bdda4df1833697f37f9c0d7577be589d592f702652",
+   "body": "{\"kind\":\"electrical_command\",\"node_id\":\"electrical-1\",\"timestamp_ms\":1000002,\"command_id\":\"c000000000000003\",\"switch\":\"transfer\",\"action\":\"close_a\",\"token\":\"00112233445566778899aabbccddeeff\",\"nonce\":\"0f1e2d3c4b5a6978\"}",
+   "sig": "62c8b69062d15b4c2ae9f40b3ae1e8d5185c8fa8af90fc3f29996c46f0b9d7c0",
+   "payload": "{\"kind\":\"electrical_command\",\"node_id\":\"electrical-1\",\"timestamp_ms\":1000002,\"command_id\":\"c000000000000003\",\"switch\":\"transfer\",\"action\":\"close_a\",\"token\":\"00112233445566778899aabbccddeeff\",\"nonce\":\"0f1e2d3c4b5a6978\",\"sig\":\"62c8b69062d15b4c2ae9f40b3ae1e8d5185c8fa8af90fc3f29996c46f0b9d7c0\"}"
+  }
+ ],
+ "refused": [
+  {
+   "name": "the action changed after signing",
+   "payload": "{\"kind\":\"alarm_command\",\"node_id\":\"alarm-1\",\"timestamp_ms\":1000000,\"command_id\":\"c000000000000001\",\"action\":\"disarm\",\"mode\":\"away\",\"force\":true,\"nonce\":\"0123456789abcdef\",\"sig\":\"74f16f5431411bbecb71cc858aca6a59035ac0ce0f906b7a69882f692d2e493a\"}",
+   "node_key": "156a3ba893545ebfde6009ac5393395fcb033e467f7ee6fb1839548da19a66b3"
+  },
+  {
+   "name": "the node changed after signing",
+   "payload": "{\"kind\":\"alarm_command\",\"node_id\":\"alarm-2\",\"timestamp_ms\":1000000,\"command_id\":\"c000000000000001\",\"action\":\"arm\",\"mode\":\"away\",\"force\":true,\"nonce\":\"0123456789abcdef\",\"sig\":\"74f16f5431411bbecb71cc858aca6a59035ac0ce0f906b7a69882f692d2e493a\"}",
+   "node_key": "156a3ba893545ebfde6009ac5393395fcb033e467f7ee6fb1839548da19a66b3"
+  },
+  {
+   "name": "the nonce changed after signing",
+   "payload": "{\"kind\":\"alarm_command\",\"node_id\":\"alarm-1\",\"timestamp_ms\":1000000,\"command_id\":\"c000000000000001\",\"action\":\"arm\",\"mode\":\"away\",\"force\":true,\"nonce\":\"0123456789abcdee\",\"sig\":\"74f16f5431411bbecb71cc858aca6a59035ac0ce0f906b7a69882f692d2e493a\"}",
+   "node_key": "156a3ba893545ebfde6009ac5393395fcb033e467f7ee6fb1839548da19a66b3"
+  },
+  {
+   "name": "signed with the key of another node",
+   "payload": "{\"kind\":\"alarm_command\",\"node_id\":\"alarm-1\",\"timestamp_ms\":1000000,\"command_id\":\"c000000000000001\",\"action\":\"arm\",\"mode\":\"away\",\"force\":true,\"nonce\":\"0123456789abcdef\",\"sig\":\"19725b7b61df4559cac6f8224e7016dd4fdb27dfb26096a2d6cac6574353b094\"}",
+   "node_key": "156a3ba893545ebfde6009ac5393395fcb033e467f7ee6fb1839548da19a66b3"
+  },
+  {
+   "name": "the signature is not the last field",
+   "payload": "{\"kind\":\"alarm_command\",\"node_id\":\"alarm-1\",\"timestamp_ms\":1000000,\"command_id\":\"c000000000000001\",\"action\":\"arm\",\"mode\":\"away\",\"force\":true,\"nonce\":\"0123456789abcdef\",\"sig\":\"74f16f5431411bbecb71cc858aca6a59035ac0ce0f906b7a69882f692d2e493a\",\"extra\":1}",
+   "node_key": "156a3ba893545ebfde6009ac5393395fcb033e467f7ee6fb1839548da19a66b3"
+  },
+  {
+   "name": "a byte after the closing brace",
+   "payload": "{\"kind\":\"alarm_command\",\"node_id\":\"alarm-1\",\"timestamp_ms\":1000000,\"command_id\":\"c000000000000001\",\"action\":\"arm\",\"mode\":\"away\",\"force\":true,\"nonce\":\"0123456789abcdef\",\"sig\":\"74f16f5431411bbecb71cc858aca6a59035ac0ce0f906b7a69882f692d2e493a\"} ",
+   "node_key": "156a3ba893545ebfde6009ac5393395fcb033e467f7ee6fb1839548da19a66b3"
+  },
+  {
+   "name": "the signature in capital letters",
+   "payload": "{\"kind\":\"alarm_command\",\"node_id\":\"alarm-1\",\"timestamp_ms\":1000000,\"command_id\":\"c000000000000001\",\"action\":\"arm\",\"mode\":\"away\",\"force\":true,\"nonce\":\"0123456789abcdef\",\"sig\":\"74F16F5431411BBECB71CC858ACA6A59035AC0CE0F906B7A69882F692D2E493A\"}",
+   "node_key": "156a3ba893545ebfde6009ac5393395fcb033e467f7ee6fb1839548da19a66b3"
+  },
+  {
+   "name": "a signature that is too short",
+   "payload": "{\"kind\":\"alarm_command\",\"node_id\":\"alarm-1\",\"timestamp_ms\":1000000,\"command_id\":\"c000000000000001\",\"action\":\"arm\",\"mode\":\"away\",\"force\":true,\"nonce\":\"0123456789abcdef\",\"sig\":\"74f16f5431411bbecb71cc858aca6a59035ac0ce0f906b7a69882f692d2e49\"}",
+   "node_key": "156a3ba893545ebfde6009ac5393395fcb033e467f7ee6fb1839548da19a66b3"
+  },
+  {
+   "name": "no signature at all",
+   "payload": "{\"kind\":\"alarm_command\",\"node_id\":\"alarm-1\",\"timestamp_ms\":1000000,\"command_id\":\"c000000000000001\",\"action\":\"arm\",\"mode\":\"away\",\"force\":true,\"nonce\":\"0123456789abcdef\"}",
+   "node_key": "156a3ba893545ebfde6009ac5393395fcb033e467f7ee6fb1839548da19a66b3"
+  }
+ ]
+}

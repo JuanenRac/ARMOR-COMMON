@@ -38,6 +38,7 @@ MESSAGES = {
     "electrical": ("Electrical", {"channels": "ElectricalChannel", "switches": "ElectricalSwitch"}),
     "electrical_command": ("ElectricalCommand", {}),
     "electrical_result": ("ElectricalResult", {}),
+    "solar_system": ("SolarSystem", {"alerts": "SolarAlert"}),
     "solar_battery_command": ("SolarBatteryCommand", {"stage": "SolarBatteryStage"}),
     "solar_battery_result": ("SolarBatteryResult", {"battery": "SolarBatteryIdentity"}),
     "node_control_command": ("NodeControlCommand", {}),
