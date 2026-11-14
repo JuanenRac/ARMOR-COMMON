@@ -447,6 +447,30 @@ paths:
         '400': { description: 'Invalid value, or nothing to change', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '401': { description: Not signed in, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
         '403': { description: The current password is wrong, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/presence/me:
+    get:
+      summary: 'Whether the server keeps the home or away word of your phone, and the last one it was told. Off until the option presence.by_user is on (404).'
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: 'The last word and when it was told; state is null while none was told or it is older than a day', content: { application/json: { schema: { $ref: '#/components/schemas/PresenceMine' } } } }
+        '403': { description: A service token has no person, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: The option presence.by_user is off, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+    put:
+      summary: 'Your phone tells the server that you are home or away. Only that word travels: the position of the phone never leaves it. Off until the option presence.by_user is on (404). A word older than a day counts as unknown.'
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PutPresenceRequest' } } } }
+      responses:
+        '200': { description: The word as it stands now, content: { application/json: { schema: { $ref: '#/components/schemas/PresenceMine' } } } }
+        '400': { description: The state is not home or away, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: A service token has no person, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: The option presence.by_user is off, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/presence:
+    get:
+      summary: 'Who has told the server that they are home or away, and the sum of it (everyone_away, someone_home or unknown) that the automations with a presence trigger follow (an administrator). Off until the option presence.by_user is on (404).'
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: The people and the sum, content: { application/json: { schema: { $ref: '#/components/schemas/PresenceSummary' } } } }
+        '404': { description: The option presence.by_user is off, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/preferences:
     get:
       summary: Your own language, theme and saved weather place - kept per account, not per browser or address
@@ -2773,6 +2797,38 @@ components:
             days: { type: array, minItems: 1, maxItems: 7, uniqueItems: true, items: { type: integer, minimum: 0, maximum: 6 }, description: '0 is Sunday; all days when absent' }
             jitter_min: { type: integer, minimum: 0, maximum: 120, description: 'Up to this many minutes either way, repeatable from the seed and the day' }
             seed: { type: string, pattern: '^[A-Za-z0-9._-]{1,32}$' }
+        - type: object
+          additionalProperties: false
+          required: [type, state]
+          properties:
+            type: { const: presence }
+            state: { type: string, enum: [everyone_away, someone_home], description: 'Fires when the sum of the words of home or away that the phones told the server (option presence.by_user) becomes this one' }
+    PutPresenceRequest:
+      type: object
+      additionalProperties: false
+      required: [state]
+      properties:
+        state: { type: string, enum: [home, away] }
+    PresenceMine:
+      type: object
+      required: [state, since]
+      properties:
+        state: { anyOf: [{ type: string, enum: [home, away] }, { type: 'null' }] }
+        since: { type: [string, 'null'], format: date-time }
+    PresenceSummary:
+      type: object
+      required: [state, people]
+      properties:
+        state: { type: string, enum: [everyone_away, someone_home, unknown], description: 'everyone_away when at least one person told the server a word of the last day and all of those words are away; someone_home when one of them is home; unknown when nobody did' }
+        people:
+          type: array
+          items:
+            type: object
+            required: [user, state, since]
+            properties:
+              user: { type: string }
+              state: { type: string, enum: [home, away] }
+              since: { type: string, format: date-time }
     AutomationAction:
       description: What an automation does
       oneOf:
@@ -3351,6 +3407,7 @@ components:
         network.login_secure_only: { type: boolean, default: false }
         session.rotate_id: { type: boolean, default: false, description: 'A Studio session in use gets a new id and cookie each time it is renewed, and the previous id keeps working for 30 seconds so requests already in flight are not signed out. Off, the default, the id lasts as long as the session. Turning it off again lowers security and asks for a new proof of identity.' }
         network.public_access: { type: boolean, default: false, description: 'Requests from outside the house and the VPN are taken at all. Off, the default, every one is answered 403 public_access_off. On, a request from outside still needs TLS, a control token of 32 characters or more and a sign-in password of 12 or more (403 public_access_unsafe with the reasons, or 403 tls_required), and an address that fails to sign in too often is closed with 429 public_login_locked. Turning it on lowers security and asks for a new proof of identity.' }
+        presence.by_user: { type: boolean, default: false, description: 'A signed-in person may let their phone tell the server only the word home or away (PUT /api/v1/presence/me), and the automations may have a presence trigger. The position of the phone never reaches the server. Off: the routes answer 404 and the trigger never fires.' }
         client.enrolment_code: { type: boolean, default: false, description: 'An administrator may ask for a code of one use and five minutes (POST /api/v1/admin/enrolment-code) for the QR that sets up an app on a phone, and a phone reads the public facts of the server with it (GET /api/v1/enrolment/{code}). The code carries no secret. Off: both routes answer 404.' }
         network.lan_ca: { type: boolean, default: false, description: 'An administrator may download the public certificate of the local CA of the LAN (GET /api/v1/security/lan-ca); the private key is never served. Turning it on lowers the security.' }
         media.retention_snapshot_days: { type: integer, minimum: 0, maximum: 3650, default: 0, description: 'How many days snapshots are kept; 0 = the general limit applies.' }

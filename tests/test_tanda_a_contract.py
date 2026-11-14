@@ -116,3 +116,20 @@ class EnrolmentCodeContract(unittest.TestCase):
         self.assertNotIn("secret", " ".join(schemas["EnrolmentCode"]["properties"]))
         options = next(schema["properties"] for schema in schemas.values() if isinstance(schema, dict) and "client.enrolment_code" in schema.get("properties", {}))
         self.assertIs(options["client.enrolment_code"]["default"], False)
+
+
+@unittest.skipIf(yaml is None or jsonschema is None, "PyYAML and jsonschema are not installed")
+class PresenceContract(unittest.TestCase):
+    def test_the_phone_tells_only_a_word_and_the_option_starts_off(self) -> None:
+        spec = yaml.safe_load(OPENAPI.read_text(encoding="utf-8"))
+        mine = spec["paths"]["/api/v1/presence/me"]
+        self.assertEqual(sorted(mine), ["get", "put"])
+        self.assertEqual(sorted(mine["put"]["responses"]), ["200", "400", "403", "404"])
+        self.assertIn("admin", spec["paths"]["/api/v1/presence"]["get"]["security"][0])
+        schemas = spec["components"]["schemas"]
+        self.assertEqual(schemas["PutPresenceRequest"]["properties"]["state"]["enum"], ["home", "away"])
+        self.assertEqual(list(schemas["PutPresenceRequest"]["properties"]), ["state"], "the body is the word and nothing else")
+        trigger = next(item for item in schemas["AutomationTrigger"]["oneOf"] if item["properties"]["type"].get("const") == "presence")
+        self.assertEqual(trigger["properties"]["state"]["enum"], ["everyone_away", "someone_home"])
+        options = next(schema["properties"] for schema in schemas.values() if isinstance(schema, dict) and "presence.by_user" in schema.get("properties", {}))
+        self.assertIs(options["presence.by_user"]["default"], False)
