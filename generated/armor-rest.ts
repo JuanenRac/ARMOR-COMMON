@@ -2153,6 +2153,11 @@ export type OperatorSessionOpened = {
 
 export type PanelSummary = {
   mode: "armed" | "disarmed";
+  /** Present only while a countdown runs: the time left to leave the house after arming (exit) or to disarm after a door opened (entry); the panel shows it big and sounds it */
+  delay?: {
+    phase: "exit" | "entry";
+    remaining_s: number;
+  };
   revision: number;
   time_ms: number;
   nodes: {
@@ -2879,6 +2884,10 @@ export type SecuritySettings = {
   /** The server refuses the text of an environment file from a maintenance agent that does not hide the secrets itself (off - an older agent is accepted and the server hides them; on - the answer is 409 agent_not_masking and no secret is relayed) */
   "admin.require_masked_agent"?: boolean;
   "panel.live_events"?: boolean;
+  /** The account of a wall panel may read the check before arming (GET /api/v1/preflight) to show what is wrong when the person presses Arm. Off: it answers 403 and the panel arms as before. */
+  "panel.preflight"?: boolean;
+  /** The account of a wall panel may read a still picture of a camera (GET /api/v1/cameras/{id}/snapshot), at most one every two seconds for each camera. Off: it answers 403. */
+  "panel.camera_view"?: boolean;
   /** When a node or an alarm panel raises a high or critical alarm (or a node alert level goes to high), the cameras that the site design says cover it take the photo and video of the capture settings. Off: only the vision service starts a capture. */
   "capture.on_alarm"?: boolean;
   /** The most captures one minute of alarms may start in all. */

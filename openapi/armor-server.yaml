@@ -1271,7 +1271,7 @@ paths:
         '404': { description: The setting is off or the server holds no metrics token, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/preflight:
     get:
-      summary: The check before arming - nodes that do not answer, silent panels, open zones, cameras that are down, open doors and windows and alarms nobody has seen - each finding blocking or only a warning; read only
+      summary: The check before arming - nodes that do not answer, silent panels, open zones, cameras that are down, open doors and windows and alarms nobody has seen - each finding blocking or only a warning; read only. The account of a wall panel may read it only while the option panel.preflight is on (otherwise 403)
       security: [{ operator: [] }]
       responses:
         '200': { description: '{ ready, checked_at, blocking, warnings, issues: [{ kind, level, code, id, detail? }] }', content: { application/json: { schema: { $ref: '#/components/schemas/Preflight' } } } }
@@ -2409,6 +2409,17 @@ paths:
         '404': { description: No such camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
         '502': { description: 'The camera did not give a picture: no valid snapshot address, login refused or no answer', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/cameras/{id}/snapshot:
+    get:
+      summary: The camera's still picture right now, as a JPEG, fetched by the server with the camera's own login; nothing is saved and no evidence item is made. The account of a wall panel may read it only while the option panel.camera_view is on (otherwise 403), at most one picture every two seconds for each camera (429 with Retry-After) and never over 1 MiB (502)
+      security: [{ operator: [] }]
+      parameters: [{ $ref: '#/components/parameters/CameraId' }]
+      responses:
+        '200': { description: A JPEG picture, content: { image/jpeg: { schema: { type: string, format: binary } } } }
+        '403': { description: 'The account of a wall panel and the option panel.camera_view is off', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: No such camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '422': { description: The camera has no snapshot address, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: Too soon after the last picture of this camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '502': { description: 'The camera did not give a picture, or it is too big', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
     post:
       summary: Capture a JPEG
       security: [{ operator: [] }]
@@ -3349,6 +3360,8 @@ components:
         admin.field_http: { type: boolean, default: false, description: Studio may ask the admin agent to let the field network also reach the server's port over HTTP (off - the routes answer 403 - each change also needs a confirmation and the one-time code of the authenticator) }
         admin.require_masked_agent: { type: boolean, default: false, description: The server refuses the text of an environment file from a maintenance agent that does not hide the secrets itself (off - an older agent is accepted and the server hides them; on - the answer is 409 agent_not_masking and no secret is relayed) }
         panel.live_events: { type: boolean, default: true }
+        panel.preflight: { type: boolean, default: false, description: 'The account of a wall panel may read the check before arming (GET /api/v1/preflight) to show what is wrong when the person presses Arm. Off: it answers 403 and the panel arms as before.' }
+        panel.camera_view: { type: boolean, default: false, description: 'The account of a wall panel may read a still picture of a camera (GET /api/v1/cameras/{id}/snapshot), at most one every two seconds for each camera. Off: it answers 403.' }
         capture.on_alarm: { type: boolean, default: false, description: 'When a node or an alarm panel raises a high or critical alarm (or a node alert level goes to high), the cameras that the site design says cover it take the photo and video of the capture settings. Off: only the vision service starts a capture.' }
         capture.on_alarm_per_min: { type: integer, minimum: 1, maximum: 60, default: 6, description: 'The most captures one minute of alarms may start in all.' }
         live.events: { type: boolean, default: true, description: 'Besides the whole state, the console channel /api/v1/events sends {type, id, version} notices when an alarm, a device, a solar device, a network node or a design changes. Off: the state only.' }
@@ -4836,6 +4849,13 @@ components:
       required: [mode, revision, time_ms, nodes, energy, alarms]
       properties:
         mode: { type: string, enum: [armed, disarmed] }
+        delay:
+          type: object
+          description: 'Present only while a countdown runs: the time left to leave the house after arming (exit) or to disarm after a door opened (entry); the panel shows it big and sounds it'
+          required: [phase, remaining_s]
+          properties:
+            phase: { type: string, enum: [exit, entry] }
+            remaining_s: { type: integer, minimum: 0 }
         revision: { type: integer }
         time_ms: { type: integer }
         nodes:
