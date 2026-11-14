@@ -99,3 +99,20 @@ class PanicGestureContract(unittest.TestCase):
         self.assertEqual(sorted(post["responses"]), ["200", "404"])
         options = next(schema["properties"] for schema in spec["components"]["schemas"].values() if isinstance(schema, dict) and "client.panic_gesture" in schema.get("properties", {}))
         self.assertIs(options["client.panic_gesture"]["default"], False)
+
+
+@unittest.skipIf(yaml is None or jsonschema is None, "PyYAML and jsonschema are not installed")
+class EnrolmentCodeContract(unittest.TestCase):
+    def test_the_code_is_asked_by_an_administrator_and_read_without_a_session(self) -> None:
+        spec = yaml.safe_load(OPENAPI.read_text(encoding="utf-8"))
+        ask = spec["paths"]["/api/v1/admin/enrolment-code"]["post"]
+        read = spec["paths"]["/api/v1/enrolment/{code}"]["get"]
+        self.assertIn("admin", ask["security"][0])
+        self.assertEqual(read["security"], [])
+        self.assertEqual(sorted(ask["responses"]), ["200", "400", "403", "404"])
+        self.assertEqual(sorted(read["responses"]), ["200", "404", "429"])
+        schemas = spec["components"]["schemas"]
+        self.assertNotIn("session", " ".join(schemas["EnrolmentFacts"]["properties"]))
+        self.assertNotIn("secret", " ".join(schemas["EnrolmentCode"]["properties"]))
+        options = next(schema["properties"] for schema in schemas.values() if isinstance(schema, dict) and "client.enrolment_code" in schema.get("properties", {}))
+        self.assertIs(options["client.enrolment_code"]["default"], False)

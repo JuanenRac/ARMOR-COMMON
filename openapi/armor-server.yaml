@@ -938,6 +938,25 @@ paths:
       responses:
         '200': { description: 'Always the same answer when the option is on, whether an alarm was raised or the quiet time had not ended', content: { application/json: { schema: { $ref: '#/components/schemas/Ok' } } } }
         '404': { description: 'The option client.panic_gesture is off', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/admin/enrolment-code:
+    post:
+      summary: 'An administrator asks for a code of one use that lives five minutes, to put in the QR that sets up an app on a phone. The code carries no secret and opens no session: it only lets the phone read the public facts of this server (its address and the fingerprint of its local authority) through GET /api/v1/enrolment/{code}; the person still types their user and password. Off until the option client.enrolment_code is on (404). The body may name the address the phones use (an https address of the house); without it the server answers with the address of the request.'
+      security: [{ admin: [] }]
+      requestBody: { required: false, content: { application/json: { schema: { $ref: '#/components/schemas/PostEnrolmentCodeRequest' } } } }
+      responses:
+        '200': { description: 'The code, when it ends and what the QR carries', content: { application/json: { schema: { $ref: '#/components/schemas/EnrolmentCode' } } } }
+        '400': { description: The address is not an https address, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: Not an administrator or the proof of identity is needed again, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: The option client.enrolment_code is off, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/enrolment/{code}:
+    get:
+      summary: 'What a phone reads after scanning the QR of an enrolment code: the address of the server and the fingerprint of its local authority, nothing secret. The code works once and for five minutes; a used, ended or wrong code, or the option client.enrolment_code off, all answer the same 404, and too many tries from one address answer 429.'
+      security: []
+      parameters: [{ name: code, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: The public facts of the server, content: { application/json: { schema: { $ref: '#/components/schemas/EnrolmentFacts' } } } }
+        '404': { description: 'Unknown, used or ended code, or the option is off', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: Too many tries from this address, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/alarm/nodes:
     get:
       summary: The latest state of every alarm node ({ nodes, totals }); a node that has been silent for thirty seconds is stale
@@ -3332,6 +3351,7 @@ components:
         network.login_secure_only: { type: boolean, default: false }
         session.rotate_id: { type: boolean, default: false, description: 'A Studio session in use gets a new id and cookie each time it is renewed, and the previous id keeps working for 30 seconds so requests already in flight are not signed out. Off, the default, the id lasts as long as the session. Turning it off again lowers security and asks for a new proof of identity.' }
         network.public_access: { type: boolean, default: false, description: 'Requests from outside the house and the VPN are taken at all. Off, the default, every one is answered 403 public_access_off. On, a request from outside still needs TLS, a control token of 32 characters or more and a sign-in password of 12 or more (403 public_access_unsafe with the reasons, or 403 tls_required), and an address that fails to sign in too often is closed with 429 public_login_locked. Turning it on lowers security and asks for a new proof of identity.' }
+        client.enrolment_code: { type: boolean, default: false, description: 'An administrator may ask for a code of one use and five minutes (POST /api/v1/admin/enrolment-code) for the QR that sets up an app on a phone, and a phone reads the public facts of the server with it (GET /api/v1/enrolment/{code}). The code carries no secret. Off: both routes answer 404.' }
         network.lan_ca: { type: boolean, default: false, description: 'An administrator may download the public certificate of the local CA of the LAN (GET /api/v1/security/lan-ca); the private key is never served. Turning it on lowers the security.' }
         media.retention_snapshot_days: { type: integer, minimum: 0, maximum: 3650, default: 0, description: 'How many days snapshots are kept; 0 = the general limit applies.' }
         media.retention_recording_days: { type: integer, minimum: 0, maximum: 3650, default: 0, description: 'How many days recordings are kept; 0 = the general limit applies.' }
@@ -3560,6 +3580,24 @@ components:
         stored: { $ref: '#/components/schemas/SecuritySettings' }
         defaults: { $ref: '#/components/schemas/SecuritySettings' }
         locked: { type: array, items: { type: string } }
+    PostEnrolmentCodeRequest:
+      type: object
+      properties:
+        origin: { type: string, description: 'The https address the phones use to reach this server, e.g. https://armor.local:18080' }
+    EnrolmentCode:
+      type: object
+      required: [code, expires_at, origin, ca_fingerprint]
+      properties:
+        code: { type: string, minLength: 22, maxLength: 64, pattern: '^[A-Za-z0-9_-]+$' }
+        expires_at: { type: string, format: date-time }
+        origin: { type: string }
+        ca_fingerprint: { type: [string, 'null'], description: 'SHA-256 of the certificate of the local authority of the LAN, 64 hex characters; null when the server has none to name' }
+    EnrolmentFacts:
+      type: object
+      required: [origin, ca_fingerprint]
+      properties:
+        origin: { type: string }
+        ca_fingerprint: { type: [string, 'null'], pattern: '^[0-9a-f]{64}$' }
     ZoneFeedKey:
       type: object
       required: [node_id, key, algorithm]
