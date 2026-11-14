@@ -4727,12 +4727,14 @@ components:
             required: [id, kind, at_ms, node_id]
             properties:
               id: { type: string }
-              kind: { type: string, enum: [new_device, device_online, device_offline, ip_changed, arp_conflict, port_opened, port_closed, internet_down, internet_up, gateway_down, gateway_up] }
+              kind: { type: string, enum: [new_device, device_online, device_offline, ip_changed, arp_conflict, port_opened, port_closed, internet_down, internet_up, gateway_down, gateway_up, risky_port, rogue_dhcp] }
               at_ms: { type: integer }
               node_id: { type: string }
               device_id: { type: string }
               port: { type: integer }
               outage_s: { type: integer }
+              server: { type: string }
+              recommendation: { type: string }
               detail: { type: string }
         outages:
           type: array

@@ -861,14 +861,24 @@ def validate_network_message(topic: str, payload: Mapping[str, object]) -> None:
         for item in events:
             if not isinstance(item, Mapping):
                 continue
-            internet = str(item.get("kind", "")).split("_")[0] in ("internet", "gateway")
+            kind = item.get("kind")
+            internet = str(kind).split("_")[0] in ("internet", "gateway")
             if internet and ("device_id" in item or "port" in item):
                 raise ContractError("an event of the internet or the gateway is not about a device or a port")
-            if not internet and "device_id" not in item:
+            if kind == "rogue_dhcp":
+                if "device_id" in item or "port" in item:
+                    raise ContractError("a rogue DHCP server event is about a server, not about a device or a port")
+                if "server" not in item:
+                    raise ContractError("a rogue DHCP server event names the server")
+            elif "server" in item:
+                raise ContractError("only a rogue DHCP server event names a server")
+            elif not internet and "device_id" not in item:
                 raise ContractError("an event about a device names the device")
+            if "recommendation" in item and kind not in ("risky_port", "rogue_dhcp"):
+                raise ContractError("only risky_port and rogue_dhcp carry a recommendation")
             if "outage_s" in item and item.get("kind") not in ("internet_up", "gateway_up"):
                 raise ContractError("only internet_up and gateway_up say how long it was down")
-            if item.get("kind") in ("port_opened", "port_closed") and "port" not in item:
+            if kind in ("port_opened", "port_closed", "risky_port") and "port" not in item:
                 raise ContractError("a port event names the port")
 
 

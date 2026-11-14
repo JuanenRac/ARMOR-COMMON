@@ -387,12 +387,19 @@ class NetworkMessageTests(unittest.TestCase):
             "a device event with no device": {**self.network, "events": [{"id": "x2", "kind": "device_offline", "at_ms": 1}]},
             "a duration where there is no end": {**self.network, "events": [{**event, "id": "x3", "outage_s": 3}]},
             "a port event with no port": {**self.network, "events": [{**event, "id": "x4", "kind": "port_closed"}]},
+            "a risky port with no port": {**self.network, "events": [{**event, "id": "x6", "kind": "risky_port"}]},
+            "a rogue DHCP server with no server": {**self.network, "events": [{"id": "x7", "kind": "rogue_dhcp", "at_ms": 1}]},
+            "a rogue DHCP server about a device": {**self.network, "events": [{"id": "x8", "kind": "rogue_dhcp", "at_ms": 1, "server": "192.168.0.77", "device_id": device["id"]}]},
+            "a server on another kind": {**self.network, "events": [{**event, "id": "x9", "server": "192.168.0.77"}]},
+            "a recommendation on another kind": {**self.network, "events": [{**event, "id": "x10", "recommendation": "close_telnet"}]},
         }
         for name, payload in cases.items():
             with self.subTest(name), self.assertRaises(ContractError):
                 validate_network_message(self.topic, payload)
         # and the ones that look alike and are fine
         validate_network_message(self.topic, {**self.network, "events": [{"id": "x5", "kind": "internet_up", "at_ms": 1, "outage_s": 3}]})
+        validate_network_message(self.topic, {**self.network, "events": [{**event, "id": "y1", "kind": "risky_port", "port": 23, "recommendation": "close_telnet"}]})
+        validate_network_message(self.topic, {**self.network, "events": [{"id": "y2", "kind": "rogue_dhcp", "at_ms": 1, "server": "192.168.0.77", "recommendation": "find_the_dhcp_server"}]})
         validate_network_message(self.topic, {**self.network, "devices": [{"id": "ip-192-168-0-9", "ip": "192.168.0.9", "online": True, "first_seen_ms": 1, "last_seen_ms": 1}]})
 
 
