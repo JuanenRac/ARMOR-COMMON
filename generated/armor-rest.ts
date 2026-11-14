@@ -1314,6 +1314,19 @@ export type EnergyBalanceSettings = {
   watch_channels?: string[];
 };
 
+export type EnrolmentCode = {
+  code: string;
+  expires_at: string;
+  origin: string;
+  /** SHA-256 of the certificate of the local authority of the LAN, 64 hex characters; null when the server has none to name */
+  ca_fingerprint: string | null;
+};
+
+export type EnrolmentFacts = {
+  origin: string;
+  ca_fingerprint: string | null;
+};
+
 /** A signed statement of what a file was, with the chain of what was done to it */
 export type EvidenceProof = {
   version: 1;
@@ -2481,6 +2494,11 @@ export type PostElectricalSwitchRequest = {
   action: "arm" | "close_a" | "close_b" | "open" | "acknowledge";
 };
 
+export type PostEnrolmentCodeRequest = {
+  /** The https address the phones use to reach this server, e.g. https://armor.local:18080 */
+  origin?: string;
+};
+
 export type PostModeRequest = {
   /** armed is away. home and night exist only while alarm.arming_modes is on (else 400 modes_disabled) */
   mode: "armed" | "disarmed" | "away" | "home" | "night";
@@ -2833,6 +2851,8 @@ export type SecuritySettings = {
   "session.rotate_id"?: boolean;
   /** Requests from outside the house and the VPN are taken at all. Off, the default, every one is answered 403 public_access_off. On, a request from outside still needs TLS, a control token of 32 characters or more and a sign-in password of 12 or more (403 public_access_unsafe with the reasons, or 403 tls_required), and an address that fails to sign in too often is closed with 429 public_login_locked. Turning it on lowers security and asks for a new proof of identity. */
   "network.public_access"?: boolean;
+  /** An administrator may ask for a code of one use and five minutes (POST /api/v1/admin/enrolment-code) for the QR that sets up an app on a phone, and a phone reads the public facts of the server with it (GET /api/v1/enrolment/{code}). The code carries no secret. Off: both routes answer 404. */
+  "client.enrolment_code"?: boolean;
   /** An administrator may download the public certificate of the local CA of the LAN (GET /api/v1/security/lan-ca); the private key is never served. Turning it on lowers the security. */
   "network.lan_ca"?: boolean;
   /** How many days snapshots are kept; 0 = the general limit applies. */
