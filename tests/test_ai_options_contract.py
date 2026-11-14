@@ -60,7 +60,7 @@ class AiOptionsContract(unittest.TestCase):
         paths = self.spec["paths"]
         self.assertEqual(paths["/api/v1/ai/ignore-proposals"]["post"]["security"], [{"aiBearer": []}])
         self.assertEqual(paths["/api/v1/ignore-proposals"]["get"]["security"], [{"operator": []}])
-        self.assertEqual(paths["/api/v1/ignore-proposals/{camera_id}"]["post"]["security"], [{"admin": []}])
+        self.assertEqual(paths["/api/v1/ignore-proposals/{id}"]["post"]["security"], [{"admin": []}])
 
 
 if __name__ == "__main__":
