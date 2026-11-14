@@ -31,7 +31,7 @@ KINDS = ("telemetry", "health", "command", "info")
 # The kind of the message ("inverter" or "battery") is inside the payload and picks the schema.
 SOLAR_TOPIC_PREFIX = "armor/solar/"
 SOLAR_KINDS = ("inverter", "battery")
-_SOLAR_SCHEMAS = {"inverter": "solar_inverter", "battery": "solar_battery"}
+_SOLAR_SCHEMAS = {"inverter": "solar_inverter", "battery": "solar_battery", "system": "solar_system"}   # "system" is the summary on armor/solar/{node_id}/system, not a state topic
 # The electrical message (ARMOR-NODE-ELECTRICAL nodes measuring the house's network) has one topic per node: armor/electrical/{node_id}/state. The switches of a node are
 # commanded on armor/electrical/{node_id}/command (server -> node) and answered on armor/electrical/{node_id}/result (node -> server).
 ELECTRICAL_TOPIC_PREFIX = "armor/electrical/"
@@ -54,7 +54,7 @@ _RELAY_COMMANDS = ("on", "off", "true", "false", "1", "0", "toggle")
 NODE_HEALTH_TOPIC_PREFIX = "armor/health/"
 _EXTRA_SCHEMAS = ("alarm_zone_feed", "alarm_policy", "device_state", "server_alert", "network_orders", "node_health", "arm_profile", "arming_modes", "connection_event", "system_event", "connection_client", "daily_summary", "heatmap",
                   "solar_battery_command", "solar_battery_result", "node_control_command", "node_control_result", "node_maintenance", "radar_event",
-                  "diagnostic_token_request", "diagnostic_token_created", "diagnostic_token_info", "voice_turn_meta", "voice_turn_result", "ai_observation", "vision_event")
+                  "diagnostic_token_request", "diagnostic_token_created", "diagnostic_token_info", "voice_turn_meta", "voice_turn_result", "ai_observation", "vision_event", "solar_system")
 # The events of the perimeter engine of a radar node: armor/radar/{node_id}/events (node -> server, QoS 1, never retained).
 RADAR_EVENT_LEAF = "events"
 # Controlling a node (restart, pause, resume, standby, identify, diagnostics, maintenance): armor/control/{node_id}/command (server -> node), armor/control/all/command (server -> every node, an arm only)
@@ -158,6 +158,27 @@ def validate_solar_message(topic: str, payload: Mapping[str, object]) -> None:
     if payload.get("node_id") != node_id or payload.get("device") != device:
         raise ContractError("payload node_id and device must match the topic")
     validate_payload(str(kind), payload)
+
+
+def parse_solar_system_topic(topic: str) -> str:
+    """Split ``armor/solar/{node_id}/system`` into ``node_id``."""
+    if not isinstance(topic, str):
+        raise ContractError("topic must be a string")
+    parts = topic.split("/")
+    if len(parts) != 4 or parts[:2] != ["armor", "solar"] or parts[3] != "system":
+        raise ContractError("topic must be armor/solar/{node_id}/system")
+    _check_node_id(parts[2])
+    return parts[2]
+
+
+def validate_solar_system(topic: str, payload: Mapping[str, object]) -> None:
+    """Validate the summary of a solar gateway: the topic, the schema, and that the topic's node matches the payload."""
+    node_id = parse_solar_system_topic(topic)
+    if not isinstance(payload, Mapping):
+        raise ContractError("payload must be an object")
+    if payload.get("node_id") != node_id:
+        raise ContractError("payload node_id must match the topic")
+    validate_payload("solar_system", payload)
 
 
 def parse_electrical_topic(topic: str, leaf: str = "state") -> str:

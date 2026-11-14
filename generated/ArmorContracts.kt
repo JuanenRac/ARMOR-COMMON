@@ -257,6 +257,24 @@ data class ElectricalResult(
     val token: String? = null
 )
 
+data class SolarAlert(
+    val code: String,
+    val device: String
+)
+
+data class SolarSystem(
+    val kind: String = "system",
+    val node_id: String,
+    val timestamp_ms: Long,
+    val inverters: Long,
+    val batteries: Long,
+    val pv_w: Double? = null,
+    val load_w: Double? = null,
+    val soc_percent: Double? = null,
+    val balance_w: Double? = null,
+    val alerts: List<SolarAlert>
+)
+
 data class SolarBatteryStage(
     val id: String,
     val index: Long,

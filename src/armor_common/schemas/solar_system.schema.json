@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://armor.local/schemas/solar-system-0.1.0.json",
+  "title": "A.R.M.O.R. solar system summary",
+  "description": "One short summary a solar gateway node publishes to armor/solar/{node_id}/system (QoS 0, not retained) about everything it reads: the total power of the panels, the load, the average state of charge of the batteries and the balance between them, plus the alerts the node raised ON ITS OWN (state of charge low, a cell too high, a temperature out of range) so that they exist even when the server is not reachable. The alerts are a fixed list of words and a device name, there is no free text. The thresholds that raise them are the node's settings, off by default.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "node_id",
+    "timestamp_ms",
+    "inverters",
+    "batteries",
+    "alerts"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "system"
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "inverters": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 16,
+      "description": "How many inverters answered in the last round."
+    },
+    "batteries": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 16,
+      "description": "How many batteries answered in the last round."
+    },
+    "pv_w": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1000000,
+      "description": "The power of all the panels together, in watts."
+    },
+    "load_w": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1000000,
+      "description": "The power the inverters give to the house, in watts."
+    },
+    "soc_percent": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "The average state of charge of the batteries that answered; left out when none did."
+    },
+    "balance_w": {
+      "type": "number",
+      "minimum": -1000000,
+      "maximum": 1000000,
+      "description": "Power of the panels minus the load, in watts; positive while the panels give more than the house takes."
+    },
+    "alerts": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "device"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "soc_low",
+              "cell_over_voltage",
+              "temperature_high",
+              "temperature_low"
+            ]
+          },
+          "device": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$"
+          }
+        }
+      }
+    }
+  }
+}
