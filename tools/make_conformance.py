@@ -396,6 +396,12 @@ def battery(**changes):
     return base
 
 
+def solar_system(**changes):
+    base = {"kind": "system", "node_id": "solar-1", "timestamp_ms": 5000, "inverters": 1, "batteries": 2, "pv_w": 856, "load_w": 119, "soc_percent": 88.5, "balance_w": 737, "alerts": []}
+    base.update(changes)
+    return base
+
+
 def connection_event(**changes):
     base = {"id": 7, "at": "2026-01-01T10:00:00.000Z", "type": "connection", "action": "login", "client_kind": "studio", "client_id": "0123456789abcdef", "user": "ana", "origin": "local", "two_factor": False}
     base.update(changes)
@@ -1341,6 +1347,31 @@ cases: dict[str, list[Any]] = {
         ("an unknown field", False, vision_event(picture="AAAA")),
         ("not an object", False, ["front-door"]),
     ],
+    "solar_system": [
+        ("a typical summary", True, solar_system()),
+        ("an alert raised by the node", True, solar_system(alerts=[{"code": "soc_low", "device": "us3000-1"}])),
+        ("the four alert codes", True, solar_system(alerts=[{"code": c, "device": "us3000-1"} for c in ("soc_low", "cell_over_voltage", "temperature_high", "temperature_low")])),
+        ("a negative balance", True, solar_system(pv_w=0, load_w=300, balance_w=-300)),
+        ("no battery answered, so no state of charge", True, without(solar_system(batteries=0), "soc_percent")),
+        ("nothing answered", True, {"kind": "system", "node_id": "solar-1", "timestamp_ms": 0, "inverters": 0, "batteries": 0, "alerts": []}),
+        ("sixteen alerts, the limit", True, solar_system(alerts=[{"code": "soc_low", "device": "us3000-1"}] * 16)),
+        ("seventeen alerts", False, solar_system(alerts=[{"code": "soc_low", "device": "us3000-1"}] * 17)),
+        ("an alert code the contract does not know", False, solar_system(alerts=[{"code": "fire", "device": "us3000-1"}])),
+        ("an alert without its device", False, solar_system(alerts=[{"code": "soc_low"}])),
+        ("an alert with free text", False, solar_system(alerts=[{"code": "soc_low", "device": "us3000-1", "text": "low"}])),
+        ("a device name in capitals", False, solar_system(alerts=[{"code": "soc_low", "device": "US3000"}])),
+        ("a state of charge above 100", False, solar_system(soc_percent=100.5)),
+        ("a negative state of charge", False, solar_system(soc_percent=-1)),
+        ("a negative panel power", False, solar_system(pv_w=-1)),
+        ("a negative load", False, solar_system(load_w=-1)),
+        ("seventeen inverters", False, solar_system(inverters=17)),
+        ("a battery count as text", False, solar_system(batteries="2")),
+        ("a missing alert list", False, without(solar_system(), "alerts")),
+        ("a kind that is not system", False, solar_system(kind="battery")),
+        ("a node id with a slash", False, solar_system(node_id="solar/1")),
+        ("an unknown field", False, solar_system(fuel=1)),
+        ("not an object", False, [1, 2]),
+    ],
     "voice_turn_result": [
         ("what was heard and the reply", True, voice_result()),
         ("with the audio in base64", True, voice_result(audio="AAAA")),
@@ -2029,7 +2060,7 @@ if not CHECK:
 for kind, entries in cases.items():
     # A fourth item, True, marks a payload the schema accepts and the message-level rule refuses (a token where none belongs, a switch named twice).
     vectors = [{"name": name, "valid": valid, "payload": payload, **({"schema_valid": True} if extra else {})} for name, valid, payload, *extra in entries]
-    schema_kind = {"solar_inverter": "inverter", "solar_battery": "battery"}.get(kind, kind)   # the solar files are named after their schema, and carry the payload's kind
+    schema_kind = {"solar_inverter": "inverter", "solar_battery": "battery", "solar_system": "system"}.get(kind, kind)   # the solar files are named after their schema, and carry the payload's kind
     text = json.dumps({"kind": schema_kind, "vectors": vectors}, indent=1) + "\n"
     if CHECK:
         path = ROOT / f"{kind}.json"

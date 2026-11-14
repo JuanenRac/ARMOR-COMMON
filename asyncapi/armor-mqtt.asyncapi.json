@@ -167,6 +167,25 @@
         }
       }
     },
+    "solar_system": {
+      "address": "armor/solar/{node_id}/system",
+      "description": "The summary of a solar gateway: total power of the panels, the load, the average state of charge and the alerts the node raised on its own.",
+      "parameters": {
+        "node_id": {
+          "description": "the name of the node"
+        }
+      },
+      "messages": {
+        "solar_system": {
+          "$ref": "#/components/messages/solar_system"
+        }
+      },
+      "bindings": {
+        "mqtt": {
+          "bindingVersion": "0.2.0"
+        }
+      }
+    },
     "solar_battery_command": {
       "address": "armor/solar/{node_id}/maintenance/command",
       "description": "A maintenance step on a battery (write capability); never retained.",
@@ -824,6 +843,51 @@
         "$ref": "#/channels/solar_state"
       },
       "summary": "the `server` role reads armor/solar/{node_id}/{device}/state",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "server"
+    },
+    "solar-node.send.solar_system": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/solar_system"
+      },
+      "summary": "the `solar-node` role publishes armor/solar/{node_id}/system",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "solar-node"
+    },
+    "node.send.solar_system": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/solar_system"
+      },
+      "summary": "the `node` role publishes armor/solar/{node_id}/system",
+      "bindings": {
+        "mqtt": {
+          "qos": 0,
+          "retain": false,
+          "bindingVersion": "0.2.0"
+        }
+      },
+      "x-role": "node"
+    },
+    "server.receive.solar_system": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/solar_system"
+      },
+      "summary": "the `server` role reads armor/solar/{node_id}/system",
       "bindings": {
         "mqtt": {
           "qos": 0,
@@ -1870,6 +1934,14 @@
           "$ref": "../src/armor_common/schemas/solar_inverter.schema.json"
         }
       },
+      "solar_system": {
+        "name": "solar_system",
+        "title": "solar_system",
+        "contentType": "application/json",
+        "payload": {
+          "$ref": "../src/armor_common/schemas/solar_system.schema.json"
+        }
+      },
       "telemetry": {
         "name": "telemetry",
         "title": "telemetry",
@@ -1892,6 +1964,7 @@
         "topic readwrite armor/device/{name}/#",
         "topic write armor/solar/{name}/+/state",
         "topic write armor/solar/{name}/maintenance/result",
+        "topic write armor/solar/{name}/system",
         "topic write armor/radar/{name}/events",
         "topic read armor/radar/{name}/control/armed",
         "topic read armor/control/{name}/command",
@@ -1917,6 +1990,7 @@
       "lines": [
         "topic write armor/solar/{name}/+/state",
         "topic write armor/solar/{name}/maintenance/result",
+        "topic write armor/solar/{name}/system",
         "topic write armor/health/{name}",
         "topic read armor/control/{name}/command",
         "topic read armor/control/all/command",

@@ -1,0 +1,536 @@
+{
+ "kind": "system",
+ "vectors": [
+  {
+   "name": "a typical summary",
+   "valid": true,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": 856,
+    "load_w": 119,
+    "soc_percent": 88.5,
+    "balance_w": 737,
+    "alerts": []
+   }
+  },
+  {
+   "name": "an alert raised by the node",
+   "valid": true,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": 856,
+    "load_w": 119,
+    "soc_percent": 88.5,
+    "balance_w": 737,
+    "alerts": [
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     }
+    ]
+   }
+  },
+  {
+   "name": "the four alert codes",
+   "valid": true,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": 856,
+    "load_w": 119,
+    "soc_percent": 88.5,
+    "balance_w": 737,
+    "alerts": [
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "cell_over_voltage",
+      "device": "us3000-1"
+     },
+     {
+      "code": "temperature_high",
+      "device": "us3000-1"
+     },
+     {
+      "code": "temperature_low",
+      "device": "us3000-1"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a negative balance",
+   "valid": true,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": 0,
+    "load_w": 300,
+    "soc_percent": 88.5,
+    "balance_w": -300,
+    "alerts": []
+   }
+  },
+  {
+   "name": "no battery answered, so no state of charge",
+   "valid": true,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 0,
+    "pv_w": 856,
+    "load_w": 119,
+    "balance_w": 737,
+    "alerts": []
+   }
+  },
+  {
+   "name": "nothing answered",
+   "valid": true,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 0,
+    "inverters": 0,
+    "batteries": 0,
+    "alerts": []
+   }
+  },
+  {
+   "name": "sixteen alerts, the limit",
+   "valid": true,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": 856,
+    "load_w": 119,
+    "soc_percent": 88.5,
+    "balance_w": 737,
+    "alerts": [
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     }
+    ]
+   }
+  },
+  {
+   "name": "seventeen alerts",
+   "valid": false,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": 856,
+    "load_w": 119,
+    "soc_percent": 88.5,
+    "balance_w": 737,
+    "alerts": [
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     },
+     {
+      "code": "soc_low",
+      "device": "us3000-1"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an alert code the contract does not know",
+   "valid": false,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": 856,
+    "load_w": 119,
+    "soc_percent": 88.5,
+    "balance_w": 737,
+    "alerts": [
+     {
+      "code": "fire",
+      "device": "us3000-1"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an alert without its device",
+   "valid": false,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": 856,
+    "load_w": 119,
+    "soc_percent": 88.5,
+    "balance_w": 737,
+    "alerts": [
+     {
+      "code": "soc_low"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an alert with free text",
+   "valid": false,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": 856,
+    "load_w": 119,
+    "soc_percent": 88.5,
+    "balance_w": 737,
+    "alerts": [
+     {
+      "code": "soc_low",
+      "device": "us3000-1",
+      "text": "low"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a device name in capitals",
+   "valid": false,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": 856,
+    "load_w": 119,
+    "soc_percent": 88.5,
+    "balance_w": 737,
+    "alerts": [
+     {
+      "code": "soc_low",
+      "device": "US3000"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a state of charge above 100",
+   "valid": false,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": 856,
+    "load_w": 119,
+    "soc_percent": 100.5,
+    "balance_w": 737,
+    "alerts": []
+   }
+  },
+  {
+   "name": "a negative state of charge",
+   "valid": false,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": 856,
+    "load_w": 119,
+    "soc_percent": -1,
+    "balance_w": 737,
+    "alerts": []
+   }
+  },
+  {
+   "name": "a negative panel power",
+   "valid": false,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": -1,
+    "load_w": 119,
+    "soc_percent": 88.5,
+    "balance_w": 737,
+    "alerts": []
+   }
+  },
+  {
+   "name": "a negative load",
+   "valid": false,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": 856,
+    "load_w": -1,
+    "soc_percent": 88.5,
+    "balance_w": 737,
+    "alerts": []
+   }
+  },
+  {
+   "name": "seventeen inverters",
+   "valid": false,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 17,
+    "batteries": 2,
+    "pv_w": 856,
+    "load_w": 119,
+    "soc_percent": 88.5,
+    "balance_w": 737,
+    "alerts": []
+   }
+  },
+  {
+   "name": "a battery count as text",
+   "valid": false,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": "2",
+    "pv_w": 856,
+    "load_w": 119,
+    "soc_percent": 88.5,
+    "balance_w": 737,
+    "alerts": []
+   }
+  },
+  {
+   "name": "a missing alert list",
+   "valid": false,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": 856,
+    "load_w": 119,
+    "soc_percent": 88.5,
+    "balance_w": 737
+   }
+  },
+  {
+   "name": "a kind that is not system",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": 856,
+    "load_w": 119,
+    "soc_percent": 88.5,
+    "balance_w": 737,
+    "alerts": []
+   }
+  },
+  {
+   "name": "a node id with a slash",
+   "valid": false,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar/1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": 856,
+    "load_w": 119,
+    "soc_percent": 88.5,
+    "balance_w": 737,
+    "alerts": []
+   }
+  },
+  {
+   "name": "an unknown field",
+   "valid": false,
+   "payload": {
+    "kind": "system",
+    "node_id": "solar-1",
+    "timestamp_ms": 5000,
+    "inverters": 1,
+    "batteries": 2,
+    "pv_w": 856,
+    "load_w": 119,
+    "soc_percent": 88.5,
+    "balance_w": 737,
+    "alerts": [],
+    "fuel": 1
+   }
+  },
+  {
+   "name": "not an object",
+   "valid": false,
+   "payload": [
+    1,
+    2
+   ]
+  }
+ ]
+}
