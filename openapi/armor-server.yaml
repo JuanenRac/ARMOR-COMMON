@@ -1838,7 +1838,7 @@ paths:
       summary: 'For the observation service (ARMOR-SERVER-AI, with its own token): the mode, the radar nodes with their tracks and light, and the cameras it can look at'
       security: [{ aiBearer: [] }]
       responses:
-        '200': { description: '{ mode, nodes: [{ id, online, targets, lux }], cameras: [{ id, name }] }', content: { application/json: { schema: { $ref: '#/components/schemas/AiContext' } } } }
+        '200': { description: '{ mode, nodes: [{ id, online, targets, lux, pose?, track_points? }], cameras: [{ id, name, pose?, fov_deg?, range_mm? }] }', content: { application/json: { schema: { $ref: '#/components/schemas/AiContext' } } } }
         '401': { description: Not the observation service token, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
   /api/v1/ai/cameras/{id}/frame:
     get:
@@ -5418,6 +5418,12 @@ components:
               online: { type: boolean }
               targets: { type: integer }
               lux: { type: [number, 'null'] }
+              pose: { $ref: '#/components/schemas/AiPose', description: 'Where the radar stands on the floor plan, when the site design places it (absent otherwise)' }
+              track_points:
+                type: array
+                maxItems: 16
+                description: 'The tracks the radar counts, in its own frame (x to the right of the radar, y straight ahead of it), in millimetres; absent when the radar reports none or the design cannot place it'
+                items: { $ref: '#/components/schemas/AiTrackPoint' }
         cameras:
           type: array
           items:
@@ -5426,6 +5432,23 @@ components:
             properties:
               id: { type: string }
               name: { type: string }
+              pose: { $ref: '#/components/schemas/AiPose', description: 'Where the camera stands on the floor plan and the way it faces, when the site design places it' }
+              fov_deg: { type: number, minimum: 20, maximum: 180, description: 'The horizontal field of view, when the design gives it' }
+              range_mm: { type: number, minimum: 0, description: 'How far the camera sees, when the design gives it' }
+    AiPose:
+      type: object
+      required: [x_mm, y_mm, yaw_deg]
+      description: 'A position on the floor plan in millimetres and the direction the device faces, in degrees clockwise from the +y axis of the plan'
+      properties:
+        x_mm: { type: number }
+        y_mm: { type: number }
+        yaw_deg: { type: number }
+    AiTrackPoint:
+      type: object
+      required: [x_mm, y_mm]
+      properties:
+        x_mm: { type: number }
+        y_mm: { type: number }
     AiObservationResult:
       type: object
       examples: [{"raised": false, "reason": "disarmed"}]
