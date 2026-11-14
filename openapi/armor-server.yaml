@@ -931,6 +931,13 @@ paths:
         '202': { description: 'Accepted; { accepted, ignored? }', content: { application/json: { schema: { $ref: '#/components/schemas/Accepted' } } } }
         '400': { description: Not the contract's message, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '401': { description: Missing or wrong ingest token, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+  /api/v1/alarm/panic-gesture:
+    post:
+      summary: 'The hidden gesture of the apps (a long press on the logo, or five quick touches) raises the silent duress alarm of the signed-in person, exactly as the duress PIN does: nothing shows on the phone, the mode is not touched, and the answer is the same as for any other accepted request. While the option client.panic_gesture is off (the default) the route answers 404, as if it did not exist; a second gesture inside voice.panic_cooldown_s seconds raises nothing more but is answered the same.'
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: 'Always the same answer when the option is on, whether an alarm was raised or the quiet time had not ended', content: { application/json: { schema: { $ref: '#/components/schemas/Ok' } } } }
+        '404': { description: 'The option client.panic_gesture is off', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/alarm/nodes:
     get:
       summary: The latest state of every alarm node ({ nodes, totals }); a node that has been silent for thirty seconds is stale
@@ -3336,6 +3343,7 @@ components:
         voice.mobile_turn: { type: boolean, default: false, description: 'A phone of a signed-in operator or administrator may speak to the voice gateway through POST /api/v1/voice/mobile-turn. Turning it on lowers the security.' }
         voice.wake_word: { type: boolean, default: false, description: The wall panel may send short chunks of audio to the voice gateway to hear its wake word (on this machine; off - the route answers 403 and nothing is passed on) }
         voice.panic_phrase: { type: boolean, default: false }
+        client.panic_gesture: { type: boolean, default: false, description: 'The hidden gesture of the apps (POST /api/v1/alarm/panic-gesture) raises the silent duress alarm. Off: the route answers 404 and the apps do not offer the gesture.' }
         voice.panic_cooldown_s: { type: integer, minimum: 10, maximum: 3600, default: 60 }
         admin.acl_relays: { type: boolean, default: false, description: Studio may ask the admin agent to open or close the two switches of the broker rules that no install turns on (off - the routes answer 403 - each change also needs two confirmations and the one-time code of the authenticator) }
         admin.field_http: { type: boolean, default: false, description: Studio may ask the admin agent to let the field network also reach the server's port over HTTP (off - the routes answer 403 - each change also needs a confirmation and the one-time code of the authenticator) }

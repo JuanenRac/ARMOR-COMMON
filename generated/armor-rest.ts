@@ -2869,6 +2869,8 @@ export type SecuritySettings = {
   /** The wall panel may send short chunks of audio to the voice gateway to hear its wake word (on this machine; off - the route answers 403 and nothing is passed on) */
   "voice.wake_word"?: boolean;
   "voice.panic_phrase"?: boolean;
+  /** The hidden gesture of the apps (POST /api/v1/alarm/panic-gesture) raises the silent duress alarm. Off: the route answers 404 and the apps do not offer the gesture. */
+  "client.panic_gesture"?: boolean;
   "voice.panic_cooldown_s"?: number;
   /** Studio may ask the admin agent to open or close the two switches of the broker rules that no install turns on (off - the routes answer 403 - each change also needs two confirmations and the one-time code of the authenticator) */
   "admin.acl_relays"?: boolean;
