@@ -1867,6 +1867,31 @@ paths:
         '200': { description: '{ raised, alarm_id?, reason? }', content: { application/json: { schema: { $ref: '#/components/schemas/AiObservationResult' } } } }
         '404': { description: Unknown camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
         '422': { description: Not a valid vision event, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/ai/ignore-proposals:
+    post:
+      summary: 'For the observation service - the parts of a camera''s picture it found always busy and proposes to ignore (rectangles as fractions of the picture). Only kept while the setting ai.learn is on (otherwise { stored: false, reason: feature_off }); nothing is applied until an administrator accepts it'
+      security: [{ aiBearer: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostAiIgnoreProposalsRequest' } } } }
+      responses:
+        '200': { description: '{ stored, reason? } - reason is feature_off, empty, rejected_before or unchanged', content: { application/json: { schema: { $ref: '#/components/schemas/AiIgnoreProposalResult' } } } }
+        '404': { description: Unknown camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+        '422': { description: Not a valid proposal, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/ignore-proposals:
+    get:
+      summary: 'The proposals of areas to ignore that wait for a decision, one per camera ({ proposals: [{ camera_id, camera_name, zones }] }); empty while the setting ai.learn is off'
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: The proposals, content: { application/json: { schema: { $ref: '#/components/schemas/IgnoreProposals' } } } }
+  /api/v1/ignore-proposals/{id}:
+    post:
+      summary: 'Decide a proposal (an administrator only). accept adds its rectangles to the areas the camera ignores (16 at most; the ones already there stay); reject drops it and the same rectangles are not proposed again. Written in the audit'
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/IgnoreProposalDecision' } } } }
+      responses:
+        '200': { description: 'The decision taken and the areas the camera ignores now', content: { application/json: { schema: { $ref: '#/components/schemas/IgnoreProposalDecided' } } } }
+        '400': { description: 'The decision is neither accept nor reject, or accepting would pass the limit of areas', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: No proposal waits for that camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
   /api/v1/ai/activity-events:
     post:
       summary: For ARMOR-VISION - while the option vision.activity_events is on (on by default; off, the answer is raised false with reason feature_off and nothing is read), one event of the activity engine (a zone entered, left, stayed in or loitered in, or a counting line crossed; the event armor.vision.activity). Every event is recorded; an entry, a stay or a loitering in a zone of kind alert raises an alarm only while the system is armed and only when the event does not say notify false (the profile of the arming mode watches the zone without telling the people the alarms go to), once per camera and zone until it is closed; a zone of kind detection, a zone the server does not know, an exit and a line crossing are only recorded
@@ -3419,6 +3444,8 @@ components:
         vision.plates_ack: { type: boolean, default: false, description: 'The privacy notice of plate reading was read.' }
         vision.faces_ack: { type: boolean, default: false, description: 'The privacy notice of face recognition was read.' }
         vision.timeline: { type: boolean, default: false, description: 'The server keeps the events of the vision service (an alert zone or a detection zone) in a timeline with the evidence taken when it was seen, for the review panel of Studio (GET /api/v1/vision/timeline). Off, the default, nothing is kept.' }
+        ai.spatial: { type: boolean, default: false, description: 'The observation service judges where each radar track falls in a camera''s picture, from the places the site design gives the radars and cameras (off: a radar track anywhere in the area a camera covers counts for that camera). It is told in the context (options.spatial).' }
+        ai.learn: { type: boolean, default: false, description: 'The observation service may study the pictures of the cameras while the system is disarmed and propose parts of the picture to ignore (a tree, a road). Nothing is applied until an administrator accepts a proposal. It is told in the context (options.learn).' }
         vision.timeline_days: { type: integer, minimum: 1, maximum: 3650, default: 30, description: 'How many days an entry of the timeline is kept before it is pruned.' }
         push.photo: { type: boolean, default: false, description: 'The notification of an alarm that a camera raised carries a small photo of the event. The photo goes through the push service of Google (FCM). It cannot be on while push.photo_ack is off, and the photo is never written to a log. Turning it on lowers the security.' }
         push.photo_ack: { type: boolean, default: false, description: 'The notice that the photo of a notification passes through FCM / Google was read.' }
@@ -4500,6 +4527,45 @@ components:
       properties:
         camera_id: { type: string }
         zones: { type: array, maxItems: 16, items: { $ref: '#/components/schemas/IgnoreZone' } }
+    PostAiIgnoreProposalsRequest:
+      type: object
+      additionalProperties: false
+      required: [camera_id, zones]
+      properties:
+        camera_id: { type: string }
+        zones: { type: array, maxItems: 16, items: { $ref: '#/components/schemas/IgnoreZone' } }
+    AiIgnoreProposalResult:
+      type: object
+      required: [stored]
+      properties:
+        stored: { type: boolean }
+        reason: { type: string }
+    IgnoreProposals:
+      type: object
+      required: [proposals]
+      properties:
+        proposals:
+          type: array
+          items:
+            type: object
+            required: [camera_id, camera_name, zones]
+            properties:
+              camera_id: { type: string }
+              camera_name: { type: string }
+              zones: { type: array, maxItems: 16, items: { $ref: '#/components/schemas/IgnoreZone' } }
+    IgnoreProposalDecision:
+      type: object
+      additionalProperties: false
+      required: [decision]
+      properties:
+        decision: { type: string, enum: [accept, reject] }
+    IgnoreProposalDecided:
+      type: object
+      required: [camera_id, decision, zones]
+      properties:
+        camera_id: { type: string }
+        decision: { type: string, enum: [accept, reject] }
+        zones: { type: array, maxItems: 16, items: { $ref: '#/components/schemas/IgnoreZone' }, description: The areas the camera ignores after the decision }
     CountLine:
       type: object
       additionalProperties: false
@@ -5408,6 +5474,13 @@ components:
       required: [mode, nodes, cameras]
       properties:
         mode: { type: string, enum: [armed, disarmed] }
+        options:
+          type: object
+          description: 'The options of the server that the service follows (both off when absent)'
+          additionalProperties: false
+          properties:
+            spatial: { type: boolean, description: 'The setting ai.spatial' }
+            learn: { type: boolean, description: 'The setting ai.learn' }
         nodes:
           type: array
           items:
