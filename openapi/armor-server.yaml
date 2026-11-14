@@ -1890,7 +1890,7 @@ paths:
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/IgnoreProposalDecision' } } } }
       responses:
         '200': { description: 'The decision taken and the areas the camera ignores now', content: { application/json: { schema: { $ref: '#/components/schemas/IgnoreProposalDecided' } } } }
-        '400': { description: The decision is neither accept nor reject, or accepting would pass the limit of areas, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '400': { description: 'The decision is neither accept nor reject, or accepting would pass the limit of areas', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '404': { description: No proposal waits for that camera, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
   /api/v1/ai/activity-events:
     post:
