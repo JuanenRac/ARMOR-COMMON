@@ -1067,6 +1067,8 @@ data class NetworkEvent(
     val device_id: String? = null,
     val port: Long? = null,
     val outage_s: Long? = null,
+    val server: String? = null,
+    val recommendation: String? = null,
     val detail: String? = null
 )
 

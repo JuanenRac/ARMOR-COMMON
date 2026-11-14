@@ -346,7 +346,9 @@
               "internet_down",
               "internet_up",
               "gateway_down",
-              "gateway_up"
+              "gateway_up",
+              "risky_port",
+              "rogue_dhcp"
             ]
           },
           "at_ms": {
@@ -366,6 +368,16 @@
             "type": "integer",
             "minimum": 0,
             "description": "Only on internet_up and gateway_up: how long it was down."
+          },
+          "server": {
+            "type": "string",
+            "pattern": "^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$",
+            "description": "Only on rogue_dhcp: the address of the DHCP server that answered and should not be there."
+          },
+          "recommendation": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,31}$",
+            "description": "Only on risky_port and rogue_dhcp: a short key the consumers write in the language of the person (never an action the node takes)."
           },
           "detail": {
             "type": "string",
