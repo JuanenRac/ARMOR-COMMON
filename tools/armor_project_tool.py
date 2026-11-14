@@ -243,9 +243,9 @@ def test_project(project: Path, manifest: dict[str, object]) -> None:
     elif name == "ARMOR-WATCH":
         # the contract of the messages is checked in Python (no watch needed); the Kotlin core is tested wherever the Gradle wrapper can run (CI)
         unit_tests(project)
-        gradle = "gradlew.bat" if os.name == "nt" and (project / "gradlew.bat").is_file() else ("./gradlew" if (project / "gradlew").is_file() else None)
-        if gradle and (os.environ.get("ARMOR_REQUIRE_GRADLE") or os.environ.get("CI")):
-            command(project, [gradle, "test"])
+        wrapper = "gradlew.bat" if os.name == "nt" and (project / "gradlew.bat").is_file() else ("./gradlew" if (project / "gradlew").is_file() else None)
+        if wrapper and (os.environ.get("ARMOR_REQUIRE_GRADLE") or os.environ.get("CI")):
+            command(project, [wrapper, "test"])
         else:
             report("WATCH_KOTLIN_TESTS=SKIPPED the Kotlin core is tested in CI (CI runs it; set ARMOR_REQUIRE_GRADLE=1 to run it here)")
     elif name == "ARMOR-HARDWARE":
