@@ -274,3 +274,12 @@ While the security option `commands.require_sig` is on, the server publishes `al
 3. the key of a node is the HMAC-SHA256 of the text `node|` followed by the id of the node, under a master key that only the server holds and that is never sent to a node or on the broker. An administrator reads the key of one node, once, in the `command_key` field of `GET /api/v1/admin/nodes/{id}/token` (present only while the option is on) and gives it to that node.
 
 A node that has a key refuses a command whose signature does not match (comparing in constant time), whose nonce it has seen among the last ones it keeps, or, when its clock is valid, whose `timestamp_ms` is more than two minutes away from its own time; it drops the command without an answer. A fixed vector for tests is in `conformance/signatures/command.json`. With the option off the two fields are absent and nothing changes.
+
+## Checking a message or a vector file from another repository
+
+`pip install -e ARMOR-COMMON` (or the package of a release) adds the command `armor-contract-check`, so an emitter does not need a `../ARMOR-COMMON` path to know whether what it sends is valid:
+
+* `armor-contract-check message armor/node/north-1/health message.json` validates one message (or standard input) for its topic; exit 0 accepted, 1 refused, 2 usage error.
+* `armor-contract-check vectors path/to/vectors/` runs vector files (`{"kind", "vectors": [{"name", "valid", "payload"}]}`) against the published schemas and prints `VECTORS=PASS` or `VECTORS=FAIL`.
+* `armor-contract-check matrix --markdown` writes the matrix of the contracts (required fields and number of accepted and refused shared vectors per kind); `docs/CONTRACT_MATRIX.md` is that output and a test fails when it is out of date. `--consumers` adds the version of the contracts each repository was last checked against, marking the ones that are behind.
+* `armor-contract-check kinds` lists the kinds that have a schema.
