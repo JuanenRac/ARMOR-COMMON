@@ -88,3 +88,14 @@ class TandaAContract(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+@unittest.skipIf(yaml is None or jsonschema is None, "PyYAML and jsonschema are not installed")
+class PanicGestureContract(unittest.TestCase):
+    def test_the_route_is_for_an_operator_and_the_option_starts_off(self) -> None:
+        spec = yaml.safe_load(OPENAPI.read_text(encoding="utf-8"))
+        post = spec["paths"]["/api/v1/alarm/panic-gesture"]["post"]
+        self.assertIn("operator", post["security"][0])
+        self.assertEqual(sorted(post["responses"]), ["200", "404"])
+        options = next(schema["properties"] for schema in spec["components"]["schemas"].values() if isinstance(schema, dict) and "client.panic_gesture" in schema.get("properties", {}))
+        self.assertIs(options["client.panic_gesture"]["default"], False)
