@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The copy of the running firmware to the other slot waits for an install or a manual write that is on:** `start_copy()` takes the same lock as `install()` and the manual writes (not only the flag of its own job) and gives it back when it ends, so two writers can no longer open the same slot.
 - **The zone feed contract says what the sequence number is and has vectors for it:** a message to a panel carries a number that is above the last one sent to that panel, the server clock or the last number plus one when two messages fall in the same millisecond, so two zones of one panel never share one. The shared vectors add the consecutive number in the same millisecond, the largest number a JSON number holds exactly and the one above it, which is refused.
 
 - **The order channel of the node can check a signature before it reads anything:** `node_control::Options` has an optional `authorize` hook that sees each order that arrives on `armor/control/...` and drops it, before it can arm anything, when the node says no. A node that does not set it behaves as before.
