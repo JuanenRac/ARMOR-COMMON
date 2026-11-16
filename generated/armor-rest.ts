@@ -3007,6 +3007,12 @@ export type SecuritySettings = {
   "vacation.mode"?: boolean;
   /** The critical commands (alarm_command, electrical_command) are published with a nonce and an HMAC-SHA256 signature of this installation. Off: unsigned. */
   "commands.require_sig"?: boolean;
+  /** The shared ingest token is no longer accepted by the routes the nodes speak to: each node has to hold its own token (derived from the shared one). Off, the default, so boards already in the field keep working; ingest_shared_token_nodes lists the nodes that still used the shared token. ARMOR_INGEST_STRICT=1 is where it starts. Turning it off again lowers security and asks for a new proof of identity. */
+  "nodes.ingest_strict"?: boolean;
+  /** This server may order a gateway node to write to a Pylontech battery (clock, counters, limits, outputs, serial number, firmware). Off, the default: the battery-ops routes answer 403 battery_write_disabled. ARMOR_BATTERY_WRITE=1 is where it starts. Turning it on lowers security and asks for a new proof of identity. */
+  "solar.battery_write"?: boolean;
+  /** Studio and the phone may ask the maintenance agent to update the programs of this machine (a preview first, then the project typed again and a signed release). Off, the default: the routes answer 403 machine_update_disabled. ARMOR_CM5_UPDATE=1 is where it starts. Turning it on lowers security and asks for a new proof of identity. */
+  "admin.cm5_update"?: boolean;
   /** An administrator may set up encrypted, scheduled backups of the data directory and make or prove one (the /api/v1/admin/backup routes). Off: they answer 403 backup_disabled. */
   "admin.backup"?: boolean;
   /** A firmware job from GitHub follows the staged rollout of the settings (/api/v1/admin/firmware/rollout): the channel stable or beta, a percent of the nodes at a time, and the way back for a node that does not come back. Off: a job updates every node it was given with the latest release, as always. */
@@ -3058,6 +3064,13 @@ export type SecuritySettingsState = {
   stored: SecuritySettings;
   defaults: SecuritySettings;
   locked: string[];
+  /** The nodes that spoke with the shared ingest token since the server started and have not spoken with their own token since (give them one before turning nodes.ingest_strict on) */
+  ingest_shared_token_nodes?: {
+    /** The node id the message claimed, or (no node id) when it had none */
+    node_id: string;
+    last_seen: string;
+    messages: number;
+  }[];
 };
 
 export type ServerInfo = {
