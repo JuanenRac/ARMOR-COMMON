@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The server contract describes the cap on node maintenance:** the security setting `nodes.maintenance_max_s` (60 to 86400 seconds, default 600); a node maintenance report longer than the cap is cut to the cap.
 - **The copy of the running firmware to the other slot waits for an install or a manual write that is on:** `start_copy()` takes the same lock as `install()` and the manual writes (not only the flag of its own job) and gives it back when it ends, so two writers can no longer open the same slot.
 - **The zone feed contract says what the sequence number is and has vectors for it:** a message to a panel carries a number that is above the last one sent to that panel, the server clock or the last number plus one when two messages fall in the same millisecond, so two zones of one panel never share one. The shared vectors add the consecutive number in the same millisecond, the largest number a JSON number holds exactly and the one above it, which is refused.
 

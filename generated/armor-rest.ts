@@ -3043,6 +3043,8 @@ export type SecuritySettings = {
   "vision.service_token_set"?: boolean;
   /** The live service may be on another machine (off: only a loopback address, 127.x, ::1 or localhost, is used and any other answers 503; turning it on is a loss) */
   "vision.service_remote"?: boolean;
+  /** The most seconds a node's own announcement or health report of planned maintenance may hold back its offline alerts; a longer one is cut to this, not ignored (ARMOR_NODE_MAINTENANCE_MAX_S is where it starts). Raising it is a loss of security */
+  "nodes.maintenance_max_s"?: number;
   /** The days the daily log keeps (the readings of the sensors and the power of the house the summary of a day uses; tuning, not a protection) */
   "summary.log_days"?: number;
   /** The most often a reading of one sensor is logged, in seconds */
