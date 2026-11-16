@@ -35,6 +35,10 @@ class TandaAContract(unittest.TestCase):
         props = self.options()
         for key in ("capture.on_alarm", "vacation.mode", "commands.require_sig", "admin.backup", "electrical.load_shedding", "electrical.balance", "nodes.ingest_strict", "solar.battery_write", "admin.cm5_update"):
             self.assertIs(props[key]["default"], False, key)
+        for key in ("panel.proxy_http", "server.alarm_state_signature_node_only", "alarm.duress_hide_trail"):
+            self.assertIs(props[key]["default"], False, key)
+        for key in ("remote.gate_by_route", "admin.firmware_refuse_downgrade", "cameras.allow_public_hosts"):
+            self.assertIs(props[key]["default"], True, key)
         self.assertIs(props["live.events"]["default"], True)
         self.assertEqual(props["capture.on_alarm_per_min"]["default"], 6)
 
