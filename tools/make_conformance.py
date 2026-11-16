@@ -1197,6 +1197,9 @@ cases: dict[str, list[Any]] = {
         ("a signature of 63 characters", False, zone_feed(seq=1, sig="a" * 63)),
         ("a negative sequence", False, zone_feed(seq=-1, sig="a" * 64)),
         ("a sequence that is a text", False, zone_feed(seq="1", sig="a" * 64)),
+        ("the sequence one above the last one of the same panel, in the same millisecond", True, zone_feed(zone="back-door", seq=1700000000001, sig="b" * 64)),
+        ("the largest sequence a number can hold exactly", True, zone_feed(seq=9007199254740991, sig="a" * 64)),
+        ("a sequence one above the largest exact number", False, zone_feed(seq=9007199254740992, sig="a" * 64)),
     ],
     "alarm_policy": [
         ("the defaults of a panel", True, alarm_policy()),

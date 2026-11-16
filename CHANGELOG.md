@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The zone feed contract says what the sequence number is and has vectors for it:** a message to a panel carries a number that is above the last one sent to that panel, the server clock or the last number plus one when two messages fall in the same millisecond, so two zones of one panel never share one. The shared vectors add the consecutive number in the same millisecond, the largest number a JSON number holds exactly and the one above it, which is refused.
+
 - **The order channel of the node can check a signature before it reads anything:** `node_control::Options` has an optional `authorize` hook that sees each order that arrives on `armor/control/...` and drops it, before it can arm anything, when the node says no. A node that does not set it behaves as before.
 
 - **The server contract describes three more security options and the nodes that still use the shared token:** `nodes.ingest_strict`, `solar.battery_write` and `admin.cm5_update` (all off by default; each starts from the environment variable it always had and can be changed from Studio afterwards), and `ingest_shared_token_nodes` in the answer of `GET /api/v1/security/settings` (the nodes that spoke with the shared ingest token since the server started and have not used their own since).
