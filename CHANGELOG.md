@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The order channel of the node can check a signature before it reads anything:** `node_control::Options` has an optional `authorize` hook that sees each order that arrives on `armor/control/...` and drops it, before it can arm anything, when the node says no. A node that does not set it behaves as before.
+
 - **The server contract describes three more security options and the nodes that still use the shared token:** `nodes.ingest_strict`, `solar.battery_write` and `admin.cm5_update` (all off by default; each starts from the environment variable it always had and can be changed from Studio afterwards), and `ingest_shared_token_nodes` in the answer of `GET /api/v1/security/settings` (the nodes that spoke with the shared ingest token since the server started and have not used their own since).
 - **The Kconfig and the build script of the electrical node are its own files:** `firmware_base/manifest.json` no longer lists ARMOR-NODE-ELECTRICAL for `main/Kconfig.projbuild` and `tools/build_node.sh`, because its copies carry the switching image (a build option that is off by default); the check of the shared firmware stops reading them there, and the other nodes are as they were. The nodes' locks show a pending version until they are synchronised again.
 ## [0.8.1.4] - Server contract for the new security options, vision timeline and notices, solar summary and shared firmware checks
