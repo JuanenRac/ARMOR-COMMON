@@ -194,6 +194,39 @@
     "seq": "1",
     "sig": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
    }
+  },
+  {
+   "name": "the sequence one above the last one of the same panel, in the same millisecond",
+   "valid": true,
+   "payload": {
+    "zone": "back-door",
+    "state": "triggered",
+    "battery_low": false,
+    "seq": 1700000000001,
+    "sig": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+   }
+  },
+  {
+   "name": "the largest sequence a number can hold exactly",
+   "valid": true,
+   "payload": {
+    "zone": "front-door",
+    "state": "triggered",
+    "battery_low": false,
+    "seq": 9007199254740991,
+    "sig": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+   }
+  },
+  {
+   "name": "a sequence one above the largest exact number",
+   "valid": false,
+   "payload": {
+    "zone": "front-door",
+    "state": "triggered",
+    "battery_low": false,
+    "seq": 9007199254740992,
+    "sig": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+   }
   }
  ]
 }
