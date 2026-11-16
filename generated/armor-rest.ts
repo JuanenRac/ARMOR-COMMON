@@ -1184,6 +1184,18 @@ export type DiagnosticTokenList = {
   tokens: Contracts.DiagnosticTokenInfo[];
 };
 
+export type DuressLog = {
+  /** Every duress alarm raised since the record began (the entries below are only the latest ones) */
+  count: number;
+  entries: {
+    at: string;
+    actor: string;
+    /** pin = a disarm or a silence by command, mode_pin = a disarm or a lowering of the mode, voice_pin = a disarm by voice */
+    via: "pin" | "mode_pin" | "voice_pin" | "panic_gesture" | "panic_phrase";
+    alarm_id?: string;
+  }[];
+};
+
 /** The saved electrical scheme; revision 0 and a null document when none has been saved. */
 export type ElectricalDesign = {
   revision: number;
@@ -2928,6 +2940,18 @@ export type SecuritySettings = {
   "server.zone_feed_signature"?: boolean;
   /** The server also publishes each alarm state it hears, signed with the key of the installation, on armor/alarm/{node_id}/state (off: it publishes nothing there; on: every one it publishes is signed) */
   "server.alarm_state_signature"?: boolean;
+  /** With the signed copy on, only a state that reached the server over MQTT or over HTTP with the token of its own node is signed; a state said over HTTP with the shared ingest token is kept and acted on but not signed. Off, the default: every state is signed. */
+  "server.alarm_state_signature_node_only"?: boolean;
+  /** The proxy of the node panels may open a panel registered over plain http. Off, the default: only an https panel whose certificate fingerprint is trusted is opened, and a panel over plain http answers 403 panel_http_disabled. Turning it on lowers security and asks for a new proof of identity. */
+  "panel.proxy_http"?: boolean;
+  /** From outside the house, with the remote policy operate or view, every route that asks for an administrator is closed by the route itself and not by a list of paths: under operate only the few routes that operate the house stay open, and a secret is not read. Off: only the older list of paths closes administering from outside. */
+  "remote.gate_by_route"?: boolean;
+  /** A firmware job from GitHub refuses to put on a node a version older than the one it runs, unless the job says it may (allow_downgrade, written in the audit trail). */
+  "admin.firmware_refuse_downgrade"?: boolean;
+  /** The server may open connections for a camera at any address, as it always could (the audit trail notes a camera saved at an address outside the house). Off: only an address of the house (10/8, 172.16/12, 192.168/16, a unique local IPv6 address) is accepted for a camera and connected to, the host name checked on the address it resolves to. Turning it on lowers security and asks for a new proof of identity. */
+  "cameras.allow_public_hosts"?: boolean;
+  /** A disarm with the duress PIN leaves exactly the trace of a normal disarm in the history and the audit trail, and the session that disarmed sees a normal disarmed state and no alarm; the silent alarm still reaches the wall panels, the other sessions and the places the alarms go to, and what tells the two apart is kept in a record only an administrator with a recent proof of identity reads (GET /api/v1/alarm/duress-log). Off, the default: the duress disarm is recorded as it always was. Turning it off again lowers security and asks for a new proof of identity. */
+  "alarm.duress_hide_trail"?: boolean;
   "media.rtsp_proxy"?: boolean;
   "network.login_secure_only"?: boolean;
   /** A Studio session in use gets a new id and cookie each time it is renewed, and the previous id keeps working for 30 seconds so requests already in flight are not signed out. Off, the default, the id lasts as long as the session. Turning it off again lowers security and asks for a new proof of identity. */

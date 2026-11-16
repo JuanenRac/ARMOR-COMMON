@@ -1083,6 +1083,13 @@ paths:
         '200': { description: The key of the panel, content: { application/json: { schema: { $ref: '#/components/schemas/ZoneFeedKey' } } } }
         '400': { description: Not a node id, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '403': { description: 'Not an administrator, or the proof of identity is needed again', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/alarm/duress-log:
+    get:
+      summary: 'The record kept apart of the disarms made with a duress PIN (and the other ways of raising the silent duress alarm): how many and, newest first, when, who and how. Only an administrator signed in to Studio, with a recent proof of identity when the request comes from outside the house; never an operator, a wall panel, a viewer or a token. The audit trail and the history show a duress disarm exactly as a normal one while the option alarm.duress_hide_trail is on.'
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: 'The count and the entries', content: { application/json: { schema: { $ref: '#/components/schemas/DuressLog' } } } }
+        '403': { description: 'Not an administrator, or the proof of identity is needed again', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/alarm/zone-links:
     get:
       summary: 'The Zigbee devices linked to zones of alarm panels ({ links: [{ device_id, node_id, zone_id }] })'
@@ -3428,6 +3435,12 @@ components:
         server.zone_feed: { type: boolean, default: true }
         server.zone_feed_signature: { type: boolean, default: true }
         server.alarm_state_signature: { type: boolean, default: false, description: 'The server also publishes each alarm state it hears, signed with the key of the installation, on armor/alarm/{node_id}/state (off: it publishes nothing there; on: every one it publishes is signed)' }
+        server.alarm_state_signature_node_only: { type: boolean, default: false, description: 'With the signed copy on, only a state that reached the server over MQTT or over HTTP with the token of its own node is signed; a state said over HTTP with the shared ingest token is kept and acted on but not signed. Off, the default: every state is signed.' }
+        panel.proxy_http: { type: boolean, default: false, description: 'The proxy of the node panels may open a panel registered over plain http. Off, the default: only an https panel whose certificate fingerprint is trusted is opened, and a panel over plain http answers 403 panel_http_disabled. Turning it on lowers security and asks for a new proof of identity.' }
+        remote.gate_by_route: { type: boolean, default: true, description: 'From outside the house, with the remote policy operate or view, every route that asks for an administrator is closed by the route itself and not by a list of paths: under operate only the few routes that operate the house stay open, and a secret is not read. Off: only the older list of paths closes administering from outside. ' }
+        admin.firmware_refuse_downgrade: { type: boolean, default: true, description: 'A firmware job from GitHub refuses to put on a node a version older than the one it runs, unless the job says it may (allow_downgrade, written in the audit trail).' }
+        cameras.allow_public_hosts: { type: boolean, default: true, description: 'The server may open connections for a camera at any address, as it always could (the audit trail notes a camera saved at an address outside the house). Off: only an address of the house (10/8, 172.16/12, 192.168/16, a unique local IPv6 address) is accepted for a camera and connected to, the host name checked on the address it resolves to. Turning it on lowers security and asks for a new proof of identity.' }
+        alarm.duress_hide_trail: { type: boolean, default: false, description: 'A disarm with the duress PIN leaves exactly the trace of a normal disarm in the history and the audit trail, and the session that disarmed sees a normal disarmed state and no alarm; the silent alarm still reaches the wall panels, the other sessions and the places the alarms go to, and what tells the two apart is kept in a record only an administrator with a recent proof of identity reads (GET /api/v1/alarm/duress-log). Off, the default: the duress disarm is recorded as it always was. Turning it off again lowers security and asks for a new proof of identity.' }
         media.rtsp_proxy: { type: boolean, default: true }
         network.login_secure_only: { type: boolean, default: false }
         session.rotate_id: { type: boolean, default: false, description: 'A Studio session in use gets a new id and cookie each time it is renewed, and the previous id keeps working for 30 seconds so requests already in flight are not signed out. Off, the default, the id lasts as long as the session. Turning it off again lowers security and asks for a new proof of identity.' }
@@ -4688,6 +4701,23 @@ components:
       required: [links]
       properties:
         links: { type: array, maxItems: 64, items: { $ref: '#/components/schemas/ZoneLink' } }
+    DuressLog:
+      type: object
+      additionalProperties: false
+      required: [count, entries]
+      properties:
+        count: { type: integer, minimum: 0, description: 'Every duress alarm raised since the record began (the entries below are only the latest ones)' }
+        entries:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [at, actor, via]
+            properties:
+              at: { type: string, format: date-time }
+              actor: { type: string }
+              via: { type: string, enum: [pin, mode_pin, voice_pin, panic_gesture, panic_phrase], description: 'pin = a disarm or a silence by command, mode_pin = a disarm or a lowering of the mode, voice_pin = a disarm by voice' }
+              alarm_id: { type: string }
     PushStatus:
       type: object
       examples: [{"enabled": false, "devices": 0}]
