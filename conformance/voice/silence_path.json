@@ -1,0 +1,35 @@
+{
+  "contract": "voice-silence-path",
+  "version": 1,
+  "note": "The whole way of a spoken order to silence the alarm, from the panel to the server, for every confirmation mode (voice.silence_confirmation). ARMOR-VOICE-AI plays each path against its own turn service and ARMOR-SERVER checks the subject it gives the voice service, so the two ends cannot drift apart. A path says what the person says, what the server answers the first time it is asked, and what the voice service must ask next.",
+  "subject": {"operator": "operator", "panel_prefix": "panel:", "max_length": 64},
+  "validity_s": {"double_turn": 15, "pin": 20, "challenge": 20, "pending": 30},
+  "original": "silence the alarm",
+  "paths": [
+    {
+      "name": "off: the order goes straight to the server",
+      "mode": "off", "panel": "p1", "proof": null, "first_answer": "accepted",
+      "asks": [{"text": "original", "confirmation": "none"}]
+    },
+    {
+      "name": "double turn: the person says yes and the token of the server is echoed back",
+      "mode": "double_turn", "panel": "p1", "proof": "yes", "first_answer": "token",
+      "asks": [{"text": "original", "confirmation": "none"}, {"text": "original", "confirmation": "server_token"}]
+    },
+    {
+      "name": "double turn without a panel: the subject is the operator",
+      "mode": "double_turn", "panel": "", "proof": "yes", "first_answer": "needs_confirmation",
+      "asks": [{"text": "original", "confirmation": "none"}, {"text": "original", "confirmation": "issued", "subject": "operator"}]
+    },
+    {
+      "name": "pin: the PIN is proved on the panel and never travels, the service vouches for it",
+      "mode": "pin", "panel": "p1", "proof": "pin", "first_answer": "needs_confirmation",
+      "asks": [{"text": "original", "confirmation": "none"}, {"text": "original", "confirmation": "issued", "subject": "panel:p1"}]
+    },
+    {
+      "name": "challenge: the number shown on the screen is said and the service vouches for it",
+      "mode": "challenge", "panel": "p1", "proof": "challenge", "first_answer": "needs_confirmation",
+      "asks": [{"text": "original", "confirmation": "none"}, {"text": "original", "confirmation": "issued", "subject": "panel:p1"}]
+    }
+  ]
+}
