@@ -180,6 +180,10 @@ flowchart LR
 | `tools/voice_cases.py` | the voice cases shared with ARMOR-VOICE-AI |
 | `tools/make_architecture.py`  `tools/make_structure.py`  `tools/universal_readme_check.py` | the pictures and the layout check of the READMEs |
 
+### Operation and tools
+
+* **Activity events are recorded once:** `POST /api/v1/ai/activity-events` takes an optional `event_id` (8 to 64 letters, digits, `-` and `_`); the same identifier on the same camera is recorded once and a repeat is answered `{ raised: false, reason: duplicate }`. The generated REST types carry the field.
+
 ## ⚙️ Configuration
 
 ### Firmware build options (Kconfig)

@@ -180,6 +180,10 @@ flowchart LR
 | `tools/voice_cases.py` | ARMOR-VOICE-AI と共有する音声ケース |
 | `tools/make_architecture.py`  `tools/make_structure.py`  `tools/universal_readme_check.py` | README の図とレイアウトの検査 |
 
+### 運用とツール
+
+* **アクティビティイベントは一度だけ記録されます：** `POST /api/v1/ai/activity-events` は任意の `event_id`（英数字・`-`・`_` で 8〜64 文字）を受け付けます。同じカメラで同じ識別子は一度だけ記録され、再送には `{ raised: false, reason: duplicate }` が返ります。生成される REST 型にもこのフィールドがあります。
+
 ## ⚙️ 設定
 
 ### ファームウェアのビルドオプション（Kconfig）

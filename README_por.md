@@ -180,6 +180,10 @@ flowchart LR
 | `tools/voice_cases.py` | os casos de voz partilhados com ARMOR-VOICE-AI |
 | `tools/make_architecture.py`  `tools/make_structure.py`  `tools/universal_readme_check.py` | as imagens e a verificação do formato dos README |
 
+### Operação e ferramentas
+
+* **Os eventos de atividade são registados uma só vez:** `POST /api/v1/ai/activity-events` aceita um `event_id` opcional (de 8 a 64 letras, dígitos, `-` e `_`); o mesmo identificador na mesma câmara é registado uma vez e a repetição recebe `{ raised: false, reason: duplicate }`. Os tipos REST gerados trazem o campo.
+
 ## ⚙️ Configuração
 
 ### Opções de compilação do firmware (Kconfig)
