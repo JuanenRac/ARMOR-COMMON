@@ -273,6 +273,8 @@ In the History a node that started after a crash or by its own guard is told onc
 
 While the security option `commands.require_sig` is on, the server publishes `alarm_command` and `electrical_command` with two more fields, `nonce` (sixteen lowercase hexadecimal digits, never reused) and, as the very last field, `sig` (64 lowercase hexadecimal digits). The signature is over the bytes of the payload exactly as they are published, so a node checks it without rebuilding any JSON:
 
+While the security option `commands.sign_node_orders` is on, the server signs the same way, with the key of the node, the `node_control_command` and `solar_battery_command` messages and the `alarm_policy` message of each alarm panel. The policy has no node id: the nonce and the signature are added to it as for the other messages and a node takes them off before it reads the policy, so the contract of the message does not change. A node reads only signed messages when its own setting says so (`security.control_require_sig`, `battery.require_sig`, `server.policy_signature`), all off by default.
+
 1. the payload must end with `,"sig":"<64 hex digits>"}`; cut that ending and put `}` in its place, which gives the body (the nonce is its last field);
 2. `sig` is the HMAC-SHA256, in hex, of the ASCII text `armor-command-v2|` followed by the body, with the key of the node;
 3. the key of a node is the HMAC-SHA256 of the text `node|` followed by the id of the node, under a master key that only the server holds and that is never sent to a node or on the broker. An administrator reads the key of one node, once, in the `command_key` field of `GET /api/v1/admin/nodes/{id}/token` (present only while the option is on) and gives it to that node.

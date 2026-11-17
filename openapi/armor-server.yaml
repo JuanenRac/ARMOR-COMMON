@@ -3484,6 +3484,7 @@ components:
         live.events: { type: boolean, default: true, description: 'Besides the whole state, the console channel /api/v1/events sends {type, id, version} notices when an alarm, a device, a solar device, a network node or a design changes. Off: the state only.' }
         vacation.mode: { type: boolean, default: false, description: 'The automations with a schedule trigger run, only while the system is armed away (presence simulation). Off: no schedule ever runs.' }
         commands.require_sig: { type: boolean, default: false, description: 'The critical commands (alarm_command, electrical_command) are published with a nonce and an HMAC-SHA256 signature of this installation. Off: unsigned.' }
+        commands.sign_node_orders: { type: boolean, default: false, description: 'The orders to the node itself (node_control_command), the battery orders (solar_battery_command) and the policy of the alarm panels (alarm_policy) are published with a nonce and an HMAC-SHA256 signature made with the key of the node. Off: unsigned. The key is given with the token of the node while this option or commands.require_sig is on.' }
         nodes.ingest_strict: { type: boolean, default: false, description: 'The shared ingest token is no longer accepted by the routes the nodes speak to: each node has to hold its own token (derived from the shared one). Off, the default, so boards already in the field keep working; ingest_shared_token_nodes lists the nodes that still used the shared token. ARMOR_INGEST_STRICT=1 is where it starts. Turning it off again lowers security and asks for a new proof of identity.' }
         solar.battery_write: { type: boolean, default: false, description: 'This server may order a gateway node to write to a Pylontech battery (clock, counters, limits, outputs, serial number, firmware). Off, the default: the battery-ops routes answer 403 battery_write_disabled. ARMOR_BATTERY_WRITE=1 is where it starts. Turning it on lowers security and asks for a new proof of identity.' }
         admin.cm5_update: { type: boolean, default: false, description: 'Studio and the phone may ask the maintenance agent to update the programs of this machine (a preview first, then the project typed again and a signed release). Off, the default: the routes answer 403 machine_update_disabled. ARMOR_CM5_UPDATE=1 is where it starts. Turning it on lowers security and asks for a new proof of identity.' }
@@ -5341,7 +5342,7 @@ components:
         node_id: { type: string }
         token: { type: string }
         strict: { type: boolean }
-        command_key: { type: string, pattern: '^[0-9a-f]{64}$', description: 'The key this node checks the signature of the critical commands with (HMAC-SHA256 of node| and its id under the master key of the server); only while the option commands.require_sig is on. Given once to the node; never cached.' }
+        command_key: { type: string, pattern: '^[0-9a-f]{64}$', description: 'The key this node checks the signature of the critical commands with (HMAC-SHA256 of node| and its id under the master key of the server); only while the option commands.require_sig or commands.sign_node_orders is on. Given once to the node; never cached.' }
     InstallationBundle:
       type: object
       required: [format, version, exported_at, exported_by, parts]
