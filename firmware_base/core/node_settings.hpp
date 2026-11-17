@@ -116,6 +116,9 @@ struct NodeSettings {
   // also refuses an image that carries no mark at all (an old image); turn it off to go back to a version that predates the marks.
   bool ota_check_board = true;
   bool ota_require_board_mark = true;
+  // The orders of the server to the node itself (armor/control/...: restart, pause, standby...) are read only when the server signed them with the key of the node (core/command_sig.hpp,
+  // control_authorized). Off, as the node always was: an order without a signature is read. With it on and no valid key, every order is refused (fail closed).
+  bool control_require_sig = false;
   // Improv Wi-Fi over the USB cable: "setup" (only while the node has no Wi-Fi network stored), "always" or "off". See core/improv.hpp (should_listen).
   ImprovMode improv = ImprovMode::kSetup;
   // How long the node waits before it tries a lost Wi-Fi network or a lost broker again (core/backoff.hpp): the wait doubles from the first value to the ceiling, scattered by up to the percent given.
@@ -325,6 +328,7 @@ inline void node_read(const json::Value& document, NodeSettings& s, Problems& pr
     read_bool(*security, "seal_secrets", s.seal_secrets, "security.seal_secrets", problems);
     read_bool(*security, "ota_check_board", s.ota_check_board, "security.ota_check_board", problems);
     read_bool(*security, "ota_require_board_mark", s.ota_require_board_mark, "security.ota_require_board_mark", problems);
+    read_bool(*security, "control_require_sig", s.control_require_sig, "security.control_require_sig", problems);
   }
   if (const json::Value* improv = document.get("improv"); improv != nullptr && improv->is_object()) {
     if (!read_choice<ImprovMode>(*improv, "mode", {{"off", ImprovMode::kOff}, {"setup", ImprovMode::kSetup}, {"always", ImprovMode::kAlways}}, s.improv)) bad(problems, "improv.mode", "invalid");
@@ -446,7 +450,7 @@ inline void node_write_tail(json::Writer& w, const NodeSettings& s) {
   w.key("ui").begin_object().field("language", s.language).end_object();
   w.key("time").begin_object().field("ntp_enabled", s.time.ntp_enabled).field("ntp", s.time.ntp).field("zone", s.time.zone).end_object();
   w.key("system").begin_object().field("auto_restart_hours", s.auto_restart_hours).field("login_limit_per_minute", s.login_limit_per_minute).end_object();
-  w.key("security").begin_object().field("seal_secrets", s.seal_secrets).field("ota_check_board", s.ota_check_board).field("ota_require_board_mark", s.ota_require_board_mark).end_object();
+  w.key("security").begin_object().field("seal_secrets", s.seal_secrets).field("ota_check_board", s.ota_check_board).field("ota_require_board_mark", s.ota_require_board_mark).field("control_require_sig", s.control_require_sig).end_object();
   w.key("improv").begin_object().field("mode", to_text(s.improv)).end_object();
   w.key("retry").begin_object().field("wifi_first_ms", s.retry_wifi_first_ms).field("wifi_max_ms", s.retry_wifi_max_ms).field("mqtt_first_ms", s.retry_mqtt_first_ms).field("mqtt_max_ms", s.retry_mqtt_max_ms).field("scatter_percent", s.retry_scatter_percent).end_object();
 }

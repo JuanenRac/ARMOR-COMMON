@@ -913,6 +913,24 @@
         "ARMOR-NODE-HMI": "tests/test_wire_full.cpp",
         "ARMOR-NODE-ALARM": "tests/test_wire_full.cpp"
       }
+    },
+    "core/command_sig.hpp": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "core/command_sig.hpp",
+        "ARMOR-NODE-ELECTRICAL": "core/command_sig.hpp",
+        "ARMOR-NODE-RADAR": "main/core/command_sig.hpp",
+        "ARMOR-NODE-HMI": "core/command_sig.hpp",
+        "ARMOR-NODE-ALARM": "core/command_sig.hpp"
+      }
+    },
+    "core/hmac_sha256.hpp": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "core/hmac_sha256.hpp",
+        "ARMOR-NODE-ELECTRICAL": "core/hmac_sha256.hpp",
+        "ARMOR-NODE-RADAR": "main/core/hmac_sha256.hpp",
+        "ARMOR-NODE-HMI": "core/hmac_sha256.hpp",
+        "ARMOR-NODE-ALARM": "core/hmac_sha256.hpp"
+      }
     }
   }
 }
