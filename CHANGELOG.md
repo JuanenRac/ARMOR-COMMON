@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The server contract describes the option that signs the orders to the nodes:** the security setting `commands.sign_node_orders` (off by default) makes the server publish the orders to the node itself, the battery orders and the policy of the alarm panels with a nonce and a signature made with the key of the node; the key is given with the token of the node while this option or `commands.require_sig` is on.
+
 - **The way of a spoken order to silence the alarm is a shared vector:** `conformance/voice/silence_path.json` fixes, for every confirmation mode, what the person says, what the server answers first and what the voice service asks next (the order first said, never the proof; the subject `panel:<id>` or `operator`), with the validities in force. The voice service and the server play it.
 
 - **The server contract describes the stable identifier of an activity event:** `POST /api/v1/ai/activity-events` takes an optional `event_id` (8 to 64 letters, digits, `-` and `_`); the same identifier on the same camera is recorded once and the repeat is answered `{ raised: false, reason: duplicate }`. The generated REST types carry the field.

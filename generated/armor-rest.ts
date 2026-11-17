@@ -2187,7 +2187,7 @@ export type NodeToken = {
   node_id: string;
   token: string;
   strict: boolean;
-  /** The key this node checks the signature of the critical commands with (HMAC-SHA256 of node| and its id under the master key of the server); only while the option commands.require_sig is on. Given once to the node; never cached. */
+  /** The key this node checks the signature of the critical commands with (HMAC-SHA256 of node| and its id under the master key of the server); only while the option commands.require_sig or commands.sign_node_orders is on. Given once to the node; never cached. */
   command_key?: string;
 };
 
@@ -3033,6 +3033,8 @@ export type SecuritySettings = {
   "vacation.mode"?: boolean;
   /** The critical commands (alarm_command, electrical_command) are published with a nonce and an HMAC-SHA256 signature of this installation. Off: unsigned. */
   "commands.require_sig"?: boolean;
+  /** The orders to the node itself (node_control_command), the battery orders (solar_battery_command) and the policy of the alarm panels (alarm_policy) are published with a nonce and an HMAC-SHA256 signature made with the key of the node. Off: unsigned. The key is given with the token of the node while this option or commands.require_sig is on. */
+  "commands.sign_node_orders"?: boolean;
   /** The shared ingest token is no longer accepted by the routes the nodes speak to: each node has to hold its own token (derived from the shared one). Off, the default, so boards already in the field keep working; ingest_shared_token_nodes lists the nodes that still used the shared token. ARMOR_INGEST_STRICT=1 is where it starts. Turning it off again lowers security and asks for a new proof of identity. */
   "nodes.ingest_strict"?: boolean;
   /** This server may order a gateway node to write to a Pylontech battery (clock, counters, limits, outputs, serial number, firmware). Off, the default: the battery-ops routes answer 403 battery_write_disabled. ARMOR_BATTERY_WRITE=1 is where it starts. Turning it on lowers security and asks for a new proof of identity. */

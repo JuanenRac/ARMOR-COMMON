@@ -33,7 +33,7 @@ class TandaAContract(unittest.TestCase):
 
     def test_the_options_default_to_the_conservative_value(self) -> None:
         props = self.options()
-        for key in ("capture.on_alarm", "vacation.mode", "commands.require_sig", "admin.backup", "electrical.load_shedding", "electrical.balance", "nodes.ingest_strict", "solar.battery_write", "admin.cm5_update"):
+        for key in ("capture.on_alarm", "vacation.mode", "commands.require_sig", "commands.sign_node_orders", "admin.backup", "electrical.load_shedding", "electrical.balance", "nodes.ingest_strict", "solar.battery_write", "admin.cm5_update"):
             self.assertIs(props[key]["default"], False, key)
         for key in ("panel.proxy_http", "server.alarm_state_signature_node_only", "alarm.duress_hide_trail"):
             self.assertIs(props[key]["default"], False, key)
