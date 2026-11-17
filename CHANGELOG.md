@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The server contract describes the stable identifier of an activity event:** `POST /api/v1/ai/activity-events` takes an optional `event_id` (8 to 64 letters, digits, `-` and `_`); the same identifier on the same camera is recorded once and the repeat is answered `{ raised: false, reason: duplicate }`. The generated REST types carry the field.
+
 - **The server contract describes six more security options and the record of duress disarms:** `panel.proxy_http`, `remote.gate_by_route`, `admin.firmware_refuse_downgrade`, `server.alarm_state_signature_node_only`, `cameras.allow_public_hosts` and `alarm.duress_hide_trail` (`panel.proxy_http`, `server.alarm_state_signature_node_only` and `alarm.duress_hide_trail` are off by default; `remote.gate_by_route` and `admin.firmware_refuse_downgrade` are on, and `cameras.allow_public_hosts` is on, as the server always behaved), and `GET /api/v1/alarm/duress-log` (an administrator with a recent proof of identity only). The generated REST types follow.
 
 - **The server contract describes the cap on node maintenance:** the security setting `nodes.maintenance_max_s` (60 to 86400 seconds, default 600); a node maintenance report longer than the cap is cut to the cap.
