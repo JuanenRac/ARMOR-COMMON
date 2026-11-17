@@ -436,6 +436,12 @@ static void test_node_read_rules() {
   p = read(s, "{\"system\":{\"auto_restart_hours\":0}}"); CHECK(p.empty() && !s.ota_require_board_mark);   // a document without it keeps it
   p = read(s, "{\"security\":{\"ota_check_board\":false,\"ota_require_board_mark\":true}}"); CHECK(p.empty() && !s.ota_check_board && s.ota_require_board_mark && tail_text(s).find("\"ota_check_board\":false,\"ota_require_board_mark\":true") != std::string::npos);
   p = read(s, "{\"security\":{\"ota_check_board\":true}}"); CHECK(p.empty() && s.ota_check_board);
+  // the signature of the orders to the node itself: off until the settings say otherwise, read and written on its own, and a document without it keeps it
+  CHECK(!s.control_require_sig && tail_text(s).find("\"control_require_sig\":false") != std::string::npos);
+  p = read(s, "{\"security\":{\"control_require_sig\":\"yes\"}}"); CHECK(has(p, "security.control_require_sig", "invalid") && !s.control_require_sig);
+  p = read(s, "{\"security\":{\"control_require_sig\":true}}"); CHECK(p.empty() && s.control_require_sig && tail_text(s).find("\"control_require_sig\":true") != std::string::npos);
+  p = read(s, "{\"system\":{\"auto_restart_hours\":0}}"); CHECK(p.empty() && s.control_require_sig);
+  p = read(s, "{\"security\":{\"control_require_sig\":false}}"); CHECK(p.empty() && !s.control_require_sig);
   // Improv over the cable: "setup" until the settings say otherwise; the waits before a lost network or broker is tried again: the waits the firmware always had until the settings say otherwise
   CHECK(s.improv == ImprovMode::kSetup && s.retry_wifi_first_ms == 1000 && s.retry_wifi_max_ms == 30000 && s.retry_mqtt_first_ms == 1000 && s.retry_mqtt_max_ms == 60000 && s.retry_scatter_percent == 20);
   p = read(s, "{\"improv\":{\"mode\":\"sometimes\"}}"); CHECK(has(p, "improv.mode", "invalid") && s.improv == ImprovMode::kSetup);

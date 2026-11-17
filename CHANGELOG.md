@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The signature of the server's commands is part of the shared firmware base:** `core/command_sig.hpp` and `core/hmac_sha256.hpp` (with `control_authorized`, which checks an order of the node-control channel and hands the order gate the order without its nonce and signature) are now copied to the five nodes, and `security.control_require_sig` (off by default) is a shared setting: with it on, the orders to the node itself are read only when the server signed them with the key of the node, and every order is refused when the node has no valid key. The shared control tests cover the signed, unsigned, replayed and keyless cases.
+
 - **The way of a spoken order to silence the alarm is a shared vector:** `conformance/voice/silence_path.json` fixes, for every confirmation mode, what the person says, what the server answers first and what the voice service asks next (the order first said, never the proof; the subject `panel:<id>` or `operator`), with the validities in force. The voice service and the server play it.
 
 - **The server contract describes the stable identifier of an activity event:** `POST /api/v1/ai/activity-events` takes an optional `event_id` (8 to 64 letters, digits, `-` and `_`); the same identifier on the same camera is recorded once and the repeat is answered `{ raised: false, reason: duplicate }`. The generated REST types carry the field.
