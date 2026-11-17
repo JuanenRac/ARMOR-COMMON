@@ -406,6 +406,25 @@ static void test_node_read_rules() {
   p = read(s, "{\"ble\":{\"mode\":\"sometimes\"}}"); CHECK(has(p, "ble.mode", "invalid") && s.ble == BleMode::kSetup);
   p = read(s, "{\"ble\":{\"passkey_mode\":\"random_display\"}}"); CHECK(p.empty() && s.ble_passkey == BlePasskeyMode::kRandomDisplay && std::string(to_text(s.ble_passkey)) == "random_display");
   p = read(s, "{\"ble\":{\"passkey_mode\":\"whatever\"}}"); CHECK(has(p, "ble.passkey_mode", "invalid") && s.ble_passkey == BlePasskeyMode::kRandomDisplay);
+  const auto tail_now = [](const NodeSettings& settings) { json::Writer w; w.begin_object(); node_write_tail(w, settings); w.end_object(); return w.str(); };
+  // the fixed PIN of the Bluetooth pairing: six digits, a secret (never written without the secrets flag), and required by its mode
+  CHECK(s.ble_passkey_pin.empty());
+  p = read(s, "{\"ble\":{\"passkey_mode\":\"fixed\"}}"); CHECK(p.empty() && s.ble_passkey == BlePasskeyMode::kFixed && std::string(to_text(s.ble_passkey)) == "fixed" && has(check(s), "ble.passkey_pin", "required"));
+  p = read(s, "{\"ble\":{\"passkey_pin\":\"12ab56\"}}"); CHECK(p.empty() && has(check(s), "ble.passkey_pin", "invalid"));
+  p = read(s, "{\"ble\":{\"passkey_pin\":\"042042\"}}"); CHECK(p.empty() && s.ble_passkey_pin == "042042" && !has(check(s), "ble.passkey_pin", "invalid") && !has(check(s), "ble.passkey_pin", "required"));
+  CHECK(tail_now(s).find("042042") == std::string::npos && tail_now(s).find("\"passkey_pin_set\":true") != std::string::npos);
+  { json::Writer w; w.begin_object(); node_write_tail(w, s, true); w.end_object(); CHECK(w.str().find("\"passkey_pin\":\"042042\"") != std::string::npos); }
+  p = read(s, "{\"ble\":{\"passkey_pin_clear\":true,\"passkey_mode\":\"derived\"}}"); CHECK(p.empty() && s.ble_passkey_pin.empty() && s.ble_passkey == BlePasskeyMode::kDerived);
+  // the password of the set-up access point: empty as it always was; a good key of its own (8 to 63 characters) or refused
+  CHECK(s.ap.setup_password.empty());
+  p = read(s, "{\"ap\":{\"setup_password\":\"short\"}}"); CHECK(p.empty() && has(check(s), "ap.setup_password", "invalid_key"));
+  p = read(s, "{\"ap\":{\"setup_password\":\"a-good-setup-key\"}}"); CHECK(p.empty() && s.ap.setup_password == "a-good-setup-key" && !has(check(s), "ap.setup_password", "invalid_key"));
+  p = read(s, "{\"ap\":{\"setup_password_clear\":true}}"); CHECK(p.empty() && s.ap.setup_password.empty());
+  // the erase of a refused firmware slot (security.ota_invalidate_rejected): off until it is turned on
+  CHECK(!s.ota_invalidate_rejected && tail_now(s).find("\"ota_invalidate_rejected\":false") != std::string::npos);
+  p = read(s, "{\"security\":{\"ota_invalidate_rejected\":\"yes\"}}"); CHECK(has(p, "security.ota_invalidate_rejected", "invalid") && !s.ota_invalidate_rejected);
+  p = read(s, "{\"security\":{\"ota_invalidate_rejected\":true}}"); CHECK(p.empty() && s.ota_invalidate_rejected && tail_now(s).find("\"ota_invalidate_rejected\":true") != std::string::npos);
+  p = read(s, "{\"security\":{\"ota_invalidate_rejected\":false}}"); CHECK(p.empty() && !s.ota_invalidate_rejected);
   p = read(s, "{\"time\":{\"ntp_enabled\":\"x\",\"ntp\":\"" + std::string(65, 'n') + "\",\"zone\":\"" + std::string(49, 'z') + "\"}}"); CHECK(has(p, "time.ntp_enabled", "invalid") && has(p, "time.ntp", "too_long") && has(p, "time.zone", "too_long"));
   p = read(s, "{\"ui\":{\"language\":\"english\"}}"); CHECK(has(p, "ui.language", "too_long") && s.language == "en");
   p = read(s, "{\"ui\":{\"language\":\"xx\"}}"); CHECK(p.empty() && s.language == "xx" && has(check(s), "ui.language", "invalid"));   // reading accepts a short text; checking is what refuses an unknown language
