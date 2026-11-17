@@ -180,6 +180,10 @@ flowchart LR
 | `tools/voice_cases.py` | 与 ARMOR-VOICE-AI 共用的语音用例 |
 | `tools/make_architecture.py`  `tools/make_structure.py`  `tools/universal_readme_check.py` | README 的图片和版式检查 |
 
+### 运维与工具
+
+* **活动事件只记录一次：** `POST /api/v1/ai/activity-events` 接受可选的 `event_id`（8 到 64 个字母、数字、`-` 和 `_`）；同一摄像头上相同的标识只记录一次，重复提交会收到 `{ raised: false, reason: duplicate }`。生成的 REST 类型包含该字段。
+
 ## ⚙️ 配置
 
 ### 固件构建选项（Kconfig）
