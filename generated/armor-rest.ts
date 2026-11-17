@@ -2467,6 +2467,8 @@ export type PostAiActivityEventsRequest = {
   direction?: "to_left" | "to_right";
   /** false: the profile of the arming mode does not tell the people the alarms go to; the event is still recorded */
   notify?: boolean;
+  /** A stable identifier of the event, the same on every retry of the same event: the server records it once per camera and answers { raised: false, reason: duplicate } to a repeat */
+  event_id?: string;
 };
 
 export type PostAiIgnoreProposalsRequest = {
