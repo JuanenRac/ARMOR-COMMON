@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The way of a spoken order to silence the alarm is a shared vector:** `conformance/voice/silence_path.json` fixes, for every confirmation mode, what the person says, what the server answers first and what the voice service asks next (the order first said, never the proof; the subject `panel:<id>` or `operator`), with the validities in force. The voice service and the server play it.
+
 - **The server contract describes the stable identifier of an activity event:** `POST /api/v1/ai/activity-events` takes an optional `event_id` (8 to 64 letters, digits, `-` and `_`); the same identifier on the same camera is recorded once and the repeat is answered `{ raised: false, reason: duplicate }`. The generated REST types carry the field.
 
 - **The server contract describes six more security options and the record of duress disarms:** `panel.proxy_http`, `remote.gate_by_route`, `admin.firmware_refuse_downgrade`, `server.alarm_state_signature_node_only`, `cameras.allow_public_hosts` and `alarm.duress_hide_trail` (`panel.proxy_http`, `server.alarm_state_signature_node_only` and `alarm.duress_hide_trail` are off by default; `remote.gate_by_route` and `admin.firmware_refuse_downgrade` are on, and `cameras.allow_public_hosts` is on, as the server always behaved), and `GET /api/v1/alarm/duress-log` (an administrator with a recent proof of identity only). The generated REST types follow.
