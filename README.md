@@ -272,10 +272,12 @@ ARMOR-COMMON/
 │   ├── schemas/                   35 JSON Schemas
 │   ├── alarm_codes.json           words of each alarm code
 │   ├── alarm_facts.json           labels of the facts of an alarm
-│   └── battery_ops.json           battery operations
+│   ├── battery_ops.json           battery operations
+│   ├── env_masking.json           rules and vectors that hide secrets of an env file
+│   └── env_masking.py             reference of those rules
 ├── firmware_base/                 the firmware that the five nodes share, once
 ├── conformance/                   1460 accepted and rejected payloads
-├── generated/                     TypeScript and Kotlin types (generated, do not edit)
+├── generated/                     TypeScript, Kotlin and C++ types (generated, do not edit)
 ├── openapi/                       armor-server.yaml, HTTP contract
 ├── asyncapi/                      armor-mqtt.asyncapi.json, MQTT topics
 ├── registry/                      repositories.json, the family list

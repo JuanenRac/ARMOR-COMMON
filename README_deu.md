@@ -256,7 +256,7 @@ Es ist reines Python und eine Reihe von Werkzeugen: Es gibt nichts zu kompiliere
 ## 📂 Struktur des Repositorys
 
 <p align="center">
-  <img src="images/repository-structure.svg" alt="Repository structure of ARMOR-COMMON" width="100%">
+  <img src="images/repository-structure.svg" alt="Repository-Struktur von ARMOR-COMMON" width="100%">
 </p>
 
 <details>
@@ -272,10 +272,12 @@ ARMOR-COMMON/
 │   ├── schemas/                   35 JSON-Schemas
 │   ├── alarm_codes.json           Wörter je Alarmcode
 │   ├── alarm_facts.json           Bezeichnungen der Fakten eines Alarms
-│   └── battery_ops.json           Batterieoperationen
+│   ├── battery_ops.json           Batterieoperationen
+│   ├── env_masking.json           Regeln und Vektoren, die Geheimnisse einer env-Datei verbergen
+│   └── env_masking.py             Referenz dieser Regeln
 ├── firmware_base/                 die Firmware, die die fünf Knoten teilen, nur einmal
 ├── conformance/                   1460 gültige und ungültige Nachrichten
-├── generated/                     TypeScript- und Kotlin-Typen (erzeugt, nicht bearbeiten)
+├── generated/                     TypeScript-, Kotlin- und C++-Typen (erzeugt, nicht bearbeiten)
 ├── openapi/                       armor-server.yaml, HTTP-Vertrag
 ├── asyncapi/                      armor-mqtt.asyncapi.json, MQTT-Topics
 ├── registry/                      repositories.json, Familienliste

@@ -256,7 +256,7 @@ Os testes de anfitrião do firmware partilhado estão em `firmware_base/tests/` 
 ## 📂 Estrutura do repositório
 
 <p align="center">
-  <img src="images/repository-structure.svg" alt="Repository structure of ARMOR-COMMON" width="100%">
+  <img src="images/repository-structure.svg" alt="Estrutura do repositório de ARMOR-COMMON" width="100%">
 </p>
 
 <details>
@@ -272,10 +272,12 @@ ARMOR-COMMON/
 │   ├── schemas/                   35 JSON Schema
 │   ├── alarm_codes.json           palavras de cada alarme
 │   ├── alarm_facts.json           etiquetas dos factos de um alarme
-│   └── battery_ops.json           operações de bateria
+│   ├── battery_ops.json           operações de bateria
+│   ├── env_masking.json           regras e vetores que ocultam os segredos de um ficheiro env
+│   └── env_masking.py             referência dessas regras
 ├── firmware_base/                 o firmware que os cinco nós partilham, uma só vez
 ├── conformance/                   1460 mensagens válidas e recusadas
-├── generated/                     tipos TypeScript e Kotlin (gerados, não editar)
+├── generated/                     tipos TypeScript, Kotlin e C++ (gerados, não editar)
 ├── openapi/                       armor-server.yaml, contrato HTTP
 ├── asyncapi/                      armor-mqtt.asyncapi.json, tópicos MQTT
 ├── registry/                      repositories.json, lista da família

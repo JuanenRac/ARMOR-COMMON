@@ -256,7 +256,7 @@ I test host del firmware condiviso sono in `firmware_base/tests/` (C++, senza ES
 ## 📂 Struttura del repository
 
 <p align="center">
-  <img src="images/repository-structure.svg" alt="Repository structure of ARMOR-COMMON" width="100%">
+  <img src="images/repository-structure.svg" alt="Struttura del repository di ARMOR-COMMON" width="100%">
 </p>
 
 <details>
@@ -272,10 +272,12 @@ ARMOR-COMMON/
 │   ├── schemas/                   35 JSON Schema
 │   ├── alarm_codes.json           parole di ogni allarme
 │   ├── alarm_facts.json           etichette dei fatti di un allarme
-│   └── battery_ops.json           operazioni batteria
+│   ├── battery_ops.json           operazioni batteria
+│   ├── env_masking.json           regole e vettori che nascondono i segreti di un file env
+│   └── env_masking.py             riferimento di quelle regole
 ├── firmware_base/                 il firmware che i cinque nodi condividono, una volta sola
 ├── conformance/                   1460 messaggi validi e rifiutati
-├── generated/                     tipi TypeScript e Kotlin (generati, non modificare)
+├── generated/                     tipi TypeScript, Kotlin e C++ (generati, non modificare)
 ├── openapi/                       armor-server.yaml, contratto HTTP
 ├── asyncapi/                      armor-mqtt.asyncapi.json, topic MQTT
 ├── registry/                      repositories.json, elenco famiglia

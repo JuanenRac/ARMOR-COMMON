@@ -73,14 +73,14 @@
     {
      "name": "schemas/",
      "desc": {
-      "en": "34 JSON Schemas",
-      "es": "34 JSON Schema",
-      "de": "34 JSON-Schemas",
-      "fr": "34 JSON Schema",
-      "it": "34 JSON Schema",
-      "ja": "34 個の JSON Schema",
-      "zh": "34 个 JSON Schema",
-      "pt": "34 JSON Schema"
+      "en": "35 JSON Schemas",
+      "es": "35 JSON Schema",
+      "de": "35 JSON-Schemas",
+      "fr": "35 JSON Schema",
+      "it": "35 JSON Schema",
+      "ja": "35 個の JSON Schema",
+      "zh": "35 个 JSON Schema",
+      "pt": "35 JSON Schema"
      }
     },
     {
@@ -224,14 +224,14 @@
     {
      "name": "conformance/",
      "desc": {
-      "en": "1228 accepted and rejected payloads",
-      "es": "1228 mensajes válidos e inválidos",
-      "de": "1228 gültige und ungültige Nachrichten",
-      "fr": "1228 messages valides et refusés",
-      "it": "1228 messaggi validi e rifiutati",
-      "ja": "受理・拒否 1228 件",
-      "zh": "1228 条有效与无效消息",
-      "pt": "1228 mensagens válidas e recusadas"
+      "en": "1460 accepted and rejected payloads",
+      "es": "1460 mensajes válidos e inválidos",
+      "de": "1460 gültige und ungültige Nachrichten",
+      "fr": "1460 messages valides et refusés",
+      "it": "1460 messaggi validi e rifiutati",
+      "ja": "受理・拒否 1460 件",
+      "zh": "1460 条有效与无效消息",
+      "pt": "1460 mensagens válidas e recusadas"
      }
     },
     {
@@ -361,14 +361,14 @@
     {
      "name": "tests/",
      "desc": {
-      "en": "237 tests",
-      "es": "237 pruebas",
-      "de": "237 Tests",
-      "fr": "237 tests",
-      "it": "237 test",
-      "ja": "237 件のテスト",
-      "zh": "237 项测试",
-      "pt": "237 testes"
+      "en": "654 tests",
+      "es": "654 pruebas",
+      "de": "654 Tests",
+      "fr": "654 tests",
+      "it": "654 test",
+      "ja": "654 件のテスト",
+      "zh": "654 项测试",
+      "pt": "654 testes"
      }
     },
     {

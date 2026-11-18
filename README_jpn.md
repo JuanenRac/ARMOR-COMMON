@@ -256,7 +256,7 @@ python -I tools/armor_ci_validate.py
 ## 📂 リポジトリの構成
 
 <p align="center">
-  <img src="images/repository-structure.svg" alt="Repository structure of ARMOR-COMMON" width="100%">
+  <img src="images/repository-structure.svg" alt="ARMOR-COMMON のリポジトリ構造" width="100%">
 </p>
 
 <details>
@@ -269,13 +269,15 @@ ARMOR-COMMON/
 │   ├── schema.py                  スキーマ解釈器
 │   ├── envelope.py                共通エンベロープ
 │   ├── voice.py                   音声の契約
-│   ├── schemas/                   34 個の JSON Schema
+│   ├── schemas/                   35 個の JSON Schema
 │   ├── alarm_codes.json           アラームコードの文言
 │   ├── alarm_facts.json           アラームの事実の表示名
-│   └── battery_ops.json           バッテリー操作
+│   ├── battery_ops.json           バッテリー操作
+│   ├── env_masking.json           envファイルの秘密を隠すルールとベクター
+│   └── env_masking.py             そのルールのリファレンス
 ├── firmware_base/                 5 つのノードが共有するファームウェア（1 か所）
 ├── conformance/                   受理・拒否 1460 件
-├── generated/                     TypeScript と Kotlin の型（生成物、編集不可）
+├── generated/                     TypeScript・Kotlin・C++ の型（生成物、編集不可）
 ├── openapi/                       armor-server.yaml（HTTP 契約）
 ├── asyncapi/                      armor-mqtt.asyncapi.json（MQTT トピック）
 ├── registry/                      repositories.json（一覧）
