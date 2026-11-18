@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 import shutil
 import sys
 import tempfile
@@ -55,6 +56,16 @@ class ArchitectureTests(unittest.TestCase):
         self.assertEqual(root.get("viewBox"), "0 0 1200 640")
         self.assertIn("ARMOR-VOICE-AI architecture", svg)
         self.assertEqual(svg, A.build_svg(self.spec), "the same JSON always gives the same picture")
+
+    def test_coordinates_carry_at_most_two_decimals(self):
+        # floating-point noise (399.9999999999999) would make the picture differ between machines
+        svg = A.build_svg(self.spec)
+        legend = r'<rect x="(-?[\d.]+)" y="\d+" width="14"'
+        self.assertTrue(re.findall(legend, svg))
+        self.assertEqual([x for x in re.findall(legend, svg) if len(x.partition(".")[2]) > 2], [])
+        spec = copy.deepcopy(self.spec)
+        spec["legend"] = {"tested": "A legend wide enough to land between whole pixels"}
+        self.assertEqual([x for x in re.findall(legend, A.build_svg(spec)) if len(x.partition(".")[2]) > 2], [])
 
     def test_motion_is_smil_and_there_are_no_icons_or_images(self):
         svg = A.build_svg(self.spec)
