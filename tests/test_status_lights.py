@@ -3,9 +3,11 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 TOOL = Path(__file__).resolve().parents[1] / "tools" / "status_lights.py"
 spec = importlib.util.spec_from_file_location("status_lights", TOOL)
@@ -192,6 +194,51 @@ class WhiteLightTests(unittest.TestCase):
     def test_white_is_refused_where_hardware_applies(self):
         bound = {"maturity": "functional", "evidence": "field"}
         self.assertTrue(any("hardware_bound" in line for line in self.problems(bound, status_lights.WHITE)))
+
+
+class StrictEvidenceTests(unittest.TestCase):
+    """--strict-evidence: a manifest that claims bench or field evidence cannot keep a red Hardware row."""
+
+    def run_check(self, lights, strict, **fields):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_repo(Path(tmp), lights, **fields)
+            return status_lights.run_in_ci(repo, strict)
+
+    def test_it_is_off_by_default(self):
+        self.assertEqual(self.run_check([G, G, R, O, G], None, evidence="bench"), [])
+        self.assertEqual(self.run_check([G, G, R, O, G], False, evidence="bench"), [])
+
+    def test_bench_with_a_red_hardware_row_fails_when_strict(self):
+        problems = self.run_check([G, G, R, O, G], True, evidence="bench")
+        self.assertEqual(len(problems), 1)
+        self.assertIn("evidence is bench", problems[0])
+        self.assertTrue(self.run_check([G, G, R, O, G], True, evidence="field"))
+
+    def test_lower_evidence_or_a_row_that_is_not_red_passes_when_strict(self):
+        self.assertEqual(self.run_check([G, G, R, O, G], True, evidence="simulator"), [])
+        self.assertEqual(self.run_check([G, G, O, O, G], True, evidence="bench"), [])
+        self.assertEqual(self.run_check([G, G, R, O, G], True, evidence="bench", extra={"hardware_bound": False}), [])
+
+    def test_the_environment_switches_it_on(self):
+        with mock.patch.dict(os.environ, {"ARMOR_STRICT_EVIDENCE": "1"}):
+            self.assertTrue(self.run_check([G, G, R, O, G], None, evidence="bench"))
+        with mock.patch.dict(os.environ, {"ARMOR_STRICT_EVIDENCE": "0"}):
+            self.assertEqual(self.run_check([G, G, R, O, G], None, evidence="bench"), [])
+
+    def test_the_command_line_flag_and_the_suggestion(self):
+        import contextlib
+        import io
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_repo(Path(tmp), [G, G, R, O, G], evidence="bench")
+            with contextlib.redirect_stderr(io.StringIO()):
+                self.assertEqual(status_lights.main(["--check", "--repo", str(repo)]), 0)
+                self.assertEqual(status_lights.main(["--check", "--strict-evidence", "--repo", str(repo)]), 1)
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                status_lights.main(["--suggest", "--repo", str(repo)])
+            self.assertIn("evidence is bench", out.getvalue())
 
 
 if __name__ == "__main__":

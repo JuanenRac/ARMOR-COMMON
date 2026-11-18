@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **A bench or field evidence without a record, or with a red Hardware row, can be refused:** `status_lights.py --check --strict-evidence` fails when the manifest says bench or field and the Hardware row is red, and `sync_manifests.py --strict-evidence` turns the missing `evidence_record` of such a manifest into a hard finding. Both are off by default (`ARMOR_STRICT_EVIDENCE=1` switches them on for a `ci_validate`); `--suggest` lists the contradiction either way. Seven tests cover it.
+
 ## [0.8.1.5] - Server contract for more security options, signed node orders, shared firmware base additions and spoken-order vectors
 
 - **A name for the broker access lines and a multipart boundary can no longer end in a line break:** the checks of `node_roles` (the identity name that goes into an access list) and of the spoken-turn boundary used `$`, which also matches before a final line break, so `north-1` followed by a newline passed and would have added a line to the text built from it. They now match the whole text. New tests cover these refusals and the cases of `armor-contract-check` that no run reached (a vector without its fields, a broken conformance folder, an out-of-date matrix, a folder with no vectors), the channel lookup, port 0 of a provisioning address and the size of a motion frame.
