@@ -147,6 +147,32 @@ class Inspect(unittest.TestCase):
         item = self.inspect({"armor.project.json": manifest(hardware_bound=True), ".github/workflows/a.yml": "run: simulate\n"})
         self.assertIn("SIMULATION_NOT_CLAIMED", codes(item))
 
+    def test_a_missing_record_is_a_note_unless_the_evidence_is_strict(self) -> None:
+        files = {"armor.project.json": manifest(evidence="bench"), "tests/test_a.py": "x", "CHANGELOG.md": "## [0.1.0]\n"}
+        loose = self.inspect(files)
+        self.assertIn(("NOTE", "HUMAN_RECORD_MISSING"), [(level, code) for level, code, _ in loose["findings"]])
+        with tempfile.TemporaryDirectory() as tmp:
+            write(Path(tmp), files)
+            strict = sm.inspect(sm.Repo(Path(tmp), "WORKTREE"), None, True)
+            self.assertIn(("HARD", "HUMAN_RECORD_MISSING"), [(level, code) for level, code, _ in strict["findings"]])
+            write(Path(tmp), {"armor.project.json": manifest(evidence="bench", evidence_record="docs/bench.md")})
+            recorded = sm.inspect(sm.Repo(Path(tmp), "WORKTREE"), None, True)
+            self.assertNotIn("HUMAN_RECORD_MISSING", codes(recorded))
+
+    def test_the_environment_and_the_flag_make_it_strict(self) -> None:
+        before = sm.MANIFEST
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp) / "ARMOR-X"
+                root.mkdir()
+                write(root, {"armor.project.json": manifest(evidence="bench"), "tests/test_a.py": "x", "CHANGELOG.md": "## [0.1.0]\n"})
+                with mock.patch.dict("os.environ", {"ARMOR_STRICT_EVIDENCE": "1"}):
+                    self.assertTrue(any("HUMAN_RECORD_MISSING" in line for line in sm.run_in_ci(root)))
+                with mock.patch.dict("os.environ", {"ARMOR_STRICT_EVIDENCE": ""}):
+                    self.assertEqual([line for line in sm.run_in_ci(root) if "HUMAN_RECORD_MISSING" in line], [])
+        finally:
+            sm.MANIFEST = before
+
     def test_github_facts(self) -> None:
         gh = mock.Mock()
         gh.release.return_value, gh.ci.return_value = "v0.9.0", "failure"
