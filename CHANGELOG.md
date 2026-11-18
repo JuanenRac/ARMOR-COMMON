@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The file tree of the README is drawn from the structure source:** the text tree in the eight READMEs is generated from `docs/structure.json`, the file that also draws the picture, so the two cannot disagree; it states the current counts (35 schemas, 1460 conformance payloads, 654 tests) and lists the secret-masking rules and the C++ types.
 - **The README test counts follow the new test of the diagram coordinates:** 654 tests in the eight READMEs.
 - **The Architecture picture rounds its coordinates to two decimals:** the legend positions no longer carry floating-point noise such as 399.9999999999999, so `make_architecture.py --check` gives the same answer on every machine, and a test keeps it so.
 - **The manifest says simulator evidence until the record of a test on real hardware is kept:** it said bench with no record, so the Integration light goes down to orange in the eight READMEs (a person raises them again with the record).

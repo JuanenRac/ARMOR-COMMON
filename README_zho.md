@@ -256,7 +256,7 @@ python -I tools/armor_ci_validate.py
 ## 📂 仓库结构
 
 <p align="center">
-  <img src="images/repository-structure.svg" alt="Repository structure of ARMOR-COMMON" width="100%">
+  <img src="images/repository-structure.svg" alt="ARMOR-COMMON 的仓库结构" width="100%">
 </p>
 
 <details>
@@ -272,10 +272,12 @@ ARMOR-COMMON/
 │   ├── schemas/                   35 个 JSON Schema
 │   ├── alarm_codes.json           报警码的文字
 │   ├── alarm_facts.json           报警事实的标签
-│   └── battery_ops.json           电池操作
+│   ├── battery_ops.json           电池操作
+│   ├── env_masking.json           隐藏env文件机密的规则与向量
+│   └── env_masking.py             这些规则的参考实现
 ├── firmware_base/                 五个节点共用的固件（只此一份）
 ├── conformance/                   1460 条有效与无效消息
-├── generated/                     TypeScript 和 Kotlin 类型（自动生成，勿编辑）
+├── generated/                     TypeScript、Kotlin 和 C++ 类型（自动生成，勿编辑）
 ├── openapi/                       armor-server.yaml（HTTP 契约）
 ├── asyncapi/                      armor-mqtt.asyncapi.json（MQTT 主题）
 ├── registry/                      repositories.json（清单）
