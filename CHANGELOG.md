@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The manifest says simulator evidence until the record of a test on real hardware is kept:** it said bench with no record, so the Integration light goes down to orange in the eight READMEs (a person raises them again with the record).
 - **A bench or field evidence without a record, or with a red Hardware row, can be refused:** `status_lights.py --check --strict-evidence` fails when the manifest says bench or field and the Hardware row is red, and `sync_manifests.py --strict-evidence` turns the missing `evidence_record` of such a manifest into a hard finding. Both are off by default (`ARMOR_STRICT_EVIDENCE=1` switches them on for a `ci_validate`); `--suggest` lists the contradiction either way. Seven tests cover it.
 
 ## [0.8.1.5] - Server contract for more security options, signed node orders, shared firmware base additions and spoken-order vectors
