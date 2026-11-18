@@ -226,6 +226,9 @@ class StrictEvidenceTests(unittest.TestCase):
         with mock.patch.dict(os.environ, {"ARMOR_STRICT_EVIDENCE": "0"}):
             self.assertEqual(self.run_check([G, G, R, O, G], None, evidence="bench"), [])
 
+    def test_a_state_without_a_manifest_has_no_contradiction(self):
+        self.assertEqual(status_lights.evidence_contradictions(Path("ARMOR-X"), {"items": []}), [])
+
     def test_the_command_line_flag_and_the_suggestion(self):
         import contextlib
         import io
