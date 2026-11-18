@@ -2163,6 +2163,15 @@ export type NodePanelList = {
   panels: NodePanel[];
 };
 
+export type NodePanelTicket = {
+  /** The address to open: the origin of the panels and /enter/ with the ticket; it is good for one use and the seconds of expires_in_s */
+  url: string;
+  /** The origin the panels are served from (scheme, host and port) */
+  origin: string;
+  /** How many seconds the ticket can still be exchanged */
+  expires_in_s: number;
+};
+
 export type NodeProvisioned = {
   ok: boolean;
   /** False when the panel of the node could not be written to */
@@ -3019,6 +3028,8 @@ export type SecuritySettings = {
   /** The server refuses the text of an environment file from a maintenance agent that does not hide the secrets itself (off - an older agent is accepted and the server hides them; on - the answer is 409 agent_not_masking and no secret is relayed) */
   "admin.require_masked_agent"?: boolean;
   "panel.live_events"?: boolean;
+  /** The panels of the nodes are served from a second origin (another port, or another name) and not from the origin of the API, entered with a ticket of one use (POST /api/v1/admin/node-panels/{id}/ticket), so that a script of a node runs without the session of the administrator who opens it. Off, the default: the panels are served from the origin of the API as they always were. While it is on, /api/v1/nodes/{id}/panel/ answers 403 panel_origin_required and the API refuses any request whose Origin is the second origin (403 panel_origin_forbidden). */
+  "panel.separate_origin"?: boolean;
   /** The account of a wall panel may read the check before arming (GET /api/v1/preflight) to show what is wrong when the person presses Arm. Off: it answers 403 and the panel arms as before. */
   "panel.preflight"?: boolean;
   /** The account of a wall panel may read a still picture of a camera (GET /api/v1/cameras/{id}/snapshot), at most one every two seconds for each camera. Off: it answers 403. */
