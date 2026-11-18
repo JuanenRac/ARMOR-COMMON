@@ -35,6 +35,6 @@ def acl_block(role: str, name: str) -> str:
 
 
 def _checked(name: str) -> str:
-    if not _NAME.match(name):
+    if not _NAME.fullmatch(name):   # fullmatch: "$" would also let a name end in a line break through
         raise ValueError("the name must match ^[a-z0-9][a-z0-9_-]{0,63}$")
     return name

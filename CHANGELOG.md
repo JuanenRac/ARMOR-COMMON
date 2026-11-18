@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **A name for the broker access lines and a multipart boundary can no longer end in a line break:** the checks of `node_roles` (the identity name that goes into an access list) and of the spoken-turn boundary used `$`, which also matches before a final line break, so `north-1` followed by a newline passed and would have added a line to the text built from it. They now match the whole text. New tests cover these refusals and the cases of `armor-contract-check` that no run reached (a vector without its fields, a broken conformance folder, an out-of-date matrix, a folder with no vectors), the channel lookup, port 0 of a provisioning address and the size of a motion frame.
+
 - **The server contract describes the panels of the nodes on an origin of their own:** the security setting `panel.separate_origin` (off by default), the route `POST /api/v1/admin/node-panels/{id}/ticket` with its typed answers (`NodePanelTicket`: the address to open, the origin and the seconds the ticket lasts) and the refusal `panel_origin_required` of the old route are in the OpenAPI description, with the generated REST types and a section of `docs/CONTRACTS.md`.
 
 - **The shared firmware base can erase a refused firmware slot, take a fixed Bluetooth PIN and open the set-up access point with a password of its own:** `security.ota_invalidate_rejected`, `ble.passkey_mode` `fixed` with `ble.passkey_pin`, and `ap.setup_password` are part of the shared node settings, the Bluetooth channel, the updater and the network plan, all off or empty by default, with their tests.

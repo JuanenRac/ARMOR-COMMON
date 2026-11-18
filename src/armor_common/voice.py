@@ -41,7 +41,7 @@ def new_boundary() -> str:
 
 
 def _check_boundary(boundary: str) -> None:
-    if not _BOUNDARY_CHARS.match(boundary) or boundary.endswith("."):
+    if not _BOUNDARY_CHARS.fullmatch(boundary) or boundary.endswith("."):   # fullmatch: "$" would also let a boundary end in a line break through
         raise VoiceTurnError(400, "bad_multipart")
 
 
