@@ -165,7 +165,7 @@ flowchart LR
 ### 模式、向量与 OpenAPI
 
 * **40 个 JSON Schema**（`src/armor_common/schemas/`）：遥测、健康、命令、节点信息、节点健康、节点控制（命令与结果）、节点维护、太阳能逆变器和电池（含命令与结果）、电气（含命令与结果）、报警（状态、命令、结果、策略和区域）、网络（含其指令）、连接与系统事件、雷达事件、服务器警报、布防配置、布防模式、设备状态、诊断令牌以及语音轮次。
-* **1460 个一致性向量**（`conformance/`，34 个文件，每条消息一个），由本仓库、ARMOR-SERVER 和固件仓库的检查运行。
+* **1460 个一致性向量**（`conformance/`，40 个文件，每条消息一个），由本仓库、ARMOR-SERVER 和固件仓库的检查运行。
 * **OpenAPI** `openapi/armor-server.yaml`：249 条路径、322 个操作，每个都有访问规则，且每个请求体、响应和错误都有命名模式。测试确认服务器注册的路由与描述完全一致。语音轮次以字节传输（见 [docs/CONTRACTS.md](docs/CONTRACTS.md)）。
 
 ### 命令行工具
@@ -269,7 +269,7 @@ ARMOR-COMMON/
 │   ├── schema.py                  模式解释器
 │   ├── envelope.py                通用信封
 │   ├── voice.py                   语音契约
-│   ├── schemas/                   35 个 JSON Schema
+│   ├── schemas/                   40 个 JSON Schema
 │   ├── alarm_codes.json           报警码的文字
 │   ├── alarm_facts.json           报警事实的标签
 │   ├── battery_ops.json           电池操作

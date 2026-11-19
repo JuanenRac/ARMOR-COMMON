@@ -165,7 +165,7 @@ flowchart LR
 ### Schémas, vecteurs et OpenAPI
 
 * **40 JSON Schema** dans `src/armor_common/schemas/` : télémétrie, santé, commande, informations du nœud, santé du nœud, contrôle du nœud (commande et résultat), maintenance du nœud, onduleur et batterie solaires (avec leurs commandes et résultats), électrique (avec commande et résultat), alarme (état, commande, résultat, politique et zones), réseau (avec ses ordres), événements de connexion et système, événements radar, alerte du serveur, profil d'armement, modes d'armement, état d'appareil, jetons de diagnostic et le tour de parole.
-* **1460 vecteurs de conformité** dans `conformance/` (38 fichiers, un par message), exécutés par ce dépôt, par ARMOR-SERVER et par les vérifications des dépôts de firmware.
+* **1460 vecteurs de conformité** dans `conformance/` (40 fichiers, un par message), exécutés par ce dépôt, par ARMOR-SERVER et par les vérifications des dépôts de firmware.
 * **OpenAPI** `openapi/armor-server.yaml` : 249 chemins et 322 opérations, chacun avec sa règle d'accès et un schéma nommé pour chaque corps, réponse et erreur. Un test vérifie que les routes enregistrées par le serveur sont exactement celles décrites. Le tour de parole voyage en octets (voir [docs/CONTRACTS.md](docs/CONTRACTS.md)).
 
 ### Outils en ligne de commande
@@ -269,7 +269,7 @@ ARMOR-COMMON/
 │   ├── schema.py                  l'interpréteur de schémas
 │   ├── envelope.py                l'enveloppe commune
 │   ├── voice.py                   le contrat vocal
-│   ├── schemas/                   35 JSON Schema
+│   ├── schemas/                   40 JSON Schema
 │   ├── alarm_codes.json           mots de chaque alarme
 │   ├── alarm_facts.json           libellés des faits d'une alarme
 │   ├── battery_ops.json           opérations de batterie
