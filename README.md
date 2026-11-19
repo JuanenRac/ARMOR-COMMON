@@ -62,7 +62,7 @@ Each line is one part of this repository and the light says how far it is today.
 | Protocols and data | 🟡 | Only the radar node's messages are used every day with a real board and the server; those of the other nodes are checked against stand-ins. |
 | Integration | 🟠 | The firmware base is checked to be identical in every node; the Kotlin types are generated but not yet used by the Android app, which keeps its own parsing. |
 | Hardware | 🟠 | Only the radar node has run this shared firmware on a board; the other four nodes have not. |
-| Security | 🟡 | The firmware signature check and the derivation of the Bluetooth PIN are tested on the host; there has been no independent review. |
+| Security | 🟠 | The firmware signature check and the derivation of the Bluetooth PIN are tested on the host; there has been no independent review. |
 | Documentation | 🟢 | Eight languages, the OpenAPI file, the conformance guide and the changelog are up to date. |
 
 ## 🎯 Overview

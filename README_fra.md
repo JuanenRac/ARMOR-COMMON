@@ -62,7 +62,7 @@ Chaque ligne est une partie de ce dépôt et le feu dit où elle en est aujourd'
 | Protocoles et données | 🟡 | Seuls les messages du nœud radar sont utilisés chaque jour avec une vraie carte et le serveur ; ceux des autres nœuds sont vérifiés par rapport à des simulations. |
 | Intégration | 🟠 | On vérifie que la base de firmware est identique dans chaque nœud ; les types Kotlin sont générés mais l'application Android ne les utilise pas encore, elle garde son propre analyseur. |
 | Matériel | 🟠 | Seul le nœud radar a exécuté ce firmware partagé sur une carte ; les quatre autres nœuds ne l'ont pas fait. |
-| Sécurité | 🟡 | La vérification de la signature du firmware et la dérivation du PIN Bluetooth sont testées sur l'hôte ; il n'y a pas eu de revue indépendante. |
+| Sécurité | 🟠 | La vérification de la signature du firmware et la dérivation du PIN Bluetooth sont testées sur l'hôte ; il n'y a pas eu de revue indépendante. |
 | Documentation | 🟢 | Huit langues, le fichier OpenAPI, le guide de conformité et le journal des modifications sont à jour. |
 
 ## 🎯 Présentation

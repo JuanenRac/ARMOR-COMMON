@@ -49,7 +49,10 @@ class Kinds(unittest.TestCase):
         self.assertEqual(status_lights.kind_of("Tests"), "tests")
         self.assertEqual(status_lights.kind_of("Documentation"), "docs")
         self.assertEqual(status_lights.kind_of("Software"), "software")
-        self.assertEqual(status_lights.kind_of("Security"), "other")
+        self.assertEqual(status_lights.kind_of("Security"), "security")
+        self.assertEqual(status_lights.kind_of("Updates"), "updates")
+        self.assertEqual(status_lights.kind_of("Writing to equipment"), "writing")
+        self.assertEqual(status_lights.kind_of("Deployment"), "other")
 
 
 class Ceilings(unittest.TestCase):
@@ -57,6 +60,37 @@ class Ceilings(unittest.TestCase):
         for evidence, top in (("none", O), ("host-test", O), ("simulator", O), ("bench", Y), ("field", G)):
             self.assertEqual(status_lights.ceiling("hardware", {"evidence": evidence}, True, True, "unknown")[0], top, evidence)
             self.assertEqual(status_lights.ceiling("integration", {"evidence": evidence}, True, True, "unknown")[0], top, evidence)
+
+    def test_security_updates_writing_share_the_hardware_ceiling_when_bound(self):
+        for kind in ("security", "updates", "writing"):
+            for evidence, top in (("none", O), ("host-test", O), ("simulator", O), ("bench", Y)):
+                self.assertEqual(status_lights.ceiling(kind, {"evidence": evidence}, True, True, "green")[0], top, (kind, evidence))
+            self.assertEqual(status_lights.ceiling(kind, {}, True, True, "green")[0], O, kind)
+        for kind in ("updates", "writing"):
+            self.assertEqual(status_lights.ceiling(kind, {"evidence": "field"}, True, True, "green")[0], G)
+
+    def test_security_is_never_green_even_with_field_evidence_or_no_hardware(self):
+        self.assertEqual(status_lights.ceiling("security", {"evidence": "field"}, True, True, "green")[0], Y)
+        self.assertEqual(status_lights.ceiling("security", {"evidence": "field", "hardware_bound": False}, True, True, "green")[0], Y)
+        self.assertEqual(status_lights.ceiling("security", {"evidence": "none", "hardware_bound": False}, True, True, "green")[0], Y)
+
+    def test_updates_and_writing_without_hardware_are_not_limited_by_evidence(self):
+        for kind in ("updates", "writing"):
+            self.assertEqual(status_lights.ceiling(kind, {"evidence": "none", "hardware_bound": False}, True, True, "green")[0], G)
+
+    def test_a_simulator_manifest_lowers_security_to_orange_in_the_table(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_repo(Path(tmp), [G, G, O, O, G], evidence="simulator")
+            for name in NAMES:
+                path = repo / name
+                text = path.read_text(encoding="utf-8").replace("| Integration |", "| Security | " + Y + " | s |\n| Updates | " + G + " | u |\n| Integration |", 1)
+                path.write_text(text.replace("\\n", "\n"), encoding="utf-8")
+            problems = status_lights.run_in_ci(repo)
+            self.assertEqual(len(problems), 2)
+            self.assertTrue(any("Security" in p for p in problems) and any("Updates" in p for p in problems))
+            status_lights.main(["--apply", "--repo", str(repo), "--ci", "off"])
+            self.assertEqual(status_lights.run_in_ci(repo), [])
+            self.assertIn("| Security | " + O + " |", (repo / "README_por.md").read_text(encoding="utf-8"))
 
     def test_evidence_does_not_limit_software(self):
         self.assertEqual(status_lights.ceiling("software", {"evidence": "none"}, True, True, "green")[0], G)
@@ -150,6 +184,16 @@ class Apply(unittest.TestCase):
             (source / "ARMOR_TEST.py").write_text(text, encoding="utf-8")
             status_lights.main(["--apply", "--repo", str(repo), "--ci", "off"])
             self.assertEqual((source / "ARMOR_TEST.py").read_text(encoding="utf-8"), text.replace('"hardware",\n      "green"', '"hardware",\n      "orange"').replace('"integration",\n      "green"', '"integration",\n      "orange"'))
+
+    def test_apply_patches_a_source_written_with_single_quotes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_repo(Path(tmp), [G, G, G, G, G], evidence="host-test")
+            source = Path(tmp) / "ARMOR-DOCS" / "tools" / "readme_src" / "repos"
+            source.mkdir(parents=True)
+            text = "FACTS = {\n 'status': [['software', 'green'],\n            ['tests', 'green'],\n            ['hardware', 'green'],\n            ['integration', 'green'],\n            ['docs', 'green']],\n 'other': {'status': {'software': 'green words'}},\n}\n"
+            (source / "ARMOR_TEST.py").write_text(text, encoding="utf-8")
+            status_lights.main(["--apply", "--repo", str(repo), "--ci", "off"])
+            self.assertEqual((source / "ARMOR_TEST.py").read_text(encoding="utf-8"), text.replace("['hardware', 'green']", "['hardware', 'orange']").replace("['integration', 'green']", "['integration', 'orange']"))
 
     def test_apply_patches_the_sections_of_the_urtc_generator(self):
         with tempfile.TemporaryDirectory() as tmp:

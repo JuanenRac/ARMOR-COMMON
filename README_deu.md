@@ -62,7 +62,7 @@ Jede Zeile ist ein Teil dieses Repositorys, und die Ampel sagt, wie weit er heut
 | Protokolle und Daten | 🟡 | Nur die Nachrichten des Radar-Knotens werden täglich mit einer echten Platine und dem Server genutzt; die der anderen Knoten werden gegen Nachbildungen geprüft. |
 | Integration | 🟠 | Es wird geprüft, dass die Firmware-Basis in jedem Knoten identisch ist; die Kotlin-Typen sind erzeugt, werden von der Android-App aber noch nicht genutzt, sie behält ihr eigenes Parsing. |
 | Hardware | 🟠 | Nur der Radar-Knoten hat diese gemeinsame Firmware auf einer Platine ausgeführt; die anderen vier Knoten nicht. |
-| Sicherheit | 🟡 | Die Prüfung der Firmware-Signatur und die Ableitung der Bluetooth-PIN sind auf dem Host getestet; es gab keine unabhängige Prüfung. |
+| Sicherheit | 🟠 | Die Prüfung der Firmware-Signatur und die Ableitung der Bluetooth-PIN sind auf dem Host getestet; es gab keine unabhängige Prüfung. |
 | Dokumentation | 🟢 | Acht Sprachen, die OpenAPI-Datei, der Konformitätsleitfaden und das Änderungsprotokoll sind aktuell. |
 
 ## 🎯 Überblick
