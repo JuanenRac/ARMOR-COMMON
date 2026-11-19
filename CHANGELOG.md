@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The test counts follow the new tests of the status lights:** 659 tests in the eight READMEs, in the figures of the structure and in its picture.
+
 - **The file tree of the README is drawn from the structure source:** the text tree in the eight READMEs is generated from `docs/structure.json`, the file that also draws the picture, so the two cannot disagree; it states the current counts (35 schemas, 1460 conformance payloads, 654 tests) and lists the secret-masking rules and the C++ types.
 - **The README test counts follow the new test of the diagram coordinates:** 654 tests in the eight READMEs.
 - **The Architecture picture rounds its coordinates to two decimals:** the legend positions no longer carry floating-point noise such as 399.9999999999999, so `make_architecture.py --check` gives the same answer on every machine, and a test keeps it so.
