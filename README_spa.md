@@ -62,7 +62,7 @@ Cada línea es una parte de este repositorio y la luz dice hasta dónde llega ho
 | Protocolos y datos | 🟡 | Solo los mensajes del nodo radar se usan a diario con una placa real y el servidor; los de los demás nodos se comprueban contra simulaciones. |
 | Integración | 🟠 | Se comprueba que la base de firmware sea idéntica en cada nodo; los tipos de Kotlin están generados pero la app de Android aún no los usa, porque conserva su propio análisis. |
 | Hardware | 🟠 | Solo el nodo radar ha ejecutado este firmware compartido en una placa; los otros cuatro nodos no. |
-| Seguridad | 🟡 | La comprobación de la firma del firmware y la derivación del PIN Bluetooth están probadas en el host; no ha habido una revisión independiente. |
+| Seguridad | 🟠 | La comprobación de la firma del firmware y la derivación del PIN Bluetooth están probadas en el host; no ha habido una revisión independiente. |
 | Documentación | 🟢 | Ocho idiomas, el archivo OpenAPI, la guía de conformidad y el historial de cambios están al día. |
 
 ## 🎯 Resumen
