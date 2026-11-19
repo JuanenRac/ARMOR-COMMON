@@ -165,7 +165,7 @@ flowchart LR
 ### Esquemas, vectores y OpenAPI
 
 * **40 JSON Schema** en `src/armor_common/schemas/`: telemetría, salud, orden, información del nodo, salud del nodo, control del nodo (orden y resultado), mantenimiento del nodo, inversor y batería solares (con sus órdenes y resultados), eléctrico (con orden y resultado), alarma (estado, orden, resultado, política y zonas), red (con sus órdenes), eventos de conexión y del sistema, eventos de radar, alerta del servidor, perfil de armado, modos de armado, estado de dispositivo, tokens de diagnóstico y el turno de voz.
-* **1460 vectores de conformidad** en `conformance/` (38 ficheros, uno por mensaje), ejecutados por este repositorio, por ARMOR-SERVER y por las comprobaciones de los repositorios de firmware.
+* **1460 vectores de conformidad** en `conformance/` (40 ficheros, uno por mensaje), ejecutados por este repositorio, por ARMOR-SERVER y por las comprobaciones de los repositorios de firmware.
 * **OpenAPI** `openapi/armor-server.yaml`: 249 rutas y 322 operaciones, cada una con su regla de acceso y un esquema con nombre para cada cuerpo, respuesta y error. Una prueba comprueba que las rutas que registra el servidor son exactamente las descritas. El turno de voz viaja como bytes (ver [docs/CONTRACTS.md](docs/CONTRACTS.md)).
 
 ### Herramientas de línea de órdenes
@@ -269,7 +269,7 @@ ARMOR-COMMON/
 │   ├── schema.py                  el intérprete de esquemas
 │   ├── envelope.py                el sobre común
 │   ├── voice.py                   el contrato de voz
-│   ├── schemas/                   35 JSON Schema
+│   ├── schemas/                   40 JSON Schema
 │   ├── alarm_codes.json           palabras de cada alarma
 │   ├── alarm_facts.json           etiquetas de los hechos de una alarma
 │   ├── battery_ops.json           operaciones de batería

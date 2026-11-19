@@ -165,7 +165,7 @@ flowchart LR
 ### Schemas, Vektoren und OpenAPI
 
 * **40 JSON-Schemas** in `src/armor_common/schemas/`: Telemetrie, Zustand, Befehl, Knoteninformation, Knotenzustand, Knotensteuerung (Befehl und Ergebnis), Knotenwartung, Solar-Wechselrichter und -Batterie (mit Befehlen und Ergebnissen), Elektro (mit Befehl und Ergebnis), Alarm (Zustand, Befehl, Ergebnis, Richtlinie und Zonen), Netzwerk (mit Aufträgen), Verbindungs- und Systemereignisse, Radar-Ereignisse, Server-Alarm, Scharfschaltprofil, Scharfschaltmodi, Gerätezustand, Diagnose-Token und der Sprachturn.
-* **1460 Konformitätsvektoren** in `conformance/` (38 Dateien, eine je Nachricht), ausgeführt von diesem Repository, von ARMOR-SERVER und von den Prüfungen der Firmware-Repositorys.
+* **1460 Konformitätsvektoren** in `conformance/` (40 Dateien, eine je Nachricht), ausgeführt von diesem Repository, von ARMOR-SERVER und von den Prüfungen der Firmware-Repositorys.
 * **OpenAPI** `openapi/armor-server.yaml`: 249 Pfade und 322 Operationen, jeweils mit Zugriffsregel und einem benannten Schema für jeden Inhalt, jede Antwort und jeden Fehler. Ein Test prüft, dass die vom Server registrierten Routen genau die beschriebenen sind. Der Sprachturn wird als Bytes übertragen (siehe [docs/CONTRACTS.md](docs/CONTRACTS.md)).
 
 ### Kommandozeilen-Werkzeuge
@@ -269,7 +269,7 @@ ARMOR-COMMON/
 │   ├── schema.py                  der Schema-Interpreter
 │   ├── envelope.py                der gemeinsame Umschlag
 │   ├── voice.py                   der Sprachvertrag
-│   ├── schemas/                   35 JSON-Schemas
+│   ├── schemas/                   40 JSON-Schemas
 │   ├── alarm_codes.json           Wörter je Alarmcode
 │   ├── alarm_facts.json           Bezeichnungen der Fakten eines Alarms
 │   ├── battery_ops.json           Batterieoperationen
