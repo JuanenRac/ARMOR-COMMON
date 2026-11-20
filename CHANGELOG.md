@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The contract pins of all the consumers are at 0.8.1.5** after a green run of the reverse dependencies of the eighteen repositories of the matrix and a green check of the watch app against this checkout; `registry/compat.json` follows the pins.
 - **The structure generator can write a figure read from the code:** `tools/make_structure.py` resolves `{{fact:NAME|LAST}}` in the descriptions of `docs/structure.json` where the documentation tools are next to the repository, and writes LAST (the figure it had when last written) everywhere else, so a repository still builds on its own.
 - **The test counts of the repository structure are read from the code:** the tests, test modules, JSON Schemas and conformance payloads that `docs/structure.json` states are `{{fact:...}}` markers now, so the tree and the picture follow the tests instead of a number typed by hand.
 - **The test counts follow the new tests of the status lights:** 659 tests in the eight READMEs, in the figures of the structure and in its picture.
