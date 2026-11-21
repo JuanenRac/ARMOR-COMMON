@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The contract pins of the nineteen consumers are at 0.8.1.6** after a green run of the reverse dependencies on the current main: the registry of pins and the compatibility matrix now name the version that every consumer was checked against.
+
 ## [0.8.1.6] - Contract pins at the current version, README facts read from the code and structure figures that follow the tests
 
 - **The contract pins of all the consumers are at 0.8.1.5** after a green run of the reverse dependencies of the eighteen repositories of the matrix and a green check of the watch app against this checkout; `registry/compat.json` follows the pins.
