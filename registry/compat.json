@@ -8,7 +8,7 @@
       "kind": "APP",
       "node": false,
       "feeds": [],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-DEVOPS",
@@ -17,28 +17,28 @@
       "feeds": [
         "ARMOR-STUDIO"
       ],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-DOCS",
       "kind": "DOCS",
       "node": false,
       "feeds": [],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-HARDWARE",
       "kind": "HARDWARE",
       "node": false,
       "feeds": [],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-IOS-CONTROL",
       "kind": "APP",
       "node": false,
       "feeds": [],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-NETWORK",
@@ -47,7 +47,7 @@
       "feeds": [
         "ARMOR-SERVER"
       ],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-NODE-ALARM",
@@ -56,7 +56,7 @@
       "feeds": [
         "ARMOR-SERVER"
       ],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-NODE-ELECTRICAL",
@@ -65,14 +65,14 @@
       "feeds": [
         "ARMOR-SERVER"
       ],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-NODE-HMI",
       "kind": "FIRMWARE",
       "node": true,
       "feeds": [],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-NODE-RADAR",
@@ -81,7 +81,7 @@
       "feeds": [
         "ARMOR-SERVER"
       ],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-NODE-SOLAR",
@@ -90,7 +90,7 @@
       "feeds": [
         "ARMOR-SERVER"
       ],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-SERVER",
@@ -102,7 +102,7 @@
         "ARMOR-NODE-HMI",
         "ARMOR-STUDIO"
       ],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-SERVER-AI",
@@ -111,7 +111,7 @@
       "feeds": [
         "ARMOR-SERVER"
       ],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-SIMULATOR",
@@ -120,21 +120,21 @@
       "feeds": [
         "ARMOR-SERVER"
       ],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-STUDIO",
       "kind": "APP",
       "node": false,
       "feeds": [],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-UPDATER",
       "kind": "TOOL",
       "node": false,
       "feeds": [],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-VISION",
@@ -143,7 +143,7 @@
       "feeds": [
         "ARMOR-SERVER-AI"
       ],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-VOICE-AI",
@@ -152,14 +152,14 @@
       "feeds": [
         "ARMOR-SERVER"
       ],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     },
     {
       "name": "ARMOR-WATCH",
       "kind": "APP",
       "node": false,
       "feeds": [],
-      "checked_against": "0.8.1.5"
+      "checked_against": "0.8.1.6"
     }
   ]
 }
