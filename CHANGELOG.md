@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The shared validator checks that the scripts served to a browser parse:** `tools/armor_ci_validate.py` runs `node --check` over the scripts under `panel/` and `public/`, so a missing comma in a table of texts fails the build instead of leaving a blank page. A repository with no such script is not affected.
 - **The contract pins of the nineteen consumers are at 0.8.1.6** after a green run of the reverse dependencies on the current main: the registry of pins and the compatibility matrix now name the version that every consumer was checked against.
 
 ## [0.8.1.6] - Contract pins at the current version, README facts read from the code and structure figures that follow the tests
