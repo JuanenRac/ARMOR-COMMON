@@ -79,6 +79,7 @@ std::mutex g_out_lock;
 std::deque<Outgoing> g_out;
 SemaphoreHandle_t g_out_ready = nullptr;
 constexpr std::size_t kOutMax = 48;
+constexpr std::int64_t kSlowPublishMs = 2000;   // a publish on a local network takes a few milliseconds
 
 void outgoing_task(void*) {
   for (;;) {
@@ -91,8 +92,17 @@ void outgoing_task(void*) {
         next = std::move(g_out.front());
         g_out.pop_front();
       }
-      if (g_connected && client_publish(next.topic.c_str(), next.payload.c_str(), static_cast<int>(next.payload.size()), next.retained ? 1 : 0, next.retained ? 1 : 0) >= 0) ++g_published;
-      else ++g_dropped;
+      if (!g_connected) { ++g_dropped; continue; }
+      const std::int64_t began_us = esp_timer_get_time();
+      const bool sent = client_publish(next.topic.c_str(), next.payload.c_str(), static_cast<int>(next.payload.size()), next.retained ? 1 : 0, next.retained ? 1 : 0) >= 0;
+      const std::int64_t took_ms = (esp_timer_get_time() - began_us) / 1000;
+      if (sent) ++g_published; else ++g_dropped;
+      // A message that could not be written, or took seconds, is said with what tells why: its size, the time and the internal memory at that moment.
+      if (!sent || took_ms >= kSlowPublishMs) {
+        const membudget::Snapshot now = memory::snapshot();
+        ESP_LOGW(kTag, "a message of %u bytes %s after %d ms (%u KB of internal memory free, biggest block %u KB, %s)", static_cast<unsigned>(next.payload.size()), sent ? "was written only" : "was not sent",
+                 static_cast<int>(took_ms), static_cast<unsigned>(now.internal_free / 1024u), static_cast<unsigned>(now.internal_largest / 1024u), next.topic.c_str());
+      }
     }
   }
 }
@@ -167,7 +177,15 @@ void on_mqtt(void*, esp_event_base_t, int32_t event_id, void* data) {
       for (const Subscription& subscription : g_subscriptions) if (subscription.on_connected) subscription.on_connected();
       break;
     case MQTT_EVENT_DISCONNECTED: g_connected = false; nodeguard::note_broker_connected(false); ESP_LOGW(kTag, "MQTT disconnected"); schedule_retry(); break;
-    case MQTT_EVENT_ERROR: ESP_LOGW(kTag, "MQTT error (the broker refused the identity, or is not reachable)"); schedule_retry(); break;
+    case MQTT_EVENT_ERROR:
+      if (event->error_handle != nullptr) {
+        ESP_LOGW(kTag, "MQTT error (the broker refused the identity, or is not reachable): type %d, answer %d, socket errno %d, TLS 0x%x", static_cast<int>(event->error_handle->error_type),
+                 static_cast<int>(event->error_handle->connect_return_code), event->error_handle->esp_transport_sock_errno, static_cast<unsigned>(event->error_handle->esp_tls_last_esp_err));
+      } else {
+        ESP_LOGW(kTag, "MQTT error (the broker refused the identity, or is not reachable)");
+      }
+      schedule_retry();
+      break;
     case MQTT_EVENT_DATA: {
       if (event->data_len != event->total_data_len || event->current_data_offset != 0) break;   // a command is a few bytes: never a fragment
       const std::string topic(event->topic, static_cast<std::size_t>(event->topic_len));

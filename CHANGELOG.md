@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The shared firmware of the nodes:** the look for a new release reads GitHub's answer piece by piece (long releases were refused as too large), memory changes (network buffers in the external memory where the node uses the shared defaults, the memory of unused Bluetooth given back), a log line for a message the broker link could not write, the hidden save bar of the panel stays hidden, and the route check fails on a file the panel asks for and the server does not register.
 - **The HTTP contract gains the history of one battery module:** `GET /api/v1/solar/history` takes `module` and answers that module with its cells, the interval of its points and the days they are kept; the largest `minutes` is the 43200 the server already takes.
 - **The HTTP contract gains the second factor of the root console:** unlocking takes a `code`, the state of the console says whether this session needs one, and the security options list `remote.console_second_factor`, on by default.
 

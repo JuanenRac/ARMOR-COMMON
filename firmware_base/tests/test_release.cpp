@@ -1,6 +1,8 @@
 // @PROJECT@ - host tests of the comparison of versions and of the choice of a release's firmware image: the update from GitHub never installs what is not this board's.
 // Copyright (C) 2026 JuanenRac (Electro Hobby 3D). GPL-3.0-or-later.
 #include <cstdio>
+#include <fstream>
+#include <iterator>
 #include <string>
 
 #include "../core/fw_trust.hpp"
@@ -161,13 +163,90 @@ static void test_fetch_errors() {
   }
 }
 
-int main() {
+// The answer about a release is read piece by piece and only its tag, names and addresses are kept (release::ReleaseFilter): it is long (an uploader for every file, the notes), and
+// however it is cut into pieces the same comes out.
+static std::string answer_of(const std::string& notes, std::size_t files) {
+  std::string text = "{\"url\":\"https://x/api\",\"author\":{\"login\":\"someone\",\"name\":\"not the tag\"},\"tag_name\":\"v1.2.3\",\"draft\":false,\"assets\":[";
+  for (std::size_t i = 0; i < files; ++i) {
+    const std::string name = i == 0 ? release::asset_name("s3-eth") : "file-" + std::to_string(i);
+    text += std::string(i != 0 ? "," : "") + "{\"url\":\"https://x/a/" + std::to_string(i) + "\",\"name\":\"" + name + "\",\"label\":null,\"uploader\":{\"login\":\"someone\",\"name\":\"inside the uploader\",\"browser_download_url\":\"https://x/not-this\"},\"size\":123,\"browser_download_url\":\"https://x/" + name + "\"}";
+  }
+  return text + "],\"body\":\"" + notes + "\"}";
+}
+
+static bool read_in_pieces(const std::string& text, std::size_t piece, std::string& kept) {
+  release::ReleaseFilter filter;
+  for (std::size_t at = 0; at < text.size(); at += piece) {
+    if (!filter.feed(text.data() + at, text.size() - at < piece ? text.size() - at : piece)) return false;
+  }
+  if (!filter.complete()) return false;
+  kept = filter.pruned();
+  return true;
+}
+
+static void test_release_filter() {
+  // notes far longer than the 24 kB that used to be the limit, with what could be taken for brackets, quotes and members inside them
+  std::string notes;
+  while (notes.size() < 100 * 1024) notes += "- a line with \\\"quotes\\\", { braces ], \\\"tag_name\\\":\\\"v9.9.9\\\" and a \\\\ backslash\\r\\n";
+  const std::string text = answer_of(notes, 12);
+  std::string whole;
+  CHECK(text.size() > 24 * 1024 && read_in_pieces(text, text.size(), whole) && whole.size() < 2048);
+  for (std::size_t piece : {1u, 2u, 3u, 7u, 512u, 4096u}) {
+    std::string kept;
+    CHECK(read_in_pieces(text, piece, kept) && kept == whole);
+  }
+  json::Value document;
+  CHECK(json::parse(whole, document) && document.string_or("tag_name", "") == "v1.2.3");
+  const json::Value* assets = document.get("assets");
+  CHECK(assets != nullptr && assets->items.size() == 12);
+  const release::Picked picked = release::pick(assets, "s3-eth");
+  CHECK(picked.image_url == "https://x/" + release::asset_name("s3-eth"));
+  // what is not a whole answer is not taken for one
+  std::string kept;
+  CHECK(!read_in_pieces(text.substr(0, text.size() - 1), 512, kept) && !read_in_pieces("", 1, kept) && !read_in_pieces("[1,2]", 1, kept) && !read_in_pieces("<html>", 1, kept));
+  CHECK(!read_in_pieces("{\"a\":[}", 1, kept) && !read_in_pieces("{} {}", 1, kept));
+  // too many files, a name too long to be one, too long an answer
+  CHECK(!read_in_pieces(answer_of("", release::ReleaseFilter::kMaxAssets + 1), 512, kept) && read_in_pieces(answer_of("", release::ReleaseFilter::kMaxAssets), 512, kept));
+  CHECK(!read_in_pieces("{\"tag_name\":\"" + std::string(release::ReleaseFilter::kMaxKept + 1, 'v') + "\"}", 512, kept));
+  release::ReleaseFilter endless;
+  const std::string block = "{\"body\":\"" + std::string(release::ReleaseFilter::kMaxAnswer, 'x');
+  CHECK(!endless.feed(block.data(), block.size()) && endless.too_large() && !endless.complete());
+  // an answer with no release in it (GitHub's own "Not Found") keeps nothing to install
+  CHECK(read_in_pieces("{\"message\":\"Not Found\",\"status\":\"404\"}", 5, kept) && kept == "{\"assets\":[]}");
+}
+
+// A real answer of GitHub given on the command line (the node's tests/data/github_release_answer.json: a release with twelve files and long notes, its dates replaced). The node kept
+// at most 24 kB of it and answered "too large".
+static void test_real_answer(const char* path) {
+  std::ifstream file(path, std::ios::binary);
+  const std::string text((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+  CHECK(text.size() > 24 * 1024);
+  for (std::size_t piece : {1u, 512u, 1460u}) {
+    std::string kept;
+    CHECK(read_in_pieces(text, piece, kept) && kept.size() < 4 * 1024);
+    json::Value document;
+    CHECK(json::parse(kept, document) && !document.string_or("tag_name", "").empty());
+    const json::Value* assets = document.get("assets");
+    CHECK(assets != nullptr && assets->items.size() >= 6);
+    for (const char* board : {"s3-eth", "s3-wifi"}) {
+      const release::Picked picked = release::pick(assets, board);
+      const std::string name = "/" + release::asset_name(board);
+      CHECK(picked.image_url.size() > name.size() && picked.image_url.compare(picked.image_url.size() - name.size(), name.size(), name) == 0 && !picked.legacy);
+      CHECK(picked.checksum_url == picked.image_url + ".sha256" && picked.signature_url == picked.image_url + ".sig2");
+      CHECK(release::is_official_url(picked.image_url, "JuanenRac/ARMOR-NODE-SOLAR"));
+    }
+  }
+}
+
+int main(int argc, char** argv) {
   test_semver();
   test_assets();
   test_official_urls();
   test_manifest();
   test_header_buffer();
   test_fetch_errors();
+  test_release_filter();
+  if (argc > 1) test_real_answer(argv[1]);
   std::printf("%d checks, %d failures\n", checks, failures);
   return failures == 0 ? 0 : 1;
 }
