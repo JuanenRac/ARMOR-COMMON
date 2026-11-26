@@ -36,7 +36,7 @@ CONFIG_FREERTOS_TASK_CREATE_ALLOW_EXT_MEM=y
 # The memory of the network. The packets and structures of Wi-Fi and lwIP are taken from the external RAM first (the internal one where there is none): they are what an HTTPS session, a
 # download and the broker link grow by, and a node with a few of those was left with little internal memory. The buffers a driver must have in internal memory stay there.
 CONFIG_SPIRAM_TRY_ALLOCATE_WIFI_LWIP=y
-# The Wi-Fi library code kept in internal memory for speed (more than 27 KB of the same memory the heap comes from) runs from the flash instead: a node sends a few small messages,
+# The Wi-Fi library code kept in internal memory for speed (about 18 KB of the same memory the heap comes from, measured in the image) runs from the flash instead: a node sends a few small messages,
 # it does not need the throughput.
 CONFIG_ESP_WIFI_IRAM_OPT=n
 CONFIG_ESP_WIFI_RX_IRAM_OPT=n
