@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The Bluetooth PIN of a node is made with HMAC-SHA256:** `ble_passkey_from` in the shared firmware base takes the first four bytes of HMAC-SHA256 (setup code as key, `armor-ble-passkey` as message), modulo one million, instead of a home-made mix. **The PIN of every node changes** with the firmware that carries it; the setup code does not. A fixed PIN (`ble.passkey_mode` `fixed`) and the random one are as before.
 - **The file tree, the picture and the README give the number of tests as it is now** (661).
 
 - **The shared workflow and its template use the current `actions/setup-java`:** version 6.3.0, pinned by commit.
