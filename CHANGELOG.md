@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.8.1.8] - More solar protocols, a lighter shared node firmware and the battery history and console factor in the HTTP contract
+
 - **More solar equipment protocols in the shared catalogue:** PI00 / PI16 (questions without CRC), PI17, the Victron VE.Direct Phoenix inverter and the battery monitor in hexadecimal mode; DALY, JBD, SRNE and PI30 entries updated. Decoded from public documents, none tried on equipment.
 - **The shared firmware of the nodes:** the look for a new release reads GitHub's answer piece by piece (long releases were refused as too large), memory changes (network buffers in the external memory where the node uses the shared defaults, the memory of unused Bluetooth given back), a log line for a message the broker link could not write, the hidden save bar of the panel stays hidden, and the route check fails on a file the panel asks for and the server does not register.
 - **The HTTP contract gains the history of one battery module:** `GET /api/v1/solar/history` takes `module` and answers that module with its cells, the interval of its points and the days they are kept; the largest `minutes` is the 43200 the server already takes.
