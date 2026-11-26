@@ -1,6 +1,5 @@
 """The catalogue of the solar equipment protocols: every entry is whole, the ids are unique and the line settings are ones a gateway node accepts."""
 import json
-import re
 import unittest
 from pathlib import Path
 
