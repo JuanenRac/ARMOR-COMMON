@@ -46,7 +46,7 @@ paths:
       summary: The latest reading of every solar inverter and battery stack that a gateway node reports, with whether each is stale, and the sums Studio shows
       security: [{ operator: [] }]
       responses:
-        '200': { description: '{ devices: [{ node_id, device, kind, reading, received_at, stale, example, registered? }], waiting: [declared devices with no reading yet], totals, catalog: { inverter_models, battery_models, connections } }', content: { application/json: { schema: { $ref: '#/components/schemas/SolarOverview' } } } }
+        '200': { description: '{ devices: [{ node_id, device, kind, reading, received_at, stale, example, registered? }], waiting: [declared devices with no reading yet], totals, catalog: { inverter_models, battery_models, connections, protocols? } }', content: { application/json: { schema: { $ref: '#/components/schemas/SolarOverview' } } } }
         '401': { description: Operator authorization is required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
     post:
       summary: A solar message over HTTP (an ingest token); the same payloads as armor/solar/{node_id}/{device}/state
@@ -3961,6 +3961,7 @@ components:
             battery_profiles: { type: object, additionalProperties: { type: object, description: 'What the maker states for the model: ranges and limits' }, description: 'By model, the figures of the manuals of the models that have them' }
             labels: { type: object, additionalProperties: { type: string }, description: 'By model, the name to show (other is worded by each client, in its language)' }
             inverter_dialects: { type: object, additionalProperties: { type: string }, description: 'By inverter family, the dialect of its serial protocol' }
+            protocols: { type: array, items: { type: object, required: [id, label, message, port_kind, dialect, baud, status], properties: { id: { type: string }, label: { type: string }, message: { type: string, enum: [inverter, battery] }, port_kind: { type: string }, dialect: { type: string }, baud: { type: integer }, framing: { type: string }, physical: { type: string }, commands: { type: array, items: { type: string } }, fields: { type: array, items: { type: string } }, status: { type: string, enum: [decoded, partial] }, note: { type: string } } }, description: 'The equipment protocols a gateway node reads (src/armor_common/solar_protocols.json)' }
             ant_bms:
               type: object
               required: [cell_counts, currents_a]

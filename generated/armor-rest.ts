@@ -3296,6 +3296,21 @@ export type SolarOverview = {
     inverter_dialects?: {
       [key: string]: string;
     };
+    /** The equipment protocols a gateway node reads (src/armor_common/solar_protocols.json) */
+    protocols?: {
+      id: string;
+      label: string;
+      message: "inverter" | "battery";
+      port_kind: string;
+      dialect: string;
+      baud: number;
+      framing?: string;
+      physical?: string;
+      commands?: string[];
+      fields?: string[];
+      status: "decoded" | "partial";
+      note?: string;
+    }[];
     ant_bms?: {
       cell_counts: number[];
       currents_a: number[];
