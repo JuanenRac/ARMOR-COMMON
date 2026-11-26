@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **A new repository in the family, ARMOR-NODE-SOLAR-HMI:** the registry, the contract pins, the compatibility matrix and the reverse-dependency run name it, and the shared project tool builds and runs its host tests. It is not one of the field nodes yet: it has no firmware, so the shared firmware base is not written into it.
 - **The Bluetooth PIN of a node is made with HMAC-SHA256:** `ble_passkey_from` in the shared firmware base takes the first four bytes of HMAC-SHA256 (setup code as key, `armor-ble-passkey` as message), modulo one million, instead of a home-made mix. **The PIN of every node changes** with the firmware that carries it; the setup code does not. A fixed PIN (`ble.passkey_mode` `fixed`) and the random one are as before.
 - **The file tree, the picture and the README give the number of tests as it is now** (661).
 
