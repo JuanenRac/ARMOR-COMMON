@@ -122,12 +122,13 @@ paths:
         '400': { description: 'A level out of its range, an unknown one, or a charge that ends below where it starts', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/solar/history:
     get:
-      summary: The recent history of one solar device, a few numbers per sample, oldest first
+      summary: The recent history of one solar device, or of one battery module of a stack and its cells, a few numbers per sample, oldest first
       security: [{ operator: [] }]
       parameters:
         - { name: node, in: query, required: true, schema: { type: string } }
         - { name: device, in: query, required: true, schema: { type: string } }
-        - { name: minutes, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 1440 } }
+        - { name: minutes, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 43200 } }
+        - { name: module, in: query, required: false, description: 'The number of a battery module of the stack: the samples are then that module and its cells (voltage_v, current_a, power_w, soc_percent, temperature_c, cell_min_v, cell_max_v, delta_mv, cell1...), as the server recorded them', schema: { type: integer, minimum: 1, maximum: 32 } }
       responses:
         '200': { description: '{ node_id, device, kind, samples: [{ t, ... }] }', content: { application/json: { schema: { $ref: '#/components/schemas/SolarHistory' } } } }
         '400': { description: Missing or invalid node or device, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
@@ -1799,13 +1800,15 @@ paths:
         '503': { description: The maintenance helper is not installed or not answering, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/admin/console/unlock:
     post:
-      summary: Unlock the root console with the administrator's password, for ten minutes; five wrong passwords close it for five minutes (an administrator; written in the audit trail)
+      summary: Unlock the root console with the administrator's password (and, from outside the house, a code of the second factor), for ten minutes; five wrong passwords close it for five minutes (an administrator; written in the audit trail)
       security: [{ admin: [] }]
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PostAdminConsoleUnlockRequest' } } } }
       responses:
         '200': { description: Unlocked, content: { application/json: { schema: { $ref: '#/components/schemas/ConsoleUnlocked' } } } }
         '401': { description: Wrong password, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+        '403': { description: 'wrong_password; from outside the house also totp_required (send the code), totp_setup_required (the account has no second factor) or wrong_code', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '423': { description: Too many failures, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: 'too_many_attempts or totp_locked', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '503': { description: The maintenance helper is not installed or not answering, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/admin/console/lock:
     post:
@@ -3449,6 +3452,7 @@ components:
         server.alarm_state_signature: { type: boolean, default: false, description: 'The server also publishes each alarm state it hears, signed with the key of the installation, on armor/alarm/{node_id}/state (off: it publishes nothing there; on: every one it publishes is signed)' }
         server.alarm_state_signature_node_only: { type: boolean, default: false, description: 'With the signed copy on, only a state that reached the server over MQTT or over HTTP with the token of its own node is signed; a state said over HTTP with the shared ingest token is kept and acted on but not signed. Off, the default: every state is signed.' }
         panel.proxy_http: { type: boolean, default: false, description: 'The proxy of the node panels may open a panel registered over plain http. Off, the default: only an https panel whose certificate fingerprint is trusted is opened, and a panel over plain http answers 403 panel_http_disabled. Turning it on lowers security and asks for a new proof of identity.' }
+        remote.console_second_factor: { type: boolean, default: true, description: 'From outside the house, unlocking the root console asks for a code of the second factor besides the password, and an account without a second factor cannot unlock it from there. Off: the password alone, as before.' }
         remote.gate_by_route: { type: boolean, default: true, description: 'From outside the house, with the remote policy operate or view, every route that asks for an administrator is closed by the route itself and not by a list of paths: under operate only the few routes that operate the house stay open, and a secret is not read. Off: only the older list of paths closes administering from outside. ' }
         admin.firmware_refuse_downgrade: { type: boolean, default: true, description: 'A firmware job from GitHub refuses to put on a node a version older than the one it runs, unless the job says it may (allow_downgrade, written in the audit trail).' }
         cameras.allow_public_hosts: { type: boolean, default: true, description: 'The server may open connections for a camera at any address, as it always could (the audit trail notes a camera saved at an address outside the house). Off: only an address of the house (10/8, 172.16/12, 192.168/16, a unique local IPv6 address) is accepted for a camera and connected to, the host name checked on the address it resolves to. Turning it on lowers security and asks for a new proof of identity.' }
@@ -4011,6 +4015,9 @@ components:
         kind: { type: string, enum: [inverter, battery] }
         minutes: { type: integer }
         samples: { type: array, items: { type: object, required: [t], additionalProperties: true, properties: { t: { type: integer } } } }
+        module: { type: integer, description: 'Only when a module was asked for: the same number' }
+        every_s: { type: integer, description: 'With a module: the seconds between two recorded points of the last day (older ones are five-minute averages)' }
+        retention_days: { type: integer, description: 'With a module: the days its history is kept; 0 when the server does not record by module' }
     NodeHealthList:
       type: object
       required: [nodes, waiting, totals, levels]
@@ -5461,6 +5468,7 @@ components:
         available: { type: boolean }
         enabled: { type: boolean }
         unlocked_until: { type: integer, description: 'Epoch milliseconds, 0 when locked' }
+        second_factor: { type: boolean, description: 'This session has to send a code of the second factor to unlock (it comes from outside the house and remote.console_second_factor is on)' }
     ConsoleUnlocked:
       type: object
       required: [unlocked_until]
@@ -6051,7 +6059,7 @@ components:
     IngestRecordingFile: { type: object, required: [index, name, bytes], properties: { index: { type: integer }, name: { type: string }, bytes: { type: integer } } }
     MaintenanceArmed: { type: object, required: [armed], properties: { armed: { type: boolean } } }
     PostAdminSystemUpgradeRequest: { type: object, properties: { mode: { type: string, enum: [upgrade, full, repair] } } }
-    PostAdminConsoleUnlockRequest: { type: object, required: [password], properties: { password: { type: string } } }
+    PostAdminConsoleUnlockRequest: { type: object, required: [password], properties: { password: { type: string }, code: { type: string, maxLength: 32, description: 'A code of the authenticator app or a recovery code: asked from outside the house while remote.console_second_factor is on' } } }
     PostAdminConsoleRunRequest: { type: object, required: [command], properties: { command: { type: string }, cwd: { type: string }, timeout_s: { type: integer } } }
     PostAiVisionEventsRequest: { type: object, required: [schema, type, camera_id, zone_id, zone_name, track_id, label, confidence, box, timestamp, timestamp_ms, authorizes_action], properties: { schema: { type: string, enum: [armor.vision.event/v1, armor.vision.event/v2] }, type: { type: string, enum: [alert, detection] }, camera_id: { type: string }, zone_id: { type: string }, zone_name: { type: string }, track_id: { type: integer }, label: { type: string }, confidence: { type: number }, box: { type: array, items: { type: number } }, timestamp: { type: number }, timestamp_ms: { type: integer }, authorizes_action: { type: boolean, enum: [false] }, radar_tracks: { type: integer }, vectors: { type: array, maxItems: 16, description: 'Where the followed objects were heading: a unit direction in the picture and a speed in pictures per second', items: { type: object, required: [track_id, dx, dy, speed], properties: { track_id: { type: integer }, dx: { type: number }, dy: { type: number }, speed: { type: number } } } } } }
     PostAiActivityEventsRequest: { type: object, required: [schema, type, camera_id, track_id, label, timestamp, timestamp_ms, authorizes_action], properties: { schema: { type: string, enum: [armor.vision.activity/v1] }, type: { type: string, enum: [zone_enter, zone_exit, dwell, loiter, line_cross] }, camera_id: { type: string, pattern: '^[A-Za-z0-9._-]{3,80}$' }, track_id: { type: integer, minimum: 1, maximum: 9007199254740991 }, label: { type: string, minLength: 1, maxLength: 60 }, timestamp: { type: number, minimum: 0 }, timestamp_ms: { type: integer, minimum: 0 }, authorizes_action: { type: boolean, enum: [false] }, zone_id: { type: string, minLength: 1, maxLength: 80 }, zone_name: { type: string, minLength: 1, maxLength: 120 }, seconds: { type: number, minimum: 0 }, line_id: { type: string, minLength: 1, maxLength: 80 }, direction: { type: string, enum: [to_left, to_right] }, notify: { type: boolean, description: 'false: the profile of the arming mode does not tell the people the alarms go to; the event is still recorded' }, event_id: { type: string, pattern: '^[A-Za-z0-9_-]{8,64}$', description: 'A stable identifier of the event, the same on every retry of the same event: the server records it once per camera and answers { raised: false, reason: duplicate } to a repeat' } }, additionalProperties: false }
