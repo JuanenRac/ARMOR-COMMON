@@ -115,6 +115,10 @@ A node that controls a **switch** (a source transfer: two contactors, A and B, o
 
 The schema cannot say the rules that join two fields (a token on the closing actions only, the refusal that matches `accepted`, a switch named once); `validate_electrical_command`, `validate_electrical_result` and `validate_electrical_message` do, and the conformance vectors that only those rules refuse are marked `"schema_valid": true`. See ARMOR-NODE-ELECTRICAL's `docs/SWITCHING.md` and `docs/SAFETY.md`.
 
+## The protocols of the solar equipment
+
+The equipment a gateway node can read is one catalogue, `src/armor_common/solar_protocols.json`: for each protocol an `id`, the message its readings become (`inverter` or `battery`), the node port setting that selects it (`port_kind`, `dialect`), the serial line (`baud`, `framing`, `physical`), the questions asked, the message fields it fills, its `status` (`decoded` or `partial`) and a note; `not_implemented` lists the others with the reason. It adds nothing to the messages themselves. The node has the same ids in flash and the server serves the table.
+
 ## Writing to a Pylontech battery: the order and the answer
 
 A gateway node (ARMOR-NODE-SOLAR) can change what a Pylontech battery keeps, through the battery's console, as the maker's own tool does. It is **off by default at three independent places**: the node (its setting `battery.write_enabled`, with the battery's service password stored only there), the server (`ARMOR_BATTERY_WRITE=1`) and the broker (its access list has to allow the two topics below). Only **typed operations** exist: there is no free command (the expert console is a typed operation with a block list). The operations, their risk, the values they take and the ranges are one table, `src/armor_common/battery_ops.json` (the ranges are the ones the maker's tool states; where its files state an order between two values, that order is checked and a group of values is only accepted whole).
