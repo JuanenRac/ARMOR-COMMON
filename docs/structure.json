@@ -361,14 +361,14 @@
     {
      "name": "tests/",
      "desc": {
-      "en": "{{fact:tests:ARMOR-COMMON|659}} tests",
-      "es": "{{fact:tests:ARMOR-COMMON|659}} pruebas",
-      "de": "{{fact:tests:ARMOR-COMMON|659}} Tests",
-      "fr": "{{fact:tests:ARMOR-COMMON|659}} tests",
-      "it": "{{fact:tests:ARMOR-COMMON|659}} test",
-      "ja": "{{fact:tests:ARMOR-COMMON|659}} 件のテスト",
-      "zh": "{{fact:tests:ARMOR-COMMON|659}} 项测试",
-      "pt": "{{fact:tests:ARMOR-COMMON|659}} testes"
+      "en": "{{fact:tests:ARMOR-COMMON|661}} tests",
+      "es": "{{fact:tests:ARMOR-COMMON|661}} pruebas",
+      "de": "{{fact:tests:ARMOR-COMMON|661}} Tests",
+      "fr": "{{fact:tests:ARMOR-COMMON|661}} tests",
+      "it": "{{fact:tests:ARMOR-COMMON|661}} test",
+      "ja": "{{fact:tests:ARMOR-COMMON|661}} 件のテスト",
+      "zh": "{{fact:tests:ARMOR-COMMON|661}} 项测试",
+      "pt": "{{fact:tests:ARMOR-COMMON|661}} testes"
      }
     },
     {

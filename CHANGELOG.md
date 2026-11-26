@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The file tree, the picture and the README give the number of tests as it is now** (661).
+
 - **One catalogue of the solar equipment protocols (`solar_protocols.json`):** ids, serial line, questions, message fields and state of every protocol a gateway node reads, and the ones it does not read with the reason. The messages do not change. The HTTP contract of the solar overview may carry it as `catalog.protocols` (optional).
 - **The shared validator checks that the scripts served to a browser parse:** `tools/armor_ci_validate.py` runs `node --check` over the scripts under `panel/` and `public/`, so a missing comma in a table of texts fails the build instead of leaving a blank page. A repository with no such script is not affected.
 - **The contract pins of the nineteen consumers are at 0.8.1.6** after a green run of the reverse dependencies on the current main: the registry of pins and the compatibility matrix now name the version that every consumer was checked against.
