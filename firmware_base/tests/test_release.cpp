@@ -213,6 +213,20 @@ static void test_release_filter() {
   CHECK(!endless.feed(block.data(), block.size()) && endless.too_large() && !endless.complete());
   // an answer with no release in it (GitHub's own "Not Found") keeps nothing to install
   CHECK(read_in_pieces("{\"message\":\"Not Found\",\"status\":\"404\"}", 5, kept) && kept == "{\"assets\":[]}");
+  // the rest of what it can be handed: brackets that do not match or go too deep, a member told twice, a name or a tag too long, "assets" that is not a list, members of the same names
+  // somewhere else, and nothing more once it was given up
+  CHECK(!read_in_pieces("{\"a\":{\"b\":1]}", 1, kept) && !read_in_pieces("{\"a\":[1}]", 1, kept) && !read_in_pieces("x{}", 1, kept) && !read_in_pieces("{}x", 1, kept) && !read_in_pieces("{} \"", 1, kept));
+  CHECK(read_in_pieces("{}\r\n\t ", 1, kept) && kept == "{\"assets\":[]}");
+  CHECK(!read_in_pieces("{\"a\":" + std::string(release::ReleaseFilter::kMaxDepth, '['), 4, kept));
+  CHECK(!read_in_pieces("{\"tag_name\":\"v1\",\"tag_name\":\"v2\"}", 3, kept));
+  CHECK(!read_in_pieces("{\"assets\":[{\"name\":\"a\",\"name\":\"b\"}]}", 3, kept));
+  CHECK(!read_in_pieces("{\"assets\":[{\"browser_download_url\":\"" + std::string(release::ReleaseFilter::kMaxKept + 1, 'u') + "\"}]}", 512, kept));
+  const std::string long_key(release::ReleaseFilter::kMaxKept + 1, 'k');
+  CHECK(read_in_pieces("{\"" + long_key + "\":\"x\",\"assets\":[{\"" + long_key + "\":\"y\",\"name\":\"n\"}]}", 7, kept) && kept == "{\"assets\":[{\"name\":\"n\",\"browser_download_url\":\"\"}]}");
+  CHECK(read_in_pieces("{\"tag_name\":7,\"assets\":{\"name\":\"n\",\"x\":[{\"name\":\"m\"}]},\"other\":[{\"name\":\"o\"}]}", 2, kept) && kept == "{\"assets\":[]}");
+  CHECK(read_in_pieces("{\"assets\":[\"name\",[\"name\"],{\"deeper\":{\"name\":\"d\"}}]}", 2, kept) && kept == "{\"assets\":[{\"name\":\"\",\"browser_download_url\":\"\"}]}");
+  release::ReleaseFilter given_up;
+  CHECK(!given_up.feed("[", 1) && !given_up.feed("{}", 2) && !given_up.complete() && !given_up.too_large());
 }
 
 // A real answer of GitHub given on the command line (the node's tests/data/github_release_answer.json: a release with twelve files and long notes, its dates replaced). The node kept
