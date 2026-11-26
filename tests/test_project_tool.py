@@ -313,6 +313,10 @@ class Steps(unittest.TestCase):
         self.assertIn("CMake", error)
         _, _, error = self.run_steps("ARMOR-NODE-HMI", tools={"cmake"})
         self.assertIn("CTest", error)
+        recorded, _, _ = self.run_steps("ARMOR-NODE-SOLAR-HMI")
+        self.assertIn("--test-dir", self.joined(recorded)[2])
+        _, _, error = self.run_steps("ARMOR-NODE-SOLAR-HMI", tools=set())
+        self.assertIn("ARMOR-NODE-SOLAR-HMI", error)
 
     def test_the_android_client_prefers_its_wrapper(self) -> None:
         recorded, _, _ = self.run_steps("ARMOR-ANDROID-CONTROL", files={"gradlew": ""}, tools=set())

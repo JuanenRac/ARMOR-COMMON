@@ -76,6 +76,18 @@
       "feeds": []
     },
     {
+      "name": "ARMOR-NODE-SOLAR-HMI",
+      "kind": "FIRMWARE",
+      "group": "CLIENTS",
+      "technologies": ["C++17", "ESP32-P4", "Solar", "Host simulator"],
+      "node": false,
+      "shared_tools": true,
+      "studio_e2e": false,
+      "contract_link": false,
+      "map": {"column": 3, "row": 4.5},
+      "feeds": []
+    },
+    {
       "name": "ARMOR-NETWORK",
       "kind": "PROJECT",
       "group": "FIELD NODES",

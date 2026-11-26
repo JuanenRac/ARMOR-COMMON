@@ -93,6 +93,13 @@
       "checked_against": "0.8.1.6"
     },
     {
+      "name": "ARMOR-NODE-SOLAR-HMI",
+      "kind": "FIRMWARE",
+      "node": false,
+      "feeds": [],
+      "checked_against": "0.8.1.6"
+    },
+    {
       "name": "ARMOR-SERVER",
       "kind": "SERVICE",
       "node": false,

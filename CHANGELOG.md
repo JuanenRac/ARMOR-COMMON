@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **A new repository in the family, ARMOR-NODE-SOLAR-HMI:** the registry, the contract pins, the compatibility matrix and the reverse-dependency run name it, and the shared project tool builds and runs its host tests. It is not one of the field nodes yet: it has no firmware, so the shared firmware base is not written into it.
 - **The file tree, the picture and the README give the number of tests as it is now** (661).
 
 - **The shared workflow and its template use the current `actions/setup-java`:** version 6.3.0, pinned by commit.

@@ -26,6 +26,7 @@ jobs:
           - ARMOR-NODE-ELECTRICAL
           - ARMOR-NODE-ALARM
           - ARMOR-NODE-HMI
+          - ARMOR-NODE-SOLAR-HMI
           - ARMOR-NETWORK
           - ARMOR-SIMULATOR
           - ARMOR-HARDWARE
