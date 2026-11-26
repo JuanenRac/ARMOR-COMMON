@@ -4,6 +4,9 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The HTTP contract gains the history of one battery module:** `GET /api/v1/solar/history` takes `module` and answers that module with its cells, the interval of its points and the days they are kept; the largest `minutes` is the 43200 the server already takes.
+- **The HTTP contract gains the second factor of the root console:** unlocking takes a `code`, the state of the console says whether this session needs one, and the security options list `remote.console_second_factor`, on by default.
+
 ## [0.8.1.7] - The solar protocol catalogue, an HMAC-SHA256 Bluetooth PIN and the solar screen node in the registry
 
 - **A new repository in the family, ARMOR-NODE-SOLAR-HMI:** the registry, the contract pins, the compatibility matrix and the reverse-dependency run name it, and the shared project tool builds and runs its host tests. It is not one of the field nodes yet: it has no firmware, so the shared firmware base is not written into it.

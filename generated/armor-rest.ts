@@ -860,6 +860,8 @@ export type ConsoleState = {
   enabled: boolean;
   /** Epoch milliseconds, 0 when locked */
   unlocked_until: number;
+  /** This session has to send a code of the second factor to unlock (it comes from outside the house and remote.console_second_factor is on) */
+  second_factor?: boolean;
 };
 
 export type ConsoleUnlocked = {
@@ -2328,6 +2330,8 @@ export type PostAdminConsoleRunRequest = {
 
 export type PostAdminConsoleUnlockRequest = {
   password: string;
+  /** A code of the authenticator app or a recovery code: asked from outside the house while remote.console_second_factor is on */
+  code?: string;
 };
 
 export type PostAdminFirewallFieldHttpRequest = {
@@ -2955,6 +2959,8 @@ export type SecuritySettings = {
   "server.alarm_state_signature_node_only"?: boolean;
   /** The proxy of the node panels may open a panel registered over plain http. Off, the default: only an https panel whose certificate fingerprint is trusted is opened, and a panel over plain http answers 403 panel_http_disabled. Turning it on lowers security and asks for a new proof of identity. */
   "panel.proxy_http"?: boolean;
+  /** From outside the house, unlocking the root console asks for a code of the second factor besides the password, and an account without a second factor cannot unlock it from there. Off: the password alone, as before. */
+  "remote.console_second_factor"?: boolean;
   /** From outside the house, with the remote policy operate or view, every route that asks for an administrator is closed by the route itself and not by a list of paths: under operate only the few routes that operate the house stay open, and a secret is not read. Off: only the older list of paths closes administering from outside. */
   "remote.gate_by_route"?: boolean;
   /** A firmware job from GitHub refuses to put on a node a version older than the one it runs, unless the job says it may (allow_downgrade, written in the audit trail). */
@@ -3201,6 +3207,12 @@ export type SolarHistory = {
     t: number;
     [key: string]: unknown;
   }[];
+  /** Only when a module was asked for: the same number */
+  module?: number;
+  /** With a module: the seconds between two recorded points of the last day (older ones are five-minute averages) */
+  every_s?: number;
+  /** With a module: the days its history is kept; 0 when the server does not record by module */
+  retention_days?: number;
 };
 
 export type SolarOverview = {
