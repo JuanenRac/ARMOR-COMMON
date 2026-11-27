@@ -362,6 +362,15 @@
               }
             }
           },
+          "left_out": {
+            "type": "array",
+            "maxItems": 12,
+            "description": "The figures of this module that came impossible and were left out of this message (the rest of the reading is good): the screens say so.",
+            "items": {
+              "type": "string",
+              "enum": ["voltage", "current", "temperature", "temperatures", "cells", "soc", "capacity", "cycles", "health", "limits", "cell_count"]
+            }
+          },
           "cells_unread": {
             "type": "array",
             "maxItems": 32,

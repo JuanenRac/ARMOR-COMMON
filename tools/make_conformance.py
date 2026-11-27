@@ -653,6 +653,8 @@ cases: dict[str, list[Any]] = {
         ("a state with a word that is too long", False, battery(stack=[{"n": 1, "present": True, "flags": [{"column": "voltage", "word": "x" * 17}]}])),
         ("a state with an unknown field", False, battery(stack=[{"n": 1, "present": True, "flags": [{"column": "voltage", "word": "OV", "level": 2}]}])),
         ("a cell not read beyond the last one", False, battery(stack=[{"n": 1, "present": True, "cells_unread": [32]}])),
+        ("two figures that came impossible and were left out", True, battery(stack=[{"n": 1, "present": True, "left_out": ["current", "cells"]}])),
+        ("a figure left out that is not one", False, battery(stack=[{"n": 1, "present": True, "left_out": ["colour"]}])),
         ("the maker a module reports", True, battery(manufacturer="Pylon", manufacturer_source="reported", stack=[{"n": 1, "present": True, "manufacturer": "Pylon", "manufacturer_source": "reported"}])),
         ("a deduced maker of a module", True, battery(stack=[{"n": 1, "present": True, "manufacturer": "Daly", "manufacturer_source": "deduced"}])),
         ("an empty maker of a module", False, battery(stack=[{"n": 1, "present": True, "manufacturer": ""}])),

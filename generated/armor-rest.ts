@@ -393,6 +393,8 @@ export type ArmorEvent = {
   severity?: "critical" | "high" | "warning";
   source_type?: string;
   field?: string;
+  /** A raised battery alarm that must not be announced (no notification): the same problem again, or a silenced battery. Absent: announced as any alarm. A fault of the battery management system never carries it */
+  quiet?: "known" | "silenced";
   [key: string]: unknown;
 };
 

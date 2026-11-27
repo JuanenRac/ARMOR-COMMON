@@ -1921,6 +1921,65 @@
    }
   },
   {
+   "name": "two figures that came impossible and were left out",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "left_out": [
+       "current",
+       "cells"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "a figure left out that is not one",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "left_out": [
+       "colour"
+      ]
+     }
+    ]
+   }
+  },
+  {
    "name": "the maker a module reports",
    "valid": true,
    "payload": {

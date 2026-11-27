@@ -6279,6 +6279,7 @@ components:
         severity: { type: string, enum: [critical, high, warning] }
         source_type: { type: string }
         field: { type: string }
+        quiet: { type: string, enum: [known, silenced], description: 'A raised battery alarm that must not be announced (no notification): the same problem again, or a silenced battery. Absent: announced as any alarm. A fault of the battery management system never carries it' }
     ConnectionEvent: { $ref: '../src/armor_common/schemas/connection_event.schema.json' }
     SystemEvent: { $ref: '../src/armor_common/schemas/system_event.schema.json' }
     ConnectionClient: { $ref: '../src/armor_common/schemas/connection_client.schema.json' }
