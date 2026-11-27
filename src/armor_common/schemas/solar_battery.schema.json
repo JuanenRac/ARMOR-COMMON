@@ -324,6 +324,54 @@
             },
             "description": "The newest entry of the module's event log (the console's data event), shown as the console prints it; left out when the node does not read it."
           },
+          "flags": {
+            "type": "array",
+            "maxItems": 48,
+            "description": "The states of the module and of its cells that are not the normal one, with the battery's own word. A cell has `cell` (from 0, like cells_v).",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "column",
+                "word"
+              ],
+              "properties": {
+                "column": {
+                  "type": "string",
+                  "enum": [
+                    "base",
+                    "voltage",
+                    "current",
+                    "temperature",
+                    "cell_voltage",
+                    "cell_temperature",
+                    "mosfet_temperature",
+                    "system"
+                  ]
+                },
+                "word": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 16
+                },
+                "cell": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 31
+                }
+              }
+            }
+          },
+          "cells_unread": {
+            "type": "array",
+            "maxItems": 32,
+            "description": "The cells (from 0) that read 0 V two turns in a row: the battery's electronics do not read them.",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 31
+            }
+          },
           "manufacturer": {
             "type": "string",
             "minLength": 1,

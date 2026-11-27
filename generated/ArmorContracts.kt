@@ -138,6 +138,12 @@ data class SolarModuleLastEvent(
     val system_fault: String? = null
 )
 
+data class SolarModuleFlags(
+    val column: String,
+    val word: String,
+    val cell: Long? = null
+)
+
 data class SolarModule(
     val n: Long,
     val present: Boolean,
@@ -161,6 +167,8 @@ data class SolarModule(
     val soh_counts: List<Long>? = null,
     val soh_abnormal: List<Long>? = null,
     val last_event: SolarModuleLastEvent? = null,
+    val flags: List<SolarModuleFlags>? = null,
+    val cells_unread: List<Long>? = null,
     val manufacturer: String? = null,
     val manufacturer_source: String? = null,
     val serial: String? = null,
