@@ -32,6 +32,26 @@
    "zh": "选择者",
    "pt": "Escolhido por"
   },
+  "bms_word": {
+   "en": "The battery's own word",
+   "es": "Palabra de la batería",
+   "de": "Wort der Batterie",
+   "fr": "Mot de la batterie",
+   "it": "Parola della batteria",
+   "ja": "バッテリーの表示語",
+   "zh": "电池原文",
+   "pt": "Palavra da bateria"
+  },
+  "column": {
+   "en": "Column",
+   "es": "Columna",
+   "de": "Spalte",
+   "fr": "Colonne",
+   "it": "Colonna",
+   "ja": "項目",
+   "zh": "项目",
+   "pt": "Coluna"
+  },
   "cell": {
    "en": "Cell",
    "es": "Celda",
