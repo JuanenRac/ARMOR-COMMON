@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **Firmware base: the memory gate of the panel cannot stay shut for ever:** when the internal memory settled between the levels that close it and the levels that open it, new connections were refused until the node was restarted by hand. It now also opens after about a minute over the closing levels. Tested on a computer; not tried on a board.
 - **A battery module may say its serial number, its Board and its chip:** the solar battery message gains `serial`, `board`, `chip` (older, newer or unknown), `specification`, `boot_version`, `comm_version` and `release_date` for each module, all optional. The serial number is private data: the message is not retained. Tested on a computer with invented data.
 - **Firmware base: the panel of a node says a request that does not end, and sends nothing while the sessions are locked:** `core/slow_req.hpp` and `main/req_watch` are shared by the five nodes, the route check fails when an answer is sent under the lock of the sessions or the API is not watched, and the shared host tests cover the rules. Tested on a computer; not tried on a board.
 ## [0.8.1.8] - More solar protocols, a lighter shared node firmware and the battery history and console factor in the HTTP contract
