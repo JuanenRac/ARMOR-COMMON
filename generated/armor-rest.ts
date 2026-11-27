@@ -227,6 +227,8 @@ export type Alarm = {
   false_alarm?: boolean;
   /** Who said so (an account name) */
   false_alarm_by?: string;
+  /** Battery alarms only. The alarm must not call for attention (no sound, voice, pop-up, blinking or red), only a discreet mark: new (a problem not told before, or one that got worse), known (the same problem again) or silenced (the battery was silenced). Absent: announced as any alarm */
+  quiet?: "new" | "known" | "silenced";
 };
 
 export type AlarmAudioRemoved = {
@@ -653,6 +655,25 @@ export type BatteryImage = {
   version: string;
 };
 
+export type BatteryNoticeSettings = {
+  /** once: battery alarms are discreet and a problem is told only once, again only if it gets worse; classic: as any alarm */
+  mode?: "once" | "classic";
+  /** A problem that has been over for this long is new if it comes back */
+  forget_after_h?: number;
+  cell_min_plausible_v?: number;
+  cell_max_plausible_v?: number;
+};
+
+export type BatteryNotices = {
+  settings: BatteryNoticeSettings;
+  defaults: BatteryNoticeSettings;
+  silenced: {
+    id: string;
+    since: string;
+    by: string;
+  }[];
+};
+
 export type BatteryOperation = {
   id: string;
   node: string;
@@ -730,6 +751,12 @@ export type BatteryOpsCatalog = {
   catalog: {
     [key: string]: unknown;
   };
+};
+
+export type BatterySilenceRequest = {
+  /** node/device, or node/device/module */
+  id: string;
+  silenced: boolean;
 };
 
 /** A camera as an operator sees it (the password is never shown) */
@@ -1054,6 +1081,10 @@ export type DailySummaryReport = {
   text: string;
   /** The note of the AI provider; present only when the settings of the summary turn it on */
   ai_note?: string;
+};
+
+export type DayCellsReset = {
+  reset: boolean;
 };
 
 export type DeleteMediaRequest = {
@@ -3380,6 +3411,31 @@ export type SolarOverview = {
     day_cells?: {
       date: string;
       bank_delta_v: number;
+      /** The reading that gave the widest gap of the bank - when, and the module and cell at each end */
+      bank?: {
+        at: number;
+        low: {
+          module: number;
+          cell: number;
+          v: number;
+        };
+        high: {
+          module: number;
+          cell: number;
+          v: number;
+        };
+      };
+      /** When somebody started the day again */
+      reset_at?: number;
+      /** Readings left out of the extremes, newest first - a voltage no cell can have (range) or a wide gap that the next reading did not repeat (unconfirmed) */
+      discarded?: {
+        at: number;
+        module: number;
+        cell?: number;
+        v?: number;
+        delta_v?: number;
+        reason: "range" | "unconfirmed";
+      }[];
       modules: {
         n: number;
         delta_v: number;

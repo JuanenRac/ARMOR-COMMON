@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **Discreet battery alarms and trustworthy cell extremes:** the HTTP contract gains `quiet` on an alarm, the battery notice settings and the silenced batteries (`/api/v1/solar/battery-notices`), the reset of today's cell extremes of a battery, and in `day_cells` which module and cell gave the widest gap and which readings were left out.
 - **A firmware campaign for a stack of batteries:** the HTTP contract gains the routes that update one module at a time with the console cable moved to each one (`/api/v1/solar/battery-campaigns`), and `firmware_update` gains the value `resume` for a battery left in its bootloader by a failed try. Nothing here has run on a battery.
 - **A large battery stack is no longer refused:** the solar battery message allowed at most 64 cells balancing at once, so a stack of ten modules with a hundred cells balancing was refused as a whole and none of its readings were taken. The limit is now 512 (sixteen modules of thirty-two cells) and the current of the stack may reach 16000 A (the sum of sixteen modules).
 - **The shared tools read the output of processes as UTF-8:** `status_lights.py`, `sync_manifests.py` and `universal_readme_check.py` are the same text as in the other families again; on Windows a character outside the code page no longer breaks a check. The ceiling of the Security, Updates and Writing rows stays for A.R.M.O.R. repositories only. 666 tests.
