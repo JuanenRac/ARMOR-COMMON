@@ -904,6 +904,81 @@ paths:
         '400': { description: 'image_size or image_header: not a firmware image of the family', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '403': { description: 'Not an administrator, writing is not turned on or the proof of identity is old (code elevation_required)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
         '415': { description: Not sent as application/octet-stream, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/solar/battery-campaigns:
+    get:
+      summary: The firmware campaigns on battery stacks, newest first (an administrator); a campaign updates one module at a time with the console cable moved to each one
+      security: [{ admin: [] }]
+      responses:
+        '200': { description: The campaigns and whether writing is on, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryCampaignList' } } } }
+    post:
+      summary: >-
+        Start a campaign (an administrator who proved themselves again): the list of modules is the one the node read from the first battery of the stack, with serial number, Board, chip
+        and version. It is refused as a whole when any module has no readable serial number, a chip that cannot be told, a model with no rule or an image that does not fit; nothing forces
+        it. Nothing is sent to a battery.
+      security: [{ admin: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryCampaignRequest' } } } }
+      responses:
+        '201': { content: { application/json: { schema: { $ref: '#/components/schemas/BatteryCampaign' } } }, description: Started }
+        '403': { description: 'Not an administrator, writing is not turned on or the proof of identity is old', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'unknown_node: no module list of that battery', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'campaign_blocked (with the reason of each module), busy or image_missing', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/solar/battery-campaigns/{id}/check:
+    post:
+      summary: >-
+        With the cable on the console of the current module: the server arms a firmware update for exactly that serial number. A console with another battery answers serial_mismatch and nothing happens; a doubtful chip or a wrong image stops the campaign. Nothing is written.
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[0-9a-f]{16}$' } }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryCampaignImage' } } } }
+      responses:
+        '202': { content: { application/json: { schema: { $ref: '#/components/schemas/BatteryCampaign' } } }, description: The campaign }
+        '403': { description: 'Not an administrator, writing is not turned on or the proof of identity is old', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'Unknown campaign', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'campaign_state, busy, image_missing or serial_mismatch', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/solar/battery-campaigns/{id}/execute:
+    post:
+      summary: >-
+        Confirm the module that was checked, typing its serial number again; the node updates it. A module that fails stops the campaign.
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[0-9a-f]{16}$' } }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryExecuteRequest' } } } }
+      responses:
+        '202': { content: { application/json: { schema: { $ref: '#/components/schemas/BatteryCampaign' } } }, description: The campaign }
+        '403': { description: 'Not an administrator, writing is not turned on or the proof of identity is old', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'Unknown campaign', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'campaign_state, busy, image_missing or serial_mismatch', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/solar/battery-campaigns/{id}/retry:
+    post:
+      summary: >-
+        Take up a stopped campaign at the module that stopped it (an administrator who proved themselves again). A transfer that failed is tried again with the same image on the battery left in its bootloader.
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[0-9a-f]{16}$' } }]
+      responses:
+        '202': { content: { application/json: { schema: { $ref: '#/components/schemas/BatteryCampaign' } } }, description: The campaign }
+        '403': { description: 'Not an administrator, writing is not turned on or the proof of identity is old', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'Unknown campaign', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'campaign_state, busy, image_missing or serial_mismatch', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/solar/battery-campaigns/{id}/cancel:
+    post:
+      summary: >-
+        Give the campaign up. A module that is being written is not cut.
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[0-9a-f]{16}$' } }]
+      responses:
+        '202': { content: { application/json: { schema: { $ref: '#/components/schemas/BatteryCampaign' } } }, description: The campaign }
+        '403': { description: 'Not an administrator, writing is not turned on or the proof of identity is old', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'Unknown campaign', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'campaign_state, busy, image_missing or serial_mismatch', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/solar/battery-campaigns/{id}/finish:
+    post:
+      summary: >-
+        Close the campaign after the last module, saying that the cable is back on the first battery of the stack.
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[0-9a-f]{16}$' } }]
+      responses:
+        '202': { content: { application/json: { schema: { $ref: '#/components/schemas/BatteryCampaign' } } }, description: The campaign }
+        '403': { description: 'Not an administrator, writing is not turned on or the proof of identity is old', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'Unknown campaign', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'campaign_state, busy, image_missing or serial_mismatch', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/solar/battery-ops/{id}:
     get:
       summary: One battery operation as it stands now (an administrator); never a token
@@ -4330,6 +4405,55 @@ components:
       required: [serial]
       properties:
         serial: { type: string, description: 'The serial number again; it must be the one typed to arm' }
+    BatteryCampaignRequest:
+      type: object
+      required: [node, port, device, image_id]
+      properties:
+        node: { type: string }
+        port: { type: integer, minimum: 1, maximum: 10 }
+        device: { type: string, description: 'The battery of the node whose module list (read from the first battery of the stack) is the campaign' }
+        image_id: { type: string }
+    BatteryCampaignImage:
+      type: object
+      properties:
+        image_id: { type: string, description: 'The same image kept again, when the server has forgotten it' }
+    BatteryCampaignModule:
+      type: object
+      required: [number, serial, model, board, chip, status]
+      properties:
+        number: { type: integer }
+        serial: { type: string }
+        model: { type: string }
+        board: { type: string }
+        chip: { type: string, enum: [older, newer, unknown] }
+        version: { type: string }
+        version_after: { type: string }
+        status: { type: string, enum: [pending, checking, ready, updating, done, failed] }
+        operation_id: { type: string }
+        code: { type: string, description: 'Why the module is not done: a refusal or a code of the node' }
+        resume: { type: boolean, description: 'The battery was left in its bootloader: the same image is tried again' }
+    BatteryCampaign:
+      type: object
+      required: [id, node, port, device, state, current, modules, image, actor, created_at, updated_at]
+      properties:
+        id: { type: string }
+        node: { type: string }
+        port: { type: integer }
+        device: { type: string }
+        state: { type: string, enum: [active, stopped, return_cable, done, cancelled] }
+        current: { type: integer, description: 'The index of the module being worked on' }
+        stop_reason: { type: string }
+        modules: { type: array, items: { $ref: '#/components/schemas/BatteryCampaignModule' } }
+        image: { type: object, required: [board, version, sha256, size], properties: { board: { type: string }, version: { type: string }, sha256: { type: string }, size: { type: integer } } }
+        actor: { type: string }
+        created_at: { type: string }
+        updated_at: { type: string }
+    BatteryCampaignList:
+      type: object
+      required: [enabled, campaigns]
+      properties:
+        enabled: { type: boolean }
+        campaigns: { type: array, items: { $ref: '#/components/schemas/BatteryCampaign' } }
     BatteryImage:
       type: object
       required: [image_id, size, crc32, sha256, board, version]
