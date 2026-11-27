@@ -883,6 +883,229 @@
    }
   },
   {
+   "name": "a module with its serial number and chip",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "model": "US3000C",
+      "serial": "TEST00AE20000001",
+      "board": "NF4.E2",
+      "chip": "newer",
+      "specification": "48V/74AH",
+      "boot_version": "V2.1",
+      "comm_version": "V2.0",
+      "release_date": "00-01-01"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a chip that cannot be told, with no serial number",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "chip": "unknown"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a chip that is not one of the three",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "chip": "guess"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a serial number with a space",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "serial": "TEST 0001"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an empty serial number",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "serial": ""
+     }
+    ]
+   }
+  },
+  {
+   "name": "a serial number that is too long",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "serial": "TTTTTTTTTTTTTTTTTTTTTTTTT"
+     }
+    ]
+   }
+  },
+  {
+   "name": "a board with a space",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "board": "NF4 E2"
+     }
+    ]
+   }
+  },
+  {
+   "name": "an empty specification",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "specification": ""
+     }
+    ]
+   }
+  },
+  {
    "name": "a software version that is too long",
    "valid": false,
    "payload": {

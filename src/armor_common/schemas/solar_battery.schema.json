@@ -324,6 +324,47 @@
             },
             "description": "The newest entry of the module's event log (the console's data event), shown as the console prints it; left out when the node does not read it."
           },
+          "serial": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{1,24}$",
+            "description": "The serial number (barcode) the module's console prints in info. Private data: it is carried in this message (never retained) and shown only to signed-in people. Left out when the node does not read it or the module has none."
+          },
+          "board": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._-]{1,16}$",
+            "description": "The Board line of info (NF4.E2, NF4.E3...). Many units do not print it."
+          },
+          "chip": {
+            "type": "string",
+            "enum": [
+              "older",
+              "newer",
+              "unknown"
+            ],
+            "description": "The chip of the module as the node tells it from its model, Board and serial number with the maker's rules (the ones that decide which firmware image fits). unknown when they do not agree, the serial number cannot be read or the model has no rule. Left out when the node has not read the module's info."
+          },
+          "specification": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 24,
+            "description": "The Specification line of info (48V/74AH)."
+          },
+          "boot_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 24
+          },
+          "comm_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 24
+          },
+          "release_date": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 24,
+            "description": "The Release Date line of info, as printed."
+          },
           "board_version": {
             "type": "string",
             "minLength": 1,

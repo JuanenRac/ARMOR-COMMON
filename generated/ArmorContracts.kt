@@ -159,6 +159,13 @@ data class SolarModule(
     val soh_counts: List<Long>? = null,
     val soh_abnormal: List<Long>? = null,
     val last_event: SolarModuleLastEvent? = null,
+    val serial: String? = null,
+    val board: String? = null,
+    val chip: String? = null,
+    val specification: String? = null,
+    val boot_version: String? = null,
+    val comm_version: String? = null,
+    val release_date: String? = null,
     val board_version: String? = null,
     val main_soft_version: String? = null,
     val soft_version: String? = null
