@@ -168,6 +168,7 @@ data class SolarModule(
     val soh_abnormal: List<Long>? = null,
     val last_event: SolarModuleLastEvent? = null,
     val flags: List<SolarModuleFlags>? = null,
+    val left_out: List<String>? = null,
     val cells_unread: List<Long>? = null,
     val manufacturer: String? = null,
     val manufacturer_source: String? = null,
