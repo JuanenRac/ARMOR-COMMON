@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.8.1.9] - Battery states and makers, discreet alarms, left-out figures and a guarding node
+
 - **A node can refuse to stop watching while armed:** the shared control rules know a guarding node (`busy_guarding`): it may restart, but a pause or a standby is refused.
 - **An impossible figure is told, not only dropped:** a battery module may carry `left_out` (the figures that came impossible and were left out of the message), and a raised battery alarm in the event history may carry `quiet` (`known` or `silenced`) so that no client notifies the same problem twice. Both are optional.
 - **A battery says what is wrong with it:** a battery module may carry `flags` (each state column or cell that is not normal, with the battery's own word) and `cells_unread` (cells that read 0 V two turns in a row), both optional; a new alarm code `solar_battery_fault` (a fault of the battery's electronics) has its title and help text in the eight languages. An older server ignores the two fields when it reads a node's message.
@@ -16,6 +18,7 @@ All notable changes to this project are documented here.
 - **A battery module may say its serial number, its Board and its chip:** the solar battery message gains `serial`, `board`, `chip` (older, newer or unknown), `specification`, `boot_version`, `comm_version` and `release_date` for each module, all optional. The serial number is private data: the message is not retained. Tested on a computer with invented data.
 - **The HTTP contract gains the solar routes of a small wall screen:** `GET /api/v1/panel/solar`, one device at a time and a short history, and the one battery operation such a screen may order (resetting the counters, with a PIN at every step), with the security options `panel.solar` and `solar.panel_battery_ops`, both off by default.
 - **Firmware base: the panel of a node says a request that does not end, and sends nothing while the sessions are locked:** `core/slow_req.hpp` and `main/req_watch` are shared by the five nodes, the route check fails when an answer is sent under the lock of the sessions or the API is not watched, and the shared host tests cover the rules. Tested on a computer; not tried on a board.
+
 ## [0.8.1.8] - More solar protocols, a lighter shared node firmware and the battery history and console factor in the HTTP contract
 
 - **More solar equipment protocols in the shared catalogue:** PI00 / PI16 (questions without CRC), PI17, the Victron VE.Direct Phoenix inverter and the battery monitor in hexadecimal mode; DALY, JBD, SRNE and PI30 entries updated. Decoded from public documents, none tried on equipment.
