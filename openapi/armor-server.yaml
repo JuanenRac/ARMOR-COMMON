@@ -1367,6 +1367,75 @@ paths:
       security: [{ operator: [] }]
       responses:
         '200': { description: The summary, content: { application/json: { schema: { $ref: '#/components/schemas/PanelSummary' } } } }
+  /api/v1/panel/solar:
+    get:
+      summary: >-
+        The solar equipment cut down for a small screen (the devices with their own figures and no modules, the totals, and whether this account may order the one battery operation of a
+        screen). The account of a wall panel reads it only while the option panel.solar is on
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: 'The list', content: { application/json: { schema: { $ref: '#/components/schemas/PanelSolar' } } } }
+  /api/v1/panel/solar/devices/{node}/{device}:
+    get:
+      summary: One solar device for a small screen, a battery with its modules and cells (same guard as GET /api/v1/panel/solar)
+      security: [{ operator: [] }]
+      parameters:
+        - { name: node, in: path, required: true, schema: { type: string } }
+        - { name: device, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: 'The device and the totals', content: { application/json: { schema: { $ref: '#/components/schemas/PanelSolarDeviceAnswer' } } } }
+        '404': { description: 'unknown_device', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/panel/solar/history:
+    get:
+      summary: At most 96 points of up to a day of one device, for a small screen (same guard as GET /api/v1/panel/solar)
+      security: [{ operator: [] }]
+      parameters:
+        - { name: node, in: query, required: true, schema: { type: string } }
+        - { name: device, in: query, required: true, schema: { type: string } }
+        - { name: minutes, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 1440, default: 180 } }
+      responses:
+        '200': { description: 'The points', content: { application/json: { schema: { $ref: '#/components/schemas/PanelSolarHistory' } } } }
+        '400': { description: 'invalid_request', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'unknown_device', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/panel/solar/battery-ops:
+    post:
+      summary: >-
+        Step one of the only battery operation of a wall screen, resetting its statistics counters (statc erases all of them): the account of a wall panel, from the house or the VPN,
+        with the options solar.panel_battery_ops and solar.battery_write on and its PIN (the lockout of disarming; the duress PIN raises the silent alarm). Nothing is written yet: the
+        node reads the battery first. Every attempt is audited
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PanelBatteryArmRequest' } } } }
+      responses:
+        '202': { description: 'Sent; the operation, still arming', content: { application/json: { schema: { $ref: '#/components/schemas/PanelBatteryOperation' } } } }
+        '400': { description: 'pin_required, or invalid_request or invalid_params', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'panel_account_only, panel_local_only, panel_battery_ops_disabled, battery_write_disabled, pin_not_set or wrong_pin (and, on arming, operation_not_from_panel)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'unknown_node: no battery of that node is reporting', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'busy', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: 'pin_locked or too many orders', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: 'mqtt_unavailable', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/panel/solar/battery-ops/{id}:
+    get:
+      summary: An operation this same account armed from a screen, without its transcript (no PIN to look at it)
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[0-9a-f]{16}$' } }]
+      responses:
+        '200': { description: 'The operation', content: { application/json: { schema: { $ref: '#/components/schemas/PanelBatteryOperation' } } } }
+        '403': { description: 'panel_account_only, panel_local_only, panel_battery_ops_disabled or battery_write_disabled', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'unknown_operation', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/panel/solar/battery-ops/{id}/execute:
+    post:
+      summary: Step two, once the operation is armed - the serial number typed again and the PIN again
+      security: [{ operator: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, pattern: '^[0-9a-f]{16}$' } }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PanelBatteryExecuteRequest' } } } }
+      responses:
+        '202': { description: 'Sent', content: { application/json: { schema: { $ref: '#/components/schemas/PanelBatteryOperation' } } } }
+        '400': { description: 'pin_required or serial_mismatch', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '403': { description: 'panel_account_only, panel_local_only, panel_battery_ops_disabled, battery_write_disabled, pin_not_set or wrong_pin (and, on arming, operation_not_from_panel)', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '404': { description: 'unknown_operation', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '409': { description: 'not_armed or expired', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '429': { description: 'pin_locked or too many orders', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '503': { description: 'mqtt_unavailable', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/system/connection:
     get:
       summary: Where the server listens and where Studio is served - the active address and ports, the saved ones and whether a restart is needed, and whether the link to the broker is encrypted with the fingerprint of the pinned authority (mqtt_tls) (an administrator)
@@ -3496,6 +3565,8 @@ components:
         panel.separate_origin: { type: boolean, default: false, description: 'The panels of the nodes are served from a second origin (another port, or another name) and not from the origin of the API, entered with a ticket of one use (POST /api/v1/admin/node-panels/{id}/ticket), so that a script of a node runs without the session of the administrator who opens it. Off, the default: the panels are served from the origin of the API as they always were. While it is on, /api/v1/nodes/{id}/panel/ answers 403 panel_origin_required and the API refuses any request whose Origin is the second origin (403 panel_origin_forbidden).' }
         panel.preflight: { type: boolean, default: false, description: 'The account of a wall panel may read the check before arming (GET /api/v1/preflight) to show what is wrong when the person presses Arm. Off: it answers 403 and the panel arms as before.' }
         panel.camera_view: { type: boolean, default: false, description: 'The account of a wall panel may read a still picture of a camera (GET /api/v1/cameras/{id}/snapshot), at most one every two seconds for each camera. Off: it answers 403.' }
+        panel.solar: { type: boolean, default: false, description: 'The account of a wall panel may read the solar equipment cut down for a small screen (GET /api/v1/panel/solar and below). Off: it answers 403.' }
+        solar.panel_battery_ops: { type: boolean, default: false, description: 'The account of a wall panel may reset the statistics counters of a battery, and nothing else, with its PIN at every step, while solar.battery_write is on too. Off: it answers 403.' }
         capture.on_alarm: { type: boolean, default: false, description: 'When a node or an alarm panel raises a high or critical alarm (or a node alert level goes to high), the cameras that the site design says cover it take the photo and video of the capture settings. Off: only the vision service starts a capture.' }
         capture.on_alarm_per_min: { type: integer, minimum: 1, maximum: 60, default: 6, description: 'The most captures one minute of alarms may start in all.' }
         live.events: { type: boolean, default: true, description: 'Besides the whole state, the console channel /api/v1/events sends {type, id, version} notices when an alarm, a device, a solar device, a network node or a design changes. Off: the state only.' }
@@ -4738,7 +4809,7 @@ components:
             properties:
               at: { type: string, format: date-time }
               actor: { type: string }
-              via: { type: string, enum: [pin, mode_pin, voice_pin, panic_gesture, panic_phrase], description: 'pin = a disarm or a silence by command, mode_pin = a disarm or a lowering of the mode, voice_pin = a disarm by voice' }
+              via: { type: string, enum: [pin, mode_pin, voice_pin, panic_gesture, panic_phrase], description: 'pin = a disarm, a silence or a battery operation by command, mode_pin = a disarm or a lowering of the mode, voice_pin = a disarm by voice' }
               alarm_id: { type: string }
     PushStatus:
       type: object
@@ -5073,6 +5144,61 @@ components:
               memory_bytes: { type: integer }
               restarts: { type: integer }
               port: { type: integer }
+    PanelSolarTotals: { type: object, required: [inverters, batteries, stale, pv_w, load_w, battery_w, soc_percent, capacity_ah, full_capacity_ah, energy_kwh, grid_present, mode], properties: { inverters: { type: integer }, batteries: { type: integer }, stale: { type: integer }, pv_w: { type: number }, load_w: { type: number }, battery_w: { type: [number, 'null'] }, soc_percent: { type: [number, 'null'] }, capacity_ah: { type: [number, 'null'] }, full_capacity_ah: { type: [number, 'null'] }, energy_kwh: { type: [number, 'null'] }, grid_present: { type: boolean }, mode: { type: [string, 'null'], enum: [power_on, standby, line, battery, fault, power_saving, shutdown, unknown, null] } } }
+    PanelSolarDevice:
+      type: object
+      required: [node_id, device, kind, stale, example, received_at, reading]
+      properties:
+        node_id: { type: string }
+        device: { type: string }
+        kind: { type: string, enum: [inverter, battery] }
+        stale: { type: boolean }
+        example: { type: boolean }
+        received_at: { type: string, format: date-time }
+        name: { type: string, description: 'The name of the declared device, when there is one' }
+        reading: { type: object, additionalProperties: true, description: 'The fields of the solar_inverter or solar_battery message that a small screen draws; a battery of the list has no stack' }
+    PanelSolar:
+      type: object
+      required: [devices, omitted, totals, battery_ops]
+      properties:
+        devices: { type: array, maxItems: 32, items: { $ref: '#/components/schemas/PanelSolarDevice' } }
+        omitted: { type: integer, description: 'Devices beyond the first 32' }
+        totals: { $ref: '#/components/schemas/PanelSolarTotals' }
+        battery_ops: { type: object, required: [enabled, may, operations], properties: { enabled: { type: boolean }, may: { type: boolean, description: 'This account may order it (and has a PIN)' }, operations: { type: array, items: { type: string, enum: [clear_stats] } } } }
+    PanelSolarDeviceAnswer:
+      type: object
+      required: [devices, totals]
+      properties:
+        devices: { type: array, minItems: 1, maxItems: 1, items: { $ref: '#/components/schemas/PanelSolarDevice' } }
+        totals: { $ref: '#/components/schemas/PanelSolarTotals' }
+    PanelSolarHistory:
+      type: object
+      required: [node_id, device, kind, minutes, samples]
+      properties:
+        node_id: { type: string }
+        device: { type: string }
+        kind: { type: string, enum: [inverter, battery] }
+        minutes: { type: integer }
+        samples: { type: array, maxItems: 96, items: { type: object, required: [t], additionalProperties: true, properties: { t: { type: integer } } } }
+    PanelBatteryArmRequest:
+      type: object
+      required: [node, port, serial, pin]
+      properties:
+        node: { type: string }
+        port: { type: integer, minimum: 1, maximum: 10 }
+        serial: { type: string, description: 'The serial number of the battery, typed by the person' }
+        pin: { type: string, description: 'The PIN of the account of the screen' }
+        op: { type: string, enum: [clear_stats], description: 'May be left out; nothing else is taken' }
+    PanelBatteryExecuteRequest:
+      type: object
+      required: [serial, pin]
+      properties:
+        serial: { type: string }
+        pin: { type: string }
+    PanelBatteryOperation:
+      type: object
+      required: [id, node, port, op, stage]
+      properties: { id: { type: string }, node: { type: string }, port: { type: integer }, op: { type: string, enum: [clear_stats] }, stage: { type: string, enum: [arming, armed, starting, running, done, rejected, expired, lost, withdrawn] }, risk: { type: string, enum: [low, medium, high, irreversible] }, summary: { type: string }, battery: { type: object, additionalProperties: true }, refusal: { type: string }, outcome: { type: string }, code: { type: string }, armed_until: { type: string } }
     PanelSummary:
       type: object
       required: [mode, revision, time_ms, nodes, energy, alarms]
