@@ -120,6 +120,43 @@ paths:
       responses:
         '200': { description: '{ settings, defaults }', content: { application/json: { schema: { $ref: '#/components/schemas/SolarAlarmSettings' } } } }
         '400': { description: 'A level out of its range, an unknown one, or a charge that ends below where it starts', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/solar/battery-notices:
+    get:
+      summary: How battery alarms call for attention (once and discreet, or as every alarm), the plausible range of a cell voltage and the batteries that are silenced
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: 'The settings, their defaults and the silenced batteries', content: { application/json: { schema: { $ref: '#/components/schemas/BatteryNotices' } } } }
+        '401': { description: Operator authorization is required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+    put:
+      summary: Change those settings (a field that is left out keeps its value; every one is range-checked)
+      security: [{ operator: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/BatteryNoticeSettings' } } } }
+      responses:
+        '200': { description: 'The settings in force', content: { application/json: { schema: { $ref: '#/components/schemas/BatteryNotices' } } } }
+        '400': { description: 'A value out of its range or an unknown one', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '401': { description: Operator authorization is required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+  /api/v1/solar/battery-notices/silence:
+    post:
+      summary: Silence one battery stack (node/device) or one module of it (node/device/module), or take the silence off
+      security: [{ operator: [] }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [id, silenced], additionalProperties: false, properties: { id: { type: string, maxLength: 140 }, silenced: { type: boolean } } } } }
+      responses:
+        '200': { description: 'The settings and the silenced batteries', content: { application/json: { schema: { $ref: '#/components/schemas/BatteryNotices' } } } }
+        '400': { description: 'Not a battery or a module', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+        '401': { description: Operator authorization is required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+  /api/v1/solar/devices/{node}/{device}/day-cells/reset:
+    post:
+      summary: Start the extremes of the cells of today again for one battery (the widest gap, the lowest and highest cell)
+      security: [{ operator: [] }]
+      parameters:
+        - { name: node, in: path, required: true, schema: { type: string } }
+        - { name: device, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: '{ reset: true }', content: { application/json: { schema: { type: object, required: [reset], properties: { reset: { type: boolean } } } } } }
+        '401': { description: Operator authorization is required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
+        '404': { description: 'No cells of that battery were seen today', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/solar/history:
     get:
       summary: The recent history of one solar device, or of one battery module of a stack and its cells, a few numbers per sample, oldest first
@@ -3356,12 +3393,30 @@ components:
         acknowledged_unverified: { type: boolean, enum: [true] }
         false_alarm: { type: boolean, description: 'A person said it was a false alarm (true) or that it was not (false); absent: nobody said, and the summary of a day infers it from the disarm that ended an intrusion alarm' }
         false_alarm_by: { type: string, maxLength: 60, description: 'Who said so (an account name)' }
+        quiet: { type: string, enum: [new, known, silenced], description: 'Battery alarms only. The alarm must not call for attention (no sound, voice, pop-up, blinking or red), only a discreet mark: new (a problem not told before, or one that got worse), known (the same problem again) or silenced (the battery was silenced). Absent: announced as any alarm' }
     AlarmSource:
       type: object
       required: [type, id]
       properties:
         type: { type: string, enum: [node, camera, device, solar, electrical, network, alarm] }
         id: { type: string }
+    BatteryNoticeSettings:
+      type: object
+      additionalProperties: false
+      properties:
+        mode: { type: string, enum: [once, classic], description: 'once: battery alarms are discreet and a problem is told only once, again only if it gets worse; classic: as any alarm' }
+        forget_after_h: { type: number, minimum: 1, maximum: 720, description: 'A problem that has been over for this long is new if it comes back' }
+        cell_min_plausible_v: { type: number, minimum: 0, maximum: 3 }
+        cell_max_plausible_v: { type: number, minimum: 3.6, maximum: 10 }
+    BatteryNotices:
+      type: object
+      required: [settings, defaults, silenced]
+      properties:
+        settings: { $ref: '#/components/schemas/BatteryNoticeSettings' }
+        defaults: { $ref: '#/components/schemas/BatteryNoticeSettings' }
+        silenced:
+          type: array
+          items: { type: object, required: [id, since, by], properties: { id: { type: string }, since: { type: string, format: date-time }, by: { type: string } } }
     AlarmList:
       type: object
       required: [active, recent]
@@ -4059,6 +4114,19 @@ components:
                 properties:
                   date: { type: string }
                   bank_delta_v: { type: number }
+                  bank:
+                    type: object
+                    description: The reading that gave the widest gap of the bank - when, and the module and cell at each end
+                    required: [at, low, high]
+                    properties:
+                      at: { type: integer }
+                      low: { type: object, required: [module, cell, v], properties: { module: { type: integer }, cell: { type: integer }, v: { type: number } } }
+                      high: { type: object, required: [module, cell, v], properties: { module: { type: integer }, cell: { type: integer }, v: { type: number } } }
+                  reset_at: { type: integer, description: When somebody started the day again }
+                  discarded:
+                    type: array
+                    description: Readings left out of the extremes, newest first - a voltage no cell can have (range) or a wide gap that the next reading did not repeat (unconfirmed)
+                    items: { type: object, required: [at, module, reason], properties: { at: { type: integer }, module: { type: integer }, cell: { type: integer }, v: { type: number }, delta_v: { type: number }, reason: { type: string, enum: [range, unconfirmed] } } }
                   modules:
                     type: array
                     items:
