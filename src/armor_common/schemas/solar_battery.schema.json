@@ -324,6 +324,20 @@
             },
             "description": "The newest entry of the module's event log (the console's data event), shown as the console prints it; left out when the node does not read it."
           },
+          "manufacturer": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32,
+            "description": "The maker of the equipment. Told by the equipment itself or, only when its protocol or model leaves no doubt, deduced (manufacturer_source). Left out when it is not known: never guessed."
+          },
+          "manufacturer_source": {
+            "type": "string",
+            "enum": [
+              "reported",
+              "deduced"
+            ],
+            "description": "reported: the equipment said it. deduced: worked out from the protocol or the model it answered with."
+          },
           "serial": {
             "type": "string",
             "pattern": "^[A-Za-z0-9_-]{1,24}$",
@@ -385,6 +399,20 @@
           }
         }
       }
+    },
+    "manufacturer": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32,
+      "description": "The maker of the equipment. Told by the equipment itself or, only when its protocol or model leaves no doubt, deduced (manufacturer_source). Left out when it is not known: never guessed."
+    },
+    "manufacturer_source": {
+      "type": "string",
+      "enum": [
+        "reported",
+        "deduced"
+      ],
+      "description": "reported: the equipment said it. deduced: worked out from the protocol or the model it answered with."
     },
     "model": {
       "type": "string",

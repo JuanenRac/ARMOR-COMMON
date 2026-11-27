@@ -306,6 +306,20 @@
       "pattern": "^[0-9A-Za-z]{8,20}$",
       "description": "The inverter's serial number (QID), when it says it."
     },
+    "manufacturer": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32,
+      "description": "The maker of the equipment. Told by the equipment itself or, only when its protocol or model leaves no doubt, deduced (manufacturer_source). Left out when it is not known: never guessed."
+    },
+    "manufacturer_source": {
+      "type": "string",
+      "enum": [
+        "reported",
+        "deduced"
+      ],
+      "description": "reported: the equipment said it. deduced: worked out from the protocol or the model it answered with."
+    },
     "firmware": {
       "type": "string",
       "pattern": "^[0-9A-Za-z._-]{1,24}$",
