@@ -80,6 +80,7 @@
         "busy_upload",
         "busy_slot_copy",
         "busy_battery",
+        "busy_guarding",
         "unavailable"
       ]
     },

@@ -4712,7 +4712,7 @@ components:
         stage: { type: string, enum: [pending, armed, sent, acknowledged, applied, offline, back, refused, no_answer, not_back], description: 'pending: waiting for the node to arm; armed: it gave its token; sent: the order was sent; acknowledged: it said it is restarting; applied: it did what was asked (see state); offline: it stopped reporting; back: it reports again; refused, no_answer and not_back: it did not' }
         state: { type: string, enum: [running, paused, standby], description: 'After an applied order: the state of the node' }
         maintenance: { type: boolean }
-        refusal: { type: string, description: 'The reason the node gave when it refused (busy_update, busy_upload, busy_slot_copy, busy_battery, rate_limited, already_in_state ...)' }
+        refusal: { type: string, description: 'The reason the node gave when it refused (busy_update, busy_upload, busy_slot_copy, busy_battery, busy_guarding, rate_limited, already_in_state ...)' }
         slot: { type: integer, description: 'Its place in a rolling restart' }
         restart_in_s: { type: integer, description: 'What the node said: seconds until it goes' }
         until_s: { type: integer, description: 'Seconds left of the pause, identify or maintenance window' }

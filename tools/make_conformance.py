@@ -1807,6 +1807,7 @@ cases: dict[str, list[Any]] = {
         ("refused: busy installing an update", True, control_refused()),
         ("refused: restarted a moment ago", True, control_refused(refusal="rate_limited")),
         ("refused: a battery operation is under way", True, control_refused(refusal="busy_battery")),
+        ("refused: the panel is guarding", True, control_refused(refusal="busy_guarding")),
         ("a pause refused: a firmware upload is under way", True, control_refused(operation="pause", refusal="busy_upload")),
         ("a standby refused: the firmware is being copied to the other slot", True, control_refused(operation="standby", refusal="busy_slot_copy")),
         ("a pause refused: the node is paused already", True, control_refused(operation="pause", action="execute", refusal="already_in_state")),
