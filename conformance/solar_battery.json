@@ -224,6 +224,432 @@
    }
   },
   {
+   "name": "ten modules with a hundred cells balancing",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 10,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "cells_v": [
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45
+      ]
+     },
+     {
+      "n": 2,
+      "present": true,
+      "cells_v": [
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45
+      ]
+     },
+     {
+      "n": 3,
+      "present": true,
+      "cells_v": [
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45
+      ]
+     },
+     {
+      "n": 4,
+      "present": true,
+      "cells_v": [
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45
+      ]
+     },
+     {
+      "n": 5,
+      "present": true,
+      "cells_v": [
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45
+      ]
+     },
+     {
+      "n": 6,
+      "present": true,
+      "cells_v": [
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45
+      ]
+     },
+     {
+      "n": 7,
+      "present": true,
+      "cells_v": [
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45
+      ]
+     },
+     {
+      "n": 8,
+      "present": true,
+      "cells_v": [
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45
+      ]
+     },
+     {
+      "n": 9,
+      "present": true,
+      "cells_v": [
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45
+      ]
+     },
+     {
+      "n": 10,
+      "present": true,
+      "cells_v": [
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45,
+       3.45
+      ]
+     }
+    ],
+    "balancing": 100
+   }
+  },
+  {
+   "name": "every cell of sixteen modules of thirty-two balancing",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 16,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true
+     },
+     {
+      "n": 2,
+      "present": true
+     },
+     {
+      "n": 3,
+      "present": true
+     },
+     {
+      "n": 4,
+      "present": true
+     },
+     {
+      "n": 5,
+      "present": true
+     },
+     {
+      "n": 6,
+      "present": true
+     },
+     {
+      "n": 7,
+      "present": true
+     },
+     {
+      "n": 8,
+      "present": true
+     },
+     {
+      "n": 9,
+      "present": true
+     },
+     {
+      "n": 10,
+      "present": true
+     },
+     {
+      "n": 11,
+      "present": true
+     },
+     {
+      "n": 12,
+      "present": true
+     },
+     {
+      "n": 13,
+      "present": true
+     },
+     {
+      "n": 14,
+      "present": true
+     },
+     {
+      "n": 15,
+      "present": true
+     },
+     {
+      "n": 16,
+      "present": true
+     }
+    ],
+    "balancing": 512
+   }
+  },
+  {
+   "name": "more cells balancing than a stack has",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "balancing": 513
+   }
+  },
+  {
+   "name": "a stack current that sixteen modules can add up to",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -1600.0,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ]
+   }
+  },
+  {
+   "name": "a stack current above what sixteen modules add up to",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": 16000.5,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ]
+   }
+  },
+  {
    "name": "a mosfet code above 255",
    "valid": false,
    "payload": {
