@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **Firmware base: the panel of a node says a request that does not end, and sends nothing while the sessions are locked:** `core/slow_req.hpp` and `main/req_watch` are shared by the five nodes, the route check fails when an answer is sent under the lock of the sessions or the API is not watched, and the shared host tests cover the rules. Tested on a computer; not tried on a board.
 ## [0.8.1.8] - More solar protocols, a lighter shared node firmware and the battery history and console factor in the HTTP contract
 
 - **More solar equipment protocols in the shared catalogue:** PI00 / PI16 (questions without CRC), PI17, the Victron VE.Direct Phoenix inverter and the battery monitor in hexadecimal mode; DALY, JBD, SRNE and PI30 entries updated. Decoded from public documents, none tried on equipment.

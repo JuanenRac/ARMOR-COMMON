@@ -62,6 +62,7 @@ CANDIDATES = [
     "core/board_s3.hpp", "core/secret_seal.hpp", "main/secret_vault.cpp", "main/secret_vault.hpp", "core/memory_budget.hpp", "main/psram_mem.cpp", "main/psram_mem.hpp", "core/backoff.hpp", "core/improv.hpp", "core/task_health.hpp", "core/central_link.hpp", "core/armor_wire.hpp", "tests/test_wire.cpp", "tests/test_wire_full.cpp",
     "main/task_health.cpp", "main/task_health.hpp", "main/improv_serial.cpp", "main/improv_serial.hpp", "tests/test_base.cpp", "tests/test_central.cpp", "tests/test_shared.cpp", "tests/test_shared_more.cpp", "tests/test_shared_node.cpp",
     "panel/index.html", "panel/style.css", "tools/pack_panel.py", "tools/build_node.sh",
+    "core/slow_req.hpp", "main/req_watch.cpp", "main/req_watch.hpp",
     "partitions.csv", "sdkconfig.defaults", "sdkconfig.board.s3-wifi", "sdkconfig.board.s3-eth",
 ]
 
