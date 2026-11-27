@@ -68,7 +68,7 @@ def result(**changes):
 
 def bat_command(**changes):
     base = {"kind": "solar_battery_command", "node_id": "solar-1", "timestamp_ms": 9000, "command_id": "b0b0b0b012345678", "port": 2, "action": "arm", "op": "output_set",
-            "params": {"output": "cfet", "state": "off"}, "serial": "PPTBH02200409223"}
+            "params": {"output": "cfet", "state": "off"}, "serial": "PPTBH00000000001"}
     base.update(changes)
     return base
 
@@ -89,7 +89,7 @@ def bat_without(payload, *names):
 
 MODULE_VOLTAGE = {"pov": 58000, "povr": 55000, "phv": 57600, "phvr": 55500, "plv": 47000, "plvr": 48000, "puv": 44000, "puvr": 45000, "pslp": 42000}
 TEMPERATURE = {"cot": 60000, "cotr": 55000, "cht": 50000, "chtr": 45000, "clt": 5000, "cltr": 8000, "cut": -5000, "cutr": -2000}
-BATTERY = {"model": "US3000C", "serial": "PPTBH02200409223", "soft_version": "V3.0", "board": ""}
+BATTERY = {"model": "US3000C", "serial": "PPTBH00000000001", "soft_version": "V3.0", "board": ""}
 ARMED_ONLY = ("token", "battery", "canonical", "summary", "risk", "atomic")
 
 
@@ -813,7 +813,7 @@ cases: dict[str, list[Any]] = {
         ("arm the clock", True, bat_command(op="set_clock", params={})),
         ("arm the clock without params", True, bat_without(bat_command(op="set_clock"), "params")),
         ("a battery with no serial yet", True, bat_command(op="set_clock", params={}, serial="NOSERIAL")),
-        ("write the barcode", True, bat_command(op="write_barcode", params={"serial": "H221014C32213244"})),
+        ("write the barcode", True, bat_command(op="write_barcode", params={"serial": "H000000C30000001"})),
         ("set the module voltages", True, bat_command(op="limits_set", params={"group": "module_voltage", "values": dict(MODULE_VOLTAGE)})),
         ("set the temperatures", True, bat_command(op="limits_set", params={"group": "temperature", "values": dict(TEMPERATURE)})),
         ("enable two protections", True, bat_command(op="protections_set", params={"items": {"bov": "en", "coc": "en"}})),
@@ -878,7 +878,7 @@ cases: dict[str, list[Any]] = {
         ("a firmware image below the smallest", False, bat_command(op="firmware_update", params={"image_size": 1000, "image_crc32": 1, "image_version": "2.4"})),
         ("a firmware image without its CRC", False, bat_command(op="firmware_update", params={"image_size": 200000, "image_version": "2.4"}), True),
         ("a firmware image with a CRC above 32 bits", False, bat_command(op="firmware_update", params={"image_size": 200000, "image_crc32": 4294967296, "image_version": "2.4"})),
-        ("an expert line with a blocked word", False, bat_command(op="expert_command", params={"line": "tbar H221014C32213244"}), True),
+        ("an expert line with a blocked word", False, bat_command(op="expert_command", params={"line": "tbar H000000C30000001"}), True),
         ("an expert line that starts the update", False, bat_command(op="expert_command", params={"line": "updata"}), True),
         ("an expert line that erases the memory", False, bat_command(op="expert_command", params={"line": "eepe 0"}), True),
         ("an expert line of two commands", False, bat_command(op="expert_command", params={"line": "pwr;shut"}), True),

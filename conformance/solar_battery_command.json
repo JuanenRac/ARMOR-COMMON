@@ -16,7 +16,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -34,7 +34,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223",
+    "serial": "PPTBH00000000001",
     "token": "0123456789abcdef0123456789abcdef"
    }
   },
@@ -102,7 +102,7 @@
     "action": "arm",
     "op": "set_clock",
     "params": {},
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -116,7 +116,7 @@
     "port": 2,
     "action": "arm",
     "op": "set_clock",
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -146,9 +146,9 @@
     "action": "arm",
     "op": "write_barcode",
     "params": {
-     "serial": "H221014C32213244"
+     "serial": "H000000C30000001"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -176,7 +176,7 @@
       "pslp": 42000
      }
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -203,7 +203,7 @@
       "cutr": -2000
      }
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -223,7 +223,7 @@
       "coc": "en"
      }
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -243,7 +243,7 @@
      },
      "accept_risk": true
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -260,7 +260,7 @@
     "params": {
      "which": "event"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -279,7 +279,7 @@
      "image_crc32": 305419896,
      "image_version": "2.4"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -299,7 +299,7 @@
      "image_version": "2.4",
      "clear_eeprom": true
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -316,7 +316,7 @@
     "params": {
      "line": "pwr"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -334,7 +334,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -352,7 +352,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -370,7 +370,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -388,7 +388,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -406,7 +406,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -424,7 +424,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -442,7 +442,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -460,7 +460,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -478,7 +478,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -496,7 +496,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223",
+    "serial": "PPTBH00000000001",
     "token": "0123456789ABCDEF0123456789ABCDEF"
    }
   },
@@ -515,7 +515,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223",
+    "serial": "PPTBH00000000001",
     "token": "0123456789abcdef0123456789abcde"
    }
   },
@@ -570,7 +570,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -588,7 +588,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -606,7 +606,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -624,7 +624,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223",
+    "serial": "PPTBH00000000001",
     "password": "x"
    }
   },
@@ -643,7 +643,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223",
+    "serial": "PPTBH00000000001",
     "service_password": "x"
    }
   },
@@ -661,7 +661,7 @@
     "params": [
      1
     ],
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -799,7 +799,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    },
    "schema_valid": true
   },
@@ -836,7 +836,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223",
+    "serial": "PPTBH00000000001",
     "token": "0123456789abcdef0123456789abcdef"
    },
    "schema_valid": true
@@ -856,7 +856,7 @@
      "output": "cfet",
      "state": "off"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    },
    "schema_valid": true
   },
@@ -942,7 +942,7 @@
     "params": {
      "hour": 3
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -960,7 +960,7 @@
      "output": "mostest",
      "state": "on"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -978,7 +978,7 @@
      "output": "cfet",
      "state": "toggle"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -995,7 +995,7 @@
     "params": {
      "output": "cfet"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    },
    "schema_valid": true
   },
@@ -1013,7 +1013,7 @@
     "params": {
      "which": "all"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -1030,7 +1030,7 @@
     "params": {
      "serial": "SHORT"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -1057,7 +1057,7 @@
       "puvr": 45000
      }
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    },
    "schema_valid": true
   },
@@ -1087,7 +1087,7 @@
       "extra": 1
      }
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -1115,7 +1115,7 @@
       "pslp": 42000
      }
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    },
    "schema_valid": true
   },
@@ -1144,7 +1144,7 @@
       "pslp": 19999
      }
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    },
    "schema_valid": true
   },
@@ -1173,7 +1173,7 @@
       "pslp": 42000
      }
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    },
    "schema_valid": true
   },
@@ -1202,7 +1202,7 @@
       "pslp": 42000
      }
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    },
    "schema_valid": true
   },
@@ -1231,7 +1231,7 @@
       "pslp": 42000
      }
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -1249,7 +1249,7 @@
      "group": "current",
      "values": {}
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -1276,7 +1276,7 @@
       "cutr": -2000
      }
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -1303,7 +1303,7 @@
       "cutr": -2000
      }
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -1322,7 +1322,7 @@
       "nope": "en"
      }
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -1341,7 +1341,7 @@
       "bov": "off"
      }
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -1360,7 +1360,7 @@
       "bov": "dis"
      }
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    },
    "schema_valid": true
   },
@@ -1378,7 +1378,7 @@
     "params": {
      "items": {}
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    },
    "schema_valid": true
   },
@@ -1398,7 +1398,7 @@
      "image_crc32": 1,
      "image_version": "2.4"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -1416,7 +1416,7 @@
      "image_size": 200000,
      "image_version": "2.4"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    },
    "schema_valid": true
   },
@@ -1436,7 +1436,7 @@
      "image_crc32": 4294967296,
      "image_version": "2.4"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -1451,9 +1451,9 @@
     "action": "arm",
     "op": "expert_command",
     "params": {
-     "line": "tbar H221014C32213244"
+     "line": "tbar H000000C30000001"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    },
    "schema_valid": true
   },
@@ -1471,7 +1471,7 @@
     "params": {
      "line": "updata"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    },
    "schema_valid": true
   },
@@ -1489,7 +1489,7 @@
     "params": {
      "line": "eepe 0"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    },
    "schema_valid": true
   },
@@ -1507,7 +1507,7 @@
     "params": {
      "line": "pwr;shut"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    },
    "schema_valid": true
   },
@@ -1525,7 +1525,7 @@
     "params": {
      "line": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    }
   },
   {
@@ -1542,7 +1542,7 @@
     "params": {
      "line": "help eepw"
     },
-    "serial": "PPTBH02200409223"
+    "serial": "PPTBH00000000001"
    },
    "schema_valid": true
   }
