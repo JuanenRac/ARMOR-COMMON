@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The shared tools read the output of processes as UTF-8:** `status_lights.py`, `sync_manifests.py` and `universal_readme_check.py` are the same text as in the other families again; on Windows a character outside the code page no longer breaks a check. The ceiling of the Security, Updates and Writing rows stays for A.R.M.O.R. repositories only. 666 tests.
 - **Firmware base: the panel of a node says a request that does not end, and sends nothing while the sessions are locked:** `core/slow_req.hpp` and `main/req_watch` are shared by the five nodes, the route check fails when an answer is sent under the lock of the sessions or the API is not watched, and the shared host tests cover the rules. Tested on a computer; not tried on a board.
 ## [0.8.1.8] - More solar protocols, a lighter shared node firmware and the battery history and console factor in the HTTP contract
 
