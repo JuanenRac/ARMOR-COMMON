@@ -114,6 +114,8 @@ data class SolarInverter(
     val units: List<SolarInverterUnits>? = null,
     val bus_v: Double? = null,
     val serial: String? = null,
+    val manufacturer: String? = null,
+    val manufacturer_source: String? = null,
     val firmware: String? = null,
     val pv_energy_total_wh: Double? = null,
     val ratings: SolarInverterRatings? = null
@@ -134,6 +136,12 @@ data class SolarModuleLastEvent(
     val power_events: String? = null,
     val battery_events: String? = null,
     val system_fault: String? = null
+)
+
+data class SolarModuleFlags(
+    val column: String,
+    val word: String,
+    val cell: Long? = null
 )
 
 data class SolarModule(
@@ -159,6 +167,10 @@ data class SolarModule(
     val soh_counts: List<Long>? = null,
     val soh_abnormal: List<Long>? = null,
     val last_event: SolarModuleLastEvent? = null,
+    val flags: List<SolarModuleFlags>? = null,
+    val cells_unread: List<Long>? = null,
+    val manufacturer: String? = null,
+    val manufacturer_source: String? = null,
     val serial: String? = null,
     val board: String? = null,
     val chip: String? = null,
@@ -187,6 +199,8 @@ data class SolarBattery(
     val soc_percent: Long? = null,
     val alarm: Boolean? = null,
     val stack: List<SolarModule>,
+    val manufacturer: String? = null,
+    val manufacturer_source: String? = null,
     val model: String? = null,
     val capacity_ah: Double? = null,
     val full_capacity_ah: Double? = null,
