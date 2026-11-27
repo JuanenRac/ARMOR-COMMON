@@ -51,9 +51,9 @@
     },
     "current_a": {
       "type": "number",
-      "minimum": -1000,
-      "maximum": 1000,
-      "description": "Sum of the modules: positive while charging."
+      "minimum": -16000,
+      "maximum": 16000,
+      "description": "Sum of the modules (up to sixteen, each within 1000 A): positive while charging."
     },
     "temperature_min_c": {
       "type": "number",
@@ -431,8 +431,8 @@
     "balancing": {
       "type": "integer",
       "minimum": 0,
-      "maximum": 64,
-      "description": "How many cells are being balanced at this moment; left out when unknown."
+      "maximum": 512,
+      "description": "How many cells are being balanced at this moment, in the whole stack (up to sixteen modules of thirty-two cells); left out when unknown."
     },
     "protecting": {
       "type": "boolean",
