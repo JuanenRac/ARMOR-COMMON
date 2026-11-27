@@ -582,6 +582,61 @@ export type BatteryArmRequest = {
   serial: string;
 };
 
+export type BatteryCampaign = {
+  id: string;
+  node: string;
+  port: number;
+  device: string;
+  state: "active" | "stopped" | "return_cable" | "done" | "cancelled";
+  /** The index of the module being worked on */
+  current: number;
+  stop_reason?: string;
+  modules: BatteryCampaignModule[];
+  image: {
+    board: string;
+    version: string;
+    sha256: string;
+    size: number;
+  };
+  actor: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type BatteryCampaignImage = {
+  /** The same image kept again, when the server has forgotten it */
+  image_id?: string;
+};
+
+export type BatteryCampaignList = {
+  enabled: boolean;
+  campaigns: BatteryCampaign[];
+};
+
+export type BatteryCampaignModule = {
+  number: number;
+  serial: string;
+  model: string;
+  board: string;
+  chip: "older" | "newer" | "unknown";
+  version?: string;
+  version_after?: string;
+  status: "pending" | "checking" | "ready" | "updating" | "done" | "failed";
+  operation_id?: string;
+  /** Why the module is not done: a refusal or a code of the node */
+  code?: string;
+  /** The battery was left in its bootloader: the same image is tried again */
+  resume?: boolean;
+};
+
+export type BatteryCampaignRequest = {
+  node: string;
+  port: number;
+  /** The battery of the node whose module list (read from the first battery of the stack) is the campaign */
+  device: string;
+  image_id: string;
+};
+
 export type BatteryExecuteRequest = {
   /** The serial number again; it must be the one typed to arm */
   serial: string;

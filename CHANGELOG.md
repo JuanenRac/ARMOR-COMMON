@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **A firmware campaign for a stack of batteries:** the HTTP contract gains the routes that update one module at a time with the console cable moved to each one (`/api/v1/solar/battery-campaigns`), and `firmware_update` gains the value `resume` for a battery left in its bootloader by a failed try. Nothing here has run on a battery.
 - **A large battery stack is no longer refused:** the solar battery message allowed at most 64 cells balancing at once, so a stack of ten modules with a hundred cells balancing was refused as a whole and none of its readings were taken. The limit is now 512 (sixteen modules of thirty-two cells) and the current of the stack may reach 16000 A (the sum of sixteen modules).
 - **The shared tools read the output of processes as UTF-8:** `status_lights.py`, `sync_manifests.py` and `universal_readme_check.py` are the same text as in the other families again; on Windows a character outside the code page no longer breaks a check. The ceiling of the Security, Updates and Writing rows stays for A.R.M.O.R. repositories only. 666 tests.
 - **Firmware base: the memory gate of the panel cannot stay shut for ever:** when the internal memory settled between the levels that close it and the levels that open it, new connections were refused until the node was restarted by hand. It now also opens after about a minute over the closing levels. Tested on a computer; not tried on a board.
