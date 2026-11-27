@@ -364,6 +364,21 @@
    }
   },
   {
+   "name": "refused: the panel is guarding",
+   "valid": true,
+   "payload": {
+    "kind": "node_control_result",
+    "node_id": "radar-1",
+    "timestamp_ms": 9100,
+    "command_id": "d0d0d0d012345678",
+    "action": "arm",
+    "operation": "restart",
+    "stage": "rejected",
+    "accepted": false,
+    "refusal": "busy_guarding"
+   }
+  },
+  {
    "name": "a pause refused: a firmware upload is under way",
    "valid": true,
    "payload": {

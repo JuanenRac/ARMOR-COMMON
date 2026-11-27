@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **A node can refuse to stop watching while armed:** the shared control rules know a guarding node (`busy_guarding`): it may restart, but a pause or a standby is refused.
 - **An impossible figure is told, not only dropped:** a battery module may carry `left_out` (the figures that came impossible and were left out of the message), and a raised battery alarm in the event history may carry `quiet` (`known` or `silenced`) so that no client notifies the same problem twice. Both are optional.
 - **A battery says what is wrong with it:** a battery module may carry `flags` (each state column or cell that is not normal, with the battery's own word) and `cells_unread` (cells that read 0 V two turns in a row), both optional; a new alarm code `solar_battery_fault` (a fault of the battery's electronics) has its title and help text in the eight languages. An older server ignores the two fields when it reads a node's message.
 - **The solar messages may say who made the equipment:** `manufacturer` (up to 32 characters) and `manufacturer_source` (`reported` when the equipment said it, `deduced` when its protocol or model leaves no doubt) in the inverter message, in the battery message (the stack) and in each battery module, all optional; left out when it is not known. A node with the new fields can talk to an older server: the server ignores the fields it does not know when it reads a node's message, it does not refuse the reading.

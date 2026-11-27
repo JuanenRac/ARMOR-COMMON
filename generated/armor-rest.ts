@@ -2058,7 +2058,7 @@ export type NodeControlLine = {
   /** After an applied order: the state of the node */
   state?: "running" | "paused" | "standby";
   maintenance?: boolean;
-  /** The reason the node gave when it refused (busy_update, busy_upload, busy_slot_copy, busy_battery, rate_limited, already_in_state ...) */
+  /** The reason the node gave when it refused (busy_update, busy_upload, busy_slot_copy, busy_battery, busy_guarding, rate_limited, already_in_state ...) */
   refusal?: string;
   /** Its place in a rolling restart */
   slot?: number;
