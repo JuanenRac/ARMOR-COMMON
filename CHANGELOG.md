@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The HTTP contract gains the solar routes of a small wall screen:** `GET /api/v1/panel/solar`, one device at a time and a short history, and the one battery operation such a screen may order (resetting the counters, with a PIN at every step), with the security options `panel.solar` and `solar.panel_battery_ops`, both off by default.
 - **Firmware base: the panel of a node says a request that does not end, and sends nothing while the sessions are locked:** `core/slow_req.hpp` and `main/req_watch` are shared by the five nodes, the route check fails when an answer is sent under the lock of the sessions or the API is not watched, and the shared host tests cover the rules. Tested on a computer; not tried on a board.
 ## [0.8.1.8] - More solar protocols, a lighter shared node firmware and the battery history and console factor in the HTTP contract
 

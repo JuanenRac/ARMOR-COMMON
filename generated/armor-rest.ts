@@ -1192,7 +1192,7 @@ export type DuressLog = {
   entries: {
     at: string;
     actor: string;
-    /** pin = a disarm or a silence by command, mode_pin = a disarm or a lowering of the mode, voice_pin = a disarm by voice */
+    /** pin = a disarm, a silence or a battery operation by command, mode_pin = a disarm or a lowering of the mode, voice_pin = a disarm by voice */
     via: "pin" | "mode_pin" | "voice_pin" | "panic_gesture" | "panic_phrase";
     alarm_id?: string;
   }[];
@@ -2246,6 +2246,98 @@ export type OperatorSessionOpened = {
   expiresAt: string;
 };
 
+export type PanelBatteryArmRequest = {
+  node: string;
+  port: number;
+  /** The serial number of the battery, typed by the person */
+  serial: string;
+  /** The PIN of the account of the screen */
+  pin: string;
+  /** May be left out; nothing else is taken */
+  op?: "clear_stats";
+};
+
+export type PanelBatteryExecuteRequest = {
+  serial: string;
+  pin: string;
+};
+
+export type PanelBatteryOperation = {
+  id: string;
+  node: string;
+  port: number;
+  op: "clear_stats";
+  stage: "arming" | "armed" | "starting" | "running" | "done" | "rejected" | "expired" | "lost" | "withdrawn";
+  risk?: "low" | "medium" | "high" | "irreversible";
+  summary?: string;
+  battery?: {
+    [key: string]: unknown;
+  };
+  refusal?: string;
+  outcome?: string;
+  code?: string;
+  armed_until?: string;
+};
+
+export type PanelSolar = {
+  devices: PanelSolarDevice[];
+  /** Devices beyond the first 32 */
+  omitted: number;
+  totals: PanelSolarTotals;
+  battery_ops: {
+    enabled: boolean;
+    /** This account may order it (and has a PIN) */
+    may: boolean;
+    operations: "clear_stats"[];
+  };
+};
+
+export type PanelSolarDevice = {
+  node_id: string;
+  device: string;
+  kind: "inverter" | "battery";
+  stale: boolean;
+  example: boolean;
+  received_at: string;
+  /** The name of the declared device, when there is one */
+  name?: string;
+  /** The fields of the solar_inverter or solar_battery message that a small screen draws; a battery of the list has no stack */
+  reading: {
+    [key: string]: unknown;
+  };
+};
+
+export type PanelSolarDeviceAnswer = {
+  devices: PanelSolarDevice[];
+  totals: PanelSolarTotals;
+};
+
+export type PanelSolarHistory = {
+  node_id: string;
+  device: string;
+  kind: "inverter" | "battery";
+  minutes: number;
+  samples: {
+    t: number;
+    [key: string]: unknown;
+  }[];
+};
+
+export type PanelSolarTotals = {
+  inverters: number;
+  batteries: number;
+  stale: number;
+  pv_w: number;
+  load_w: number;
+  battery_w: number | null;
+  soc_percent: number | null;
+  capacity_ah: number | null;
+  full_capacity_ah: number | null;
+  energy_kwh: number | null;
+  grid_present: boolean;
+  mode: "power_on" | "standby" | "line" | "battery" | "fault" | "power_saving" | "shutdown" | "unknown" | null | null;
+};
+
 export type PanelSummary = {
   mode: "armed" | "disarmed";
   /** Present only while a countdown runs: the time left to leave the house after arming (exit) or to disarm after a door opened (entry); the panel shows it big and sounds it */
@@ -3040,6 +3132,10 @@ export type SecuritySettings = {
   "panel.preflight"?: boolean;
   /** The account of a wall panel may read a still picture of a camera (GET /api/v1/cameras/{id}/snapshot), at most one every two seconds for each camera. Off: it answers 403. */
   "panel.camera_view"?: boolean;
+  /** The account of a wall panel may read the solar equipment cut down for a small screen (GET /api/v1/panel/solar and below). Off: it answers 403. */
+  "panel.solar"?: boolean;
+  /** The account of a wall panel may reset the statistics counters of a battery, and nothing else, with its PIN at every step, while solar.battery_write is on too. Off: it answers 403. */
+  "solar.panel_battery_ops"?: boolean;
   /** When a node or an alarm panel raises a high or critical alarm (or a node alert level goes to high), the cameras that the site design says cover it take the photo and video of the capture settings. Off: only the vision service starts a capture. */
   "capture.on_alarm"?: boolean;
   /** The most captures one minute of alarms may start in all. */
