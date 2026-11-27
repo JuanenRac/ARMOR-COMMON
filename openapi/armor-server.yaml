@@ -141,7 +141,7 @@ paths:
       security: [{ operator: [] }]
       requestBody:
         required: true
-        content: { application/json: { schema: { type: object, required: [id, silenced], additionalProperties: false, properties: { id: { type: string, maxLength: 140 }, silenced: { type: boolean } } } } }
+        content: { application/json: { schema: { $ref: '#/components/schemas/BatterySilenceRequest' } } }
       responses:
         '200': { description: 'The settings and the silenced batteries', content: { application/json: { schema: { $ref: '#/components/schemas/BatteryNotices' } } } }
         '400': { description: 'Not a battery or a module', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
@@ -154,7 +154,7 @@ paths:
         - { name: node, in: path, required: true, schema: { type: string } }
         - { name: device, in: path, required: true, schema: { type: string } }
       responses:
-        '200': { description: '{ reset: true }', content: { application/json: { schema: { type: object, required: [reset], properties: { reset: { type: boolean } } } } } }
+        '200': { description: '{ reset: true }', content: { application/json: { schema: { $ref: '#/components/schemas/DayCellsReset' } } } }
         '401': { description: Operator authorization is required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
         '404': { description: 'No cells of that battery were seen today', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
   /api/v1/solar/history:
@@ -3417,6 +3417,18 @@ components:
         silenced:
           type: array
           items: { type: object, required: [id, since, by], properties: { id: { type: string }, since: { type: string, format: date-time }, by: { type: string } } }
+    BatterySilenceRequest:
+      type: object
+      required: [id, silenced]
+      additionalProperties: false
+      properties:
+        id: { type: string, maxLength: 140, description: 'node/device, or node/device/module' }
+        silenced: { type: boolean }
+    DayCellsReset:
+      type: object
+      required: [reset]
+      properties:
+        reset: { type: boolean }
     AlarmList:
       type: object
       required: [active, recent]

@@ -753,6 +753,12 @@ export type BatteryOpsCatalog = {
   };
 };
 
+export type BatterySilenceRequest = {
+  /** node/device, or node/device/module */
+  id: string;
+  silenced: boolean;
+};
+
 /** A camera as an operator sees it (the password is never shown) */
 export type Camera = {
   id: string;
@@ -1075,6 +1081,10 @@ export type DailySummaryReport = {
   text: string;
   /** The note of the AI provider; present only when the settings of the summary turn it on */
   ai_note?: string;
+};
+
+export type DayCellsReset = {
+  reset: boolean;
 };
 
 export type DeleteMediaRequest = {
