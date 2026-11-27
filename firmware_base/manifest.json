@@ -931,6 +931,33 @@
         "ARMOR-NODE-HMI": "core/hmac_sha256.hpp",
         "ARMOR-NODE-ALARM": "core/hmac_sha256.hpp"
       }
+    },
+    "core/slow_req.hpp": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "core/slow_req.hpp",
+        "ARMOR-NODE-ELECTRICAL": "core/slow_req.hpp",
+        "ARMOR-NODE-RADAR": "main/core/slow_req.hpp",
+        "ARMOR-NODE-HMI": "core/slow_req.hpp",
+        "ARMOR-NODE-ALARM": "core/slow_req.hpp"
+      }
+    },
+    "main/req_watch.cpp": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "main/req_watch.cpp",
+        "ARMOR-NODE-ELECTRICAL": "main/req_watch.cpp",
+        "ARMOR-NODE-RADAR": "main/req_watch.cpp",
+        "ARMOR-NODE-HMI": "main/req_watch.cpp",
+        "ARMOR-NODE-ALARM": "main/req_watch.cpp"
+      }
+    },
+    "main/req_watch.hpp": {
+      "targets": {
+        "ARMOR-NODE-SOLAR": "main/req_watch.hpp",
+        "ARMOR-NODE-ELECTRICAL": "main/req_watch.hpp",
+        "ARMOR-NODE-RADAR": "main/req_watch.hpp",
+        "ARMOR-NODE-HMI": "main/req_watch.hpp",
+        "ARMOR-NODE-ALARM": "main/req_watch.hpp"
+      }
     }
   }
 }
