@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **Two opt-in solar protocols join the shared catalogue:** `pylontech-rs485` (a Pylontech stack asked over RS485) and `modbus-srne-mppt-table` (an SRNE charge controller read from a register table, dialect `srne-mppt-table`). Both are read only, off unless chosen, and not tried on real equipment.
 - **The security option `solar.wifi_dongle`** is in the HTTP contract: the server reads an inverter's Wi-Fi dongle locally, off by default.
 
 - **The solar messages carry more of what the equipment says of itself:** the battery message may carry `bms_system` (the whole stack's own state of charge and health, charge left and learned, modules asleep and recommended limits); the inverter message may carry `energy` (the panel and load energy the unit counts itself), `options_on` and `options_off`, `defaults`, `charge_current_options_a`, `ac_charge_current_options_a` and `bms` (what the inverter hears from its battery). All optional; a server older than this refuses a message that carries them, so the server is updated before the node.
