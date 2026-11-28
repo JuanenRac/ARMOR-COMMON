@@ -3382,6 +3382,19 @@ export type SolarExamplesRemoved = {
   removed: number;
 };
 
+export type SolarFullCharges = {
+  batteries: {
+    /** node/device */
+    id: string;
+    charges: {
+      ended_ms: number;
+      minutes: number;
+      mean_gap_mv: number;
+      max_gap_mv: number;
+    }[];
+  }[];
+};
+
 export type SolarHistory = {
   node_id: string;
   device: string;
