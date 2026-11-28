@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The solar messages carry more of what the equipment says of itself:** the battery message may carry `bms_system` (the whole stack's own state of charge and health, charge left and learned, modules asleep and recommended limits); the inverter message may carry `energy` (the panel and load energy the unit counts itself), `options_on` and `options_off`, `defaults`, `charge_current_options_a`, `ac_charge_current_options_a` and `bms` (what the inverter hears from its battery). All optional; a server older than this refuses a message that carries them, so the server is updated before the node.
 ## [0.8.1.9] - Battery states and makers, discreet alarms, left-out figures and a guarding node
 
 - **A node can refuse to stop watching while armed:** the shared control rules know a guarding node (`busy_guarding`): it may restart, but a pause or a standby is refused.

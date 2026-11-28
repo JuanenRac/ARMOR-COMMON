@@ -534,6 +534,68 @@
       "minimum": 0,
       "maximum": 255,
       "description": "The status code of the discharge MOSFET, as above."
+    },
+    "bms_system": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "What the first battery of a stack says of the whole stack (the console's pwrsys): its own state of charge and health, the charge left and learned, and the limits it recommends. Every member is optional. Currents are positive amperes.",
+      "properties": {
+        "modules_total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64
+        },
+        "modules_present": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64
+        },
+        "modules_sleep": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64
+        },
+        "soc_percent": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "health_percent": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "remaining_ah": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "full_capacity_ah": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "charge_voltage_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "discharge_voltage_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "charge_current_a": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 16000
+        },
+        "discharge_current_a": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 16000
+        }
+      }
     }
   }
 }

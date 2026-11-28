@@ -116,6 +116,130 @@
    }
   },
   {
+   "name": "what the first battery says of the whole stack",
+   "valid": true,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "bms_system": {
+     "modules_total": 8,
+     "modules_present": 8,
+     "modules_sleep": 0,
+     "soc_percent": 99,
+     "health_percent": 95,
+     "remaining_ah": 396.23,
+     "full_capacity_ah": 400.1,
+     "charge_voltage_v": 53.25,
+     "discharge_voltage_v": 45.0,
+     "charge_current_a": 84.8,
+     "discharge_current_a": 212.0
+    }
+   }
+  },
+  {
+   "name": "a stack summary with a negative current limit",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "bms_system": {
+     "discharge_current_a": -212
+    }
+   }
+  },
+  {
+   "name": "a stack summary with an unknown member",
+   "valid": false,
+   "payload": {
+    "kind": "battery",
+    "node_id": "solar-1",
+    "device": "us3000-1",
+    "timestamp_ms": 3000,
+    "modules": 2,
+    "state": "discharging",
+    "voltage_v": 49.87,
+    "current_a": -2.59,
+    "temperature_min_c": 19.5,
+    "temperature_max_c": 25.0,
+    "cell_min_v": 3.328,
+    "cell_max_v": 3.349,
+    "soc_percent": 88,
+    "alarm": false,
+    "stack": [
+     {
+      "n": 1,
+      "present": true,
+      "voltage_v": 49.872,
+      "current_a": -1.28,
+      "temperature_c": 22.0,
+      "soc_percent": 88,
+      "state": "Dischg"
+     },
+     {
+      "n": 2,
+      "present": false
+     }
+    ],
+    "bms_system": {
+     "voltage_v": 50
+    }
+   }
+  },
+  {
    "name": "power as a string",
    "valid": false,
    "payload": {

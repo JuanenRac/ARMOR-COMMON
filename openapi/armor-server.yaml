@@ -120,6 +120,13 @@ paths:
       responses:
         '200': { description: '{ settings, defaults }', content: { application/json: { schema: { $ref: '#/components/schemas/SolarAlarmSettings' } } } }
         '400': { description: 'A level out of its range, an unknown one, or a charge that ends below where it starts', content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /api/v1/solar/full-charges:
+    get:
+      summary: The cell gap of every battery stack at each of its last full charges
+      security: [{ operator: [] }]
+      responses:
+        '200': { description: 'The batteries, each with its last charges, the oldest first', content: { application/json: { schema: { $ref: '#/components/schemas/SolarFullCharges' } } } }
+        '401': { description: Operator authorization is required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } }, text/plain: { schema: { $ref: '#/components/schemas/StatusText' } } } }
   /api/v1/solar/battery-notices:
     get:
       summary: How battery alarms call for attention (once and discreet, or as every alarm), the plausible range of a cell voltage and the batteries that are silenced
@@ -4213,6 +4220,20 @@ components:
               load_kwh: { type: number }
               battery_in_kwh: { type: number }
               battery_out_kwh: { type: number }
+    SolarFullCharges:
+      type: object
+      required: [batteries]
+      properties:
+        batteries:
+          type: array
+          items:
+            type: object
+            required: [id, charges]
+            properties:
+              id: { type: string, description: node/device }
+              charges:
+                type: array
+                items: { type: object, required: [ended_ms, minutes, mean_gap_mv, max_gap_mv], properties: { ended_ms: { type: integer }, minutes: { type: integer }, mean_gap_mv: { type: integer }, max_gap_mv: { type: integer } } }
     SolarAlarmSettings:
       type: object
       required: [settings, defaults]
