@@ -429,6 +429,240 @@
           ]
         }
       }
+    },
+    "energy": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The energy the inverter counts itself, in Wh: of the panels and of the load, of the day, month and year of the inverter's own date (day, yyyymmdd) and of the load since it was new. Every member is optional.",
+      "properties": {
+        "day": {
+          "type": "string",
+          "pattern": "^20[0-9]{6}$"
+        },
+        "pv_today_wh": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000000.0
+        },
+        "pv_month_wh": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000000.0
+        },
+        "pv_year_wh": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000000.0
+        },
+        "load_today_wh": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000000.0
+        },
+        "load_month_wh": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000000.0
+        },
+        "load_year_wh": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000000.0
+        },
+        "load_total_wh": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000000000.0
+        }
+      }
+    },
+    "options_on": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "string",
+        "enum": [
+          "buzzer",
+          "overload_bypass",
+          "feed_to_grid",
+          "power_saving",
+          "lcd_return_default",
+          "overload_restart",
+          "temperature_restart",
+          "lcd_backlight",
+          "source_interrupt_alarm",
+          "fault_record"
+        ]
+      },
+      "description": "The options of the unit that are switched on (QFLAG)."
+    },
+    "options_off": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "string",
+        "enum": [
+          "buzzer",
+          "overload_bypass",
+          "feed_to_grid",
+          "power_saving",
+          "lcd_return_default",
+          "overload_restart",
+          "temperature_restart",
+          "lcd_backlight",
+          "source_interrupt_alarm",
+          "fault_record"
+        ]
+      },
+      "description": "The options of the unit that are switched off (QFLAG)."
+    },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The settings the unit leaves the factory with (QDI); every member is optional.",
+      "properties": {
+        "out_rating_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "out_rating_hz": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "battery_recharge_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "battery_under_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "battery_bulk_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "battery_float_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "max_charge_a": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2000
+        },
+        "max_ac_charge_a": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2000
+        },
+        "battery_type": {
+          "type": "string",
+          "enum": [
+            "agm",
+            "flooded",
+            "user"
+          ]
+        },
+        "input_range": {
+          "type": "string",
+          "enum": [
+            "appliance",
+            "ups"
+          ]
+        },
+        "output_priority": {
+          "type": "string",
+          "enum": [
+            "utility_first",
+            "solar_first",
+            "sbu"
+          ]
+        },
+        "charger_priority": {
+          "type": "string",
+          "enum": [
+            "utility_first",
+            "solar_first",
+            "solar_and_utility",
+            "solar_only"
+          ]
+        }
+      }
+    },
+    "charge_current_options_a": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 2000
+      },
+      "description": "The currents the unit accepts as its maximum charge, in amperes."
+    },
+    "ac_charge_current_options_a": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 2000
+      },
+      "description": "The currents the unit accepts as its maximum charge from the grid, in amperes."
+    },
+    "bms": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "What the inverter hears from its lithium battery (QBMS). With connected false, nothing else is told.",
+      "properties": {
+        "connected": {
+          "type": "boolean"
+        },
+        "soc_percent": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "force_charge": {
+          "type": "boolean"
+        },
+        "stop_discharge": {
+          "type": "boolean"
+        },
+        "stop_charge": {
+          "type": "boolean"
+        },
+        "bulk_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "float_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "cutoff_v": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "max_charge_a": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2000
+        },
+        "max_discharge_a": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2000
+        }
+      }
     }
   }
 }

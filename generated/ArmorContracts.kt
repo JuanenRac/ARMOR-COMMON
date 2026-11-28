@@ -78,6 +78,45 @@ data class SolarInverterRatings(
     val charger_priority: String? = null
 )
 
+data class SolarInverterEnergy(
+    val day: String? = null,
+    val pv_today_wh: Double? = null,
+    val pv_month_wh: Double? = null,
+    val pv_year_wh: Double? = null,
+    val load_today_wh: Double? = null,
+    val load_month_wh: Double? = null,
+    val load_year_wh: Double? = null,
+    val load_total_wh: Double? = null
+)
+
+data class SolarInverterDefaults(
+    val out_rating_v: Double? = null,
+    val out_rating_hz: Double? = null,
+    val battery_recharge_v: Double? = null,
+    val battery_under_v: Double? = null,
+    val battery_bulk_v: Double? = null,
+    val battery_float_v: Double? = null,
+    val max_charge_a: Double? = null,
+    val max_ac_charge_a: Double? = null,
+    val battery_type: String? = null,
+    val input_range: String? = null,
+    val output_priority: String? = null,
+    val charger_priority: String? = null
+)
+
+data class SolarInverterBms(
+    val connected: Boolean? = null,
+    val soc_percent: Long? = null,
+    val force_charge: Boolean? = null,
+    val stop_discharge: Boolean? = null,
+    val stop_charge: Boolean? = null,
+    val bulk_v: Double? = null,
+    val float_v: Double? = null,
+    val cutoff_v: Double? = null,
+    val max_charge_a: Double? = null,
+    val max_discharge_a: Double? = null
+)
+
 data class SolarInverter(
     val kind: String = "inverter",
     val node_id: String,
@@ -118,7 +157,14 @@ data class SolarInverter(
     val manufacturer_source: String? = null,
     val firmware: String? = null,
     val pv_energy_total_wh: Double? = null,
-    val ratings: SolarInverterRatings? = null
+    val ratings: SolarInverterRatings? = null,
+    val energy: SolarInverterEnergy? = null,
+    val options_on: List<String>? = null,
+    val options_off: List<String>? = null,
+    val defaults: SolarInverterDefaults? = null,
+    val charge_current_options_a: List<Long>? = null,
+    val ac_charge_current_options_a: List<Long>? = null,
+    val bms: SolarInverterBms? = null
 )
 
 data class SolarModuleLastEvent(
@@ -184,6 +230,20 @@ data class SolarModule(
     val soft_version: String? = null
 )
 
+data class SolarBatteryBmsSystem(
+    val modules_total: Long? = null,
+    val modules_present: Long? = null,
+    val modules_sleep: Long? = null,
+    val soc_percent: Long? = null,
+    val health_percent: Long? = null,
+    val remaining_ah: Double? = null,
+    val full_capacity_ah: Double? = null,
+    val charge_voltage_v: Double? = null,
+    val discharge_voltage_v: Double? = null,
+    val charge_current_a: Double? = null,
+    val discharge_current_a: Double? = null
+)
+
 data class SolarBattery(
     val kind: String = "battery",
     val node_id: String,
@@ -212,7 +272,8 @@ data class SolarBattery(
     val balancing: Long? = null,
     val protecting: Boolean? = null,
     val charge_mos: Long? = null,
-    val discharge_mos: Long? = null
+    val discharge_mos: Long? = null,
+    val bms_system: SolarBatteryBmsSystem? = null
 )
 
 data class ElectricalChannel(
