@@ -224,14 +224,14 @@
     {
      "name": "conformance/",
      "desc": {
-      "en": "{{fact:vectors|1491}} accepted and rejected payloads",
-      "es": "{{fact:vectors|1491}} mensajes válidos e inválidos",
-      "de": "{{fact:vectors|1491}} gültige und ungültige Nachrichten",
-      "fr": "{{fact:vectors|1491}} messages valides et refusés",
-      "it": "{{fact:vectors|1491}} messaggi validi e rifiutati",
-      "ja": "受理・拒否 {{fact:vectors|1491}} 件",
-      "zh": "{{fact:vectors|1491}} 条有效与无效消息",
-      "pt": "{{fact:vectors|1491}} mensagens válidas e recusadas"
+      "en": "{{fact:vectors|1498}} accepted and rejected payloads",
+      "es": "{{fact:vectors|1498}} mensajes válidos e inválidos",
+      "de": "{{fact:vectors|1498}} gültige und ungültige Nachrichten",
+      "fr": "{{fact:vectors|1498}} messages valides et refusés",
+      "it": "{{fact:vectors|1498}} messaggi validi e rifiutati",
+      "ja": "受理・拒否 {{fact:vectors|1498}} 件",
+      "zh": "{{fact:vectors|1498}} 条有效与无效消息",
+      "pt": "{{fact:vectors|1498}} mensagens válidas e recusadas"
      }
     },
     {
