@@ -3224,6 +3224,8 @@ export type SecuritySettings = {
   "panel.solar"?: boolean;
   /** The account of a wall panel may reset the statistics counters of a battery, and nothing else, with its PIN at every step, while solar.battery_write is on too. Off: it answers 403. */
   "solar.panel_battery_ops"?: boolean;
+  /** The server listens for the Wi-Fi dongle of an inverter and reads it, only the addresses listed in solar-wifi-dongle.json of its data directory. The dongle protocol has no authentication; the server only reads. Off: no port is open. Turning it on lowers security. */
+  "solar.wifi_dongle"?: boolean;
   /** When a node or an alarm panel raises a high or critical alarm (or a node alert level goes to high), the cameras that the site design says cover it take the photo and video of the capture settings. Off: only the vision service starts a capture. */
   "capture.on_alarm"?: boolean;
   /** The most captures one minute of alarms may start in all. */
