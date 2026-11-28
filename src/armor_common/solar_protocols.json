@@ -341,6 +341,29 @@
    "note": "A charger: the AC fields are zero; the DC load is not published."
   },
   {
+   "id": "modbus-srne-mppt-table",
+   "label": "SRNE MPPT charge controller, read from a register table (Modbus RTU)",
+   "message": "inverter",
+   "port_kind": "modbus",
+   "dialect": "srne-mppt-table",
+   "baud": 9600,
+   "framing": "8N1",
+   "physical": "rs232",
+   "commands": [
+    "03 over the registers of the table (0x0100..0x0109)"
+   ],
+   "fields": [
+    "battery_v",
+    "battery_a",
+    "battery_percent",
+    "pv_v",
+    "pv_a",
+    "pv_w"
+   ],
+   "status": "partial",
+   "note": "Off unless the port is set to this variant. A charger: the AC fields are zero."
+  },
+  {
    "id": "vedirect-mppt",
    "label": "Victron VE.Direct solar charger",
    "message": "inverter",
@@ -458,6 +481,29 @@
    "note": ""
   },
   {
+   "id": "pylontech-rs485",
+   "label": "Pylontech battery, RS485 protocol",
+   "message": "battery",
+   "port_kind": "pylontech",
+   "dialect": "rs485",
+   "baud": 115200,
+   "framing": "8N1",
+   "physical": "rs485",
+   "commands": [
+    "0x42 analogue values",
+    "0x92 charge limits"
+   ],
+   "fields": [
+    "voltage_v",
+    "current_a",
+    "soc_percent",
+    "cells_v",
+    "temperatures_c"
+   ],
+   "status": "partial",
+   "note": "Off unless the port is set to this variant (the default is the console). Read only. 9600 baud with DIP 1 on. No capture of a real battery yet."
+  },
+  {
    "id": "ant-bms",
    "label": "ANT-BMS",
    "message": "battery",
@@ -568,10 +614,6 @@
   {
    "id": "jk-modbus",
    "reason": "The JK PB series speaks Modbus with another register map; not verified against its document."
-  },
-  {
-   "id": "pylontech-rs485",
-   "reason": "The frame is built and checked, but the meaning of INFO differs between versions and needs a capture."
   },
   {
    "id": "easun-smt3",
